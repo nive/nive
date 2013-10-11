@@ -278,13 +278,13 @@ class Form(Events, ReForm):
             if not subsets:
                 try:
                     # try to load subset names from configuration
-                    subsets = config.forms
+                    self.subsets = subsets = config.forms
                 except AttributeError:
                     pass
                 
         
         # unconfigured form
-        if not subset and not subsets and not config and not self.fields:
+        if not subset and not subsets and not config.get("forms") and not self.fields:
             raise ConfigurationError, "No form fields defined"
         # unknown subset
         if subset and (not subsets or not subset in subsets):
@@ -371,7 +371,8 @@ class Form(Events, ReForm):
                                 action = v
                                 break
                     if not action:
-                        raise ConfigurationError, "Form action lookup failed: " + a
+                        continue
+                        # raise ConfigurationError, "Form action lookup failed: " + a
                     a = action
                 self._c_actions.append(a)
                 
