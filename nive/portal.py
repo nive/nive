@@ -284,10 +284,22 @@ from pyramid.response import Response
 from pyramid.httpexceptions import HTTPError, HTTPNotFound, HTTPServerError
 
 
-def forbidden_view(request):
+def forbidden_view(forbiddenResponse, request):
+    portal = request.context.app.portal
+    def status():
+        headers = [("X-Result", "false")]
+        if hasattr(forbiddenResponse, "headerlist"):
+            headers += list(forbiddenResponse.headerlist)
+        forbiddenResponse.headerlist = headers    
+        return forbiddenResponse
+    if request.environ.get("HTTP_X_REQUESTED_WITH")=="XMLHttpRequest":
+        # return plain 403
+        return status()
+    if not portal.configuration.forbiddenUrl:
+        # return plain 403
+        return status()
     # login form
     url = request.referrer
-    portal = request.context.app.portal
     return Redirect(portal.configuration.forbiddenUrl+"?redirect="+request.url, request, messages=[u"Please log in"], raiseException=False)
        
 def login_view(context, request):
