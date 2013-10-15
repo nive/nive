@@ -209,7 +209,7 @@ class FormTest(unittest.TestCase):
         
 
     def test_json(self, **kw):
-        form = JsonMappingForm(request=Request(),app=self.app, view=self.view)
+        form = JsonMappingForm(request=Request(), app=self.app, view=self.view)
         form.fields = (
             FieldConf(id="parameter1", datatype="text", size=1000),
             FieldConf(id="parameter2", datatype="string", size=100),

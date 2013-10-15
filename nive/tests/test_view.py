@@ -32,6 +32,7 @@ class viewTest(unittest.TestCase):
         self.request._LOCALE_ = "en"
         self.request.subpath = ["file1.txt"]
         self.request.context = None
+        self.request.content_type = None
         self.app = db_app.app_db(["nive.adminview.view"])
         self.app.Startup(self.config)
         #self.request = getRequest()

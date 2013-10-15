@@ -20,6 +20,7 @@ class tViews(unittest.TestCase):
         request = testing.DummyRequest()
         request._LOCALE_ = "en"
         self.request = request
+        self.request.content_type = ""
         self.config = testing.setUp(request=request)
         self.app = app_db()
         self.portal = Portal()
@@ -83,6 +84,7 @@ class tTemplates(unittest.TestCase):
         request = testing.DummyRequest()
         request._LOCALE_ = "en"
         self.request = request
+        self.request.content_type = ""
         self.config = testing.setUp(request=request)
         self.app = app_db()
         self.portal = Portal()

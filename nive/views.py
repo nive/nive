@@ -606,22 +606,34 @@ class BaseView(object):
             request = self.request
         try:
             if method == "POST":
-                value = request.POST.getall(key)
+                if request.content_type=="application/json":
+                    value = request.json_body.get(key)
+                else:
+                    value = request.POST.getall(key)
             elif method == "GET":
                 value = request.GET.getall(key)
             else:
-                value = request.POST.getall(key)
+                if request.content_type=="application/json":
+                    value = request.json_body.get(key)
+                else:
+                    value = request.POST.getall(key)
                 if not value:
                     value = request.GET.getall(key)
             if isinstance(value, bytes):
                 value = unicode(value, self.context.app.configuration.frontendCodepage)
         except (AttributeError,KeyError):
             if method == "POST":
-                value = request.POST.get(key)
+                if request.content_type=="application/json":
+                    value = request.json_body.get(key)
+                else:
+                    value = request.POST.get(key)
             elif method == "GET":
                 value = request.GET.get(key)
             else:
-                value = request.POST.get(key)
+                if request.content_type=="application/json":
+                    value = request.json_body.get(key)
+                else:
+                    value = request.POST.get(key)
                 if not value:
                     value = request.GET.get(key)
             if isinstance(value, bytes):
@@ -649,28 +661,42 @@ class BaseView(object):
         """
         if not request:
             request = self.request
+        #method = method or request.method
         try:
             if method == "POST":
-                values = request.POST.mixed()
+                if request.content_type=="application/json":
+                    values = request.json_body
+                else:
+                    values = request.POST.mixed()
             elif method == "GET":
                 values = request.GET.mixed()
             else:
                 values = request.GET.mixed()
-                values.update(request.POST.mixed())
+                if request.content_type=="application/json":
+                    values.update(request.json_body)
+                else:
+                    values.update(request.POST.mixed())
         except AttributeError:
             try:
                 if method == "POST":
-                    values = request.POST
+                    if request.content_type=="application/json":
+                        values = request.json_body
+                    else:
+                        values = request.POST
                 elif method == "GET":
                     values = request.GET
                 else:
                     values = {}
-                    if request.GET:
-                        values.update(request.GET)
-                    values.update(request.POST)
+                    values.update(request.GET)
+                    if request.content_type=="application/json":
+                        values.update(request.json_body)
+                    else:
+                        values.update(request.POST)
             except AttributeError:
                 values = request
-        return values    
+        if not values:
+            return {}
+        return values
     
     def FmtURLParam(self, **kw):
         """
