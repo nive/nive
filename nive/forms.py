@@ -284,8 +284,9 @@ class Form(Events, ReForm):
                 
         
         # unconfigured form
-        if not subset and not subsets and not config.get("forms") and not self.fields:
-            raise ConfigurationError, "No form fields defined"
+        if not subset and not self.subsets and not self.fields:
+            if not config or (not config.forms and not config.data):
+                raise ConfigurationError, "No form fields defined"
         # unknown subset
         if subset and (not subsets or not subset in subsets):
             raise ConfigurationError, "Unknown form subset"
@@ -645,7 +646,8 @@ class Form(Events, ReForm):
                 elif method == "GET":
                     values = request.GET
                 else:
-                    values = request.GET
+                    values = {}
+                    values.update(request.GET)
                     values.update(request.POST)
             except AttributeError:
                 values = request
