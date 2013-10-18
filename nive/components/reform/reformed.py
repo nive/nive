@@ -41,7 +41,6 @@ def SchemaFactory(form, fields, actions, force=False):
     
     SchemaNode(...)
     """
-    context = form.context
     kwWidget = {"form": form}
 
     nodeMapping = {
@@ -58,7 +57,7 @@ def SchemaFactory(form, fields, actions, force=False):
         "datetime": datetime_node,
         "list": list_node,
         "radio": radio_node,
-        "msselection": msselection_node,
+        "mselection": mselection_node,
         "mcheckboxes": mcheckboxes_node,
         "lines": lines_node,
         "email": email_node,
@@ -103,7 +102,7 @@ def SchemaFactory(form, fields, actions, force=False):
             n = hidden_node(field, kw, kwWidget, form)
 
         else:
-            n = apply(nodeMapping[ftype], field, kw, kwWidget, form)
+            n = apply(nodeMapping[ftype], (field, kw, kwWidget, form))
             
         # add node to form
         if not n:
@@ -196,7 +195,7 @@ def datetime_node(field, kw, kwWidget, form):
 
 def list_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, context)
+        v = form.app.root().LoadListItems(field, form.context)
         if field.settings and field.settings.get("addempty"):
             v.insert(0,{"id":u"","name":u""})
         values = [(a["id"],a["name"]) for a in v]
@@ -208,21 +207,21 @@ def list_node(field, kw, kwWidget, form):
 
 def radio_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, context)
+        v = form.app.root().LoadListItems(field, form.context)
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
     return SchemaNode(String(), **kw)
 
-def msselection_node(field, kw, kwWidget, form):
+def mselection_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, context)
+        v = form.app.root().LoadListItems(field, form.context)
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = SelectWidget(values=values, size=field.get("len", 4), **kwWidget)
     return SchemaNode(List(allow_empty=True), **kw)
 
 def mcheckboxes_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, context)
+        v = form.app.root().LoadListItems(field, form.context)
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = CheckboxChoiceWidget(values=values, **kwWidget)
     return SchemaNode(List(allow_empty=True), **kw)
@@ -276,3 +275,4 @@ def unitlist_node(field, kw, kwWidget, form):
 def timestamp_node(field, kw, kwWidget, form):
     # readonly
     return None
+

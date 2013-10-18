@@ -173,6 +173,7 @@ from nive.definitions import Conf, FieldConf, ConfigurationError
 from nive.definitions import ISort
 from nive.events import Events
 
+from nive.i18n import _
 from nive.components import reform
 from nive.components.reform.form import Form as ReForm
 from nive.components.reform.schema import null, Invalid
@@ -180,7 +181,6 @@ from nive.components.reform.exception import ValidationFailure
 
 from nive.components.reform.reformed import SchemaFactory
 from nive.components.reform.reformed import zpt_renderer
-from nive.components.reform.i18n import _
 
 
 class ValidationError(Exception):
@@ -206,7 +206,7 @@ class Form(Events, ReForm):
     """
     Base form class.
     """
-    _schemaFactory = SchemaFactory
+    defaultSchemaFactory = SchemaFactory
     default_renderer = zpt_renderer
 
     # form configuration values
@@ -389,7 +389,11 @@ class Form(Events, ReForm):
             return 
         fields = self.GetFields()
         actions = self.GetActions(True)
-        self._schemaFactory(self, fields, actions, force)
+        schemaNodes, buttons = self.defaultSchemaFactory(fields, actions, force)
+        # setup nodes
+        for n in schemaNodes:
+            self.add(n)
+        self.buttons = buttons
         self._c_form = True
         return 
 

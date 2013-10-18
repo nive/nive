@@ -105,7 +105,7 @@ class FormTest(unittest.TestCase):
         self.assert_(v, e)
 
         form = Form(loadFromType="type1", app=self.app, view=self.view)
-        subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "section", "fields": [u"funit"]})]}}
+        subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unit"})]}}
         form.subsets = subsets
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
@@ -154,7 +154,7 @@ class FormTest(unittest.TestCase):
         form.formUrl = "form/url"
         form.cssID = u"upload"
         form.css_class = u"niveform"
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "section", "fields": [u"funit"]})]}}
+        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "number"})]}}
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
         self.assert_(v, e)
@@ -196,7 +196,7 @@ class FormTest(unittest.TestCase):
         form.Process()
 
         form.subset = "test"
-        form.subsets = {u"test": {"fields": [u"parameter1", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "section", "fields": [u"parameter2"]})]}}
+        form.subsets = {u"test": {"fields": [u"parameter1", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "lines"})]}}
         form.Setup("test")
         form.Process()
         req = {"run$":1}
@@ -343,7 +343,7 @@ class FormTest_db(unittest.TestCase):
         self.assertEqual(count+2, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=root, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "section", "fields": [u"fnumber"]})], 
+        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "email"})], 
                                   "actions": [u"default", u"create",u"cancel"]}}
         form.Setup(subset = "test", addTypeField = True)
         result, data, action=form.Process()
@@ -413,7 +413,7 @@ class FormTest_db(unittest.TestCase):
         self.assertEqual(count, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "section", "fields": [u"fnumber"]})],
+        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "url"})],
                                   "actions": [u"defaultEdit",u"edit",u"cancel"]}}
         form.subset = "test"
         form.Setup(subset = "test")
@@ -428,7 +428,7 @@ class FormTest_db(unittest.TestCase):
         self.assertEqual(count, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"fields": [u"parameter2"], "id": "section1", "name": "Section 1", "datatype": "section"})],
+        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unitlist"})],
                                   "actions": [u"defaultEdit",u"edit",u"cancel"]}}
         try:
             form.Setup(subset="test3")
