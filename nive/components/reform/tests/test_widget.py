@@ -1114,6 +1114,54 @@ class TestResourceRegistry(unittest.TestCase):
         result = reg([('abc', '123')])
         self.assertEqual(result, {'js':['1'], 'css':['2'], 'seq':[]})
 
+
+class TestFileUploadWidget2(unittest.TestCase):
+    def _makeOne(self, **kw):
+        from nive.components.reform.widget import FileUploadWidget2
+        return FileUploadWidget2(**kw)
+
+    def test_serialize_null(self):
+        from nive.components.reform.schema import null
+        renderer = DummyRenderer()
+        schema = DummySchema()
+        field = DummyField(schema, renderer)
+        widget = self._makeOne()
+        widget.serialize(field, null)
+        self.assertEqual(renderer.template, widget.template)
+        self.assertEqual(renderer.kw['field'], field)
+        self.assertEqual(renderer.kw['cstruct'], {})
+
+    def test_serialize_None(self):
+        renderer = DummyRenderer()
+        schema = DummySchema()
+        field = DummyField(schema, renderer)
+        widget = self._makeOne()
+        widget.serialize(field, None)
+        self.assertEqual(renderer.template, widget.template)
+        self.assertEqual(renderer.kw['field'], field)
+        self.assertEqual(renderer.kw['cstruct'], {})
+
+    def test_deserialize_null(self):
+        from nive.components.reform.schema import null
+        schema = DummySchema()
+        field = DummyField(schema)
+        widget = self._makeOne()
+        result = widget.deserialize(field, null)
+        self.assertEqual(result, null)
+
+    def test_deserialize_file(self):
+        from nive.components.reform.schema import null
+        from nive.helper import File
+        schema = DummySchema()
+        field = DummyField(schema)
+        widget = self._makeOne()
+        file = File()
+        result = widget.deserialize(field, file)
+        self.assertEqual(result.filename, file.filename)
+        self.assertEqual(result.file, file.file)
+
+
+
 class DummyRenderer(object):
     def __init__(self, result=''):
         self.result = result

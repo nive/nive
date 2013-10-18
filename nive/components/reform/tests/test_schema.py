@@ -2021,3 +2021,96 @@ class DummySchemaNode2(object):
         self.default = default
         self.children = []
 
+
+class TestLines(unittest.TestCase):
+    def _makeOne(self, encoding=None):
+        from nive.components.reform.schema import Lines
+        return Lines()
+
+    def test_deserialize_emptystring(self):
+        from nive.components.reform.schema import null
+        node = DummySchemaNode(None)
+        typ = self._makeOne(None)
+        result = typ.deserialize(node, '')
+        self.assertEqual(result, [])
+
+    def test_deserialize_uncooperative(self):
+        val = Uncooperative()
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        e = invalid_exc(typ.deserialize, node, val)
+        self.failUnless(e.msg)
+
+    def test_deserialize_stringlist(self):
+        value = u'123\r\n456\r\n789\r\n'
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        result = typ.deserialize(node, value)
+        self.assertEqual(result, ["123","456","789"])
+
+    def test_deserialize_stringlist_nobr(self):
+        value = u'123\r\n456\r\n789'
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        result = typ.deserialize(node, value)
+        self.assertEqual(result, ["123","456","789"])
+
+    def test_deserialize_stringlist_sep(self):
+        value = u'123\r\n456\r\n789'
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        typ.lb="\n"
+        result = typ.deserialize(node, value)
+        self.assertEqual(result, ["123\r","456\r","789"])
+        self.assertNotEqual(result, ["123","456","789"])
+
+    def test_serialize_null(self):
+        from nive.components.reform.schema import null
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        result = typ.serialize(node, null)
+        self.assertEqual(result, null)
+
+
+class TestFileData2(unittest.TestCase):
+    def _makeOne(self):
+        from nive.components.reform.schema import FileData2
+        return FileData2()
+
+    def test_deserialize_null(self):
+        from nive.components.reform.schema import null
+        typ = self._makeOne()
+        node = DummySchemaNode2()
+        result = typ.deserialize(node, null)
+        self.assertEqual(result, null)
+
+    def test_deserialize_not_null(self):
+        typ = self._makeOne()
+        node = DummySchemaNode2()
+        result = typ.deserialize(node, '123')
+        self.assertEqual(result, '123')
+
+    def test_serialize_null(self):
+        from nive.components.reform.schema import null
+        typ = self._makeOne()
+        node = DummySchemaNode2()
+        result = typ.serialize(node, null)
+        self.assertEqual(result, null)
+
+    def test_serialize_no_filename(self):
+        typ = self._makeOne()
+        node = DummySchemaNode2()
+        e = invalid_exc(typ.serialize, node, {'uid':'uid'})
+        self.assertEqual(e.msg, "${value} has no ${key} key")
+
+    def test_serialize_with_values(self):
+        typ = self._makeOne()
+        node = DummySchemaNode2()
+        result = typ.serialize(node, {'filename':'filename', 'uid':'uid',
+                                      'mimetype':'mimetype', 'size':'size',
+                                      'file':'fp'})
+        self.assertEqual(result['filename'], 'filename')
+        self.assertEqual(result['uid'], 'uid')
+        self.assertEqual(result['mime'], 'mimetype')
+        self.assertEqual(result['size'], 'size')
+        self.assertEqual(result['file'], 'fp')

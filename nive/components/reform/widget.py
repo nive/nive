@@ -4,10 +4,11 @@ import string
 import StringIO
 import urllib
 
+from nive.i18n import _
 from nive.components.reform import schema 
-from nive.components.reform.i18n import _
 from nive.components.reform.schema import Invalid
 from nive.components.reform.schema import null
+from nive.helper import File
 
 try:
     import json 
@@ -927,7 +928,7 @@ class FileUploadWidget(Widget):
     def deserialize(self, field, pstruct, formstruct=None):
         if pstruct is null:
             return null
-        #!!! switch to formstruct ?
+        # switch to formstruct ?
         upload = pstruct.get('upload')
         uid = pstruct.get('uid')
 
@@ -965,6 +966,51 @@ class FileUploadWidget(Widget):
                     return null
 
         return data
+
+
+class FileUploadWidget2(Widget):
+    """
+    Represent a file upload.  Meant to work with a
+    :class:`reform.FileData2` schema node.
+
+    Extended version using nive `File` class instead of
+    schema.filedict().
+     
+    **Attributes/Arguments**
+
+    template
+        The template name used to render the widget.  Default:
+        ``file_upload``.
+
+    size
+        The ``size`` attribute of the input field (default ``None``).
+    """
+    template = 'file_upload'
+    size = None
+
+    def __init__(self, **kw):
+        Widget.__init__(self, **kw)
+
+    def serialize(self, field, cstruct):
+        if cstruct in ("", null, None):
+            cstruct = {}
+        template = self.template
+        return field.renderer(template, field=field, cstruct=cstruct)
+
+    def deserialize(self, field, pstruct, formstruct=None):
+        if pstruct in ("", null, None):
+            return null
+        file = File()
+        file.filename = pstruct.filename
+        file.file = pstruct.file
+        file.filekey = field.name
+        if hasattr(pstruct, "length"):
+            file.size = pstruct.length
+        if hasattr(pstruct, "type"):
+            file.mime = pstruct.type
+        file.tempfile = True
+        return file
+
 
 
 class DatePartsWidget(Widget):

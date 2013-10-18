@@ -8,8 +8,8 @@ import iso8601
 import pprint
 import re
 
-from nive.components.reform.i18n import _
-
+from nive.i18n import _
+from nive.helper import File
 
 required = object()
 _marker = required # bw compat
@@ -1811,3 +1811,156 @@ class List(object):
             raise Invalid(node, _('Required'))
         return value
         
+
+
+class Lines(object):
+    """ A type representing a list of items stored as text one item per line.
+    Deserializes an iterable to a ``text`` object.
+
+    This type constructor accepts one argument:
+
+    ``allow_empty``
+       Boolean representing whether an empty set input to
+       deserialize will be considered valid.  Default: ``False``.
+       
+    ``lb``
+       Line break character or string. Default `\r\n`.
+       
+    ``remove_empty``
+       Remove empty lines from list.
+    """
+    def __init__(self, allow_empty=True):
+        self.allow_empty = allow_empty
+        self.lb = "\r\n"
+        self.remove_empty = True
+        
+    def serialize(self, node, value):
+        if isinstance(value, (list, tuple)):
+            value = self.lb.join(value)
+        return value
+
+    def deserialize(self, node, value, formstruct=None):
+        if value in (null, None):
+            return null
+        if value == u"":
+            value = []
+
+        elif isinstance(value, basestring):
+            value = value.split(self.lb)
+            if self.remove_empty:
+                try:
+                    # remove empty lines
+                    while True:
+                        value.remove(u"")
+                except:
+                    pass
+        elif not isinstance(value, (list, tuple)):
+            raise Invalid(
+                node,
+                _('${value} is not iterable', mapping={'value':value})
+                )
+        value =  list(value)
+        if not value and not self.allow_empty:
+            raise Invalid(node, _('Required'))
+        return value
+        
+
+class FileData2(object):
+    """
+    A type representing file data; used to shuttle data back and forth
+    between an application and the
+    :class:`reform.widget.FileUploadWidget` widget.
+
+    """
+
+    def serialize(self, node, value):
+        """
+        Serialize a dictionary representing partial file information
+        to a dictionary containing information expected by a file
+        upload widget.
+        
+        The file data dictionary passed as ``value`` to this
+        ``serialize`` method *must* include:
+
+        filename
+            Filename of this file (not a full filesystem path, just the
+            filename itself).
+
+        uid
+            Unique string id for this file.  Needs to be unique enough to
+            disambiguate it from other files that may use the same
+            temporary storage mechanism before a successful validation,
+            and must be adequate for the calling code to reidentify it
+            after deserialization.
+
+        A fully populated dictionary *may* also include the following
+        values:
+
+        fp
+            File-like object representing this file's content or
+            ``None``.  ``None`` indicates this file has already been
+            committed to permanent storage.  When serializing a
+            'committed' file, the ``fp`` value should ideally not be
+            passed or it should be passed as ``None``; ``None`` as an
+            ``fp`` value is a signifier to the file upload widget that
+            the file data has already been committed.  Using ``None``
+            as an ``fp`` value helps prevent unnecessary data copies
+            to temporary storage when a form is rendered, however its
+            use requires cooperation from the calling code; in
+            particular, the calling code must be willing to translate
+            a ``None`` ``fp`` value returned from a deserialization
+            into the file data via the ``uid`` in the deserialization.
+
+        mimetype
+            File content type (e.g. ``application/octet-stream``).
+
+        size
+            File content length (integer).
+
+        preview_url
+            URL which provides an image preview of this file's data.
+
+        If a ``size`` is not provided, the widget will have no access
+        to size display data.  If ``preview_url`` is not provided, the
+        widget will not be able to show a file preview.  If
+        ``mimetype`` is not provided, the widget will not be able to
+        display mimetype information.
+        """
+        if value in (null, None, ""):
+            return null
+        
+        if not hasattr(value, 'get'):
+            mapping = {'value':repr(value)}
+            raise Invalid(
+                node,
+                _('${value} is not a dictionary', mapping=mapping)
+                )
+        for n in ('filename',):
+            if not n in value:
+                mapping = {'value':repr(value), 'key':n}
+                raise Invalid(
+                    node,
+                    _('${value} has no ${key} key', mapping=mapping)
+                    )
+        if isinstance(value, basestring):
+            # from path
+            file = File()
+            file.fromPath(value)
+            return file
+
+        elif not isinstance(value, File):
+            # dictionary or similar
+            file = File()
+            file.filename = value.get('filename','')
+            file.file = value.get('file')
+            file.filekey = node.name
+            file.uid = value.get('uid', node.name)
+            file.mime = value.get('mimetype')
+            file.size = value.get('size')
+            file.tempfile = True
+            return file
+        return value
+    
+    def deserialize(self, node, value, formstruct=None):
+        return value
+
