@@ -43,38 +43,12 @@ def SchemaFactory(form, fields, actions, force=False):
     """
     kwWidget = {"form": form}
 
-    nodeMapping = {
-        "string": string_node,
-        "number": number_node,
-        "float": float_node,
-        "bool": bool_node,
-        "htext": htext_node,
-        "text": text_node,
-        "code": code_node,
-        "json": json_node,
-        "file": file_node,
-        "date": date_node,
-        "datetime": datetime_node,
-        "list": list_node,
-        "radio": radio_node,
-        "mselection": mselection_node,
-        "mcheckboxes": mcheckboxes_node,
-        "lines": lines_node,
-        "email": email_node,
-        "url": url_node,
-        "urllist": urllist_node,
-        "password": password_node,
-        "unit": unit_node,
-        "unitlist": unitlist_node,
-        "timestamp": timestamp_node
-    }
-
     nodes = []
     for field in fields:
         # use field configuration node: node must be a valid 
         # SchemaNode 
         if field.get("node") and not force:
-            sc.add(field.get("node"))
+            nodes.append(field.node)
             continue
         
         # default node setup
@@ -84,12 +58,20 @@ def SchemaFactory(form, fields, actions, force=False):
             "title": field.name,
             "description": field.description
         }
+        # bw 0.9.12 -> moved from settings to field conf
         # custom validator
         if field.settings and field.settings.get("validator"):
             kw["validator"] = field.settings["validator"]
         # custom widget
         if field.settings and field.settings.get("widget"):
             kw["widget"] = field.settings["widget"]
+
+        # custom validator
+        if field.get("validator"):
+            kw["validator"] = field.validator
+        # custom widget
+        if field.get("widget"):
+            kw["widget"] = field.widget
 
         # setup missing and default value
         if not field.required:
@@ -275,4 +257,40 @@ def unitlist_node(field, kw, kwWidget, form):
 def timestamp_node(field, kw, kwWidget, form):
     # readonly
     return None
+
+def nlist_node(field, kw, kwWidget, form):
+    # unused
+    return None
+
+def binary_node(field, kw, kwWidget, form):
+    # unused
+    return None
+
+nodeMapping = {
+    "string": string_node,
+    "number": number_node,
+    "float": float_node,
+    "bool": bool_node,
+    "htext": htext_node,
+    "text": text_node,
+    "code": code_node,
+    "json": json_node,
+    "file": file_node,
+    "date": date_node,
+    "datetime": datetime_node,
+    "list": list_node,
+    "radio": radio_node,
+    "mselection": mselection_node,
+    "mcheckboxes": mcheckboxes_node,
+    "lines": lines_node,
+    "email": email_node,
+    "url": url_node,
+    "urllist": urllist_node,
+    "password": password_node,
+    "unit": unit_node,
+    "unitlist": unitlist_node,
+    "timestamp": timestamp_node,
+    "nlist": nlist_node,
+    "binary": binary_node
+}
 
