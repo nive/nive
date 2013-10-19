@@ -83,39 +83,6 @@ Json: add "copyFrom" ::
         ...
     }    
 
-Data field types
-----------------
-These types define both: the data storage type (like string or number), widget
-and internal handling. Use these for FieldConf.datatypes.
-
-===========  ==============================================
-id           Name
-===========  ==============================================
-string       String 
-number       Number 
-float        Float 
-bool         Bool 
-htext        HTML Text 
-text         Text 
-code         HTML / Javascript / CSS 
-json         Json 
-file         File 
-date         Date 
-datetime     Datetime 
-list         List 
-radio        Radio Selection 
-mselection   Multiple Selection 
-mcheckboxes  Multiple Checkboxes 
-lines        Lines 
-email        E-Mail 
-url          URL 
-urllist      URL List 
-password     Password 
-unit         ID Reference 
-unitlist     ID Reference List 
-timestamp    Timestamp 
-===========  ==============================================
-
 
 Configurations
 ---------------
@@ -405,10 +372,47 @@ class FieldConf(baseConf):
         hidden :      This field is rendered as hidden field in forms.
         len :         Depends on datatype. 
         node :        Form field object for rendering and validation (colander schema node).
+        validator :   Form field validator callback.
+        widget :      Form widget rendered in HTML forms.
     
     Call ``FieldConf().test()`` to verify configuration values.
 
+    Data field types
+    ----------------
+    The types define the data field format (like string or number), widget
+    and internal handling. Use these for FieldConf.datatypes.
+    
+    ===========  ==============================================
+    id           Name
+    ===========  ==============================================
+    string       String 
+    number       Number 
+    float        Float 
+    bool         Bool 
+    htext        HTML Text 
+    text         Text 
+    code         HTML / Javascript / CSS 
+    json         Json 
+    file         File 
+    date         Date 
+    datetime     Datetime 
+    list         List 
+    radio        Radio Selection 
+    mselection   Multiple Selection 
+    mcheckboxes  Multiple Checkboxes 
+    lines        Lines 
+    email        E-Mail 
+    url          URL 
+    urllist      URL List 
+    password     Password 
+    unit         ID Reference 
+    unitlist     ID Reference List 
+    timestamp    Timestamp 
+    ===========  ==============================================
+
     Interface: IFieldConf
+
+
     """
     implements(IFieldConf)
     
@@ -439,6 +443,10 @@ class FieldConf(baseConf):
         if len(self.id) > 25:
             report.append((ConfigurationError, " FieldConf.id too long. 25 chars allowed.", self))
         # check datatype
+        report = self._testdatatype(report)
+        return report
+
+    def _testdatatype(self, report):
         ok=0
         for d in DataTypes:
             if d["id"] == self.datatype:
@@ -1392,30 +1400,34 @@ def TryResolveName(name, base=None):
 # field type definitions ---------------------------------------------------------------
 
 DataTypes = (
+# basic data types
 Conf(id="string",      name=_(u"String"),             description=u""),
 Conf(id="number",      name=_(u"Number"),             description=u""),
 Conf(id="float",       name=_(u"Float"),              description=u""),
 Conf(id="bool",        name=_(u"Bool"),               description=u""),
-Conf(id="htext",       name=_(u"HTML Text"),          description=u""),
-Conf(id="text",        name=_(u"Text"),               description=u""),
-Conf(id="code",        name=_(u"Code (Html, Javascript, Css)"), description=u""),
-Conf(id="json",        name=_(u"Json"),               description=u""),
 Conf(id="file",        name=_(u"File"),               description=u""),
+Conf(id="text",        name=_(u"Text"),               description=u""),
 Conf(id="date",        name=_(u"Date"),               description=u""),
 Conf(id="datetime",    name=_(u"Datetime"),           description=u""),
+# extended data types, handled like basic with different validation and renderer
+Conf(id="htext",       name=_(u"HTML Text"),          description=u""),
+Conf(id="code",        name=_(u"Code (Html, Javascript, Css)"), description=u""),
+Conf(id="json",        name=_(u"Json"),               description=u""),
+Conf(id="lines",       name=_(u"Lines"),              description=u""),
 Conf(id="list",        name=_(u"List"),               description=u""),
 Conf(id="radio",       name=_(u"Radio Selection"),    description=u""),
 Conf(id="mselection",  name=_(u"Multiple Selection"), description=u""),
 Conf(id="mcheckboxes", name=_(u"Multiple Checkboxes"),description=u""),
-Conf(id="lines",       name=_(u"Lines"),              description=u""),
 Conf(id="email",       name=_(u"Email"),              description=u""),
+Conf(id="password",    name=_(u"Password"),           description=u""),
 Conf(id="url",         name=_(u"URL"),                description=u""),
 Conf(id="urllist",     name=_(u"URL List"),           description=u""),
-Conf(id="password",    name=_(u"Password"),           description=u""),
 Conf(id="unit",        name=_(u"ID Reference"),       description=u""),
 Conf(id="unitlist",    name=_(u"ID Reference List"),  description=u""),
 Conf(id="timestamp",   name=_(u"Timestamp"),          description=u""),
-Conf(id="binary",      name=_(u"Binary"),             description=u""),   # not supported as database field yet
+# not supported as database field yet
+Conf(id="binary",      name=_(u"Binary"),             description=u""),   
+Conf(id="nlist",       name=_(u"List of numbers"),    description=u""),
 )
 
 

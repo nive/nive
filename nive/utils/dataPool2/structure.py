@@ -264,7 +264,7 @@ class PoolStructure(object):
         file -> bytes
         timestamp -> float
         date, datetime -> datetime
-        mselection, mcheckboxes, urllist -> string tuple
+        mselection, mcheckboxes, urllist -> unicode tuple
         unitlist -> number tuple
         json -> python type list, tuple or dict
 

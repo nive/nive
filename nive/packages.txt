@@ -84,7 +84,9 @@ events.Event
     def RegisterEvent(self, signal, function):
     def RemoveEvent(self, signal, function):
 
-    
-    
+definitions
+	FieldConf.settings["validator"] -> FieldConf.validator    
+	FieldConf.settings["widget"] -> FieldConf.widget    
+
     
     
