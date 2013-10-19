@@ -197,7 +197,7 @@ class MySQLManager(object):
 
         elif datatype in ("number", "long", "int"):
             aN = conf["default"]
-            if aN == u"" or aN == u" " or aN == None:
+            if aN in (u"", u" ", None):
                 aN = 0
             if isinstance(aN, basestring):
                 aN = long(aN)
@@ -210,7 +210,7 @@ class MySQLManager(object):
 
         elif datatype == "float":
             aN = conf["default"]
-            if aN == u"" or aN == u" " or aN == None:
+            if aN in (u"", u" ", None):
                 aN = 0
             if isinstance(aN, basestring):
                 aN = float(aN)
@@ -218,11 +218,11 @@ class MySQLManager(object):
 
         elif datatype == "bool":
             aN = conf["default"]
-            if aN == u"" or aN == u" " or aN == None or aN == u"False":
+            if aN in (u"", u" ", None, u"False"):
                 aN = 0
-            if aN == u"True":
+            elif aN == u"True":
                 aN = 1
-            if isinstance(aN, basestring):
+            elif isinstance(aN, basestring):
                 aN = int(aN)
             aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
 
@@ -244,7 +244,7 @@ class MySQLManager(object):
             aD = conf["default"]
             if aD == () or aD == "()":
                 aD = u"NULL"
-            if aD in ("now", "nowdate", "nowtime"):
+            elif aD in ("now", "nowdate", "nowtime"):
                 aD = u""
             if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
@@ -257,7 +257,7 @@ class MySQLManager(object):
             aD = conf["default"]
             if aD == () or aD == "()":
                 aD = u"NULL"
-            if aD in ("now", "nowdate", "nowtime"):
+            elif aD in ("now", "nowdate", "nowtime"):
                 aD = u""
             if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
@@ -274,9 +274,9 @@ class MySQLManager(object):
 
         elif datatype == "listn" or datatype == "codelist":
             aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
+            if aN in (u"", u" ", None):
                 aN = 0
-            if isinstance(aN, basestring):
+            elif isinstance(aN, basestring):
                 aN = int(aN)
             aStr = u"SMALLINT(6) NOT NULL DEFAULT %d" % (aN)
 
@@ -288,7 +288,7 @@ class MySQLManager(object):
 
         elif datatype == "bytesize":
             aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
+            if aN in (u"", u" ", None):
                 aN = 0
             if isinstance(aN, basestring):
                 aN = long(aN)
