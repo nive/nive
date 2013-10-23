@@ -7,7 +7,7 @@ The *portal* manages applications and is the pyramid_ or wsgi_ root. There is on
 portal in each instance.
 
 The portal handles the cms applications and global components like the user database. 
-Applications have to be registered by calling ``Register(application)`` on initialisation.
+Applications have to be registered by calling ``Register(application)`` on initialization.
 
 - Routes url names to applications
 - Calls ``Startup()`` for each registered application on server startup
@@ -133,8 +133,7 @@ class Portal(Events, object):
         the startup call. Calls *Startup()* for each registered component.
         
         *pyramidConfig* is the pyramid registration configuration object for views and other 
-        system components. nive ViewConf_ and ViewModuelConf_ are automatically with
-        pyramid. 
+        system components. 
         
         *debug* signals whether running in debug mode or not.
         """

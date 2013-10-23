@@ -364,8 +364,8 @@ class FieldConf(baseConf):
     
     Call ``FieldConf().test()`` to verify configuration values.
 
-    Data field types
-    ----------------
+    **Data field types**
+
     The types define the data field format (like string or number), widget
     and internal handling. Use these for FieldConf.datatypes.
     
@@ -398,7 +398,6 @@ class FieldConf(baseConf):
     ===========  ==============================================
 
     Interface: IFieldConf
-
 
     """
     implements(IFieldConf)

@@ -20,7 +20,7 @@ fields       list of database fields (field ids) to include in result.
 parameter    dictionary with fieldname:value entries used for search conditions
 operators    dictionary with fieldname:operator entries used for search conditions
              default: strings=*LIKE*, all others='='
-             possible values: ``=, LIKE, IN, >, <, <=, >=, !=, BETWEEN ``
+             possible values: ``=, LIKE, NOT IN, IN, >, <, <=, >=, !=, BETWEEN ``
 sort         result sort field or list if multiple
 ascending    sort ascending or decending
 start        start position in result
@@ -153,8 +153,10 @@ class Search:
             fields = ["id", "title", "pool_type"]
             parameter = {"pool_unitref": self.id}
             operators = {"pool_type": "!="}
-            records = self.dataroot.SelectDict("image", parameter=parameter, fields=fields, 
-                                             operators=operators)
+            records = self.dataroot.SelectDict("image", 
+                                               parameter=parameter, 
+                                               fields=fields, 
+                                               operators=operators)
         
         returns records as dict list
         """
