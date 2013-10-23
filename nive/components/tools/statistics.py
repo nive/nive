@@ -1,5 +1,6 @@
 # Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
 # Released under GPL3. See license.txt
+# Released under GPL3. See license.txt
 
 
 import types
