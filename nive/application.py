@@ -96,7 +96,7 @@ class Application(object):
         # v0.9.12: moved _meta to configuration.meta 
         # meta fields are now handled by the application configuration
         # self._meta = copy.deepcopy(SystemFlds)
-
+        
         # default root name if multiple
         self._defaultRoot = ""
         # cache database structure 
@@ -150,9 +150,9 @@ class Application(object):
         self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
         # register pyramid views 
         if pyramidConfig:
-            pyramidConfig = self.RegisterViewModules(pyramidConfig)
+            pyramidConfig = self._RegisterViewModules(pyramidConfig)
             pyramidConfig.commit()
-            pyramidConfig = self.RegisterViews(pyramidConfig)
+            pyramidConfig = self._RegisterViews(pyramidConfig)
             pyramidConfig.commit()
 
         # register groups
@@ -163,19 +163,14 @@ class Application(object):
         log.debug('Finished registration.')
         
         # reload database structure
-        self.LoadStructure(forceReload = True)
+        self._LoadStructure(forceReload = True)
         self._dbpool = self._GetDataPoolObj()
                            
         # test and create database fields 
         if debug:
             self.GetTool("nive.components.tools.dbStructureUpdater", self).Run()
             result, report = self.TestDB()
-            if not result:
-                log.error('Database test result: %s %s', str(result), ", ".join(report))
-            else:
-                log.info('Database test result: %s %s', str(result), ", ".join(report))
-            if not self._structure.get(u"pool_meta"):
-                log.error('No meta fields in _structure %s', repr(self._structure))
+            log.error('Database test result: %s %s', str(result), report)
  
         # reset caching after startup
         #self.configuration.useCache = cache
@@ -196,7 +191,6 @@ class Application(object):
             self._dbpool.Close()
 
 
-
     # Properties -----------------------------------------------------------
 
     def root(self, name=""):
@@ -211,7 +205,10 @@ class Application(object):
 
     def obj(self, id, rootname = "", **kw):
         """ returns object    """
-        return self.LookupObj(id, rootname, **kw)
+        root = self._GetRootObj(rootname)
+        if not root:
+            return None
+        return root.LookupObj(id, **kw)
 
     @property
     def db(self):
@@ -266,7 +263,7 @@ class Application(object):
         
         returns the workflow object
         """
-        if not self.configuration.workflowEnabled or wfProcID == "":
+        if not self.configuration.workflowEnabled:
             return None
         return self._GetWfObj(wfProcID, contextObject or _GlobalObject())
 
@@ -282,17 +279,7 @@ class Application(object):
         return self._dbpool
 
 
-    def LookupObj(self, id, rootname = "", **kw):
-        """
-        Returns the object for the id. if root name is empty the default root is used.
-        
-        returns object
-        """
-        root = self.GetRoot(rootname)
-        return root.LookupObj(id, **kw)
-
-
-    def Query(self, sql, values = []):
+    def Query(self, sql, values = ()):
         """
         Start a sql query on the database. 
         
@@ -305,20 +292,19 @@ class Application(object):
 
     def TestDB(self):
         """
-        Test database connection for errors. Returns state and list with errors.
+        Test database connection for errors. Returns state and error message.
         
-        returns bool, list
+        returns bool, message
         """
         try:
-            e = []
             db = self.db
             if not db.connection.IsConnected():
-                return False, e
-            return True, e
+                return False, "No connection"
+            r = self.Query("select id from pool_meta where id =1")
+            return True, "OK"
 
         except Exception, err:
-            e.append(str(err))
-            return False, e
+            return False, str(err)
 
 
     def NewConnection(self):
@@ -350,6 +336,11 @@ class Application(object):
         """ """
         return __version__ == __version__
 
+    def LookupObj(self, id, rootname = "", **kw):
+        """
+        use obj() instead
+        """
+        return self.obj(id, rootname, **kw)
 
 
 
@@ -378,11 +369,8 @@ class Registration(object):
         log = logging.getLogger(self.id)
         iface, conf = ResolveConfiguration(module)
         if not conf:
-            try:
-                log.debug('Register module: %s', str(module))
-                return self.registry.registerUtility(module, **kw)
-            except Exception, e:
-                raise ConfigurationError, str(module)
+            log.debug('Register python module: %s', str(module))
+            return self.registry.registerUtility(module, **kw)
         
         # test conf
         if self.debug:
@@ -395,7 +383,7 @@ class Registration(object):
         log.debug('Register module: %s %s', str(conf), str(iface))
         # register module views
         if iface not in (IViewModuleConf, IViewConf):
-            self.RegisterConfViews(conf)
+            self._RegisterConfViews(conf)
             
         # reset cached class value. makes testing easier
         try:
@@ -480,9 +468,34 @@ class Registration(object):
         raise TypeError, "Unknown configuration interface type (%s)" % (str(conf))
         
         
-        
-    def RegisterConfViews(self, conf):    
-        # register views included in configuration.views
+    def SetupRegistry(self):
+        """
+        Loads self.configuration, includes modules and updates meta fields.
+        """
+        if not self.configuration:
+            raise ConfigurationError, "Configuration is empty"
+        c = self.configuration
+        for k in c.keys():
+            # special values
+            if k == "id" and c.id:
+                self.__name__ = c.id
+            if k == "acl" and c.acl:
+                self.__acl__ = c.acl
+                continue
+            if k == "dbConfiguration" and c.dbConfiguration:
+                # bw 0.9.3
+                if type(c.dbConfiguration) == DictType:
+                    self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
+                else:
+                    self.dbConfiguration = c.dbConfiguration
+                continue
+            
+
+    def _RegisterConfViews(self, conf):
+        """
+        Register view configurations included as ``configuration.views`` in other 
+        configuration classes like ObjectConf, RootConf and so on.
+        """
         views = None
         try: 
             views = conf.views
@@ -501,34 +514,7 @@ class Registration(object):
             self.Register(v)
 
 
-    def SetupRegistry(self):
-        """
-        Loads self.configuration, includes modules and updates meta fields.
-        """
-        def idinlist(l, id):
-            for i in l:
-                if i["id"] == id:
-                    return True
-            return False
-
-        c = self.configuration
-        for k in c.keys():
-            # special values
-            if k == "id" and c.id:
-                self.__name__ = c.id
-            if k == "acl" and c.acl:
-                self.__acl__ = c.acl
-                continue
-            if k == "dbConfiguration" and c.dbConfiguration:
-                # bw 0.9.3
-                if type(c.dbConfiguration) == DictType:
-                    self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
-                else:
-                    self.dbConfiguration = c.dbConfiguration
-                continue
-            
-
-    def RegisterViews(self, config):
+    def _RegisterViews(self, config):
         """
         Register configured views and static views with the pyramid web framework.
         """
@@ -544,13 +530,10 @@ class Registration(object):
                             containment=view.containment,
                             custom_predicates=view.custom_predicates or (self.AppViewPredicate,),
                             **view.options)
-            #try:
-            #except Exception, e:
-            #    pass
         return config
 
 
-    def RegisterViewModules(self, config):
+    def _RegisterViewModules(self, config):
         """
         Register configured views and static views with the pyramid web framework.
         """
@@ -567,9 +550,6 @@ class Registration(object):
                                 containment=view.containment or viewmod.containment,
                                 custom_predicates=view.custom_predicates or viewmod.custom_predicates or (self.AppViewPredicate,),
                                 **view.options)
-                #try:
-                #except Exception, e:
-                #    raise ConfigurationError, str(view)
             
             # static views
             maxage = 60*60*4
@@ -580,15 +560,6 @@ class Registration(object):
         return config
 
 
-    def AppViewPredicate(self, context, request):
-        """
-        Check if context of view is this application. For multisite support.
-        """
-        app = context.app
-        return app == self
-    AppViewPredicate.__text__ = "nive.AppViewPredicate"
-        
-        
     def _Lock(self):
         # lock all configurations
         # adapters
@@ -600,7 +571,7 @@ class Registration(object):
             except:    pass
 
     
-    def LoadStructure(self, forceReload = False):
+    def _LoadStructure(self, forceReload = False):
         """
         returns dictionary containing database tables and columns
         """
@@ -640,6 +611,15 @@ class Registration(object):
         return structure
 
 
+    def AppViewPredicate(self, context, request):
+        """
+        Check if context of view is this application. For multisite support.
+        """
+        app = context.app
+        return app == self
+    AppViewPredicate.__text__ = "nive.AppViewPredicate"
+        
+        
 
 
 class Configuration:
@@ -652,24 +632,30 @@ class Configuration:
 
     def QueryConf(self, queryFor, context=None):
         """
-        returns configuration or None
+        Returns a list of configurations or empty list
         """
         if isinstance(queryFor, basestring):
-            queryFor = ResolveName(queryFor)
+            queryFor = ResolveName(queryFor, raiseExcp=False)
+            if not queryFor:
+                return ()
         if context:
             return self.registry.getAdapters((context,), queryFor)
         return self.registry.getAllUtilitiesRegisteredFor(queryFor)
 
     def QueryConfByName(self, queryFor, name, context=None):
         """
-        returns configuration or None
+        Returns configuration or None
         """
         if isinstance(queryFor, basestring):
-            queryFor = ResolveName(queryFor)
+            queryFor = ResolveName(queryFor, raiseExcp=False)
+            if not queryFor:
+                return None
         if context:
-            return self.registry.queryAdapter(context, queryFor, name=name)
+            v = self.registry.queryAdapter(context, queryFor, name=name)
+            if v:
+                return v[0]
+            return None
         return self.registry.queryUtility(queryFor, name=name)
-    
     
     def Factory(self, queryFor, name, context=None):
         """
@@ -761,37 +747,6 @@ class Configuration:
         if t:
             return t.name
         return ""
-
-
-    # Tool -------------------------------------------------------------
-
-    def GetToolConf(self, toolID, contextObject=None):
-        """
-        Get the tool configuration.
-        
-        returns configuration or None
-        """
-        if not contextObject:
-            contextObject = _GlobalObject()
-        v = self.registry.queryAdapter(contextObject, IToolConf, name=toolID)
-        if v:
-            return v[0]
-        return None
-
-    def GetAllToolConfs(self, contextObject=None):
-        """
-        Get all tool configurations.
-        
-        returns list
-        """
-        tools = []
-        for a in self.registry.registeredAdapters():
-            if a.provided==IToolConf:
-                if contextObject:
-                    if not a.required[0] in providedBy(contextObject):
-                        continue
-                tools.append(a.factory)
-        return tools
 
 
     # General Fields -------------------------------------------------------------
@@ -888,6 +843,37 @@ class Configuration:
         return m[0]["name"]
 
 
+    # Tool -------------------------------------------------------------
+
+    def GetToolConf(self, toolID, contextObject=None):
+        """
+        Get the tool configuration.
+        
+        returns configuration or None
+        """
+        if not contextObject:
+            contextObject = _GlobalObject()
+        v = self.registry.queryAdapter(contextObject, IToolConf, name=toolID)
+        if v:
+            return v[0]
+        return None
+
+    def GetAllToolConfs(self, contextObject=None):
+        """
+        Get all tool configurations.
+        
+        returns list
+        """
+        tools = []
+        for a in self.registry.registeredAdapters():
+            if a.provided==IToolConf:
+                if contextObject:
+                    if not a.required[0] in providedBy(contextObject):
+                        continue
+                tools.append(a.factory)
+        return tools
+
+
     # Categories -------------------------------------------------------------------------------------------------------
 
     def GetCategory(self, categoryID=""):
@@ -962,7 +948,10 @@ class Configuration:
         
         returns configuration or None
         """
-        return self.registry.queryAdapter(contextObject or _GlobalObject(), IWfProcessConf, name=processID)
+        v = self.registry.queryAdapter(contextObject or _GlobalObject(), IWfProcessConf, name=processID)
+        if v:
+            return v[0]
+        return None
 
 
     def GetAllWorkflowConfs(self, contextObject=None):
@@ -982,7 +971,7 @@ class Configuration:
         return w
 
 
-    # nive Configuration -------------------------------------------------------------
+    # System value storage -------------------------------------------------------------
 
     def StoreSysValue(self, key, value):
         """
@@ -1003,6 +992,13 @@ class Configuration:
             return None
         return r[0][0]
 
+    def DeleteSysValue(self, key):
+        """
+        Deletes a single system value
+        """
+        db = self.db
+        db.DeleteRecords(u"pool_sys", {u"id": key})
+        db.Commit()
 
 
 class AppFactory:
@@ -1144,7 +1140,7 @@ class AppFactory:
         if not conf:
             iface, conf = ResolveConfiguration(name)
             if not conf:
-                raise ImportError, "Tool not found. Please load the tool by referencing the tool configuration. (%s)" % (str(name))
+                raise ImportError, "Tool not found. Please load the tool by referencing the tool id. (%s)" % (str(name))
         tag = conf.context
         toolObj = GetClassRef(tag, self.reloadExtensions, True, None)
         toolObj = toolObj(conf, self)
@@ -1153,45 +1149,24 @@ class AppFactory:
         return toolObj
 
 
-    def _GetWfObj(self, wfConf, contextObject):
+    def _GetWfObj(self, name, contextObject):
         """
         creates the root object
         """
-        if isinstance(wfConf, basestring):
-            wfConf = self.GetWorkflowConf(wfConf, contextObject)
+        if isinstance(name, basestring):
+            wfConf = self.GetWorkflowConf(name, contextObject)
             if isinstance(wfConf, (list, tuple)):
                 wfConf = wfConf[0]
         if not wfConf:
-            return None
+            iface, wfConf = ResolveConfiguration(name)
+            if not wfConf:
+                raise ImportError, "Workflow process not found. Please load the workflow by referencing the process id. (%s)" % (str(name))
 
-        name = wfConf["id"]
-        useCache = self.configuration.useCache
-        cachename = "_c_wf"+name
-        if useCache and hasattr(self, cachename) and getattr(self, cachename):
-            wfObj = getattr(self, cachename)
-        else:
-            wfTag = wfConf["context"]
-            wfObj = GetClassRef(wfTag, self.reloadExtensions, True, None)
-            wfObj = wfObj(wfConf, self)
-            if wfObj and useCache:
-                setattr(self, cachename, wfObj)
+        wfTag = wfConf.context
+        wfObj = GetClassRef(wfTag, self.reloadExtensions, True, None)
+        wfObj = wfObj(wfConf, self)
+        if not _IGlobal.providedBy(contextObject):
+            wfObj.__parent__ = contextObject
         return wfObj
 
-
-    def _CloseWfObj(self, name=None):
-        """
-        close wf object. if name = none, all are closed.
-        """
-        if not name:
-            n = self.GetWorkflowIds()
-        else:
-            n = (name,)
-        for name in n:
-            cachename = "_c_wf"+name
-            try:
-                o = getattr(self, cachename)
-                o.Close()
-                setattr(self, cachename, None)
-            except:
-                pass
 
