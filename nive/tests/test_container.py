@@ -360,7 +360,7 @@ class containerTest_db:
         r.GetParentIDs()
         r.GetParentTitles()
         r.GetParentPaths()
-        r.GetTool("nive.components.tools.example")
+        r.GetTool("nive.tools.example")
 
 
     def test_shortcuts2(self):
@@ -388,7 +388,7 @@ class containerTest_db:
         o1.GetParentIDs()
         o1.GetParentTitles()
         o1.GetParentPaths()
-        o1.GetTool("nive.components.tools.example")
+        o1.GetTool("nive.tools.example")
         o1.Close()
         self.assertEqual(ccc+1, a.db.GetCountEntries())
         r.Delete(o1.id, user)

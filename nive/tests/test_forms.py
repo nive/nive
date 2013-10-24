@@ -162,7 +162,7 @@ class FormTest(unittest.TestCase):
 
 
     def test_tool(self, **kw):
-        tool = self.app.GetTool("nive.components.tools.example")
+        tool = self.app.GetTool("nive.tools.example")
         form = ToolForm(loadFromType=tool.configuration, context=tool,app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
         form.cssID = u"upload"

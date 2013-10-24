@@ -3,10 +3,10 @@ import time
 import unittest
 
 from nive.definitions import *
-from nive.tools import *
+from nive.tool import *
 from nive.security import User 
 
-from nive.components.tools.example import configuration
+from nive.tools.example import configuration
 import db_app
 
 # -----------------------------------------------------------------
@@ -31,13 +31,13 @@ class ToolTest(unittest.TestCase):
         self.app.Close()
 
     def test_toolapp(self):
-        t = self.app.GetTool("nive.components.tools.example")
+        t = self.app.GetTool("nive.tools.example")
         self.assert_(t)
         r,v = t()
         self.assert_(r)
 
     def test_toolapp2(self):
-        self.app.Register("nive.components.tools.example")
+        self.app.Register("nive.tools.example")
         t = self.app.GetTool("exampletool")
         self.assert_(t)
         r,v = t()
@@ -57,7 +57,7 @@ class ToolTest(unittest.TestCase):
         user = User(u"test")
         r = self.app.root()
         o = db_app.createObj1(r)
-        t = o.GetTool("nive.components.tools.example")
+        t = o.GetTool("nive.tools.example")
         r1,v = t()
         self.assert_(r1)
         r.Delete(o.GetID(), user=user)

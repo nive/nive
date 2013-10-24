@@ -19,7 +19,7 @@ mObject = ObjectConf(id="object", dbparam="object", name="Object",
                      data=(FieldConf(id="a1",datatype="string",name="A1"),FieldConf(id="a2",datatype="number",name="A2"),))
 
 mRoot = RootConf(id="root")
-mTool = ToolConf(id="tool", context="nive.components.tools.example")
+mTool = ToolConf(id="tool", context="nive.tools.example")
 mViewm = ViewModuleConf(id="vm")
 mView = ViewConf(id="v",context=mApp,view=mApp)
 mMod = ModuleConf(id="mod", context=mApp)

@@ -34,7 +34,7 @@ from nive.definitions import ConfigurationError
 
 from nive.security import User, authenticated_userid
 from nive.helper import ResolveName, ResolveConfiguration, FormatConfTestFailure, GetClassRef, ClassFactory
-from nive.tools import _IGlobal, _GlobalObject
+from nive.tool import _IGlobal, _GlobalObject
 from nive.workflow import IWfProcessConf
 from nive.utils.utils import SortConfigurationList
 
@@ -202,7 +202,7 @@ class Application(object):
                            
         # test and create database fields 
         if self.debug:
-            self.GetTool("nive.components.tools.dbStructureUpdater", self).Run()
+            self.GetTool("nive.tools.dbStructureUpdater", self).Run()
             result, report = self.TestDB()
             log.error('Database test result: %s %s', str(result), report)
  

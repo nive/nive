@@ -75,7 +75,7 @@ def myapp(modules=None):
         a.Query("select id from pool_sys where id=1")
         a.Query("select id from pool_groups where id=1")
     except:
-        a.GetTool("nive.components.tools.dbStructureUpdater")()
+        a.GetTool("nive.tools.dbStructureUpdater")()
     a.Startup(None)
     return a
 

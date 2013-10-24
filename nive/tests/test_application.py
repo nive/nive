@@ -11,7 +11,7 @@ from nive.events import Events
 from nive.portal import Portal
 from nive.components import baseobjects
 
-from nive.tools import _IGlobal, _GlobalObject
+from nive.tool import _IGlobal, _GlobalObject
 
 from nive.tests import db_app
 
@@ -24,16 +24,16 @@ mObject = ObjectConf(id="object", dbparam="object", name="Object",
                      data=(FieldConf(id="a1",datatype="string",name="A1"),FieldConf(id="a2",datatype="number",name="A2"),))
 
 mRoot = RootConf(id="root")
-mTool = ToolConf(id="tool", context="nive.components.tools.example.tool")
+mTool = ToolConf(id="tool", context="nive.tools.example.tool")
 mViewm = ViewModuleConf(id="vm")
 mView = ViewConf(id="v",context=mApp,view=mApp)
 mMod = ModuleConf(id="mod", context=mApp)
 mDb = DatabaseConf(dbName="test")
 
 mWfObj = WfProcessConf("nive.tests.test_workflow.wf1", id="wf", apply=(IObject,))
-mToolObj = ToolConf("nive.components.tools.example", id="tool", apply=(IObject,))
+mToolObj = ToolConf("nive.tools.example", id="tool", apply=(IObject,))
 
-mToolErr = ToolConf(id="tool", context="nive.components.tools.no_example")
+mToolErr = ToolConf(id="tool", context="nive.tools.no_example")
 
 
 mApp2 = AppConf(id="app2", 
@@ -231,7 +231,7 @@ class appTest(unittest.TestCase):
 
     def test_tools(self):
         self.assert_(self.app.GetTool("tool"))
-        self.assert_(self.app.GetTool("nive.components.tools.example"))
+        self.assert_(self.app.GetTool("nive.tools.example"))
         self.assertRaises(ImportError, self.app.GetTool, ("no_tool"))
         self.assertRaises(ImportError, self.app.GetTool, (""))
 
@@ -322,7 +322,7 @@ class appTest(unittest.TestCase):
         self.assert_(self.app._GetRootObj("root"))
         self.app._CloseRootObj(name="root")
         self.assert_(self.app._GetRootObj("root"))
-        self.assert_(self.app._GetToolObj("nive.components.tools.example", None))
+        self.assert_(self.app._GetToolObj("nive.tools.example", None))
 
 
 
@@ -359,7 +359,7 @@ class appTest_db:
         o=self.app.obj(self.id, rootname = "")
         self.assert_(o)
         # unregistered tool
-        self.assert_(self.app.GetTool("nive.components.tools.example", o))
+        self.assert_(self.app.GetTool("nive.tools.example", o))
         # registered tool
         self.assert_(self.app.GetTool("tool", o))
 

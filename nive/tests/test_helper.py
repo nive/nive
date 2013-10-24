@@ -52,8 +52,8 @@ class ConfigurationTest(unittest.TestCase):
     def test_resolve1(self, **kw):
         self.assert_(ResolveName("nive.tests.test_helper.text", base=None))
         self.assert_(ResolveName(".test_helper.text", base="nive.tests"))
-        self.assert_(ResolveName("nive.components.tools.dbStructureUpdater", base=None))
-        self.assert_(ResolveName(".dbStructureUpdater.dbStructureUpdater", base="nive.components.tools"))
+        self.assert_(ResolveName("nive.tools.dbStructureUpdater", base=None))
+        self.assert_(ResolveName(".dbStructureUpdater.dbStructureUpdater", base="nive.tools"))
         
     def test_resolve2(self, **kw):
         i,c = ResolveConfiguration(testconf, base=None)

@@ -152,10 +152,10 @@ def app_db(modules=None):
         a.Query("select id from pool_sys where id=1")
         a.Query("select id from pool_groups where id=1")
     except:
-        a.GetTool("nive.components.tools.dbStructureUpdater")()
+        a.GetTool("nive.tools.dbStructureUpdater")()
 
     # disable this to update test tables each time the tests are called
-    #a.GetTool("nive.components.tools.dbStructureUpdater")()
+    #a.GetTool("nive.tools.dbStructureUpdater")()
     a.Startup(None)
     # this will reset all testdata
     #emptypool(a)
@@ -190,7 +190,7 @@ def emptypool(app):
 
 def createpool(path,app):
     path.CreateDirectories()
-    app.GetTool("nive.components.tools.dbStructureUpdater")()
+    app.GetTool("nive.tools.dbStructureUpdater")()
 
 
 def statdb(app):
