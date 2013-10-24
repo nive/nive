@@ -132,8 +132,8 @@ class Portal(Events, object):
         server startup. All configuration, registration and setup is handled during
         the startup call. 
         
-        Calls *Startup()*, *StartRegistration()*, *FinishRegistration()*, *Run()* for each 
-        registered application.   
+        Calls *Setup()*, *StartRegistration()*, *FinishRegistration()*, *Run()* for each 
+        registered application.
         
         *pyramidConfig* is the pyramid registration configuration object for views and other 
         system components. 
@@ -275,10 +275,6 @@ class Portal(Events, object):
             a.Close()
             setattr(self, name, None)
             
-
-    # bw 0.9.4
-    def GetComponents(self):
-        return self.GetApps()
 
 
 

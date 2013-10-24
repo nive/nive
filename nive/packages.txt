@@ -88,5 +88,6 @@ definitions
 	FieldConf.settings["validator"] -> FieldConf.validator    
 	FieldConf.settings["widget"] -> FieldConf.widget    
 
-    
+portal
+	def GetComponents    
     
