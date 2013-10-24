@@ -8,8 +8,8 @@ from nive.definitions import ToolConf, FieldConf, IApplication, MetaTbl, Structu
 from nive.i18n import _
 
 configuration = ToolConf()
-configuration.id = "dbSqldataDump"
-configuration.context = "nive.tools.dbSqldataDump.dbSqldataDump"
+configuration.id = "dbSqlDump"
+configuration.context = "nive.tools.dbSqlDump.dbSqlDump"
 configuration.name = _(u"Database sql dump")
 configuration.description = _("This function only dumps table contents and skips 'create table' statements.")
 configuration.apply = (IApplication,)
@@ -24,7 +24,7 @@ configuration.mimetype = "text/sql"
 
 
 
-class dbSqldataDump(Tool):
+class dbSqlDump(Tool):
     """
     """
 
