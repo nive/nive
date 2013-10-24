@@ -37,14 +37,14 @@ mToolErr = ToolConf(id="tool", context="nive.tools.no_example")
 
 
 mApp2 = AppConf(id="app2", 
-                context="nive.tests.test_nive.testapp",
+                context="nive.tests.test_application.testapp",
                 modules=[mObject,mRoot,mTool,mViewm,mView,mMod,mDb], 
                 groups=[GroupConf(id="g1",name="G1")], 
                 categories=[CategoryConf(id="c1",name="C1")]
 )
 
 mAppErr = AppConf(id="app2", 
-                context="nive.tests.test_nive.testapp",
+                context="nive.tests.test_application.testapp",
                 modules=[mObject,mRoot,mTool,mViewm,mView,mMod], 
                 groups=[GroupConf(id="g1",name="G1")], 
                 categories=[CategoryConf(id="c1",name="C1")]

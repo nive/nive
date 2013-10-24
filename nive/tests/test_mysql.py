@@ -21,7 +21,7 @@ from nive.security import User
 from nive.components.objects.base import ApplicationBase
 
 from db_app import *
-from test_nive import appTest_db
+from test_application import appTest_db
 from test_container import containerTest_db, groupsrootTest_db
 from test_objects import objTest_db, objToolTest_db, objWfTest_db, groupsTest_db
 
