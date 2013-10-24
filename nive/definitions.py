@@ -241,6 +241,8 @@ class baseConf(object):
             i,c = helper.ResolveConfiguration(copyFrom)
             if c:
                 data = copy.deepcopy(c.__dict__)
+                if "locked" in data:
+                    del data["locked"]
                 self.update(data)
                 self._parent = c
         if values:

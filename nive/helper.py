@@ -33,12 +33,12 @@ def ResolveName(name, base=None, raiseExcp=True):
         return name
     if not base:
         base = caller_package()
-    if not raiseExcp:
-        d = DottedNameResolver(base)
-        return d.maybe_resolve(name)
-    d = DottedNameResolver(base)
-    return d.resolve(name)
-
+    try:
+        return DottedNameResolver(base).resolve(name)
+    except:
+        if not raiseExcp:
+            return None
+        raise
 
 def ResolveAsset(name, base=None, raiseExcp=True):
     """
@@ -54,14 +54,12 @@ def ResolveAsset(name, base=None, raiseExcp=True):
     if name.startswith("./"):
         # use relative file system path
         name = os.getcwd()+name[1:]
-    if not raiseExcp:
-        try:
-            d = AssetResolver(base)
-            return d.resolve(name)
-        except:
+    try:
+        return AssetResolver(base).resolve(name)
+    except:
+        if not raiseExcp:
             return None
-    d = AssetResolver(base)
-    return d.resolve(name)
+        raise
 
     
 def ResolveConfiguration(conf, base=None):

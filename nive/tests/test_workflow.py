@@ -257,8 +257,8 @@ class WfTest(unittest.TestCase):
         a = app_db()
         a.Register(wf1)
         a.Register(wf2)
-        self.assert_(a.GetWorkflowConf(wf1.id, self.obj)[0].id==wf1.id)
-        self.assert_(a.GetWorkflowConf(wf2.id)[0].id==wf2.id)
+        self.assert_(a.GetWorkflowConf(wf1.id, self.obj).id==wf1.id)
+        self.assert_(a.GetWorkflowConf(wf2.id).id==wf2.id)
 
 
 class TransisiotnTest(unittest.TestCase):
