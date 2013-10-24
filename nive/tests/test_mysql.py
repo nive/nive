@@ -99,7 +99,7 @@ class mygroupsTest_db(groupsTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
-        self.app = myapp(["nive.components.extensions.localgroups"])
+        self.app = myapp(["nive.extensions.localgroups"])
         self.remove=[]
 
 class myobjTest_db(objTest_db, uTestCase):
@@ -114,7 +114,7 @@ class mygroupsrootTest_db(groupsrootTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
-        self.app = myapp(["nive.components.extensions.localgroups"])
+        self.app = myapp(["nive.extensions.localgroups"])
         self.remove=[]
 
 

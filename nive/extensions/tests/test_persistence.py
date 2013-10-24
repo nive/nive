@@ -4,7 +4,7 @@ import unittest
 
 from nive.definitions import *
 
-from nive.components.extensions.persistence import *
+from nive.extensions.persistence import *
 
 from nive.tests import db_app
 
@@ -32,7 +32,7 @@ class Persistence(unittest.TestCase):
 class tdbPersistence(unittest.TestCase):
     
     def setUp(self):
-        self.app = db_app.app_db(["nive.components.extensions.persistence.dbPersistenceConfiguration"])
+        self.app = db_app.app_db(["nive.extensions.persistence.dbPersistenceConfiguration"])
         pass
     
     def tearDown(self):

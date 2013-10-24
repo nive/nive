@@ -402,7 +402,7 @@ class containerTest_db_(containerTest_db, unittest.TestCase):
 class groupsrootTest_db:
     
     def setUp(self):
-        self.app = app_db(["nive.components.extensions.localgroups"])
+        self.app = app_db(["nive.extensions.localgroups"])
         self.remove=[]
 
     def tearDown(self):

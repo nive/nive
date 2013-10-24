@@ -4,7 +4,7 @@ import unittest
 
 from nive.definitions import *
 
-from nive.components.extensions.cache import *
+from nive.extensions.cache import *
 
 from nive.tests import db_app
 

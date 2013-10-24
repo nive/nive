@@ -113,7 +113,7 @@ class LocalGroups(object):
 
 def SetupLocalGroups(app, pyramidConfig):
     # get all roots and add extension
-    extension = "nive.components.extensions.localgroups.LocalGroups"
+    extension = "nive.extensions.localgroups.LocalGroups"
     def add(confs):
         for c in confs:
             e = c.extensions
@@ -133,6 +133,6 @@ def SetupLocalGroups(app, pyramidConfig):
 configuration = ModuleConf(
     id = "localGroups",
     name = u"Local Group assignment for objects and roots",
-    context = "nive.components.extensions.localgroups",
+    context = "nive.extensions.localgroups",
     events = (Conf(event="startRegistration", callback=SetupLocalGroups),),
 )

@@ -254,7 +254,7 @@ class objTest_db_(objTest_db, unittest.TestCase):
 class groupsTest_db:
     
     def setUp(self):
-        self.app = app_db(["nive.components.extensions.localgroups"])
+        self.app = app_db(["nive.extensions.localgroups"])
         #emptypool(self.app)
         self.remove=[]
 
