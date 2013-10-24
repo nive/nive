@@ -2,12 +2,10 @@
 # Released under GPL3. See license.txt
 #
 
-import types
-
 from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, ViewConf, FieldConf, IApplication, Structure, MetaTbl
+
 from nive.i18n import _
-from nive.views import BaseView
 from nive.helper import FakeLocalizer
 from nive.utils.dataPool2.base import OperationalError
 
@@ -16,44 +14,21 @@ from pyramid.threadlocal import get_current_request
 
    
    
-class dbView(BaseView):
-    """
-    """
-    
-    def view(self):
-        """
-        Run a tool by rendering the default form and execute on submit.
-        This function does not return a valid Response object. This view is meant to
-        be called from another view or template:
-        ``view.RenderView(tool)``
-        """
-        tool = self.context
-        values = self.GetFormValues(method="POST")
-        values["request"] = self.request
-        result = tool.Run(**values)
-        data = tool.stream
-        if not isinstance(data, basestring):
-            try:
-                data = data.getvalue()
-            except:
-                data = str(data)
-        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False) 
-    
-            
-configuration = ToolConf()
-configuration.id = "dbStructureUpdater"
-configuration.context = "nive.tools.dbStructureUpdater.dbStructureUpdater"
-configuration.name = _(u"Database Structure")
-configuration.description = _(u"Generate or update the database structure based on configuration settings.")
-configuration.apply = (IApplication,)
-configuration.data = [
-    FieldConf(id="modify",     datatype="bool", default=0, name=_(u"Modify existing columns"),  description=_(u"Change existing database columns to new configuration. Depending on the changes, data may be lost!")),
-    FieldConf(id="showSystem", datatype="bool", default=0, name=_(u"Show system columns"),      description=u"")
-]
-configuration.mimetype = "text/html"
-configuration.views = [
-    ViewConf(name="", view=dbView, attr="view", permission="system", context="nive.tools.dbStructureUpdater.dbStructureUpdater")
-]
+configuration = ToolConf(
+    id = "dbStructureUpdater",
+    context = "nive.tools.dbStructureUpdater.dbStructureUpdater",
+    name = _(u"Database Structure"),
+    description = _(u"Generate or update the database structure based on configuration settings."),
+    apply = (IApplication,),
+    mimetype = "text/html",
+    data = [
+        FieldConf(id="modify",     datatype="bool", default=0, name=_(u"Modify existing columns"),  description=_(u"Change existing database columns to new configuration. Depending on the changes, data may be lost!")),
+        FieldConf(id="showSystem", datatype="bool", default=0, name=_(u"Show system columns"),      description=u"")
+    ],
+    views = [
+        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbStructureUpdater.dbStructureUpdater")
+    ]
+)
 
 class dbStructureUpdater(Tool):
 

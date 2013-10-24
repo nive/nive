@@ -17,6 +17,7 @@ from nive import __version__
 
 import copy
 import logging
+import uuid
 
 from time import time
 from types import DictType
@@ -204,7 +205,10 @@ class Application(object):
         if self.debug:
             self.GetTool("nive.tools.dbStructureUpdater", self).Run()
             result, report = self.TestDB()
-            log.error('Database test result: %s %s', str(result), report)
+            if result:
+                log.info('Database test result: %s %s', str(result), report)
+            else:
+                log.error('Database test result: %s %s', str(result), report)
  
         self._Lock()
         
@@ -453,7 +457,7 @@ class Registration(object):
             return True
 
         elif iface == IViewConf:
-            self.registry.registerUtility(conf, provided=IViewConf, name=conf.id)
+            self.registry.registerUtility(conf, provided=IViewConf, name=conf.id or str(uuid.uuid4()))
             return True
         elif iface == IViewModuleConf:
             self.registry.registerUtility(conf, provided=IViewModuleConf, name=conf.id)

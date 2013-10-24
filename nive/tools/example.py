@@ -2,8 +2,8 @@
 # Released under GPL3. See license.txt
 #
 
-from nive.tool import Tool
-from nive.definitions import ToolConf, FieldConf
+from nive.tool import Tool, ToolView
+from nive.definitions import ToolConf, FieldConf, ViewConf
 
 
 configuration = ToolConf(
@@ -18,7 +18,9 @@ configuration.data = [
     FieldConf(id="parameter1", datatype="bool",               default=0,  name=u"Show 1", description=u"Display 1"),
     FieldConf(id="parameter2", datatype="string", required=1, default="", name=u"Show 2", description=u"Display 2")
 ]
-
+configuration.views = [
+    ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.example.tool")
+]
 
 
 class tool(Tool):

@@ -4,28 +4,29 @@
 
 import json
 
-from nive.tool import Tool
-from nive.definitions import ToolConf, FieldConf, IApplication, MetaTbl, Structure
+from nive.tool import Tool, ToolView
+from nive.definitions import ToolConf, FieldConf, ViewConf
+from nive.definitions import IApplication, MetaTbl, Structure
 from nive.i18n import _
 
 configuration = ToolConf(
     id = "dbJsonDump",
     context = "nive.tools.dbJsonDump.dbJsonDump",
     name = _(u"Database json dump"),
-    description = _("This function only dumps table contents the way records are stored."),
+    description = _("This function dumps table contents the way records are stored in json format."),
     apply = (IApplication,),
-    mimetype = "text/json"
+    mimetype = "text/json",
+    data = [
+        FieldConf(id="excludeSystem", 
+                  datatype="mcheckboxes", 
+                  default=[], 
+                  listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
+                  name=_(u"Exclude system columns"))
+    ],
+    views = [
+        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
+    ]
 )
-
-configuration.data = [
-    FieldConf(id="excludeSystem", 
-              datatype="mcheckboxes", 
-              default=[], 
-              listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
-              name=_(u"Exclude system columns"))
-]
-
-
 
 class dbJsonDump(Tool):
     """

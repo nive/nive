@@ -118,7 +118,7 @@ class MySQLManager(object):
                 continue
 
             # modify column settings
-            if name in columns and columns["name"].get("db"):
+            if name in columns and columns[name].get("db"):
                 if not self.ModifyColumn(tableName, name, u"", options):
                     return False
             else:

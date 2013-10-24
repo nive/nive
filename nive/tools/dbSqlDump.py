@@ -3,16 +3,19 @@
 #
 
 
-from nive.tool import Tool
-from nive.definitions import ToolConf, FieldConf, IApplication, MetaTbl, Structure
+from nive.tool import Tool, ToolView
+from nive.definitions import ToolConf, FieldConf, ViewConf
+from nive.definitions import IApplication, MetaTbl, Structure
 from nive.i18n import _
 
-configuration = ToolConf()
-configuration.id = "dbSqlDump"
-configuration.context = "nive.tools.dbSqlDump.dbSqlDump"
-configuration.name = _(u"Database sql dump")
-configuration.description = _("This function only dumps table contents and skips 'create table' statements.")
-configuration.apply = (IApplication,)
+configuration = ToolConf(
+    id = "dbSqlDump",
+    context = "nive.tools.dbSqlDump.dbSqlDump",
+    name = _(u"Database sql dump"),
+    description = _("This function dumps table contents as SQL INSERT statements. 'CREATE table' statements are not included."),
+    apply = (IApplication,),
+    mimetype = "text/sql"
+)
 configuration.data = [
     FieldConf(id="excludeSystem", 
               datatype="mcheckboxes", 
@@ -20,8 +23,9 @@ configuration.data = [
               listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
               name=_(u"Exclude system columns"))
 ]
-configuration.mimetype = "text/sql"
-
+configuration.views = [
+    ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.dbSqlDump.dbSqlDump")
+]
 
 
 class dbSqlDump(Tool):

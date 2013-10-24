@@ -2,28 +2,29 @@
 # Released under GPL3. See license.txt
 #
 
-import types
-
 from pyramid.i18n import get_localizer
 from pyramid.threadlocal import get_current_request
 
-from nive.tool import Tool
+from nive.tool import Tool, ToolView
 from nive.helper import FakeLocalizer
 from nive.definitions import ToolConf, IApplication
+from nive.definitions import ViewConf
 from nive.i18n import _
 
 from nive.utils.utils import FormatBytesForDisplay
 
-configuration = ToolConf()
-configuration.id = "cmsstatistics"
-configuration.context = "nive.tools.cmsstatistics.cmsstatistics"
-configuration.name = _(u"CMS Statistics")
-configuration.description = _("This function provides a short summary of elements and data contained in the website.")
-configuration.apply = (IApplication,)
-configuration.data = [
-]
-configuration.mimetype = "text/html"
-
+configuration = ToolConf(
+    id = "cmsstatistics",
+    context = "nive.tools.cmsstatistics.cmsstatistics",
+    name = _(u"CMS Statistics"),
+    description = _("This function provides a short summary of elements and data contained in the website."),
+    apply = (IApplication,),
+    mimetype = "text/html",
+    data = [],
+    views = [
+        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.cmsstatistics.cmsstatistics")
+    ]
+)
 
 
 class cmsstatistics(Tool):
@@ -42,7 +43,7 @@ class cmsstatistics(Tool):
         conn = datapool.connection
         c = conn.cursor()
 
-        self.stream.write(u"<table>\n")
+        self.stream.write(u"<table class='table table-bordered'>\n")
 
         sql = "select count(*) from pool_meta"
         c.execute(sql)
