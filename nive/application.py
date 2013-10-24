@@ -67,6 +67,15 @@ class Application(object):
         appConf.modules.append(dbConf)
 
     Requires (Configuration, Registration, AppFactory, Events.Events)
+
+    The startup process is handled by nive.portal.portal on application startup.
+    During startup the system fires four events in the following order:
+
+    - startup(app)
+    - startRegistration(app, pyramidConfig)
+    - finishRegistration(app, pyramidConfig)
+    - run(app)
+
     """
     
     def __init__(self, configuration=None):
@@ -127,15 +136,20 @@ class Application(object):
 
 
     def Startup(self, pyramidConfig, debug=False):
+        self.Setup(debug=debug)
+        self.StartRegistration(pyramidConfig)
+        self.FinishRegistration(pyramidConfig)
+        self.Run()
+
+    
+    def Setup(self, debug=False):
         """
         Called by nive.portal.portal on application startup.
+        Sets up the registry.
 
-        Events (in order):
+        Events:
 
         - startup(app)
-        - startRegistration(app, pyramidConfig)
-        - finishRegistration(app, pyramidConfig)
-        - run(app)
         """
         t = time()
         log = logging.getLogger(self.id)
@@ -143,10 +157,17 @@ class Application(object):
         self.Signal("startup", app=self)
         self.SetupRegistry()
         self.debug = debug
-        # disable caching during startup
-        #cache = self.configuration.useCache
-        #self.configuration.useCache = False
         
+
+    def StartRegistration(self, pyramidConfig):
+        """
+        Processes all registered components and commits view definitions to
+        the pyramid application configuration.
+
+        Events:
+
+        - startRegistration(app, pyramidConfig)
+        """
         self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
         # register pyramid views 
         if pyramidConfig:
@@ -159,6 +180,17 @@ class Application(object):
         portal = self.portal
         if portal and hasattr(portal, "RegisterGroups"):
             portal.RegisterGroups(self)
+
+
+    def FinishRegistration(self, pyramidConfig):
+        """
+        Finishes the registration process and cashes the database structure.
+        Configurations will have a write lock after the registration is finished.
+
+        Events:
+
+        - finishRegistration(app, pyramidConfig)
+        """
         self.Signal("finishRegistration", app=self, pyramidConfig=pyramidConfig)
         log.debug('Finished registration.')
         
@@ -167,15 +199,22 @@ class Application(object):
         self._dbpool = self._GetDataPoolObj()
                            
         # test and create database fields 
-        if debug:
+        if self.debug:
             self.GetTool("nive.components.tools.dbStructureUpdater", self).Run()
             result, report = self.TestDB()
             log.error('Database test result: %s %s', str(result), report)
  
-        # reset caching after startup
-        #self.configuration.useCache = cache
         self._Lock()
         
+
+    def Run(self):
+        """
+        Signals the application is up and running.
+
+        Events:
+
+        - run(app)
+        """
         # start
         self.Signal("run", app=self)
         log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-t)

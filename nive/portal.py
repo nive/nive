@@ -130,7 +130,10 @@ class Portal(Events, object):
         """
         *Startup* is called once by the *main* function of the pyramid wsgi app on 
         server startup. All configuration, registration and setup is handled during
-        the startup call. Calls *Startup()* for each registered component.
+        the startup call. 
+        
+        Calls *Startup()*, *StartRegistration()*, *FinishRegistration()*, *Run()* for each 
+        registered application.   
         
         *pyramidConfig* is the pyramid registration configuration object for views and other 
         system components. 
@@ -142,10 +145,27 @@ class Portal(Events, object):
         if pyramidConfig:
             self.SetupPortalViews(pyramidConfig)
             #pyramidConfig.add_subscriber(self.StartConnection, iface=NewRequest)
+        
+        # Setup
         for c in self.components:
             component = getattr(self, c)
-            if hasattr(component, "Startup"):
-                component.Startup(pyramidConfig, debug=debug)
+            if IApplication.providedBy(component):
+                component.Setup(pyramidConfig, debug=debug)
+        # StartRegistration
+        for c in self.components:
+            component = getattr(self, c)
+            if IApplication.providedBy(component):
+                component.StartRegistration(pyramidConfig)
+        # FinishRegistration
+        for c in self.components:
+            component = getattr(self, c)
+            if IApplication.providedBy(component):
+                component.FinishRegistration(pyramidConfig)
+        # Run
+        for c in self.components:
+            component = getattr(self, c)
+            if IApplication.providedBy(component):
+                component.Run()
 
 
     def GetApps(self, interface=None):
