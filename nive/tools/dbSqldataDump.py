@@ -2,9 +2,8 @@
 # Released under GPL3. See license.txt
 #
 
-import types
 
-from nive.tools import Tool
+from nive.tool import Tool
 from nive.definitions import ToolConf, FieldConf, IApplication, MetaTbl, Structure
 from nive.i18n import _
 
@@ -15,7 +14,10 @@ configuration.name = _(u"Database sql dump")
 configuration.description = _("This function only dumps table contents and skips 'create table' statements.")
 configuration.apply = (IApplication,)
 configuration.data = [
-    FieldConf(id="excludeSystem", datatype="mcheckboxes", default=[], listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
+    FieldConf(id="excludeSystem", 
+              datatype="mcheckboxes", 
+              default=[], 
+              listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
               name=_(u"Exclude system columns"))
 ]
 configuration.mimetype = "text/sql"

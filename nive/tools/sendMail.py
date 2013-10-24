@@ -18,7 +18,7 @@ from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused, SMTPHeloError
 from nive.utils.utils import ConvertToList
 from nive.definitions import ConfigurationError
 from nive.definitions import ToolConf, FieldConf
-from nive.tools import Tool
+from nive.tool import Tool
 from nive.i18n import _
 
 configuration = ToolConf()

@@ -7,7 +7,7 @@ import types
 from pyramid.i18n import get_localizer
 from pyramid.threadlocal import get_current_request
 
-from nive.tools import Tool
+from nive.tool import Tool
 from nive.helper import FakeLocalizer
 from nive.definitions import ToolConf, IApplication
 from nive.i18n import _

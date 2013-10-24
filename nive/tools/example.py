@@ -2,7 +2,7 @@
 # Released under GPL3. See license.txt
 #
 
-from nive.tools import Tool
+from nive.tool import Tool
 from nive.definitions import ToolConf, FieldConf
 
 

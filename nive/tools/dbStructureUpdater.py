@@ -4,7 +4,7 @@
 
 import types
 
-from nive.tools import Tool, ToolView
+from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, ViewConf, FieldConf, IApplication, Structure, MetaTbl
 from nive.i18n import _
 from nive.views import BaseView

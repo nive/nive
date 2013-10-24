@@ -4,7 +4,7 @@
 
 import types
 
-from nive.tools import Tool
+from nive.tool import Tool
 from nive.definitions import ToolConf, IApplication
 from nive.i18n import _
 
