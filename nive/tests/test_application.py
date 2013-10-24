@@ -144,6 +144,11 @@ class simpleAppTest(unittest.TestCase):
         app.Register(c)
         app.Startup(None, debug=True)
 
+    def test_db(self):
+        app = testapp()
+        app.Register(mApp2)
+        v,r=app.TestDB()
+        self.assertFalse(v)
 
 
 class appTest(unittest.TestCase):
@@ -177,19 +182,6 @@ class appTest(unittest.TestCase):
     def test_del(self):
         self.app.__del__()
         
-    def test_db(self):
-        v,r=self.app.TestDB()
-        self.assert_(v)
-        self.app.db.connection.close()
-        v,r=self.app.TestDB()
-        self.assert_(v)
-
-        self.app.db.connection.db = None
-        self.app.db.connection.configuration = None
-        v,r=self.app.TestDB()
-        self.assertFalse(v)
-
-        
     def test_getitem(self):
         self.assert_(self.app["root"])
         try:
@@ -215,7 +207,6 @@ class appTest(unittest.TestCase):
         
     def test_props(self):
         self.assert_(self.app.root())
-        self.assertFalse(self.app.obj(123))
         self.assert_(self.app.portal)
         self.assert_(self.app.db)
         self.assert_(self.app.app)
@@ -340,6 +331,14 @@ class appTest_db:
             self.app.root().Delete(self.id, user=user)
 
 
+    def test_db(self):
+        v,r=self.app.TestDB()
+        self.assert_(v)
+        self.app.db.connection.close()
+        v,r=self.app.TestDB()
+        self.assert_(v)
+
+        
     def test_dbfncs(self):
         v,r=self.app.TestDB()
         self.assert_(v)
