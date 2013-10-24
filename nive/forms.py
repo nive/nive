@@ -1240,8 +1240,8 @@ class ToolForm(HTMLForm):
             temp = self.fields
         elif config and self.app:
             temp = config.data
-        if not temp:
-            raise ConfigurationError, "No form fields defined."
+        #if not temp:
+        #    raise ConfigurationError, "No form fields defined."
         # lookup field configurations
         self._c_fields = []
         for f in temp:
