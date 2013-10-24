@@ -111,11 +111,12 @@ class Application(object):
         # cache database structure 
         self._structure = PoolStructure()
         self._dbpool = None
-        log = logging.getLogger(self.id)
         
+        log = logging.getLogger(self.id)
         log.debug("Initialize %s", repr(configuration))
         self.Signal("init", configuration=configuration)
 
+        self.starttime = 0
         if configuration:
             self.Register(configuration)
         
@@ -151,7 +152,7 @@ class Application(object):
 
         - startup(app)
         """
-        t = time()
+        self.starttime = time()
         log = logging.getLogger(self.id)
         log.debug("Startup with debug=%s", str(debug))
         self.Signal("startup", app=self)
@@ -192,6 +193,7 @@ class Application(object):
         - finishRegistration(app, pyramidConfig)
         """
         self.Signal("finishRegistration", app=self, pyramidConfig=pyramidConfig)
+        log = logging.getLogger(self.id)
         log.debug('Finished registration.')
         
         # reload database structure
@@ -217,7 +219,8 @@ class Application(object):
         """
         # start
         self.Signal("run", app=self)
-        log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-t)
+        log = logging.getLogger(self.id)
+        log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-self.starttime)
         self.id = self.configuration.id
 
     

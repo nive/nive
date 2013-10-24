@@ -34,12 +34,12 @@ Interface: IPortal
 import copy
 import time
 import logging
-import gc
 
 from pyramid.events import NewRequest
 
 from nive.i18n import _
-from nive.definitions import IPortal, PortalConf, implements, Conf
+from nive.definitions import PortalConf, Conf
+from nive.definitions import implements, IPortal, IApplication
 from nive.definitions import ConfigurationError
 from nive.helper import ResolveConfiguration, ResolveName
 from nive.security import User, authenticated_userid, Allow, ALL_PERMISSIONS
