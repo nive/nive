@@ -986,7 +986,7 @@ class ViewConf(baseConf):
 
 
     def __str__(self):
-        return "<%(name)s> %(id)s" % self
+        return "%(attr)s %(view)s for %(context)s" % self
 
     def test(self, viewModule=None):
         if not viewModule:
