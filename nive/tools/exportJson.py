@@ -28,9 +28,9 @@ configuration = ToolConf(
         FieldConf(id="filedata", 
                   datatype="radio", 
                   default="none", 
-                  listItems=[{"id":"none", "name":"Only file information"},
-                             {"id":"data", "name":"Include file data"},
-                             {"id":"path","name":"No file data, only filenames and local paths"}], 
+                  listItems=[{"id":"none", "name":"Only file information (No file data)"},
+                             {"id":"path", "name":"Only file information and local paths (No file data)"},
+                             {"id":"data", "name":"Include all file data"},], 
                   name=_(u"File data"),
                   description=_(u"Include binary file data in json export (encoded as base64)"))
     ],
