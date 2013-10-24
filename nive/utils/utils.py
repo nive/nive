@@ -8,7 +8,6 @@ import os, tempfile, json
 from datetime import datetime
 from mimetypes import guess_type, guess_extension
 from operator import itemgetter, attrgetter
-from types import StringType
 
 from path import DvPath
 
@@ -28,11 +27,6 @@ def ConvertHTMLToText(html, url="", removeReST=True):
         text = text.replace(u"# ","")
         return text
     return h.handle(html)
-
-
-def ConvertTextToHTML(html):
-    # replaces lines breaks with br's
-    return html.replace(u"\n", u"\n<br/>")
 
 
 def ConvertToDateTime(date):
@@ -65,38 +59,11 @@ def ConvertToDateTime(date):
         pass
 
 
+def ConvertHexToBin(m):
+    return u''.join(map(lambda x: chr(16*int(u'0x%s'%m[x*2],0)+int(u'0x%s'%m[x*2+1],0)),range(len(m)/2)))
 
-def XssEscape(html, permitted_tags=None, requires_no_close=None, allowed_attributes=None):
-    """
-    source: http://code.activestate.com/recipes/496942-cross-site-scripting-xss-defense/
-    
-    A list of the only tags allowed.  Be careful adding to this.  Adding
-    "script," for example, would not be smart.  'img' is out by default 
-    because of the danger of IMG embedded commands, and/or web bugs.
-    permitted_tags = ['a', 'b', 'blockquote', 'br', 'i', 
-                      'li', 'ol', 'ul', 'p', 'cite', 'strong', 'em', 'pre', 'h3', 'h4']
-
-    A list of tags that require no closing tag.
-    requires_no_close = ['img', 'br']
-
-    A dictionary showing the only attributes allowed for particular tags.
-    If a tag is not listed here, it is allowed no attributes.  Adding
-    "on" tags, like "onhover," would not be smart.  Also be very careful
-    of "background" and "style."
-    allowed_attributes = \
-            {'a':['href','title'],
-             'img':['src','alt'],
-             'blockquote':['type']}
-    """
-    import xssescape
-    xss = xssescape.XssCleaner()
-    if permitted_tags:
-        xss.permitted_tags = permitted_tags
-    if requires_no_close:
-        xss.requires_no_close = requires_no_close
-    if allowed_attributes:
-        xss.allowed_attributes = allowed_attributes
-    return xss.strip(html)
+def ConvertBinToHex(m):
+    return u''.join(map(lambda x: hex(ord(x)/16)[-1]+hex(ord(x)%16)[-1],m))
 
 
 def CutText(text, textlen, cutchars=" ;:,.\r\n", postfix=u" ..."):
@@ -111,13 +78,6 @@ def CutText(text, textlen, cutchars=" ;:,.\r\n", postfix=u" ..."):
         if p!=-1 and p<pos:
             pos=p
     return text[:pos] + postfix
-
-
-def ConvertHexToBin(m):
-    return u''.join(map(lambda x: chr(16*int(u'0x%s'%m[x*2],0)+int(u'0x%s'%m[x*2+1],0)),range(len(m)/2)))
-
-def ConvertBinToHex(m):
-    return u''.join(map(lambda x: hex(ord(x)/16)[-1]+hex(ord(x)%16)[-1],m))
 
 
 def FormatBytesForDisplay(size):
@@ -164,23 +124,6 @@ def FmtSeconds(seconds):
             return minutesPlural % t2
     else:
         return u'%d seconds' % seconds
-
-
-def SortConfigurationList(values, sort, ascending=True):
-    """
-    Sorts the dictionary list `values` by attribute or key `sort`. This works for definitions.Conf() objects 
-    and simple dictionaries. 
-    Results can be ordered ascending or descending.
-    """
-    if not sort:
-        return values
-    try:
-        values = sorted(values, key=attrgetter(sort))   
-    except AttributeError:
-        values = sorted(values, key=itemgetter(sort))   
-    if not ascending:
-        values.reverse()
-    return values
 
 
 def GetMimeTypeExtension(extension):
@@ -252,7 +195,6 @@ def GetExtensionMimeType(mime):
     return u""
 
 
-
 def TidyHtml(data, options=None):
     """
     clean up html by calling tidy
@@ -310,11 +252,9 @@ def TidyHtml(data, options=None):
 
 
 def ReplaceHTMLEntities(text, codepage = None):
-    ##
-    # Removes HTML or XML character references and entities from a text string.
-    #
-    # @param text The HTML (or XML) source text.
-    # @return The plain text, as a Unicode string, if necessary.
+    """
+    Removes HTML or XML character references and entities from a text string.
+    """
     def _fixup(m):
         text = m.group(0)
         if text[:2] == u"&#":
@@ -342,27 +282,21 @@ def ReplaceHTMLEntities(text, codepage = None):
     return result
 
 
-def LoadFromFile(path):
-    file = open(path)
-    if not file:
-        return None
-    value = file.read()
-    file.close()
-    return value
-
-
-def WriteToFile(path, value, append = False):
-    if append:
-        file = open(path, "ab+")
-        if not file:
-            return False
-    else:
-        file = open(path, "wb")
-        if not file:
-            return False
-    file.write(value)
-    file.close()
-    return True
+def SortConfigurationList(values, sort, ascending=True):
+    """
+    Sorts the dictionary list `values` by attribute or key `sort`. This works for definitions.Conf() objects 
+    and simple dictionaries. 
+    Results can be ordered ascending or descending.
+    """
+    if not sort:
+        return values
+    try:
+        values = sorted(values, key=attrgetter(sort))   
+    except AttributeError:
+        values = sorted(values, key=itemgetter(sort))   
+    if not ascending:
+        values.reverse()
+    return values
 
 
 # failsafe type conversion ---------------------------------------------------------------------------------------
@@ -523,7 +457,11 @@ def DUMP(data, path = "dump.txt", addTime=False):
         aS = "\r\n\r\n" + date.strftime("%Y-%m-%d %H:%M:%S") + "\r\n" + str(data)
     else:
         aS = "\r\n\r\n" + str(data)
-    WriteToFile(path, True)
+    file = open(path, "ab+")
+    if not file:
+        return 
+    file.write(value)
+    file.close()
 
 def STACKF(t=0, label = "", limit = 15, path = "_stackf.txt", name=""):
     import time
@@ -539,84 +477,4 @@ def STACKF(t=0, label = "", limit = 15, path = "_stackf.txt", name=""):
     traceback.print_stack(limit=limit, file=s)
     DUMP("%s\r\n%s\r\n%s" % (h, label, s.getvalue()), path)
 
-def LOG(data = "", path="_log.txt", t=0):
-    import time
-    n = time.time() - t
-    try:
-        fd = open(path, "ab+")
-        fd.write("%f %s\r\n" % (n, data))
-        fd.close()
-    except:
-        try:
-            fd.close()
-        except:
-            pass
-
-
-
-class logdata:
-    _data = ""
-    _maxsize = 1024 * 512
-    _path = ""
-    
-    def __del__(self):
-        self.write("", 1)
-
-    def write(self, data="", flush=0):
-        import thread
-        if flush or len(self._data)>self._maxsize:
-            try:
-                lock = thread.allocate_lock()
-                lock.acquire(1)
-                fd = open(self._path, "ab+")
-                fd.write(self._data + data)
-                self._data = ""
-                fd.close()
-                if lock.locked():
-                    lock.release()
-                return True
-            except:
-                try:
-                    fd.close()
-                except:
-                    pass
-                try:
-                    if lock.locked():
-                        lock.release()
-                except:
-                    pass
-                return False
-        else:
-            try:
-                lock = thread.allocate_lock()
-                lock.acquire(1)
-                self._data += data
-                if lock.locked():
-                    lock.release()
-                return True
-            except:
-                return False
-
-# global log
-_log = None
-
-def LOGHTTP(client="-", user="-", t=0, action="GET", url="-", state="200", referrer="-", agent="-", path="http.log", logObj=None):
-    import time
-    if t != 0:
-        t = time.localtime(t)
-    else:
-        t = time.localtime()
-    t = time.strftime(u"[%d/%m/%Y:%H:%M:%S", t)
-    ms = ("%f"%(time.time())).split(".")[-1]
-    t += ".%s]"%(ms)
-    referrer = referrer.replace('"', '')
-    agent = agent.replace('"', '')
-    log = u"""%s - "%s" %s "%s %s" %s - "%s" "%s"\r\n""" % (client, user, t, action, url, str(state), referrer, agent)
-    if not logObj:
-        logObj = _log
-    if not logObj:
-        logObj = logdata()
-        logObj._path = path
-    return logObj.write(log)
-    
 

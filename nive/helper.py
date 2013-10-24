@@ -17,7 +17,6 @@ from nive.definitions import IWidgetConf, IWfProcessConf, IWfStateConf, IWfTrans
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
 from nive.utils.dataPool2.files import File
-from nive.utils.utils import LoadFromFile
 
 
 def ResolveName(name, base=None, raiseExcp=True):
@@ -87,7 +86,8 @@ def ResolveConfiguration(conf, base=None):
         # json file
         if conf.find(".json")!= -1:
             path = ResolveAsset(conf, base)
-            s = LoadFromFile(path.abspath())
+            with open(path.abspath()) as f:
+                s = f.read()
             conf = json.loads(s)
         # resolve attribute name
         elif conf:

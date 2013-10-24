@@ -1239,9 +1239,6 @@ class Base(object):
         aC.close()
         return aN
 
-    def Log(self, s):
-        DUMP(s, self._log,name=self.name)
-
 
     def SetConnection(self, conn):
         self._conn = conn
