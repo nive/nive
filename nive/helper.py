@@ -186,6 +186,8 @@ class ConfEncoder(json.JSONEncoder):
             for k in obj:
                 values[k] = obj[k]
             return values
+        elif isinstance(obj, datetime):
+            return str(obj)
         return json.JSONEncoder.default(self, obj)
 
 class ConfDecoder(object):
