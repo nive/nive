@@ -111,7 +111,10 @@ class modTest(unittest.TestCase):
 
     def test_startup2(self):
         self.app.Register(mApp)
-        self.app.Startup(None, True)
+        self.app.Setup(True)
+        self.app.StartRegistration(None)
+        self.app.FinishRegistration(None)
+        self.app.Run()
         self.assert_(self.app.db)
         self.app.Close()
 
