@@ -150,7 +150,7 @@ class Portal(Events, object):
         for c in self.components:
             component = getattr(self, c)
             if IApplication.providedBy(component):
-                component.Setup(pyramidConfig, debug=debug)
+                component.Setup(debug)
         # StartRegistration
         for c in self.components:
             component = getattr(self, c)
