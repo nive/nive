@@ -19,6 +19,11 @@ nive.components.extensions.sessionuser -> nive_userdb.extensions.sessionuser
 
 nive.components.objects [part 2] -> nive_cms.baseobjects  (see search and replace)
 
+nive.components.extensions -> nive.extensions
+
+nive.components.tools -> nive.tools
+
+nive/tools.py -> nive/tool.py
 
     
 Search and replace nive.components.objects
