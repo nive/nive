@@ -47,6 +47,7 @@ form.form .controls input, textarea, select { width:500px; }
 form.form .controls input[type="radio"] { width:auto; margin-bottom: 2px; display:block; }
 form.form .controls input[type="checkbox"] { width:auto; margin-bottom: 2px; display:block; }
 form.form .help-block    { width:220px; margin-left:20px; display:block; float:left; }
+form.form .help-block-br { width:500px; margin-left:170px; display:block; }
 form label.required:after  { content: "*"; }
 form input.password        { display:block; }
 

@@ -534,6 +534,7 @@ class RichTextWidget(TextInputWidget):
     template = 'richtext'
     skin = 'default'
     theme = 'simple'
+    category = 'full-width'
     requirements = ( ('tinymce', None), )
 
 class PasswordWidget(TextInputWidget):
@@ -1227,6 +1228,7 @@ class CodeTextWidget(TextInputWidget):
     width = 500
     template = 'codetext'
     codetype = 'default'
+    category = 'full-width'
     theme = 'simple'
     requirements = ( ('codemirror', None), )
 
