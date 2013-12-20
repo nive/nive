@@ -171,11 +171,13 @@ class Application(object):
         - startRegistration(app, pyramidConfig)
         """
         self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
-        # register pyramid views 
+        # register pyramid views and translations
         if pyramidConfig:
-            pyramidConfig = self._RegisterViewModules(pyramidConfig)
+            self._RegisterViewModules(pyramidConfig)
             pyramidConfig.commit()
-            pyramidConfig = self._RegisterViews(pyramidConfig)
+            self._RegisterViews(pyramidConfig)
+            pyramidConfig.commit()
+            self._RegisterTranslations(pyramidConfig)
             pyramidConfig.commit()
 
         # register groups
@@ -446,7 +448,7 @@ class Registration(object):
             for e in conf.events:
                 log.debug('Register Event: %s for %s', str(e.event), str(e.callback))
                 self.ListenEvent(e.event, e.callback)
-        
+
         if iface == IRootConf:
             self.registry.registerUtility(conf, provided=IRootConf, name=conf.id)
             if conf.default or not self._defaultRoot:
@@ -604,6 +606,23 @@ class Registration(object):
             config.add_static_view(name=viewmod.staticName or viewmod.id, path=viewmod.static, cache_max_age=maxage)
         
         return config
+
+
+    def _RegisterTranslations(self, config):
+        """
+        Register translation directories contained in configurations.
+        Translations can be specified as `configuraion.translations` for 
+        IAppConf, IViewModuleConf, IObjectConf, IRootConf, IToolConf, IModuleConf, IWidgetConf
+        """
+        for confType in (IAppConf, IViewModuleConf, IObjectConf, IRootConf, IToolConf, IModuleConf, IWidgetConf): 
+            mods = self.registry.getAllUtilitiesRegisteredFor(confType)
+            for modconf in mods:
+                path = modconf.translations
+                # translations
+                if isinstance(path, basestring):
+                    config.add_translation_dirs(path)
+                elif isinstance(path, (list, tuple)):
+                    config.add_translation_dirs(*path)
 
 
     def _Lock(self):

@@ -18,10 +18,12 @@ from nive.tests import db_app
 mApp = AppConf(id="app", 
                groups=[GroupConf(id="g1",name="G1")], 
                categories=[CategoryConf(id="c1",name="C1")], 
-               modules = [DatabaseConf(dbName="test")])
+               modules = [DatabaseConf(dbName="test")],
+               translations="nive:locale/")
 
 mObject = ObjectConf(id="object", dbparam="object", name="Object",
-                     data=(FieldConf(id="a1",datatype="string",name="A1"),FieldConf(id="a2",datatype="number",name="A2"),))
+                     data=(FieldConf(id="a1",datatype="string",name="A1"),FieldConf(id="a2",datatype="number",name="A2"),),
+                     translations=("nive:locale/","nive:locale/"))
 
 mRoot = RootConf(id="root")
 mTool = ToolConf(id="tool", context="nive.tools.example.tool")

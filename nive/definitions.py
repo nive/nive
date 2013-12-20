@@ -478,6 +478,7 @@ class AppConf(baseConf):
         workflowEnabled :  Enable or disable the workflow engine.
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         
     Call ``AppConf().test()`` to verify configuration values.
     
@@ -515,6 +516,7 @@ class AppConf(baseConf):
         self.listDefault = []
         self.modules = []
         self.categories = []
+        self.translations = None
         
         # development
         self.reloadExtensions = False
@@ -669,6 +671,7 @@ class ObjectConf(baseConf):
 
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         version   : Optional version string.
         description      : Description.
 
@@ -697,6 +700,7 @@ class ObjectConf(baseConf):
         self.category = u""
         self.hidden = False
         self.events = None
+        self.translations = None
         self.description = u""
         self.version = "1"
         baseConf.__init__(self, copyFrom, **values)
@@ -783,6 +787,7 @@ class RootConf(baseConf):
         workflowID       : Workflow process id.
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         description : Description.
 
     Call RootConf().test() to verify configuration values.
@@ -803,6 +808,7 @@ class RootConf(baseConf):
         self.workflowEnabled = False
         self.urlTraversal = True
         self.workflowID = ""
+        self.translations = None
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
 
@@ -854,6 +860,7 @@ class ViewModuleConf(baseConf):
         acl    : Pyramid security definitions added to nive.Application acls
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         description : optional description
     
     Included views ::
@@ -887,6 +894,7 @@ class ViewModuleConf(baseConf):
         self.mainTemplate = None
         self.widgets = None
         self.acl = None
+        self.translations = None
         self.description = u""
         
         # views and defaults
@@ -1095,6 +1103,7 @@ class ToolConf(baseConf):
         name     : Display name
         events   : Register for one or multiple Application events. 
                    Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         description : Description
     
     Call ToolConf().test() to verify configuration values.
@@ -1113,6 +1122,7 @@ class ToolConf(baseConf):
         self.views = []
         self.mimetype = ""
         self.hidden = False
+        self.translations = None
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
 
@@ -1164,6 +1174,7 @@ class ModuleConf(baseConf):
         views   : List containing ViewConf or ViewModuleConf definitions. 
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         modules : Additional module configuration to be included.
         description : Description.
 
@@ -1180,6 +1191,7 @@ class ModuleConf(baseConf):
         self.views = []
         self.events = None
         self.modules = []
+        self.translations = None
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
 
@@ -1236,6 +1248,7 @@ class WidgetConf(baseConf):
         sort        : Default sort for widgets as number.
         events      : Register for one or multiple Application events. 
                       Register each event as e.g. Conf(event="run", callback=function).
+        translations : A single or multiple directories containing translation files. 
         description : Description.
 
     Call ``WidgetConf().test()`` to verify configuration values.
@@ -1251,6 +1264,7 @@ class WidgetConf(baseConf):
         self.name = None
         self.id = None
         self.sort = 100
+        self.translations = None
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
 
