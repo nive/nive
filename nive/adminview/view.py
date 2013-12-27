@@ -35,7 +35,7 @@ configuration = ViewModuleConf(
         ('jquery.js', 'nive.adminview:static/mods/jquery.min.js'),
         ('jquery-ui.js', 'nive.adminview:static/mods/ui/jquery-ui-1.8.24.custom.min.js'),
         # nive specific
-        ('nive.js', 'nive.adminview:static/nive.css'),
+        ('adminview.css', 'nive.adminview:static/adminview.css'),
     ],
 )
 t = configuration.templates
