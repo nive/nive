@@ -22,7 +22,8 @@ class viewModule(object):
     mainTemplate = "nive.tests:index.pt"
     templates = u"nive.tests:"
     parent = None
-    static = u""
+    static = u"nive.tests:"
+    assets = (("jquery.js", "nive.adminview:static/mods/jquery.min.js"), ("another.css", "nive.adminview:static/adminview.css"))
 
 class viewTest(unittest.TestCase):
 
@@ -119,7 +120,7 @@ class viewTest(unittest.TestCase):
         self.assert_(view.index_tmpl(path=None)==None)
         self.assert_(view.index_tmpl(path="nive.tests:index.pt"))
         
-        view.viewModule=viewModule()
+        view._c_vm=viewModule()
         self.assert_(view.index_tmpl(path=None))
         
         self.assertRaises(ValueError, view.DefaultTemplateRenderer, {}, templatename = None)
@@ -189,3 +190,12 @@ class viewTest(unittest.TestCase):
         self.assert_(view2.FmtSeconds(2584))
         self.assert_(view2.FmtBytes(135786))
 
+
+    def test_assets(self):
+        view2 = BaseView(self.context, self.request)
+        view2._c_vm=viewModule()
+        self.assert_(view2.Assets())
+        self.assert_(view2.Assets(ignore="jquery.js"))
+        self.assert_(view2.Assets(assets=(("jquery.js", "nive.adminview:static/mods/jquery.min.js"),)))
+        self.assertFalse(view2.Assets(assets=[]))
+        

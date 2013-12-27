@@ -28,14 +28,14 @@ configuration = ViewModuleConf(
     context = IApplication,
     view = "nive.adminview.view.AdminView",
     templates = "nive.adminview:",
+    mainTemplate = "index.pt",
     permission = "administration",
     static = "nive.adminview:static",
     assets = [
-        # jquery and jquery-ui
+        ('bootstrap.min.css', 'nive.adminview:static/mods/bootstrap/css/bootstrap.min.css'),
+        ('adminview.css', 'nive.adminview:static/adminview.css'),   # nive css
         ('jquery.js', 'nive.adminview:static/mods/jquery.min.js'),
-        ('jquery-ui.js', 'nive.adminview:static/mods/ui/jquery-ui-1.8.24.custom.min.js'),
-        # nive specific
-        ('adminview.css', 'nive.adminview:static/adminview.css'),
+        ('bootstrap.min.js', 'nive.adminview:static/mods/bootstrap/js/bootstrap.min.js'),
     ],
 )
 t = configuration.templates
@@ -147,9 +147,10 @@ class ConfigurationForm(HTMLForm):
 
 class AdminBasics(BaseView):
 
-    def index_tmpl(self):
-        i = get_renderer("nive.adminview:index.pt").implementation()
-        return i
+    def __init__(self, context, request):
+        super(AdminBasics, self).__init__(context, request)
+        # the viewModule is used for template/template directory lookup 
+        self.viewModuleID = "administration"
 
     def view(self):
         return {}

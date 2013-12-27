@@ -30,7 +30,7 @@ from nive.i18n import _
 from nive.utils.utils import ConvertToStr, ConvertListToStr, ConvertToDateTime
 from nive.utils.utils import FmtSeconds, FormatBytesForDisplay, CutText, GetMimeTypeExtension
 from nive import FileNotFound
-from nive.definitions import IPage, IObject
+from nive.definitions import IPage, IObject, IViewModuleConf
 
 
 
@@ -47,12 +47,33 @@ class BaseView(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.viewModule = None
+        self.viewModuleID = None
         self.appRequestKeys = []
-        self._t = time.time()
         self.fileExpires = 3600
+        self._t = time.time()
+        self._c_vm = None     # cashes the view module configuration
 
-
+    @property
+    def viewModule(self):
+        """
+        View module configuration lookup
+        
+        Views in pyramid are not connected to configuration settings by default. In `nive` view
+        configurations can be linked to view classes by setting the view module configuraions ID
+        as a class attribute.  
+        
+        E.g. the following line will link all instances of the view class to the registered 
+        ``IViewModuleConf`` with id = `design`.
+        
+            self.viewModuleID = "design"
+            
+        The configurations are stored and looked in the applications registry. 
+        """
+        if not self.viewModuleID:
+            return self._c_vm
+        self._c_vm = self._c_vm or self.context.app.QueryConfByName(IViewModuleConf, self.viewModuleID)
+        return self._c_vm
+        
     # url handling ----------------------------------------------------------------
 
     def Url(self, resource=None):
@@ -247,8 +268,9 @@ class BaseView(object):
             return get_renderer(path).implementation()
         if not self.viewModule or not self.viewModule.mainTemplate:
             return None
-        return get_renderer(self.viewModule.mainTemplate).implementation()
-    
+        tmpl = self._LookupTemplate(self.viewModule.mainTemplate)
+        return get_renderer(tmpl).implementation()
+        
 
     def DefaultTemplateRenderer(self, values, templatename = None):
         """
@@ -311,6 +333,50 @@ class BaseView(object):
         return unicode(value, codepage)
 
     
+    def Assets(self, assets=None, ignore=None, viewModuleConfID=None):  
+        """
+        Renders a list of static ressources as html <script> and <link>.
+        If assets is None the list of assets is looked up in the view module-configuration.
+        Asset definitions use a identifier and an asset path like: ::
+        
+            assets = (
+              ('jquery.js', 'nive_cms.cmsview:static/mods/jquery.min.js'),
+              ('toolbox.css', 'nive_cms.cmsview:static/toolbox/toolbox.css'),
+              ('jquery-ui.js', 'http://example.com/static/mods/jquery.min.js')
+            )
+                
+        If for example jquery is already included in the main page Assets() can be told to ignore certain
+        entries: ::
+        
+            cmsview.Assets(ignore=["jquery.js"])  
+            
+        The list of assets is configured as part of the view module settings. If the view module 
+        configuration is not stored as class attribute (`self.viewModule`) the configuration can be accessed 
+        by id in the applications registry. In this case the id can be passed in like 
+        `Assets(viewModuleConfID='editor')` to lookup the the configuration in the registry. 
+        
+        """
+        if viewModuleConfID:
+            app = self.context.app
+            conf = app.QueryConfByName(IViewModuleConf, viewModuleConfID)
+            if not conf:
+                return u""
+            assets = conf.assets
+        if assets==None and self.viewModule:
+            assets = self.viewModule.assets
+        if not assets:
+            return u""
+        
+        if ignore==None:
+            ignore = []
+
+        js_links = [r[1] if r[1].startswith((u"http://",u"https://")) else self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
+        css_links = [r[1] if r[1].startswith((u"http://",u"https://")) else self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
+        js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
+        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+        return (u"\r\n").join(js_tags + css_tags)
+        
+
     def IsPage(self, object=None):
         """
         Check if object is a page.
