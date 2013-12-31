@@ -17,6 +17,7 @@ from nive.definitions import StagContainer, StagRessource, MetaTbl
 from nive.definitions import IContainer, ICache, IObject, IConf 
 from nive.definitions import ContainmentError, ConfigurationError
 from nive.definitions import AllTypesAllowed
+from nive.i18n import translate
 from nive.workflow import WorkflowNotAllowed
 from nive.helper import ResolveName, ClassFactory
 
@@ -760,7 +761,7 @@ class Root(object):
         self.queryRestraints = {}, {}
 
         self.meta = Conf(pool_type=rootDef["id"], 
-                         title=rootDef["name"], 
+                         title=translate(rootDef["name"]), 
                          pool_state=1, 
                          pool_filename=path, 
                          pool_wfa=u"",
