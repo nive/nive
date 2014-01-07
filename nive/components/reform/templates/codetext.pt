@@ -18,5 +18,5 @@
           name="${field.name}">${cstruct}</textarea>
 
 <script>
-  var editor = CodeMirror.fromTextArea(document.getElementById("${field.oid}"), { mode: "text/html", tabMode: "indent", lineNumbers: true });
+  var editor = CodeMirror.fromTextArea(document.getElementById("${field.oid}"), ${field.widget.renderOptions(field)});
 </script>

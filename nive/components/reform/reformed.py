@@ -136,9 +136,7 @@ def htext_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",1000000))
     if not "widget" in kw:
-        width = field.settings.get("width", 500)
-        height = field.settings.get("height", 250)
-        kw["widget"] = RichTextWidget(width=width, height=height, **kwWidget)
+        kw["widget"] = RichTextWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def text_node(field, kw, kwWidget, form):

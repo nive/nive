@@ -373,6 +373,48 @@ class TestRichTextWidget(TestTextInputWidget):
         from nive.components.reform.widget import RichTextWidget
         return RichTextWidget(**kw)
 
+    def test_options(self):
+        from nive.components.reform.schema import null
+        from nive.definitions import Conf
+        field = DummyField()
+        widget = self._makeOne(strip=False)
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        widget = self._makeOne(configuration=Conf())
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        widget = self._makeOne(configuration=Conf(settings={"width":"12345","height":"67890"}))
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        self.assert_(result.find("12345")!=-1)
+        self.assert_(result.find("67890")!=-1)
+        opts = {"nothing": "00000"}
+        widget = self._makeOne(configuration=Conf(settings={"options":opts}))
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        self.assert_(result.find("nothing")!=-1)
+
+class TestCodeTextWidget(TestTextInputWidget):
+    def _makeOne(self, **kw):
+        from nive.components.reform.widget import CodeTextWidget
+        return CodeTextWidget(**kw)
+
+    def test_options(self):
+        from nive.components.reform.schema import null
+        from nive.definitions import Conf
+        field = DummyField()
+        widget = self._makeOne(strip=False)
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        widget = self._makeOne(configuration=Conf())
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        opts = {"nothing": "00000"}
+        widget = self._makeOne(configuration=Conf(settings={"options":opts}))
+        result = widget.renderOptions(field)
+        self.assert_(result)
+        self.assert_(result.find("nothing")!=-1)
+
 class TestCheckboxWidget(unittest.TestCase):
     def _makeOne(self, **kw):
         from nive.components.reform.widget import CheckboxWidget

@@ -3,6 +3,7 @@ import random
 import string
 import StringIO
 import urllib
+import copy
 
 from nive.i18n import _
 from nive.components.reform import schema 
@@ -502,11 +503,27 @@ class RichTextWidget(TextInputWidget):
     provided in the page where the widget is rendered. A version of
     :term:`TinyMCE Editor` is included in reform's static directory.
     
-
-    **Attributes/Arguments**
-
+    **Configuration settings**
+    
+    These settings can be set in the fields configuration 
+    (`nive.definitions.FieldConf`) as part of the settings. E.g.
+    
+        field.settings["options"] = {...} # Tiny mce options 
+    
+    width
+        The width to be used with the default options. Ignored if 
+        options are set.
+    
     height
-        The height, in pixels, of the text editor.  Defaults to 240.
+        The width to be used with the default options. Ignored if 
+        options are set.
+    
+    options
+        Tiny mce configuration options. See tiny mce docs for all
+        possible values. If options is None the widgets defaults will
+        be used. (`RichTextWidget.options`)
+        
+    **Attributes/Arguments**
 
     delayed_load
         If you have many richtext fields, you can set this option to
@@ -530,13 +547,7 @@ class RichTextWidget(TextInputWidget):
         The theme for the WYSIWYG editor, ``simple`` or ``advanced``.
         Defaults to ``simple``.
 
-    width
-        The width, in pixels, of the editor.  Defaults to 500.
-        The width can also be given as a percentage (e.g. '100%')
-        relative to the width of the enclosing element.
     """
-    height = 240
-    width = 500
     delayed_load = False
     strip = True
     template = 'richtext'
@@ -544,6 +555,151 @@ class RichTextWidget(TextInputWidget):
     theme = 'simple'
     category = 'full-width'
     requirements = ( ('tinymce', None), )
+    options = {
+        "mode" : "exact",
+        "elements": "",  # element id is set in renderOptions() call
+        "height": "240",
+        "width": "100%",
+        "theme": "advanced",
+        "theme_advanced_resizing": True,
+        "theme_advanced_toolbar_align": "left",
+        "theme_advanced_toolbar_location": "top",
+        "plugins": "table,contextmenu,paste,wordcount",
+        "convert_urls": False,
+
+        # Theme options
+        "theme_advanced_buttons1" : "bold,italic,styleselect,bullist,numlist,outdent,indent,link,unlink,table,|,cut,copy,paste,pasteword,|,undo,redo,|,code",
+        "theme_advanced_buttons2" : "",
+        "theme_advanced_buttons3" : "",
+        "theme_advanced_buttons4" : "",
+        "theme_advanced_toolbar_location" : "top",
+        "theme_advanced_toolbar_align" : "left",
+        "theme_advanced_statusbar_location" : "bottom",
+        "theme_advanced_resizing" : True,
+
+        # Style formats
+        "style_formats" : [
+            {"title" : _(u"Header 1"), "block" : "h1"},
+            {"title" : _(u"Header 2"), "block" : "h2"},
+            {"title" : _(u"Header 3"), "block" : "h3"},
+            {"title" : _(u"Header 4"), "block" : "h4"},
+            {"title" : _(u"Text (p)"), "block" : "p"},
+            {"title" : _(u"Formatted (pre)"), "block" : "pre"},
+        ],
+
+        # Content CSS (should be your site CSS)
+        #content_css : "",
+
+        # Drop lists for link/image/media/template dialogs
+        #external_link_list_url : "tiny_mce/lists/link_list.js",
+
+        # Replace values for the template plugin
+        #template_replace_values : {}   
+    }
+    
+    def renderOptions(self, field):
+        """
+        Renders the tiny mce configuration options to be included in the template
+        
+        Custom Tiny MCE options can be specified in the field configuration
+        (`nive.definitions.FieldConf`) as:
+    
+            field.settings["options"]        
+
+        The options should either be a string or dictionary. Dicts will be rendered 
+        as json strings.
+        
+        Width and height of the editor field can be customized for the default
+        options by setting:
+        
+            field.settings["width"]
+            field.settings["height"]
+
+        These values will be ignored if `field.settings["options"]` set.
+        """
+        if self.configuration and self.configuration.get("settings"):
+            opt = self.configuration.settings.get("options")
+            if opt:
+                if isinstance(opt, dict):
+                    opt["elements"] = field.oid
+                    return json.dumps(opt)
+                return opt % {u"oid": field.oid}
+
+        # set editor width and height for default options
+        opt = copy.deepcopy(self.options)
+        opt["elements"] = field.oid
+        if self.configuration and self.configuration.get("settings"):
+            opt["width"] = self.configuration.settings.get("width") or opt["width"]
+            opt["height"] = self.configuration.settings.get("height") or opt["height"]
+        return json.dumps(opt)
+        
+
+class CodeTextWidget(TextInputWidget):
+    """
+    Renders a ``<textarea>`` widget with the
+    :term:`Codemirror Editor`.
+
+    **Attributes/Arguments**
+
+    height
+        The height, in pixels, of the text editor.  Defaults to 240.
+
+    template
+        The template name used to render the widget.  Default:
+        ``codetext``.
+
+    codetype 
+        The skin for the WYSIWYG editor. Normally only needed if you
+        plan to reuse a TinyMCE js from another framework that
+        defined a skin.
+
+    theme
+        The theme for the WYSIWYG editor, ``simple`` or ``advanced``.
+        Defaults to ``simple``.
+
+    width
+        The width, in pixels, of the editor.  Defaults to 500.
+        The width can also be given as a percentage (e.g. '100%')
+        relative to the width of the enclosing element.
+    """
+    height = 400
+    width = 500
+    template = 'codetext'
+    codetype = 'default'
+    category = 'full-width'
+    theme = 'simple'
+    requirements = ( ('codemirror', None), )
+    options = { "mode": "text/html", "tabMode": "indent", "lineNumbers": True }
+
+    def renderOptions(self, field):
+        """
+        Renders the Codemirror configuration options to be included in the template
+        
+        Custom Codemirror options can be specified in the field configuration
+        (`nive.definitions.FieldConf`) as:
+    
+            field.settings["options"]        
+
+        The options should either be a string or dictionary. Dicts will be rendered 
+        as json strings.
+        
+        Width and height of the editor field can be customized for the default
+        options by setting:
+        
+            field.settings["width"]
+            field.settings["height"]
+
+        These values will be ignored if `field.settings["options"]` set.
+        """
+        if self.configuration and self.configuration.get("settings"):
+            opt = self.configuration.settings.get("options")
+            if opt:
+                if isinstance(opt, dict):
+                    return json.dumps(opt)
+                return opt
+
+        # set editor width and height for default options
+        return json.dumps(self.options)
 
 class PasswordWidget(TextInputWidget):
     """
@@ -1203,43 +1359,6 @@ class TextInputCSVWidget(Widget):
             for e in error.children:
                 msgs.append('%s' % e)
             field.error = Invalid(field.schema, '\n'.join(msgs))
-
-class CodeTextWidget(TextInputWidget):
-    """
-    Renders a ``<textarea>`` widget with the
-    :term:`Codemirror Editor`.
-
-    **Attributes/Arguments**
-
-    height
-        The height, in pixels, of the text editor.  Defaults to 240.
-
-    template
-        The template name used to render the widget.  Default:
-        ``codetext``.
-
-    codetype 
-        The skin for the WYSIWYG editor. Normally only needed if you
-        plan to reuse a TinyMCE js from another framework that
-        defined a skin.
-
-    theme
-        The theme for the WYSIWYG editor, ``simple`` or ``advanced``.
-        Defaults to ``simple``.
-
-    width
-        The width, in pixels, of the editor.  Defaults to 500.
-        The width can also be given as a percentage (e.g. '100%')
-        relative to the width of the enclosing element.
-    """
-    height = 400
-    width = 500
-    template = 'codetext'
-    codetype = 'default'
-    category = 'full-width'
-    theme = 'simple'
-    requirements = ( ('codemirror', None), )
-
 
 
 class ResourceRegistry(object):
