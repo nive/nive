@@ -58,13 +58,15 @@ def SchemaFactory(form, fields, actions, force=False):
             "title": field.name,
             "description": field.description
         }
-        # bw 0.9.12 -> moved from settings to field conf
-        # custom validator
+
+        # ----------------------------------------------------------
+        # bw 0.9.12 -> moved from `field.settings` to `field`
+        # to be removed in future. use field.widget and field.validator instead. 
         if field.settings and field.settings.get("validator"):
             kw["validator"] = field.settings["validator"]
-        # custom widget
         if field.settings and field.settings.get("widget"):
             kw["widget"] = field.settings["widget"]
+        # ----------------------------------------------------------
 
         # custom validator
         if field.get("validator"):
