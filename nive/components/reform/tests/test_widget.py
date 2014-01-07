@@ -49,6 +49,14 @@ class TestWidget(unittest.TestCase):
         widget.handle_error(field, error)
         self.assertEqual(widget.error, 'abc')
 
+    def test_configuration(self):
+        from nive.definitions import FieldConf
+        widget = self._makeOne(configuration=FieldConf())
+        self.assert_(widget.configuration)
+        widget = self._makeOne()
+        self.assertFalse(widget.configuration)
+
+
 class TestTextInputWidget(unittest.TestCase):
     def _makeOne(self, **kw):
         from nive.components.reform.widget import TextInputWidget

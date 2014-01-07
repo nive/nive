@@ -41,7 +41,6 @@ def SchemaFactory(form, fields, actions, force=False):
     
     SchemaNode(...)
     """
-    kwWidget = {"form": form}
 
     nodes = []
     for field in fields:
@@ -51,12 +50,17 @@ def SchemaFactory(form, fields, actions, force=False):
             nodes.append(field.node)
             continue
         
-        # default node setup
-        # for all fields
+        # Default node setup
+        # Basic values for all fields and widgets
         kw = {
             "name": field.id,
             "title": field.name,
-            "description": field.description
+            "description": field.description,
+            "configuration": field
+        }
+        kwWidget = {
+            "form": form,
+            "configuration": field
         }
 
         # ----------------------------------------------------------

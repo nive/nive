@@ -80,6 +80,14 @@ class Field(object):
         resource_registry
             The :term:`resource registry` associated with this field.
 
+    configuration
+        A ``nive.definitions.FieldConf`` instance or dictionary 
+        providing configuration values used to render the widget.
+        Values depend on the widget type if used at all. Used 
+        for example to customize Tiny MCE or other javascript modules.
+        See the widgets documentation on how to use the configuration.
+
+
     *Constructor Arguments*
 
       ``renderer``, ``counter`` and ``resource_registry`` are accepted
@@ -129,6 +137,7 @@ class Field(object):
         self.description = schema.description
         self.required = schema.required
         self.children = []
+        self.configuration = None
         self.__dict__.update(kw)
         for child in schema.children:
             self.children.append(Field(child,

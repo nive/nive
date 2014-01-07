@@ -412,6 +412,14 @@ class TestField(unittest.TestCase):
         self.failUnless(r.startswith('<nive.components.reform.field.Field object at '), r)
         self.failUnless(r.endswith("(schemanode 'name')>"))
 
+    def test_configuration(self):
+        from nive.definitions import FieldConf
+        schema = DummySchema()
+        field = self._makeOne(schema, configuration=FieldConf())
+        self.assert_(field.configuration)
+        field = self._makeOne(schema)
+        self.assertFalse(field.configuration)
+
 class DummyField(object):
     oid = 'oid'
     requirements = ( ('abc', '123'), ('def', '456'))

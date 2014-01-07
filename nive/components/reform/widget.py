@@ -88,6 +88,13 @@ class Widget(object):
 
         Default: ``()`` (the empty tuple, meaning no special
         requirements).
+        
+    configuration
+        A ``nive.definitions.FieldConf`` instance or dictionary 
+        providing configuration values used to render the widget.
+        Values depend on the widget type if used at all. Used 
+        for example to customize Tiny MCE or other javascript modules.
+        See the widgets documentation on how to use the configuration.
 
     These attributes are also accepted as keyword arguments to all
     widget constructors; if they are passed, they will override the
@@ -104,6 +111,7 @@ class Widget(object):
     error_class = 'error'
     css_class = None
     requirements = ()
+    configuration = None
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
