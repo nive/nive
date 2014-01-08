@@ -12,8 +12,11 @@ from nive.tests.db_app import *
 
 class containerTest_db:
     
+    def _loadApp(self,mods=None):
+        self.app = app_db(mods)
+
     def setUp(self):
-        self.app = app_db()
+        self._loadApp()
         self.remove=[]
 
     def tearDown(self):
@@ -401,8 +404,11 @@ class containerTest_db_(containerTest_db, unittest.TestCase):
 
 class groupsrootTest_db:
     
+    def _loadApp(self,mods=None):
+        self.app = app_db(mods)
+
     def setUp(self):
-        self.app = app_db(["nive.extensions.localgroups"])
+        self._loadApp(["nive.extensions.localgroups"])
         self.remove=[]
 
     def tearDown(self):

@@ -321,16 +321,19 @@ class appTest(unittest.TestCase):
 
 class appTest_db:
     
+    def _loadApp(self, mods=None):
+        self.app = db_app.app_db(mods)
+
     def setUp(self):
-        self.app = db_app.app_db((mWfObj,mToolObj))
+        self._loadApp((mWfObj,mToolObj))
         r = self.app.root()
         o = db_app.createObj1(r)
-        self.id = o.id
+        self.oid = o.id
         
     def tearDown(self):
         user = User(u"test")
-        if self.id:
-            self.app.root().Delete(self.id, user=user)
+        if self.oid:
+            self.app.root().Delete(self.oid, user=user)
 
 
     def test_db(self):
@@ -357,7 +360,7 @@ class appTest_db:
     
 
     def test_real_tools(self):
-        o=self.app.obj(self.id, rootname = "")
+        o=self.app.obj(self.oid, rootname = "")
         self.assert_(o)
         # unregistered tool
         self.assert_(self.app.GetTool("nive.tools.example", o))
@@ -366,7 +369,7 @@ class appTest_db:
 
 
     def test_real_wfs(self):
-        o=self.app.obj(self.id, rootname = "")
+        o=self.app.obj(self.oid, rootname = "")
         self.assert_(o)
         self.app.configuration.unlock()
         self.app.configuration.workflowEnabled = True
@@ -380,7 +383,7 @@ class appTest_db:
 
 
     def test_real_objects(self):
-        id = self.id
+        id = self.oid
 
         self.assert_(self.app.LookupObj(id))
         self.assert_(self.app.LookupObj(id, rootname = ""))

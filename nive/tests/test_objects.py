@@ -13,12 +13,14 @@ from nive.tests.db_app import *
 
 class objTest_db:
     
+    def _loadApp(self,mods=None):
+        self.app = app_db(mods)
+
     def setUp(self):
-        self.app = app_db()
+        self._loadApp()
 
     def tearDown(self):
         self.app.Close()
-        pass
 
 
     def test_obj1(self):
@@ -253,9 +255,11 @@ class objTest_db_(objTest_db, unittest.TestCase):
 
 class groupsTest_db:
     
+    def _loadApp(self,mods=None):
+        self.app = app_db(mods)
+
     def setUp(self):
-        self.app = app_db(["nive.extensions.localgroups"])
-        #emptypool(self.app)
+        self._loadApp(["nive.extensions.localgroups"])
         self.remove=[]
 
     def tearDown(self):
@@ -263,7 +267,6 @@ class groupsTest_db:
         root = self.app.root()
         for r in self.remove:
             root.Delete(r, u)
-        pass
 
     def test_objectgroups(self):
         a=self.app

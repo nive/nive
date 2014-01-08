@@ -60,59 +60,36 @@ def myapp(modules=None):
 
 
 class myappTest_db(test_application.appTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp()
-        self.remove=[]
-
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 class mycontainerTest_db(test_container.containerTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp()
-        self.remove=[]
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 class mygroupsTest_db(test_objects.groupsTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp(["nive.extensions.localgroups"])
-        self.remove=[]
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 class myobjTest_db(test_objects.objTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp()
-        self.remove=[]
-
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 class mygroupsrootTest_db(test_container.groupsrootTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp(["nive.extensions.localgroups"])
-        self.remove=[]
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 
 """
 
 
 class myobjToolTest_db(test_objects.objToolTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp()
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 class myobjWfTest_db(test_objects.objWfTest_db, uTestCase):
-
-    def setUp(self):
-        #emptypool()
-        self.app = myapp()
-
-
+    def _loadApp(self, mods=None):
+        self.app = myapp(mods)
 
 """
 
