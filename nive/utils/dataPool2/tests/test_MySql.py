@@ -1,61 +1,45 @@
-# -*- coding: latin-1 -*-
 
-import copy, time
 import unittest
 
-from nive.tests.test_mysql import ENABLE_MYSQL_TESTS, myapp
+from nive.definitions import DatabaseConf
 
-class utc:
-    pass
-uTestCase = utc
+from nive.utils.dataPool2.tests import test_db
+from nive.utils.dataPool2.tests import test_Base
 
-if ENABLE_MYSQL_TESTS:
+from nive.tests import __local
+from nive.tests.__local import MYSQL_CONF
+from nive.tests import test_mysql
+
+
+# switch test class to enable / disable tests
+if not __local.ENABLE_MYSQL_TESTS:
+    class utc:
+        pass
+    uTestCase = utc
+else:
     from nive.utils.dataPool2.mySqlPool import *
     uTestCase = unittest.TestCase
     
-from nive.definitions import DatabaseConf
-from nive.utils.dataPool2.base import *
-from nive.utils.path import DvPath
 
-from test_db import dbTest
-from test_Base import conf, stdMeta, struct, SystemFlds, Fulltext, Files, data1_1, data2_1, meta1, file1_1, file1_2
-
-from nive.tests import __local
-
-conn = DatabaseConf(
-    user = __local.USER,
-    password = __local.PASSWORD,
-    host = __local.HOST,
-    port = __local.PORT,
-    dbName = __local.DATABASE,
-    unicode = 1,
-    timeout = 1
-)
-myconn = conn
-
-def getPool():
-    p = MySql(connParam=myconn, **conf)
-    p.structure.Init(structure=struct, stdMeta=struct[u"pool_meta"])
-    return p
-
-
-class MySqlTest(dbTest, uTestCase):
+class MySqlTest(test_db.dbTest, uTestCase):
     """
+    Runs nive.utils.dataPool2.tests.test_db for mysql databases
     """
 
     def setUp(self):
-        self.pool = getPool()
+        p = MySql(connParam=DatabaseConf(MYSQL_CONF), **test_Base.conf)
+        p.structure.Init(structure=test_Base.struct, stdMeta=test_Base.struct[u"pool_meta"])
+        self.pool = p
         self.checkdb()
         self.connect()
 
     def connect(self):
         #print "Connect DB on", conn["host"],
-        self.pool.CreateConnection(myconn)
+        self.pool.CreateConnection(DatabaseConf(MYSQL_CONF))
         self.assert_(self.pool.connection.IsConnected())
         #print "OK"
 
     def checkdb(self):
-        myapp()
+        test_mysql.myapp()
     
-def __test():
-    unittest.main()
+

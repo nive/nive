@@ -4,48 +4,27 @@ Running mysql tests
 Create a database 'ut_nive' and assign all permissions for user 'root@localhost'. 
 File root is '/var/tmp/nive'.
 
-To customize settings change 'dbconfMySql' in this file and 'conn' in 
-nive/utils/dataPool2/tests/t_MySql.py.  
+To customize settings change 'dbconfMySql' in 'nive/tests/__local.py'.  
 
 """
 
-
-import time
 import unittest
-from StringIO import StringIO
 
 from nive.utils.path import DvPath
 
 from nive.definitions import *
-from nive.security import User
 from nive.components.objects.base import ApplicationBase
+from nive.portal import Portal
 
-from db_app import *
-from test_application import appTest_db
-from test_container import containerTest_db, groupsrootTest_db
-from test_objects import objTest_db, objToolTest_db, objWfTest_db, groupsTest_db
-
+from nive.tests import db_app
+from nive.tests import test_application
+from nive.tests import test_container
+from nive.tests import test_objects 
 from nive.tests import __local
 
-# real database test configuration
-# change these to fit your system
-ENABLE_MYSQL_TESTS = True
-try:
-    import MySQLdb
-except ImportError:
-    ENABLE_MYSQL_TESTS = False
 
-dbconfMySql = DatabaseConf(
-    context = "MySql",
-    dbName = __local.DATABASE,
-    fileRoot = __local.ROOT,
-    host = __local.HOST,
-    user = __local.USER,
-    port = __local.PORT,
-    password = __local.PASSWORD
-)
-
-if not ENABLE_MYSQL_TESTS:
+# switch test class to enable / disable tests
+if not __local.ENABLE_MYSQL_TESTS:
     class utc:
         pass
     uTestCase = utc
@@ -55,8 +34,8 @@ else:
     
 def myapp(modules=None):
     a = ApplicationBase()
-    a.Register(dbconfMySql)
-    a.Register(appconf)
+    a.Register(DatabaseConf(__local.MYSQL_CONF))
+    a.Register(db_app.appconf)
     if modules:
         for m in modules:
             a.Register(m)
@@ -80,7 +59,7 @@ def myapp(modules=None):
     return a
 
 
-class myappTest_db(appTest_db, uTestCase):
+class myappTest_db(test_application.appTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
@@ -88,21 +67,21 @@ class myappTest_db(appTest_db, uTestCase):
         self.remove=[]
 
 
-class mycontainerTest_db(containerTest_db, uTestCase):
+class mycontainerTest_db(test_container.containerTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
         self.app = myapp()
         self.remove=[]
 
-class mygroupsTest_db(groupsTest_db, uTestCase):
+class mygroupsTest_db(test_objects.groupsTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
         self.app = myapp(["nive.extensions.localgroups"])
         self.remove=[]
 
-class myobjTest_db(objTest_db, uTestCase):
+class myobjTest_db(test_objects.objTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
@@ -110,7 +89,7 @@ class myobjTest_db(objTest_db, uTestCase):
         self.remove=[]
 
 
-class mygroupsrootTest_db(groupsrootTest_db, uTestCase):
+class mygroupsrootTest_db(test_container.groupsrootTest_db, uTestCase):
 
     def setUp(self):
         #emptypool()
@@ -118,21 +97,22 @@ class mygroupsrootTest_db(groupsrootTest_db, uTestCase):
         self.remove=[]
 
 
-
-#tests!
-#class myobjToolTest_db(objToolTest_db, uTestCase):
-#
-#    def setUp(self):
-#        #emptypool()
-#        self.app = myapp()
-
-#class myobjWfTest_db(objWfTest_db, uTestCase):
-#
-#    def setUp(self):
-#        #emptypool()
-#        self.app = myapp()
+"""
 
 
+class myobjToolTest_db(test_objects.objToolTest_db, uTestCase):
+
+    def setUp(self):
+        #emptypool()
+        self.app = myapp()
+
+class myobjWfTest_db(test_objects.objWfTest_db, uTestCase):
+
+    def setUp(self):
+        #emptypool()
+        self.app = myapp()
 
 
+
+"""
 
