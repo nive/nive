@@ -112,7 +112,7 @@ class Object(object):
         """
         Get the file as `File` object with meta information. The included file 
         pointer is opened on read. 
-        This functions dierctly acceses the database and omits files files cached in 
+        This functions directly accesses the database and ignores files cached in 
         object.files.
         
         returns File object or None
@@ -122,7 +122,7 @@ class Object(object):
     def GetFileByName(self, filename):
         """
         Get a file by filename. See GetFile() for details.
-        This functions dierctly acceses the database and omits files files cached in 
+        This functions directly accesses the database and ignores files cached in 
         object.files.
         
         returns File object or None
@@ -135,7 +135,7 @@ class Object(object):
     def GetFileByUID(self, uid):
         """
         Get a file by uid. Only for files contained in this object. See GetFile() for details.
-        This functions dierctly acceses the database and omits files files cached in 
+        This functions directly accesses the database and ignores files cached in 
         object.files.
         
         returns File object or none
