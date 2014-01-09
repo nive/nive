@@ -5,14 +5,15 @@ import unittest
 from nive.security import User
 from nive.definitions import *
 
-import db_app
+from nive.tests import db_app
+from nive.tests import __local
 
 # -----------------------------------------------------------------
 
-class SearchTest_db(unittest.TestCase):
+class SearchTest_db:
 
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
         r=self.app.root()
     
         # create three levels of entries
@@ -135,3 +136,12 @@ class SearchTest_db(unittest.TestCase):
         self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"meta"})))
         #self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"})))
 
+class SearchTest_db_sqlite(SearchTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
+
+class SearchTest_db_mysql(SearchTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """

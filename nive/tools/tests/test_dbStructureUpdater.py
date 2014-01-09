@@ -6,7 +6,7 @@ from nive.definitions import *
 from nive.helper import ResolveName
 from nive.tools.dbStructureUpdater import *
 
-from nive.tests import db_app
+from nive.tests import __local
 
 
 from nive.helper import FormatConfTestFailure
@@ -29,11 +29,11 @@ class DBStructureTest(unittest.TestCase):
         self.assert_(t)
 
     
-class DBStructureTest2(unittest.TestCase):
+class DBStructureTest2(__local.DefaultTestCase):
     """
     """
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
         self.app.Register(configuration)
 
     def tearDown(self):

@@ -5,16 +5,18 @@ import unittest
 
 from nive.portal import Portal
 
-from nive.tests.db_app import *
 from nive.adminview import view
 from nive.views import BaseView
+
+from nive.tests.db_app import *
+from nive.tests import __local
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden
 from pyramid import testing 
 from pyramid.renderers import render
 
 
-class tViews(unittest.TestCase):
+class tViews(__local.DefaultTestCase):
 
     def setUp(self):
         request = testing.DummyRequest()
@@ -22,7 +24,7 @@ class tViews(unittest.TestCase):
         self.request = request
         self.request.content_type = ""
         self.config = testing.setUp(request=request)
-        self.app = app_db()
+        self._loadApp()
         self.portal = Portal()
         self.portal.Register(self.app, "nive")
         self.app.Register(view.configuration)
@@ -78,7 +80,7 @@ class tViews(unittest.TestCase):
              
 
 
-class tTemplates(unittest.TestCase):
+class tTemplates(__local.DefaultTestCase):
 
     def setUp(self):
         request = testing.DummyRequest()
@@ -86,7 +88,7 @@ class tTemplates(unittest.TestCase):
         self.request = request
         self.request.content_type = ""
         self.config = testing.setUp(request=request)
-        self.app = app_db()
+        self._loadApp()
         self.portal = Portal()
         self.portal.Register(self.app, "nive")
         self.app.Register(view.configuration)

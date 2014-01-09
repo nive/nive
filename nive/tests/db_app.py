@@ -12,15 +12,6 @@ from nive.security import User
 
 from nive.components.objects.base import ApplicationBase
 
-from nive.tests import __local
-
-# real database test configuration
-# change these to fit your system
-dbconf = DatabaseConf(
-    dbName = __local.ROOT+"nive.db",
-    fileRoot = __local.ROOT,
-    context = "Sqlite3"
-)
 
 root = RootConf(
     id = u"root",
@@ -129,7 +120,6 @@ file2_2 = {"filename":"file2.txt", "file":file2_2_data}
 def app_db(modules=None):
     a = ApplicationBase()
     a.Register(appconf)
-    a.Register(dbconf)
     if modules:
         for m in modules:
             a.Register(m)
@@ -195,7 +185,6 @@ def createpool(path,app):
 
 def statdb(app):
     c = app.db.GetCountEntries()
-    countdb = c
     ##print "Count entries in DB:", c
     return c
 

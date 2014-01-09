@@ -9,13 +9,11 @@ from nive.helper import *
 from nive.portal import Portal
 
 from nive.tests.db_app import *
+from nive.tests import __local
 
 
 class objTest_db:
     
-    def _loadApp(self,mods=None):
-        self.app = app_db(mods)
-
     def setUp(self):
         self._loadApp()
 
@@ -246,18 +244,20 @@ class objTest_db:
         a.Close()
 
     
+class objTest_db_sqlite(objTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
 
-class objTest_db_(objTest_db, unittest.TestCase):    
+class objTest_db_mysql(objTest_db, __local.MySqlTestCase):
     """
+    see tests.__local
     """
-    
+        
 
 
 class groupsTest_db:
     
-    def _loadApp(self,mods=None):
-        self.app = app_db(mods)
-
     def setUp(self):
         self._loadApp(["nive.extensions.localgroups"])
         self.remove=[]
@@ -297,12 +297,17 @@ class groupsTest_db:
 
         r.Delete(id, user=user)
 
+
+class groupsTest_db_sqlite(groupsTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
+
+class groupsTest_db_mysql(groupsTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """
         
-
-class groupsTest_db_(groupsTest_db, unittest.TestCase):
-    """
-    """
-
  
     
 #tests!

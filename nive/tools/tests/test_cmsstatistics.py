@@ -5,7 +5,7 @@ import unittest
 from nive.definitions import *
 from nive.tools.cmsstatistics import *
 
-from nive.tests import db_app
+from nive.tests import __local
 
 from nive.helper import FormatConfTestFailure
 
@@ -24,10 +24,10 @@ class DBSqlDataTest1(unittest.TestCase):
         cmsstatistics(configuration,None)
         
     
-class DBSqlDataTest1_db(unittest.TestCase):
+class DBSqlDataTest1_db(__local.DefaultTestCase):
 
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
         self.app.Register(configuration)
 
     def tearDown(self):

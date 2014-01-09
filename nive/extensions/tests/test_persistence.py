@@ -7,6 +7,7 @@ from nive.definitions import *
 from nive.extensions.persistence import *
 
 from nive.tests import db_app
+from nive.tests import __local
 
         
 
@@ -29,11 +30,10 @@ class Persistence(unittest.TestCase):
         
         
         
-class tdbPersistence(unittest.TestCase):
+class tdbPersistence(__local.DefaultTestCase):
     
     def setUp(self):
-        self.app = db_app.app_db(["nive.extensions.persistence.dbPersistenceConfiguration"])
-        pass
+        self._loadApp(["nive.extensions.persistence.dbPersistenceConfiguration"])
     
     def tearDown(self):
         pass

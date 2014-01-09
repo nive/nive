@@ -6,7 +6,6 @@ from types import DictType
 from nive.definitions import implements
 from nive.security import User, AdminUser, GetUsers, Unauthorized, UserFound, IAdminUser
 from nive.security import effective_principals
-from nive.tests import db_app
 
 
 class securityTest(unittest.TestCase):
@@ -20,10 +19,6 @@ class securityTest(unittest.TestCase):
             implements(IAdminUser)
         a = aaaaa()
 
-    def test_init1(self):
-        app = db_app.app_db()
-        GetUsers(app)
-    
     def test_user(self):
         u = User("name", 123)
         self.assert_(str(u)=="name")

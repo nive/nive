@@ -6,8 +6,6 @@ from nive.definitions import *
 
 from nive.extensions.cache import *
 
-from nive.tests import db_app
-
 
 class testobj(object, ContainerCache):
     type = "object"

@@ -7,9 +7,10 @@ from nive.tool import *
 from nive.security import User 
 
 from nive.tools.example import configuration
-import db_app
+from nive.tests import db_app
+from nive.tests import __local
 
-# -----------------------------------------------------------------
+
 
 class ToolTest1(unittest.TestCase):
 
@@ -22,10 +23,10 @@ class ToolTest1(unittest.TestCase):
         self.assert_(t.GetParameter("test"))
 
 
-class ToolTest(unittest.TestCase):
+class ToolTest_db:
 
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
 
     def tearDown(self):
         self.app.Close()
@@ -62,3 +63,13 @@ class ToolTest(unittest.TestCase):
         self.assert_(r1)
         r.Delete(o.GetID(), user=user)
 
+
+class ToolTest_db_sqlite(ToolTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
+
+class ToolTest_db_mysql(ToolTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """

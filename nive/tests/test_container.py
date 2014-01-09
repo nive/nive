@@ -9,12 +9,11 @@ from nive.portal import Portal
 
 from nive.tests.db_app import *
 
-
+from nive.tests import __local
+    
+    
 class containerTest_db:
     
-    def _loadApp(self,mods=None):
-        self.app = app_db(mods)
-
     def setUp(self):
         self._loadApp()
         self.remove=[]
@@ -396,17 +395,22 @@ class containerTest_db:
         self.assertEqual(ccc+1, a.db.GetCountEntries())
         r.Delete(o1.id, user)
 
-class containerTest_db_(containerTest_db, unittest.TestCase):
+
+class containerTest_db_sqlite(containerTest_db, __local.SqliteTestCase):
     """
+    see tests.__local
     """
+
+class containerTest_db_mysql(containerTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """
+    
 
 
 
 class groupsrootTest_db:
     
-    def _loadApp(self,mods=None):
-        self.app = app_db(mods)
-
     def setUp(self):
         self._loadApp(["nive.extensions.localgroups"])
         self.remove=[]
@@ -441,11 +445,16 @@ class groupsrootTest_db:
 
 
 
-
-
-class groupsrootTest_db_(groupsrootTest_db, unittest.TestCase):
+class groupsrootTest_db_sqlite(groupsrootTest_db, __local.SqliteTestCase):
     """
+    see tests.__local
     """
+
+class groupsrootTest_db_mysql(groupsrootTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """
+    
 
 
 

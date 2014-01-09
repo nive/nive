@@ -14,6 +14,8 @@ from nive.components import baseobjects
 from nive.tool import _IGlobal, _GlobalObject
 
 from nive.tests import db_app
+from nive.tests import __local
+
 
 mApp = AppConf(id="app", 
                groups=[GroupConf(id="g1",name="G1")], 
@@ -321,11 +323,8 @@ class appTest(unittest.TestCase):
 
 class appTest_db:
     
-    def _loadApp(self, mods=None):
-        self.app = db_app.app_db(mods)
-
     def setUp(self):
-        self._loadApp((mWfObj,mToolObj))
+        self._loadApp([mWfObj,mToolObj])
         r = self.app.root()
         o = db_app.createObj1(r)
         self.oid = o.id
@@ -411,8 +410,15 @@ class appTest_db:
 
 
 
-class appTest_db_(appTest_db, unittest.TestCase):
+class appTest_db_sqlite(appTest_db, __local.SqliteTestCase):
     """
+    see tests.__local
+    """
+
+
+class appTest_db_mysql(appTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
     """
 
 

@@ -5,7 +5,7 @@ import unittest
 from nive.definitions import *
 from nive.tools.exportJson import *
 
-from nive.tests import db_app
+from nive.tests import db_app, __local
 
 from nive.helper import FormatConfTestFailure
 from nive.security import User
@@ -25,10 +25,10 @@ class DBExportTest1(unittest.TestCase):
         exportJson(configuration,None)
         
     
-class DBExportTest1_db(unittest.TestCase):
+class DBExportTest1_db(__local.DefaultTestCase):
 
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
         self.app.Register(configuration)
         root = self.app.root()
         self.o=o=db_app.createObj1(root)

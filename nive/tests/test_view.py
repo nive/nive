@@ -7,6 +7,7 @@ from nive.definitions import *
 from nive.security import *
 from nive.tests import db_app
 from nive.views import *
+from nive.tests import __local
 
 from pyramid.response import Response
 from pyramid.request import Request
@@ -25,7 +26,7 @@ class viewModule(object):
     static = u"nive.tests:"
     assets = (("jquery.js", "nive.adminview:static/mods/jquery.min.js"), ("another.css", "nive.adminview:static/adminview.css"))
 
-class viewTest(unittest.TestCase):
+class viewTest_db:
 
     def setUp(self):
         self.config = testing.setUp()
@@ -34,7 +35,7 @@ class viewTest(unittest.TestCase):
         self.request.subpath = ["file1.txt"]
         self.request.context = None
         self.request.content_type = None
-        self.app = db_app.app_db(["nive.adminview.view"])
+        self._loadApp(["nive.adminview.view"])
         self.app.Startup(self.config)
         #self.request = getRequest()
         user = User(u"test")
@@ -199,3 +200,13 @@ class viewTest(unittest.TestCase):
         self.assert_(view2.Assets(assets=(("jquery.js", "nive.adminview:static/mods/jquery.min.js"),)))
         self.assertFalse(view2.Assets(assets=[]))
         
+
+class viewTest_db_sqlite(viewTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
+
+class viewTest_db_mysql(viewTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """

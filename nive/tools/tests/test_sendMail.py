@@ -7,7 +7,7 @@ from smtplib import SMTPServerDisconnected
 from nive.definitions import *
 from nive.tools.sendMail import *
 
-from nive.tests import db_app
+from nive.tests import __local
 
 
 from nive.helper import FormatConfTestFailure
@@ -30,10 +30,10 @@ class SendMailTest1(unittest.TestCase):
         sendMail(configuration,None)
         
         
-class SendMailTest2_db(unittest.TestCase):
+class SendMailTest2_db(__local.DefaultTestCase):
 
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
         self.app.Register(configuration)
         logging.basicConfig()
     

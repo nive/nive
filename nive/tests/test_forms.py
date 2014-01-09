@@ -8,7 +8,8 @@ from nive.events import Events
 from nive.views import BaseView
 from nive.security import User as UserO
 from nive.helper import Request
-import db_app
+from nive.tests import db_app
+from nive.tests import __local
 
 
 data1_1 = { u"ftext": "this is text!",
@@ -260,10 +261,10 @@ class FormTest(unittest.TestCase):
 
         
 
-class FormTest_db(unittest.TestCase):
+class FormTest_db:
 
     def setUp(self):
-        self.app = db_app.app_db()
+        self._loadApp()
         self.request = testing.DummyRequest()
         self.request._LOCALE_ = "en"
         self.config = testing.setUp(request=self.request)
@@ -466,4 +467,15 @@ class FormTest_db(unittest.TestCase):
 
         self.assert_(obj.data.get("ftext"))
         
+
+class FormTest_db_sqlite(FormTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
+
+class FormTest_db_mysql(FormTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """
+    
 
