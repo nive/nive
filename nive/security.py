@@ -42,6 +42,8 @@ class User(object):
         self.name = name
         self.id = id
         self.groups = []
+        self.meta = Conf()
+        self.data = Conf()
         
     def GetGroups(self, context=None):
         return self.groups
