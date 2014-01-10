@@ -199,7 +199,10 @@ class ConversionTest(unittest.TestCase):
         self.assert_(self.structure.deserialize(u"data2", u"fmselection", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assert_(self.structure.deserialize(u"data2", u"fmcheckboxes", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assert_(self.structure.deserialize(u"data2", u"furllist", json.dumps(["aaa","bbb"]))[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"funitlist", json.dumps(["aaa","bbb"]))[0]=="aaa")
+        self.assert_(self.structure.deserialize(u"data2", u"funitlist", json.dumps(["123","123"]))[0]==123)
+        self.assertRaises(ValueError, self.structure.deserialize, u"data2", u"funitlist", json.dumps(["aaa","bbb"]))
+        self.assert_(self.structure.deserialize(u"data2", u"fmcheckboxes", "aaa")[0]=="aaa")
+        self.assert_(self.structure.deserialize(u"data2", u"fmcheckboxes", ["aaa","bbb"])[0]=="aaa")
         
     def test_ds_json(self):
         self.assert_(self.structure.deserialize(u"data2", u"fjson", json.dumps(["aaa","bbb"]))[0]=="aaa")
