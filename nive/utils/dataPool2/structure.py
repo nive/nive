@@ -472,20 +472,8 @@ class PoolStructure(object):
             # unitlist -> to number tuple
             if not value:
                 value = u""
-            elif value[0]!="[":
-                # bw 0.9.5b: changed storage format to json. Previous versions used lines 
-                # with \n for entries.
-                if isinstance(value, basestring):
-                    if value.startswith(u"_json_"):
-                        value = json.loads(value[len(u"_json_"):])
-                    else:
-                        value = tuple(value.split(u"\n"))
-                elif isinstance(value, list):
-                    value = tuple(value)
-                if fieldtype == "unitlist":
-                    value = [long(v) for v in value]
             else:
-                 value = json.loads(value)
+                value = json.loads(value)
             
         elif fieldtype == "json":
             # -> to python type
