@@ -256,7 +256,7 @@ def unitlist_node(field, kw, kwWidget, form):
         kw["validator"] = Length(max=field.get("size",255))
     if not "widget" in kw:
         kw["widget"] = TextInputWidget(size=field.get("len",50), **kwWidget)
-    return SchemaNode(String(), **kw)
+    return SchemaNode(Lines(), **kw)
 
 def timestamp_node(field, kw, kwWidget, form):
     # readonly
