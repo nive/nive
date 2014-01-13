@@ -43,11 +43,11 @@ class Unauthorized(Exception):
 
 class BaseView(object):
     """    """
+    viewModuleID = None
     
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.viewModuleID = None
         self.appRequestKeys = []
         self.fileExpires = 3600
         self._t = time.time()
