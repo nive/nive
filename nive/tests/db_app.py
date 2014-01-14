@@ -86,6 +86,10 @@ appconf = AppConf(
     meta = copy.deepcopy(list(SystemFlds)) + copy.deepcopy(list(UserFlds))
 )
 appconf.meta.append(FieldConf(id="testfld", datatype="number", size=4, name=u"Number"))
+appconf.meta.append(FieldConf(id="title", datatype="string", size=100, name=u"Title"))
+appconf.meta.append(FieldConf(id="pool_sort", datatype="number", size=4, name=u"Number"))
+appconf.meta.append(FieldConf(id="pool_wfa", datatype="string", size=20, name=u"Workflow"))
+appconf.meta.append(FieldConf(id="pool_wfp", datatype="string", size=20, name=u"Workflow"))
 
 # test data -----------------------------------------------------------------------
 data1_1 = { u"ftext": "this is text!",
@@ -141,6 +145,7 @@ def app_db(modules=None):
         a.Query("select id from pool_files where id=1")
         a.Query("select id from pool_sys where id=1")
         a.Query("select id from pool_groups where id=1")
+        a.Query("select title from pool_meta where id=1")
     except:
         a.GetTool("nive.tools.dbStructureUpdater")()
 

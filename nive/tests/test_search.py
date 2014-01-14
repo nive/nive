@@ -73,8 +73,8 @@ class SearchTest_db:
         self.assert_(r.SelectDict(parameter={"pool_type": "notype", "pool_filename": "others"}, logicalOperator="or", operators={"pool_type":"LIKE", "pool_filename":"LIKE"}))
         self.assertFalse(r.Select(parameter={"pool_type": "notype", "pool_filename": "notitle"}, logicalOperator="or", operators={"pool_type":"LIKE", "pool_filename":"LIKE"}))
         self.assertFalse(r.SelectDict(parameter={"pool_type": "notype", "pool_filename": "notitle"}, logicalOperator="or", operators={"pool_type":"LIKE", "pool_filename":"LIKE"}))
-        self.assert_(r.Select(groupby="pool_filename"))
-        self.assert_(r.SelectDict(groupby="pool_filename"))
+        self.assert_(r.Select(fields=["pool_filename"], groupby="pool_filename"))
+        self.assert_(r.SelectDict(fields=["pool_filename"], groupby="pool_filename"))
         self.assert_(r.Select(condition="id > 23"))
         self.assert_(r.SelectDict(condition="id > 23"))
 
