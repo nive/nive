@@ -820,7 +820,7 @@ class Search:
                                parameter=parameter, 
                                fields=[u"id", u"pool_unitref", name_field+u" as name"], 
                                operators=operators, 
-                               groupby=name_field, 
+                               #groupby=name_field, 
                                sort=sort)
         return recs
 
@@ -840,7 +840,7 @@ class Search:
         recs = self.SelectDict(parameter=parameter, 
                                fields=[u"id", u"pool_unitref", name_field+u" as name"], 
                                operators=operators, 
-                               groupby=name_field, 
+                               #groupby=name_field, 
                                sort=sort)
         return recs
 
