@@ -270,7 +270,9 @@ class MySql(FileManager, Base):
         return parents
 
 
-
+    def _FmtListForQuery(self, values):
+        FmtParam = self.connection.FmtParam
+        return u",".join([FmtParam(v) for v in values])
 
 
 class MySqlEntry(FileEntry, Entry):
