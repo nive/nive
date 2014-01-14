@@ -476,7 +476,11 @@ class PoolStructure(object):
                 try:
                     value = tuple(json.loads(value))
                 except ValueError:
-                    value = (value,)
+                    # bw 0.9.12 convert line based values
+                    if "\r\n" in value:
+                        value = value.split("\r\n")
+                    else:
+                        value = (value,)
             elif isinstance(value, list):
                 value = tuple(value)
             if fieldtype == "unitlist":
