@@ -36,14 +36,17 @@ class User(object):
     A fake user object for testing.
     """
     def __str__(self):
-        return self.name
+        return self.data.name
     
     def __init__(self, name, id=0):
-        self.name = name
         self.id = id
         self.groups = []
-        self.meta = Conf()
-        self.data = Conf()
+        self.meta = Conf(title=name)
+        self.data = Conf(name=name,email="")
+
+    @property
+    def identity(self):
+        return str(self)
         
     def GetGroups(self, context=None):
         return self.groups
