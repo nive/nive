@@ -57,7 +57,8 @@ class Connection(object):
     def rollback(self):
         """ Calls rollback on the current transaction, if supported """
         db = self._get()
-        db.rollback()
+        if db:
+            db.rollback()
 
     def commit(self):
         """ Calls commit on the current transaction, if supported """

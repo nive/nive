@@ -147,7 +147,8 @@ class Base(object):
         """
         Rollback the changes made to the database, if supported
         """
-        self.usedconnection.rollback()
+        if self.usedconnection:
+            self.usedconnection.rollback()
 
     def Commit(self, user=""):
         """
