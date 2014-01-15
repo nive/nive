@@ -22,6 +22,7 @@ class LocalGroups(object):
     def Init(self):
         self._localRoles = {}
         self.ListenEvent("create", "AddOwner")
+        self.ListenEvent("delete", "RemoveGroups")
         self._secid = self.id or self.idhash
         
     
@@ -79,6 +80,14 @@ class LocalGroups(object):
         self._DelLocalGroupsCache(username, group)
         self.db.RemoveGroups(self._secid, userid=username, group=group)
 
+
+    def RemoveGroups(self, **kw):
+        """
+        Remove all group assignments before deleting the object. 
+        """
+        self.db.RemoveGroups(self._secid)
+        self._localRoles = {}
+        
 
     def _LocalGroups(self, username):
         if username in self._localRoles:
