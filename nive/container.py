@@ -444,6 +444,9 @@ class ContainerEdit:
         - delete (called in context of the new object)
         """
         app = self.app
+        # check if id is object
+        if IObject.providedBy(id):
+            obj = id
         if not obj:
             obj = self.GetObj(id, queryRestraints=False, **kw)
             if not obj:
