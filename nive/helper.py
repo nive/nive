@@ -16,7 +16,7 @@ from nive.definitions import IViewConf, IToolConf, IPortalConf, IGroupConf, ICat
 from nive.definitions import IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
-from nive.utils.dataPool2.files import File
+from nive import File
 
 
 def ResolveName(name, base=None, raiseExcp=True):
