@@ -3,7 +3,7 @@ import unittest
 
 from nive.definitions import DatabaseConf
 from nive.utils.path import DvPath
-from nive.utils.dataPool2.sqlite3Pool import Sqlite3
+from nive.utils.dataPool2.sqlite.sqlite3Pool import Sqlite3
 
 from nive.utils.dataPool2.tests import test_db
 from nive.utils.dataPool2.tests import test_Base

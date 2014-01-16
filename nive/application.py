@@ -1084,9 +1084,11 @@ class AppFactory:
         if not poolTag:
             raise TypeError, "Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!"
         elif poolTag.lower() in ("sqlite","sqlite3"):
-            poolTag = "nive.utils.dataPool2.sqlite3Pool.Sqlite3"
+            poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
         elif poolTag.lower() == "mysql":
-            poolTag = "nive.utils.dataPool2.mySqlPool.MySql"
+            poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
+        elif poolTag.lower() in ("postgres","postgresql"):
+            poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
 
         # if a database connection other than the default is configured
         cTag = self.dbConfiguration.connection
@@ -1133,9 +1135,11 @@ class AppFactory:
         if not poolTag:
             raise TypeError, "Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!"
         elif poolTag.lower() in ("sqlite","sqlite3"):
-            poolTag = "nive.utils.dataPool2.sqlite3Pool.Sqlite3"
+            poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
         elif poolTag.lower() == "mysql":
-            poolTag = "nive.utils.dataPool2.mySqlPool.MySql"
+            poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
+        elif poolTag.lower() in ("postgres","postgresql"):
+            poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
         dbObj = GetClassRef(poolTag, self.reloadExtensions, True, None)
         return dbObj._DefaultConnection(config=self.dbConfiguration, connectNow=False)
 

@@ -2,14 +2,14 @@
 
 import copy
 
-import test_MySql
+from nive.utils.dataPool2.mysql.tests import test_MySql
 try:
-    from nive.utils.dataPool2.mySqlPool import *
+    from nive.utils.dataPool2.mysql.mySqlPool import *
 except:
     pass
 
 import test_db
-from nive.utils.dataPool2.sqlite3Pool import *
+from nive.utils.dataPool2.sqlite.sqlite3Pool import *
 
 
 mode = "mysql"

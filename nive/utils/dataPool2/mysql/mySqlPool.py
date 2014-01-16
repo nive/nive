@@ -31,7 +31,7 @@ from nive.utils.dataPool2.base import Base, Entry
 from nive.utils.dataPool2.base import NotFound
 from nive.utils.dataPool2.connection import Connection, ConnectionThreadLocal, ConnectionRequest
 
-from nive.utils.dataPool2.dbManager import MySQLManager
+from nive.utils.dataPool2.mysql.dbManager import MySQLManager
 from nive.utils.dataPool2.files import FileManager, FileEntry
 
 

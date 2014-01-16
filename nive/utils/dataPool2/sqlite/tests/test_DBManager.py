@@ -5,7 +5,7 @@ import unittest
 
 
 from nive.definitions import FieldConf
-from nive.utils.dataPool2.dbManager import *
+from nive.utils.dataPool2.sqlite.dbManager import *
 from nive.utils.path import DvPath
 
 dbpath = ":memory:"

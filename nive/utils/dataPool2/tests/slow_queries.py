@@ -2,9 +2,9 @@
 
 import copy
 
-import test_MySql
+from nive.utils.dataPool2.mysql.tests import test_MySql
 try:
-    from nive.utils.dataPool2.mySqlPool import *
+    from nive.utils.dataPool2.mysql.mySqlPool import *
 except:
     pass
 

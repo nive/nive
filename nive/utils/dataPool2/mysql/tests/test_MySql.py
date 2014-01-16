@@ -3,7 +3,7 @@ import unittest
 
 from nive.definitions import DatabaseConf
 
-from nive.utils.dataPool2.mySqlPool import MySql
+from nive.utils.dataPool2.mysql.mySqlPool import MySql
 
 from nive.utils.dataPool2.tests import test_db
 from nive.utils.dataPool2.tests import test_Base

@@ -5,7 +5,7 @@ import unittest
 from types import *
 
 from nive.utils.dataPool2.base import *
-from nive.utils.dataPool2.sqlite3Pool import *
+from nive.utils.dataPool2.sqlite.sqlite3Pool import *
 from nive.utils.path import DvPath
 
 from sqlite3 import OperationalError

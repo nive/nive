@@ -6,9 +6,6 @@ import unittest
 
 from nive.definitions import DatabaseConf
 from nive.utils.dataPool2.connection import *
-from nive.utils.dataPool2.sqlite3Pool import Sqlite3
-
-from sqlite3 import OperationalError
 
 from nive.tests.db_app import app_db
 

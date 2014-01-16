@@ -6,29 +6,38 @@ import os, sys
 import string, time, cPickle, re, types
 from datetime import datetime
 
-from nive.utils.path import DvPath
 from nive.utils.utils import ConvertToDateTime
+from nive.utils.dataPool2.dbManager import DatabaseManager
+
+MYSQL = 0
+
+try:    
+    import MySQLdb
+    MYSQL = 1
+except:    
+    pass 
+    #print "MySQLdb not imported!"
 
 
 
-
-class DatabaseManager(object):
+class MySQLManager(DatabaseManager):
     """
-    Base class for specific database servers
-    
-    SQL and administration calls are bases on MySql
     """
 
     modifyColumns = True
 
     def __init__(self):
+        import MySQLdb
         self.db = None
         self.dbConn = None
+        self.engine = "MyISAM"
         self.useUtf8 = True
 
     # Database Options ---------------------------------------------------------------------
 
     def Connect(self, databaseName = "", inIP = "", inUser = "", inPW = ""):
+        self.dbConn = MySQLdb.connect(db = databaseName, host = inIP, user = inUser, passwd = inPW)
+        self.db = self.dbConn.cursor()
         return self.db != None
 
 
@@ -123,8 +132,6 @@ class DatabaseManager(object):
 
         datatypes:
         list -> list || listn
-        
-        Example:
 
         string -> VARCHAR(size) NOT NULL DEFAULT default
         number -> INT NOT NULL DEFAULT default
@@ -152,7 +159,117 @@ class DatabaseManager(object):
         aStr = ""
 
         # convert datatype list
-        
+        if datatype == "list":
+            if isinstance(conf["default"], basestring):
+                datatype = "listt"
+            else:
+                datatype = "listn"
+
+        if datatype in ("string", "email", "password"):
+            if conf.get("size", conf.get("maxLen",0)) <= 3:
+                aStr = u"CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            else:
+                aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+
+        elif datatype in ("number", "long", "int"):
+            aN = conf["default"]
+            if aN in (u"", u" ", None):
+                aN = 0
+            if isinstance(aN, basestring):
+                aN = long(aN)
+            if conf.get("size", conf.get("maxLen",0)) == 4:
+                aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
+            elif conf.get("size", conf.get("maxLen",0)) >16:
+                aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
+            else:
+                aStr = u"INT NOT NULL DEFAULT %d" % (aN)
+
+        elif datatype == "float":
+            aN = conf["default"]
+            if aN in (u"", u" ", None):
+                aN = 0
+            if isinstance(aN, basestring):
+                aN = float(aN)
+            aStr = u"FLOAT NOT NULL DEFAULT %d" % (aN)
+
+        elif datatype == "bool":
+            aN = conf["default"]
+            if aN in (u"", u" ", None, u"False"):
+                aN = 0
+            elif aN == u"True":
+                aN = 1
+            elif isinstance(aN, basestring):
+                aN = int(aN)
+            aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
+
+        elif datatype in ("text", "htext", "url", "urllist", "json", "code"):
+            aStr = u"TEXT NOT NULL" # DEFAULT '%s'" % (conf["default"])
+
+        elif datatype == "unit":
+            aN = conf["default"]
+            if aN == "" or aN == " " or aN == None:
+                aN = 0
+            if isinstance(aN, basestring):
+                aN = long(aN)
+            aStr = u"INT UNSIGNED NOT NULL DEFAULT %d" % (aN)
+
+        elif datatype == "unitlist":
+            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+
+        elif datatype == "date":
+            aD = conf["default"]
+            if aD == () or aD == "()":
+                aD = u"NULL"
+            elif aD in ("now", "nowdate", "nowtime"):
+                aD = u""
+            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+                aD = self.ConvertDate(aD)
+            if aD == u"":
+                aStr = u"DATE NULL"
+            else:
+                aStr = u"DATE NULL DEFAULT '%s'" % (aD)
+
+        elif datatype == "datetime":
+            aD = conf["default"]
+            if aD == () or aD == "()":
+                aD = u"NULL"
+            elif aD in ("now", "nowdate", "nowtime"):
+                aD = u""
+            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+                aD = self.ConvertDate(aD)
+            if aD == u"":
+                aStr = u"DATETIME NULL"
+            else:
+                aStr = u"DATETIME NULL DEFAULT '%s'" % (aD)
+
+        elif datatype == "timestamp":
+            aStr = u"TIMESTAMP"
+
+        elif datatype == "listt":
+            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+
+        elif datatype == "listn" or datatype == "codelist":
+            aN = conf["default"]
+            if aN in (u"", u" ", None):
+                aN = 0
+            elif isinstance(aN, basestring):
+                aN = int(aN)
+            aStr = u"SMALLINT(6) NOT NULL DEFAULT %d" % (aN)
+
+        elif datatype == "mselection" or datatype == "mcheckboxes" or datatype == "mcodelist" or datatype == "radio":
+            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+
+        elif datatype == "file":
+            aStr = u"BLOB"
+
+        elif datatype == "bytesize":
+            aN = conf["default"]
+            if aN in (u"", u" ", None):
+                aN = 0
+            if isinstance(aN, basestring):
+                aN = long(aN)
+            aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
+
         return aStr
 
 

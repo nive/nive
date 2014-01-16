@@ -18,7 +18,7 @@ from nive.utils.dataPool2.base import NotFound
 from nive.utils.dataPool2.connection import Connection, ConnectionThreadLocal, ConnectionRequest
 
 from nive.utils.dataPool2.files import FileManager, FileEntry
-from nive.utils.dataPool2.dbManager import Sqlite3Manager
+from nive.utils.dataPool2.sqlite.dbManager import Sqlite3Manager
 
 from nive.definitions import OperationalError
 
