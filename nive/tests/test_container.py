@@ -199,12 +199,14 @@ class containerTest_db:
         self.assert_(len(r.GetObjs(batch=False))==cobjs+2)
         self.assert_(len(r.GetContainers())==ccontainer+2)  # less failsafe than batch=False. On failure reset testdata.
         self.assert_(len(r.GetObjs())==cobjs+2)
+        self.assert_(len(r.GetObjs(pool_type="type2")))
         self.assert_(len(r.GetContainerList(parameter={u"pool_type":u"type2"}))==ccontainer2+1)
         self.assert_(len(r.GetObjsList(parameter={u"pool_type":u"type2"}))==cobjs2+1)
         self.assert_(len(o3.GetObjsBatch([o4.id,o5.id])))
         # object
         self.assert_(len(o3.GetContainers())==2)
         self.assert_(len(o3.GetObjs())==2)
+        self.assert_(len(o3.GetObjs(pool_type="type2"))==2)
         self.assert_(len(o3.GetContainerList(parameter={u"pool_type":u"type2"}))==2)
         self.assert_(len(o3.GetObjsList(parameter={u"pool_type":u"type2"}))==2)
         self.assert_(len(o3.GetContainerList(parameter={u"pool_type":u"type2"}, operators={"pool_type":u"<>"}))==0)
