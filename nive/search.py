@@ -129,7 +129,17 @@ class Search:
             typeInf = self.app.GetObjectConf(pool_type)
             if not typeInf:
                 raise ConfigurationError, pool_type + " type not found"
-            sql, values = db.FmtSQLSelect(fields, parameter, dataTable=typeInf["dbparam"], operators=operators, sort=sort, ascending=ascending, start=start, max=max, groupby=kw.get("groupby"), logicalOperator=kw.get("logicalOperator"), condition=kw.get("condition"))
+            sql, values = db.FmtSQLSelect(fields, 
+                                          parameter, 
+                                          dataTable=typeInf["dbparam"], 
+                                          operators=operators, 
+                                          sort=sort, 
+                                          ascending=ascending, 
+                                          start=start, 
+                                          max=max, 
+                                          groupby=kw.get("groupby"), 
+                                          logicalOperator=kw.get("logicalOperator"), 
+                                          condition=kw.get("condition"))
         recs = db.Query(sql, values)
         return recs
 
