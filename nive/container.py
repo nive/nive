@@ -65,7 +65,7 @@ class Container(object):
         return obj
 
 
-    def GetObjs(self, parameter = None, operators = None, **kw):
+    def GetObjs(self, parameter = None, operators = None, pool_type = None, **kw):
         """
         Search for subobjects based on parameter and operators. ::
         
@@ -91,7 +91,7 @@ class Container(object):
         root = self.dataroot
         if kw.get("queryRestraints")!=False:
             parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort = sort)
+        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort=sort)
         useBatch = kw.get("batch", True)
         if useBatch:
             ids = [c["id"] for c in objects]
@@ -141,10 +141,7 @@ class Container(object):
                 fields = [u"id", u"title", u"pool_filename", u"pool_type", u"pool_state", u"pool_sort", u"pool_stag", u"pool_wfa"]
         root = self.dataroot
         parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        if pool_type:
-            objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort = sort)
-        else:
-            objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort = sort)
+        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort = sort)
         return objects
     
         
