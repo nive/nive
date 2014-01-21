@@ -388,11 +388,15 @@ class PoolStructure(object):
         elif fieldtype in ("date", "datetime"):
             if isinstance(value, (float,int,long)):
                 value = unicode(datetime.fromtimestamp(value))
+            elif value==None:
+                pass
             elif not isinstance(value, unicode):
                 value = unicode(value)
         
         elif fieldtype == "timestamp":
-            if not isinstance(value, basestring):
+            if value==None:
+                pass
+            elif not isinstance(value, basestring):
                 value = unicode(value)
         
         elif fieldtype in ("list","radio"):
