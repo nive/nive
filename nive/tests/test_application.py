@@ -342,6 +342,20 @@ class appTest_db:
         v,r=self.app.TestDB()
         self.assert_(v)
 
+    
+    def test_cacheddb(self):
+        conn=self.app.db.usedconnection
+        self.assert_(conn)
+        
+        from nive.components.objects.base import ApplicationBase
+        from nive.tests.db_app import appconf
+        a = ApplicationBase()
+        a.Register(appconf)
+        a.Register(conn.configuration)
+        a.Startup(None, cachedDbConnection=conn)
+        v,r=self.app.TestDB()
+        self.assert_(v)
+
         
     def test_dbfncs(self):
         v,r=self.app.TestDB()
