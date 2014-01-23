@@ -137,10 +137,10 @@ class Application(object):
         raise KeyError, name
 
 
-    def Startup(self, pyramidConfig, debug=False):
+    def Startup(self, pyramidConfig, debug=False, cachedDbConnection=None):
         self.Setup(debug=debug)
         self.StartRegistration(pyramidConfig)
-        self.FinishRegistration(pyramidConfig)
+        self.FinishRegistration(pyramidConfig, cachedDbConnection=cachedDbConnection)
         self.Run()
 
     
@@ -186,10 +186,14 @@ class Application(object):
             portal.RegisterGroups(self)
 
 
-    def FinishRegistration(self, pyramidConfig):
+    def FinishRegistration(self, pyramidConfig, cachedDbConnection=None):
         """
         Finishes the registration process and cashes the database structure.
         Configurations will have a write lock after the registration is finished.
+        
+        `cachedDbConnection` is a nive.utils.dataPool2.connection instance to 
+        avoid reconnects on application startup. The connection can be accessed
+        during runtime through ``self.db.usedconnection``.
 
         Events:
 
@@ -201,7 +205,7 @@ class Application(object):
         
         # reload database structure
         self._LoadStructure(forceReload = True)
-        self._dbpool = self._GetDataPoolObj()
+        self._dbpool = self._GetDataPoolObj(cachedDbConnection)
                            
         # test and create database fields 
         if self.debug:
@@ -1074,7 +1078,7 @@ class AppFactory:
     - Application
     """
 
-    def _GetDataPoolObj(self):
+    def _GetDataPoolObj(self, cachedDbConnection=None):
         """
         creates the database object
         """
@@ -1091,9 +1095,10 @@ class AppFactory:
             poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
 
         # if a database connection other than the default is configured
-        cTag = self.dbConfiguration.connection
-        if cTag:
-            connObj = GetClassRef(cTag, self.reloadExtensions, True, None)
+        if cachedDbConnection:
+            connObj = cachedDbConnection
+        elif self.dbConfiguration.connection:
+            connObj = GetClassRef(self.dbConfiguration.connection, self.reloadExtensions, True, None)
             connObj = connObj(config=self.dbConfiguration, connectNow=False)
         else:
             connObj = None
