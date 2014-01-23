@@ -51,6 +51,9 @@ class User(object):
     def GetGroups(self, context=None):
         return self.groups
     
+    def ReadableName(self):
+        return self.data.name
+    
 
 
 
