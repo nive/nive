@@ -54,7 +54,8 @@ class User(object):
     def ReadableName(self):
         return self.data.name
     
-
+    def Commit(self, user=None):
+        return
 
 
 class Unauthorized(Exception):
