@@ -294,6 +294,7 @@ class groupsTest_db:
         o.AddLocalGroup(userid, u"group:local")
         o.RemoveLocalGroups(userid, None)
         self.assertFalse(o.GetLocalGroups(userid))
+        o.Commit(user=user)
 
         r.Delete(id, user=user)
 

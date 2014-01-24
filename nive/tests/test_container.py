@@ -444,7 +444,8 @@ class groupsrootTest_db:
         r.AddLocalGroup(userid, u"group:local")
         r.RemoveLocalGroups(userid, None)
         self.assertFalse(r.GetLocalGroups(userid))
-
+        r.db.Undo()
+        
 
 
 class groupsrootTest_db_sqlite(groupsrootTest_db, __local.SqliteTestCase):

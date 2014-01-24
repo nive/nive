@@ -1192,7 +1192,6 @@ class Base(object):
         else:
             raise TypeError, "id must not be none"
         self.InsertFields(self.GroupsTable, data)
-        self.Commit()
 
 
     def RemoveGroups(self, id, userid=None, group=None):
@@ -1209,7 +1208,6 @@ class Base(object):
         if group:
             p["groupid"] = group
         self.DeleteRecords(self.GroupsTable, p)
-        self.Commit()
 
 
     def GetAllUserGroups(self, userid):
