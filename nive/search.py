@@ -245,7 +245,8 @@ class Search:
                                                start=None, 
                                                max=None,
                                                **kw)
-                total = db.Query(sql2, values)[0][0]
+                val = db.Query(sql2, values)
+                total = val[0][0] if val else 0
             else:
                 sql2, values = db.FmtSQLSelect([u"-count(DISTINCT %s)" % (kw.get("groupby"))], 
                                                parameter=parameter, 
@@ -253,7 +254,8 @@ class Search:
                                                start=None, 
                                                max=None, 
                                                **kw)
-                total = db.Query(sql2, values)[0][0]
+                val = db.Query(sql2, values)
+                total = val[0][0] if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -320,7 +322,8 @@ class Search:
                                            max=max, 
                                            dataTable=typeInf["dbparam"],
                                            **kw)
-            total = db.Query(sql2, values)[0][0]
+            val = db.Query(sql2, values)
+            total = val[0][0] if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -388,7 +391,8 @@ class Search:
                                            dataTable=typeInf["dbparam"],
                                            singleTable=1,
                                            **kw)
-            total = db.Query(sql2, values)[0][0]
+            val = db.Query(sql2, values)
+            total = val[0][0] if val else 0
                 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -460,7 +464,8 @@ class Search:
                                            max=max, 
                                            skipRang=1, 
                                            **kw)
-            total = db.Query(sql2, values)[0][0]
+            val = db.Query(sql2, values)
+            total = val[0][0] if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         result["phrase"] = searchFor
@@ -542,7 +547,8 @@ class Search:
                                            dataTable=typeInf["dbparam"],
                                            skipRang=1, 
                                            **kw)
-            total = db.Query(sql2, values)[0][0]
+            val = db.Query(sql2, values)
+            total = val[0][0] if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         result["phrase"] = searchFor
