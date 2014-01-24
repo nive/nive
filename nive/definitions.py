@@ -228,7 +228,7 @@ class baseConf(object):
         return self.__class__(**data)
     
     def test(self):
-        return True
+        return ()
     
     #Provides(IConf)
     def __init__(self, copyFrom=None, **values):
