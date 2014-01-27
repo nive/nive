@@ -99,9 +99,7 @@ class BaseView(object):
 
         returns url
         """
-        if not resource:
-            resource=self.context
-        return resource_url(resource, self.request)
+        return resource_url(resource or self.context, self.request)
 
     def StaticUrl(self, file):
         """
