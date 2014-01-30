@@ -45,6 +45,7 @@ class FormTest(unittest.TestCase):
         request = testing.DummyRequest()
         request._LOCALE_ = "en"
         self.config = testing.setUp(request=request)
+        self.config.include('pyramid_chameleon')
     
     def tearDown(self):
         self.app.Close()
@@ -268,6 +269,7 @@ class FormTest_db:
         self.request = testing.DummyRequest()
         self.request._LOCALE_ = "en"
         self.config = testing.setUp(request=self.request)
+        self.config.include('pyramid_chameleon')
         self.remove=[]
     
     def tearDown(self):

@@ -29,8 +29,9 @@ class viewModule(object):
 class viewTest_db:
 
     def setUp(self):
-        self.config = testing.setUp()
         self.request = testing.DummyRequest()
+        self.config = testing.setUp(request=self.request)
+        self.config.include('pyramid_chameleon')
         self.request._LOCALE_ = "en"
         self.request.subpath = ["file1.txt"]
         self.request.context = None
