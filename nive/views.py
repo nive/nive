@@ -51,7 +51,7 @@ class BaseView(object):
         self.appRequestKeys = []
         self.fileExpires = 3600
         self._t = time.time()
-        self._c_vm = None     # cashes the view module configuration
+        self._c_vm = None     # caches the view module configuration
 
     @property
     def viewModule(self):
