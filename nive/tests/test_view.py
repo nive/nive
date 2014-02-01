@@ -69,13 +69,17 @@ class viewTest_db:
         self.assert_(view.Url(self.context))
         self.assert_(view.FolderUrl())
         self.assert_(view.FolderUrl(self.context))
-        self.assertRaises(ValueError, view.StaticUrl, "file.js")
         self.assert_(view.FileUrl("file1"))
         self.assert_(view.FileUrl("file1", self.context2))
         self.assert_(view.PageUrl())
         self.assert_(view.PageUrl(self.context, usePageLink=1))
         self.assert_(view.CurrentUrl(retainUrlParams=False))
         self.assert_(view.CurrentUrl(retainUrlParams=True))
+
+        self.assertRaises(ValueError, view.StaticUrl, "file.js")
+        self.assertRaises(ValueError, view.StaticUrl, "myproject:file.js")
+        self.assert_(view.StaticUrl("http://file.js"))
+        self.assert_(view.StaticUrl("/file.js"))
 
         urls = ["page_url", "obj_url", "obj_folder_url", "parent_url"]
         for url in urls:
