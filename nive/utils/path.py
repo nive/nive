@@ -2,13 +2,19 @@
 # Released under GPL3. See license.txt
 #
 
-try:    from win32pipe import popen
-except: from os import popen
+WIN32 = False
+try:    
+    from win32pipe import popen
+    WIN32 = True
+except: 
+    from os import popen
 
 import os
 import string
 import stat
 import shutil
+import tempfile
+import time
 
 
 class DvPath(object):
@@ -104,6 +110,22 @@ class DvPath(object):
         self.AppendSeperator()
         self.SetNameExtension(name)
 
+    def SetUniqueTempFileName(self):
+        """
+        () return True
+        """
+        if not WIN32:
+            aDir = tempfile.gettempdir()
+            if not aDir:
+                return False
+            self._path = aDir
+            self.AppendSeperator()
+            aName = "tmp_" + str(time.time())
+            self.SetNameExtension(aName)
+            return True
+
+        self._path, x = win32api.GetTempFileName(win32api.GetTempPath(), "tmp_", 0)
+        return True
 
     # get ----------------------------------------------------------------------------
 
