@@ -9,7 +9,8 @@ import os
 import string
 import stat
 import shutil
-
+import uuid
+import tempfile
 
 class DvPath(object):
     """
@@ -281,4 +282,20 @@ class DvPath(object):
                 break
             r += d
         return r
+    
+    
+    def SetUniqueTempFileName(self):
+        """
+        Creates a unique tempfile name with the current file extension
+        """
+        dir = tempfile.gettempdir()
+        if not dir:
+            return False
+        ext = self.GetExtension()
+        self._path = dir
+        self.AppendSeperator()
+        name = str(uuid.uuid4())
+        self.SetName(name)
+        self.SetExtension(ext)
+        return True
 
