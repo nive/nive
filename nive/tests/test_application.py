@@ -435,4 +435,8 @@ class appTest_db_mysql(appTest_db, __local.MySqlTestCase):
     see tests.__local
     """
 
+class appTest_db_pg(appTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """
 

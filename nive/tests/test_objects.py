@@ -309,6 +309,11 @@ class groupsTest_db_mysql(groupsTest_db, __local.MySqlTestCase):
     see tests.__local
     """
         
+class groupsTest_db_pg(groupsTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """
+        
  
     
 #tests!

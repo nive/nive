@@ -215,3 +215,8 @@ class viewTest_db_mysql(viewTest_db, __local.MySqlTestCase):
     """
     see tests.__local
     """
+
+class viewTest_db_pg(viewTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """

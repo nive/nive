@@ -480,4 +480,8 @@ class FormTest_db_mysql(FormTest_db, __local.MySqlTestCase):
     see tests.__local
     """
     
+class FormTest_db_pg(FormTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """
 
