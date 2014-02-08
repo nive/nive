@@ -40,9 +40,9 @@ MYSQL_CONF = DatabaseConf(
 POSTGRES_CONF = DatabaseConf(
     context = "PostgreSql",
     dbName = "ut_nive",
-    host = "localhost",
-    user = "postgres",
-    password = "postgres",
+    host = "",
+    user = "",
+    password = "",
     port = "",
     fileRoot = ROOT
 )
@@ -51,7 +51,7 @@ POSTGRES_CONF = DatabaseConf(
 # These switches also allow to manually enable or disable database system tests.
 ENABLE_SQLITE_TESTS = True
 ENABLE_MYSQL_TESTS = True
-ENABLE_POSTGRES_TESTS = False
+ENABLE_POSTGRES_TESTS = True
 try:
     import MySQLdb
 except ImportError:
