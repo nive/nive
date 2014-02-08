@@ -408,6 +408,11 @@ class containerTest_db_mysql(containerTest_db, __local.MySqlTestCase):
     see tests.__local
     """
     
+class containerTest_db_pg(containerTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """
+    
 
 
 
@@ -458,6 +463,10 @@ class groupsrootTest_db_mysql(groupsrootTest_db, __local.MySqlTestCase):
     see tests.__local
     """
     
+class groupsrootTest_db_pg(groupsrootTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """
 
 
 

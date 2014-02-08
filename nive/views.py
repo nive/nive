@@ -51,7 +51,7 @@ class BaseView(object):
         self.appRequestKeys = []
         self.fileExpires = 3600
         self._t = time.time()
-        self._c_vm = None     # cashes the view module configuration
+        self._c_vm = None     # caches the view module configuration
 
     @property
     def viewModule(self):
@@ -99,9 +99,7 @@ class BaseView(object):
 
         returns url
         """
-        if not resource:
-            resource=self.context
-        return resource_url(resource, self.request)
+        return resource_url(resource or self.context, self.request)
 
     def StaticUrl(self, file):
         """
@@ -116,8 +114,19 @@ class BaseView(object):
             <link tal:attributes="href view.StaticUrl('my_app.design:static/layout2.css')" 
                   rel="stylesheet" type="text/css" media="all" />
                   
+         absolute http urls can also be used based on the url prefix http, https and / ::
+
+            <link tal:attributes="href view.StaticUrl('/assets/layout2.css')" 
+                  rel="stylesheet" type="text/css" media="all" />
+            <link tal:attributes="href view.StaticUrl('http://myserver.com/assets/layout2.css')" 
+                  rel="stylesheet" type="text/css" media="all" />
+            <link tal:attributes="href view.StaticUrl('https://myserver.com/assets/layout2.css')" 
+                  rel="stylesheet" type="text/css" media="all" />
+                  
         returns url
         """
+        if file.startswith((u"http://",u"https://",u"/")):
+            return file
         if not u":" in file and self.viewModule and self.viewModule.static:
             file = u"%s/%s" % (self.viewModule.static, file)
         return static_url(file, self.request)
@@ -370,8 +379,8 @@ class BaseView(object):
         if ignore==None:
             ignore = []
 
-        js_links = [r[1] if r[1].startswith((u"http://",u"https://")) else self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
-        css_links = [r[1] if r[1].startswith((u"http://",u"https://")) else self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
+        js_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
+        css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
         js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)

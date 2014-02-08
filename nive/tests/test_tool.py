@@ -73,3 +73,8 @@ class ToolTest_db_mysql(ToolTest_db, __local.MySqlTestCase):
     """
     see tests.__local
     """
+
+class ToolTest_db_pg(ToolTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """

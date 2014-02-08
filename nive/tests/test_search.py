@@ -145,3 +145,8 @@ class SearchTest_db_mysql(SearchTest_db, __local.MySqlTestCase):
     """
     see tests.__local
     """
+
+class SearchTest_db_pg(SearchTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """

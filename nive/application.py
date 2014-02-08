@@ -156,9 +156,9 @@ class Application(object):
         self.starttime = time()
         log = logging.getLogger(self.id)
         log.debug("Startup with debug=%s", str(debug))
+        self.debug = debug
         self.Signal("startup", app=self)
         self.SetupRegistry()
-        self.debug = debug
         
 
     def StartRegistration(self, pyramidConfig):

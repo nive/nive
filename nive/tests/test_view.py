@@ -29,8 +29,9 @@ class viewModule(object):
 class viewTest_db:
 
     def setUp(self):
-        self.config = testing.setUp()
         self.request = testing.DummyRequest()
+        self.config = testing.setUp(request=self.request)
+        self.config.include('pyramid_chameleon')
         self.request._LOCALE_ = "en"
         self.request.subpath = ["file1.txt"]
         self.request.context = None
@@ -68,13 +69,17 @@ class viewTest_db:
         self.assert_(view.Url(self.context))
         self.assert_(view.FolderUrl())
         self.assert_(view.FolderUrl(self.context))
-        self.assertRaises(ValueError, view.StaticUrl, "file.js")
         self.assert_(view.FileUrl("file1"))
         self.assert_(view.FileUrl("file1", self.context2))
         self.assert_(view.PageUrl())
         self.assert_(view.PageUrl(self.context, usePageLink=1))
         self.assert_(view.CurrentUrl(retainUrlParams=False))
         self.assert_(view.CurrentUrl(retainUrlParams=True))
+
+        self.assertRaises(ValueError, view.StaticUrl, "file.js")
+        self.assertRaises(ValueError, view.StaticUrl, "myproject:file.js")
+        self.assert_(view.StaticUrl("http://file.js"))
+        self.assert_(view.StaticUrl("/file.js"))
 
         urls = ["page_url", "obj_url", "obj_folder_url", "parent_url"]
         for url in urls:
@@ -207,6 +212,11 @@ class viewTest_db_sqlite(viewTest_db, __local.SqliteTestCase):
     """
 
 class viewTest_db_mysql(viewTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """
+
+class viewTest_db_pg(viewTest_db, __local.PostgreSqlTestCase):
     """
     see tests.__local
     """

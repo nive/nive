@@ -95,6 +95,12 @@ class Path(unittest.TestCase):
         p.Delete(deleteSubdirs = True)
         self.assert_(p.IsDirectory()==False)
         #p.Execute("cmd", returnStream = True)
-            
+        
+        
+    def test_tempfilename(self):
+        p = DvPath("file.txt")
+        p.SetUniqueTempFileName()
+        self.assert_(p.GetExtension()=="txt",p.GetExtension())
+        
             
             
