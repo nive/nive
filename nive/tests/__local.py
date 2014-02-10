@@ -1,5 +1,4 @@
 
-
 import sys
 import unittest
 from nive.definitions import DatabaseConf
@@ -49,8 +48,8 @@ POSTGRES_CONF = DatabaseConf(
 
 # essential system tests are run for both database systems if installed.
 # These switches also allow to manually enable or disable database system tests.
-ENABLE_SQLITE_TESTS = True
-ENABLE_MYSQL_TESTS = True
+ENABLE_SQLITE_TESTS = False
+ENABLE_MYSQL_TESTS = False
 ENABLE_POSTGRES_TESTS = True
 try:
     import MySQLdb
@@ -114,6 +113,6 @@ else:
 
 # Higher level tests are only run for one database system, not multiple.
 # The database type can be switched here
-DefaultTestCase = SqliteTestCase
+DefaultTestCase = PostgreSqlTestCase
 
     
