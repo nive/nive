@@ -231,7 +231,7 @@ class Form(Events, ReForm):
         self._c_form = None
         self._c_fields = None
         self._c_actions = None
-        ReForm.__init__(self, **kw)
+        super(ReForm, self).__init__(**kw)
         
         self.Signal("init")
             

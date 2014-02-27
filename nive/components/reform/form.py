@@ -96,7 +96,7 @@ class Form(Field):
                  formid='reform', use_ajax=False, ajax_options='{}', **kw):
         if schema == None:
             schema = Schema()
-        Field.__init__(self, schema, **kw)
+        super(Form, self).__init__(schema, **kw)
         _buttons = []
         for button in buttons:
             if isinstance(button, basestring):
