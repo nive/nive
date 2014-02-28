@@ -363,13 +363,13 @@ class ContainerEdit:
             newobj.Signal("duplicate", **kw)
             
         except Exception, e:
-            try:
-                if newDataEntry:
+            db = app.db
+            if newDataEntry:
+                try:
                     id = newDataEntry.GetID()
-                    db = app.db
                     db.DeleteEntry(id)
-            except:
-                pass
+                except:
+                    pass
             db.Undo()
             raise 
 
