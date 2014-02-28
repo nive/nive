@@ -342,7 +342,7 @@ class BaseView(object):
         return unicode(value, codepage)
 
     
-    def Assets(self, assets=None, ignore=None, viewModuleConfID=None):  
+    def Assets(self, assets=None, ignore=None, viewModuleConfID=None, types=None):  
         """
         Renders a list of static ressources as html <script> and <link>.
         If assets is None the list of assets is looked up in the view module-configuration.
@@ -364,6 +364,8 @@ class BaseView(object):
         by id in the applications registry. In this case the id can be passed in like 
         `Assets(viewModuleConfID='editor')` to lookup the the configuration in the registry. 
         
+        By default `Assets` renders both css and js links. You can use the parameter types e.g *types="js"*
+        to get js file links only. Set *types="css"* to get all css links.
         """
         if viewModuleConfID:
             app = self.context.app
@@ -378,11 +380,14 @@ class BaseView(object):
         
         if ignore==None:
             ignore = []
-
-        js_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
-        css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
-        js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
-        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+        
+        js_tags = css_tags = []
+        if types in (None, "js"):
+            js_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
+            js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
+        if types in (None, "css"):
+            css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
+            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
         
 
