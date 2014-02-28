@@ -128,7 +128,12 @@ class BaseView(object):
         if file.startswith((u"http://",u"https://",u"/")):
             return file
         if not u":" in file and self.viewModule and self.viewModule.static:
-            file = u"%s/%s" % (self.viewModule.static, file)
+            if self.viewModule.static.endswith((u"/",u":")):
+                file = self.viewModule.static + file
+            else:
+                file = u"%s/%s" % (self.viewModule.static, file)
+            if file.startswith((u"http://",u"https://",u"/")):
+                return file
         return static_url(file, self.request)
 
     def FileUrl(self, fieldID, resource=None):
