@@ -318,8 +318,6 @@ class Search:
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
-                                           start=start, 
-                                           max=max, 
                                            dataTable=typeInf["dbparam"],
                                            **kw)
             val = db.Query(sql2, values)
