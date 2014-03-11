@@ -697,11 +697,13 @@ class Search:
 
     def _ConvertRecords(self, records, converter, fields, fldList, skipRender, kws):
         # convert result
+        db = self.db
         items = []
         for rec in records:
             rec2 = []
             for p in range(len(fields)):
-                rec2.append(converter.Render(fields[p], rec[p], False, render=(fldList[p] not in skipRender), **kws))
+                value = db.structure._de(rec[p], fields[p][u"datatype"], fields[p])
+                rec2.append(converter.Render(fields[p], value, False, render=(fldList[p] not in skipRender), **kws))
             items.append(dict(zip(fldList, rec2)))
         return items, len(items)
     
