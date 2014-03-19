@@ -16,7 +16,11 @@ from time import time, localtime
 try:
     import psycopg2
 except ImportError:
-    pass
+    # define fake psycopg class here to avoid test import errors if psycopg is not installed
+    class psycopg2(object):
+        OperationalError = None
+        ProgrammingError = None
+        Warning = None
 
 from nive.utils.utils import STACKF
 
