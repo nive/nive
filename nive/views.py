@@ -332,12 +332,18 @@ class BaseView(object):
             try:
                 value = render_view(obj, self.request, name, secure)
                 self.request.context = orgctx
+            except HTTPNotFound:
+                self.request.context = orgctx
+                return u"Not found!"
             except HTTPForbidden:
                 self.request.context = orgctx
                 return u""
         else:
             try:
                 value = render_view(obj, self.request, name, secure)
+            except HTTPNotFound:
+                self.request.context = orgctx
+                return u"Not found!"
             except:
                 self.request.context = orgctx
                 raise
