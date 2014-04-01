@@ -51,6 +51,17 @@ class User(object):
     def GetGroups(self, context=None):
         return self.groups
     
+    def InGroups(self, groups):
+        """
+        check if user has one of these groups
+        """
+        if isinstance(groups, basestring):
+            return groups in self.groups
+        for g in groups:
+            if g in self.groups:
+                return True
+        return False
+    
     def ReadableName(self):
         return self.data.name
     
