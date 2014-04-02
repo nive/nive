@@ -19,7 +19,7 @@ class PostgreSqlTest(test_db.dbTest, __local.PostgreSqlTestCase):
     """
 
     def setUp(self):
-        p = MySql(connParam=DatabaseConf(POSTGRES_CONF), **test_Base.conf)
+        p = PostgreSql(connParam=DatabaseConf(POSTGRES_CONF), **test_Base.conf)
         p.structure.Init(structure=test_Base.struct, stdMeta=test_Base.struct[u"pool_meta"])
         self.pool = p
         self.pool.connection.connect()
