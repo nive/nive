@@ -56,12 +56,12 @@ class File(object):
             # update attributes from dictionary
             self.update(filedict)
 
-        # file data is set as string -> create string io and mark as tempfile
         if isinstance(self.file, basestring):
+            # file data is set as string -> create string io and mark as tempfile
             self.size = len(self.file)
             self.file = StringIO(self.file)
             self.tempfile = True
-
+    
         # get extension and file name if not set
         if self.filename == "" and self.path != "":
             self.filename = os.path.basename(path)

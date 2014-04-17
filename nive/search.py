@@ -255,7 +255,7 @@ class Search:
                                                max=None, 
                                                **kw)
                 val = db.Query(sql2, values)
-                total = val[0][0] if val else 0
+                total = len(val) if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -318,12 +318,13 @@ class Search:
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
-                                           start=start, 
-                                           max=max, 
                                            dataTable=typeInf["dbparam"],
                                            **kw)
             val = db.Query(sql2, values)
-            total = val[0][0] if val else 0
+            if not kw.get("groupby"):
+                total = val[0][0] if val else 0
+            else:
+                total = len(val) if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -392,7 +393,10 @@ class Search:
                                            singleTable=1,
                                            **kw)
             val = db.Query(sql2, values)
-            total = val[0][0] if val else 0
+            if not kw.get("groupby"):
+                total = val[0][0] if val else 0
+            else:
+                total = len(val) if val else 0
                 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -465,7 +469,10 @@ class Search:
                                            skipRang=1, 
                                            **kw)
             val = db.Query(sql2, values)
-            total = val[0][0] if val else 0
+            if not kw.get("groupby"):
+                total = val[0][0] if val else 0
+            else:
+                total = len(val) if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         result["phrase"] = searchFor
@@ -548,7 +555,10 @@ class Search:
                                            skipRang=1, 
                                            **kw)
             val = db.Query(sql2, values)
-            total = val[0][0] if val else 0
+            if not kw.get("groupby"):
+                total = val[0][0] if val else 0
+            else:
+                total = len(val) if val else 0
 
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         result["phrase"] = searchFor
@@ -699,11 +709,13 @@ class Search:
 
     def _ConvertRecords(self, records, converter, fields, fldList, skipRender, kws):
         # convert result
+        db = self.db
         items = []
         for rec in records:
             rec2 = []
             for p in range(len(fields)):
-                rec2.append(converter.Render(fields[p], rec[p], False, render=(fldList[p] not in skipRender), **kws))
+                value = db.structure._de(rec[p], fields[p][u"datatype"], fields[p])
+                rec2.append(converter.Render(fields[p], value, False, render=(fldList[p] not in skipRender), **kws))
             items.append(dict(zip(fldList, rec2)))
         return items, len(items)
     

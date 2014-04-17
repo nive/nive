@@ -204,6 +204,8 @@ class viewTest_db:
         self.assert_(view2.Assets(ignore="jquery.js"))
         self.assert_(view2.Assets(assets=(("jquery.js", "nive.adminview:static/mods/jquery.min.js"),)))
         self.assertFalse(view2.Assets(assets=[]))
+        self.assert_(view2.Assets(types="js").find(".css")==-1)
+        self.assert_(view2.Assets(types="css").find(".js")==-1)
         
 
 class viewTest_db_sqlite(viewTest_db, __local.SqliteTestCase):

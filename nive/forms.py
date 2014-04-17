@@ -231,7 +231,7 @@ class Form(Events, ReForm):
         self._c_form = None
         self._c_fields = None
         self._c_actions = None
-        ReForm.__init__(self, **kw)
+        super(Form, self).__init__(**kw)
         
         self.Signal("init")
             
@@ -929,14 +929,25 @@ class HTMLForm(Form):
         req = self.request
         js_links = []
         css_links = []
-        if js_resources:
-            js_links = [static_url(r, req) for r in filter(lambda v: v not in ignore, js_resources)]
-        if css_resources:
-            css_links = [static_url(r, req) for r in filter(lambda v: v not in ignore, css_resources)]
-        # seq
-        if resources:
-            js_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
-            css_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
+        # use view.StaticUrl if self.view is set
+        if self.view:
+            if js_resources:
+                js_links = [self.view.StaticUrl(r) for r in filter(lambda v: v not in ignore, js_resources)]
+            if css_resources:
+                css_links = [self.view.StaticUrl(r) for r in filter(lambda v: v not in ignore, css_resources)]
+            # seq
+            if resources:
+                js_links.extend([self.view.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
+                css_links.extend([self.view.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
+        else:
+            if js_resources:
+                js_links = [static_url(r, req) for r in filter(lambda v: v not in ignore, js_resources)]
+            if css_resources:
+                css_links = [static_url(r, req) for r in filter(lambda v: v not in ignore, css_resources)]
+            # seq
+            if resources:
+                js_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
+                css_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
         js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)

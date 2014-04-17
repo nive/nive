@@ -857,6 +857,7 @@ class ViewModuleConf(baseConf):
         static : Static directory
         staticName : By default ViewModule.id is used as url name to map the static
                      directory. To change the default specify a different name here.  
+        assets : list of assets required. each asset included as tuple (asset_id, asset_path)
         acl    : Pyramid security definitions added to nive.Application acls
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
@@ -891,6 +892,7 @@ class ViewModuleConf(baseConf):
         self.name = u""
         self.static = ""
         self.staticName = None
+        self.assets = None
         self.mainTemplate = None
         self.widgets = None
         self.acl = None

@@ -48,9 +48,10 @@ POSTGRES_CONF = DatabaseConf(
 
 # essential system tests are run for both database systems if installed.
 # These switches also allow to manually enable or disable database system tests.
-ENABLE_SQLITE_TESTS = False
+ENABLE_SQLITE_TESTS = True
 ENABLE_MYSQL_TESTS = False
-ENABLE_POSTGRES_TESTS = True
+ENABLE_POSTGRES_TESTS = False
+
 try:
     import MySQLdb
 except ImportError:

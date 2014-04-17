@@ -128,7 +128,12 @@ class BaseView(object):
         if file.startswith((u"http://",u"https://",u"/")):
             return file
         if not u":" in file and self.viewModule and self.viewModule.static:
-            file = u"%s/%s" % (self.viewModule.static, file)
+            if self.viewModule.static.endswith((u"/",u":")):
+                file = self.viewModule.static + file
+            else:
+                file = u"%s/%s" % (self.viewModule.static, file)
+            if file.startswith((u"http://",u"https://",u"/")):
+                return file
         return static_url(file, self.request)
 
     def FileUrl(self, fieldID, resource=None):
@@ -327,12 +332,18 @@ class BaseView(object):
             try:
                 value = render_view(obj, self.request, name, secure)
                 self.request.context = orgctx
+            except HTTPNotFound:
+                self.request.context = orgctx
+                return u"Not found!"
             except HTTPForbidden:
                 self.request.context = orgctx
                 return u""
         else:
             try:
                 value = render_view(obj, self.request, name, secure)
+            except HTTPNotFound:
+                self.request.context = orgctx
+                return u"Not found!"
             except:
                 self.request.context = orgctx
                 raise
@@ -342,7 +353,7 @@ class BaseView(object):
         return unicode(value, codepage)
 
     
-    def Assets(self, assets=None, ignore=None, viewModuleConfID=None):  
+    def Assets(self, assets=None, ignore=None, viewModuleConfID=None, types=None):  
         """
         Renders a list of static ressources as html <script> and <link>.
         If assets is None the list of assets is looked up in the view module-configuration.
@@ -364,6 +375,8 @@ class BaseView(object):
         by id in the applications registry. In this case the id can be passed in like 
         `Assets(viewModuleConfID='editor')` to lookup the the configuration in the registry. 
         
+        By default `Assets` renders both css and js links. You can use the parameter types e.g *types="js"*
+        to get js file links only. Set *types="css"* to get all css links.
         """
         if viewModuleConfID:
             app = self.context.app
@@ -378,11 +391,14 @@ class BaseView(object):
         
         if ignore==None:
             ignore = []
-
-        js_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
-        css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
-        js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
-        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+        
+        js_tags = css_tags = []
+        if types in (None, "js"):
+            js_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
+            js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
+        if types in (None, "css"):
+            css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
+            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
         
 

@@ -124,12 +124,18 @@ def string_node(field, kw, kwWidget, form):
     return SchemaNode(String(), **kw)
 
 def number_node(field, kw, kwWidget, form):
+    if not "widget" in kw:
+        kw["widget"] = TextInputWidget(**kwWidget)
     return SchemaNode(Integer(), **kw)
 
 def float_node(field, kw, kwWidget, form):
+    if not "widget" in kw:
+        kw["widget"] = TextInputWidget(**kwWidget)
     return SchemaNode(Float(), **kw)
 
 def bool_node(field, kw, kwWidget, form):
+    if not "widget" in kw:
+        kw["widget"] = CheckboxWidget(**kwWidget)
     return SchemaNode(Boolean(), **kw)
 
 def htext_node(field, kw, kwWidget, form):
@@ -183,6 +189,8 @@ def list_node(field, kw, kwWidget, form):
     if not "widget" in kw:
         v = form.app.root().LoadListItems(field, form.context)
         if field.settings and field.settings.get("addempty"):
+            # copy the list and add empty entry
+            v = list(v)
             v.insert(0,{"id":u"","name":u""})
         values = [(a["id"],a["name"]) for a in v]
         kw["widget"] = SelectWidget(values=values, **kwWidget)
