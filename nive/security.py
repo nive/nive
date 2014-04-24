@@ -102,7 +102,11 @@ class AdminUser(object):
         self.data = Conf(**values)
         self.meta = Conf()
         self.identity = ident or str(self.id)
-        self.groups = self.data.groups = (u"group:admin",)
+        if values.get("groups"):
+            groups = tuple(values.get("groups"))
+        else:
+            groups = (u"group:admin",)
+        self.groups = self.data.groups = groups
 
     def __str__(self):
         return str(self.identity)
