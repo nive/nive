@@ -90,7 +90,7 @@ or rendering use a form library directly.
 
 Control sets for Select and Radio fields
 ========================================
-Conditional sets can be automatically shown and hidden by setting a list `controlset:True`
+Conditional sets can be automatically shown and hidden by setting a lists option `controlset:True`
 and extending each listitem with a fields list. :: 
 
       FieldConf(id="flist",   
