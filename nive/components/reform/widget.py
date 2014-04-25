@@ -827,13 +827,18 @@ class SelectWidget(Widget):
         Returns a list of controlset field ids. If `value` is None all controlled
         fields will be returned otherwise only the ids linked to this value.
         """
-        items = self.form.GetField(field.name).listItems(field, None)
+        items = self.form.GetField(field.name).get("listItems",[])
+        if not isinstance(items, (list,tuple)):
+            items = items(field, None)
         ids = []
         for i in items:
             if value and value!=i.id:
                 continue
-            for v in i.fields:
-                ids.append(v.id)
+            try:
+                for v in i.fields:
+                    ids.append(v.id)
+            except AttributeError:
+                pass
         if format=="html":
             return json.dumps(ids)
         return ids
