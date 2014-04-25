@@ -13,6 +13,7 @@ For configuration storage and reference ``configuration.uid()`` is used as key.
 """
 import pickle
 import time
+import logging 
 
 from nive.definitions import implements, IPersistent, ModuleConf, Conf, IModuleConf
 from nive.definitions import OperationalError, ProgrammingError
@@ -91,7 +92,7 @@ class DbPersistence(PersistentConf):
             if not db:
                 close = 1
                 db = self.app.NewDBApi()
-            sql = """select value,ts from pool_sys where id=%s""" % (db.placeholder)
+            sql = """select value,ts from pool_sys where id=%s""" % (self.app.NewConnection().placeholder)
             c=db.cursor()
             c.execute(sql, (self._GetUid(),))
             data = c.fetchall()
@@ -103,7 +104,8 @@ class DbPersistence(PersistentConf):
             data = None
             db.rollback()
         except Exception, e:
-            # !!! log error and continue
+            log = logging.getLogger(self.app.id)
+            log.error("DbPersistence.Load() failed %s", str(e))
             return None
         if close:
             db.close()
