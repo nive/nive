@@ -1,10 +1,10 @@
 
 <style type="text/css">
 .CodeMirror {
-  font-size:110%;
+  font-size:1.1em;
   line-height:1.3em;
   border: 1px solid #dddddd;
-  width: 700px;
+  width: auto;
 }
 .CodeMirror-scroll {
   min-height: ${field.widget.height}px;
