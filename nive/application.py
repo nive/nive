@@ -285,6 +285,7 @@ class Application(object):
         
         Events:
         - loadRoot(root)
+        - loadFromCache() called for the root
 
         returns root object
         """
