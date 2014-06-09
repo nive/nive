@@ -550,9 +550,7 @@ class BaseView(object):
         
         returns True / False
         """
-        if not context:
-            context = self.context
-        return has_permission(permission, context, self.request)
+        return has_permission(permission, context or self.context, self.request)
     
     def InGroups(self, groups):
         """
