@@ -6,6 +6,9 @@ from types import DictType
 from nive.definitions import *
 
 # -----------------------------------------------------------------
+class DummyClass(object):
+    def hello(self):
+        return "hello"
 
 
 class baseConfTest(unittest.TestCase):
@@ -160,6 +163,7 @@ class ConfTest(unittest.TestCase):
             name = "Text",
             dbparam = "texts",
             context = "nive.tests.test_helper.text",
+            extensions = (DummyClass,),
             selectTag = 1,
             description = ""
         )
@@ -237,6 +241,7 @@ class ConfTest(unittest.TestCase):
             id = "module",
             name = "Module",
             context = "nive.tests.test_definitions.ConfTest",
+            extensions = (DummyClass,),
             events = None,
             description = ""
         )
@@ -244,7 +249,7 @@ class ConfTest(unittest.TestCase):
         self.assert_(len(testconf.uid()))
         str(testconf) # may be empty
         self.assert_(repr(testconf))
-    
+
     def test_obj9(self, **kw):
         testconf = WidgetConf(
             apply = (IObject,IApplication),

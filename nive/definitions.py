@@ -1176,6 +1176,8 @@ class ModuleConf(baseConf):
         views   : List containing ViewConf or ViewModuleConf definitions. 
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
+        extensions:List of dotted python names or class references to extend context with
+                   additional functionality. Used in object factory.
         translations : A single or multiple directories containing translation files. 
         modules : Additional module configuration to be included.
         description : Description.
@@ -1193,6 +1195,7 @@ class ModuleConf(baseConf):
         self.views = []
         self.events = None
         self.modules = []
+        self.extensions = None
         self.translations = None
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
@@ -1229,6 +1232,12 @@ class ModuleConf(baseConf):
                     report.append((ImportError, " AppConf.modules error: "+m, self, m))
             if hasattr(m, "test"):
                 report += m.test()
+        # check extensions
+        if self.extensions:
+            for e in self.extensions:
+                o = TryResolveName(e)
+                if not o:
+                    report.append((ImportError, " for ModuleConf.extensions", e))
         return report                
         
 

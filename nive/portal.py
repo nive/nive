@@ -39,9 +39,12 @@ from pyramid.events import NewRequest
 
 from nive.i18n import _
 from nive.definitions import PortalConf, Conf
-from nive.definitions import implements, IPortal, IApplication
+from nive.definitions import implements
 from nive.definitions import ConfigurationError
+from nive.definitions import IModuleConf, IPortal, IApplication
+from nive.definitions import ModuleConf
 from nive.helper import ResolveConfiguration, ResolveName
+from nive.helper import ClassFactory
 from nive.security import User, authenticated_userid, Allow, ALL_PERMISSIONS
 from nive.events import Events
 from nive.utils.utils import SortConfigurationList
@@ -107,9 +110,12 @@ class Portal(Events, object):
         elif isinstance(comp, basestring):
             c = ResolveName(conf.context)
             comp = c(conf)
+        elif IModuleConf.providedBy(comp):
+            comp = ClassFactory(conf)(conf)
         elif iface and iface.providedBy(comp):
             c = ResolveName(conf.context)
             comp = c(conf)
+
         try:
             if not name:
                 name = conf.id
