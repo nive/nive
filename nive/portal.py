@@ -104,22 +104,18 @@ class Portal(Events, object):
         """
         log = logging.getLogger("portal")
         iface, conf = ResolveConfiguration(comp)
-        if not conf:
-            if not name or isinstance(comp, basestring):
-                raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
-        elif isinstance(comp, basestring):
-            c = ResolveName(conf.context)
-            comp = c(conf)
-        elif IModuleConf.providedBy(comp):
+        if not conf and isinstance(comp, basestring):
+            raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
+        elif IModuleConf.providedBy(conf):
             comp = ClassFactory(conf)(conf)
         elif iface and iface.providedBy(comp):
-            c = ResolveName(conf.context)
-            comp = c(conf)
+            comp = ResolveName(conf.context)(conf)
+        elif isinstance(comp, basestring):
+            comp = ResolveName(conf.context)(conf)
 
         try:
-            if not name:
-                name = conf.id
-        except:
+            name = name or conf.id
+        except AttributeError:
             pass
         if not name:
             raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
