@@ -81,6 +81,8 @@ class Portal(Events, object):
         event: getitem(obj) called with the traversed object
         """
         try:
+            if not name in self.components:
+                raise KeyError, name
             obj = getattr(self, name)
             self.Signal("getitem", obj=obj)
             return obj
