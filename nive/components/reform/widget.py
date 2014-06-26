@@ -1170,7 +1170,11 @@ class FileUploadWidget2(Widget):
     def deserialize(self, field, pstruct, formstruct=None):
         if pstruct in ("", null, None):
             return null
-        file = File()
+        try:
+            cls = self.form.app.db.GetFileClass()
+            file = cls()
+        except AttributeError:
+            file = File()
         file.filename = pstruct.filename
         file.file = pstruct.file
         file.filekey = field.name
