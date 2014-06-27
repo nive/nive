@@ -113,8 +113,8 @@ class Application(object):
         self._structure = PoolStructure()
         self._dbpool = None
         
-        log = logging.getLogger(self.id)
-        log.debug("Initialize %s", repr(configuration))
+        self.log = logging.getLogger(self.id)
+        self.log.debug("Initialize %s", repr(configuration))
         self.Signal("init", configuration=configuration)
 
         self.starttime = 0
@@ -154,8 +154,7 @@ class Application(object):
         - startup(app)
         """
         self.starttime = time()
-        log = logging.getLogger(self.id)
-        log.debug("Startup with debug=%s", str(debug))
+        self.log.debug("Startup with debug=%s", str(debug))
         self.debug = debug
         self.Signal("startup", app=self)
         self.SetupRegistry()
@@ -200,8 +199,7 @@ class Application(object):
         - finishRegistration(app, pyramidConfig)
         """
         self.Signal("finishRegistration", app=self, pyramidConfig=pyramidConfig)
-        log = logging.getLogger(self.id)
-        log.debug('Finished registration.')
+        self.log.debug('Finished registration.')
         
         # reload database structure
         self._LoadStructure(forceReload = True)
@@ -212,9 +210,9 @@ class Application(object):
             self.GetTool("nive.tools.dbStructureUpdater", self).Run()
             result, report = self.TestDB()
             if result:
-                log.info('Database test result: %s %s', str(result), report)
+                self.log.info('Database test result: %s %s', str(result), report)
             else:
-                log.error('Database test result: %s %s', str(result), report)
+                self.log.error('Database test result: %s %s', str(result), report)
  
         self._Lock()
         
@@ -229,10 +227,9 @@ class Application(object):
         """
         # start
         self.Signal("run", app=self)
-        log = logging.getLogger(self.id)
-        log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-self.starttime)
+        self.log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-self.starttime)
         self.id = self.configuration.id
-
+        self.log=logging.getLogger(self.id)
     
     def Close(self):
         """
@@ -419,10 +416,9 @@ class Registration(object):
         
         raises TypeError, ConfigurationError, ImportError
         """
-        log = logging.getLogger(self.id)
         iface, conf = ResolveConfiguration(module)
         if not conf:
-            log.debug('Register python module: %s', str(module))
+            self.log.debug('Register python module: %s', str(module))
             return self.registry.registerUtility(module, **kw)
         
         # test conf
@@ -430,10 +426,10 @@ class Registration(object):
             r=conf.test()
             if r:
                 v = FormatConfTestFailure(r)
-                log.warn('Configuration test failed:\r\n%s', v)
+                self.log.warn('Configuration test failed:\r\n%s', v)
                 #return False
         
-        log.debug('Register module: %s %s', str(conf), str(iface))
+        self.log.debug('Register module: %s %s', str(conf), str(iface))
         # register module views
         if iface not in (IViewModuleConf, IViewConf):
             self._RegisterConfViews(conf)
@@ -451,7 +447,7 @@ class Registration(object):
         # events
         if conf.get("events"):
             for e in conf.events:
-                log.debug('Register Event: %s for %s', str(e.event), str(e.callback))
+                self.log.debug('Register Event: %s for %s', str(e.event), str(e.callback))
                 self.ListenEvent(e.event, e.callback)
 
         if iface == IRootConf:
