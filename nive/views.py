@@ -1030,8 +1030,10 @@ class FieldRenderer(object):
                             values.append(item["name"])
                 else:
                     values.append(ref)
-                
-            data = u", ".join(values)
+            delimiter = u", "
+            if fieldConf.settings and u"delimiter" in fieldConf.settings:
+                delimiter = fieldConf.settings[u"delimiter"]
+            data = delimiter.join(values)
 
         elif fType == "url":
             if render:
