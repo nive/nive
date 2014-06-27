@@ -246,7 +246,7 @@ def LoadJSONConf(jsondata, default=None):
 
 
 
-def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
+def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, storeConfAsStaticClassVar=False):
     """
     Creates a python class reference from configuration. Uses configuration.context as class
     and dynamically adds classes listed as configuration.extensions as base classes.
@@ -257,6 +257,10 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
     - configuration.extensions [optional]
     
     If reloadClass = False the class is cached as configuration._v_class.
+    
+    storeConfAsStaticClassVar: experimental option. If true stores the configuration as part of the 
+    class.
+    
     """
     if not reloadClass:
         try:
@@ -282,6 +286,9 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
             configuration.lock()
     
     if not bases:
+        if storeConfAsStaticClassVar:
+            cls = type("_factory_"+cls.__name__, (cls,), {})
+            cls.configuration = configuration
         cacheCls(configuration, cls)
         return cls
 
@@ -298,6 +305,8 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
 
     # create new class with name configuration.context
     cls = type("_factory_"+cls.__name__, tuple(b), {})
+    if storeConfAsStaticClassVar:
+        cls.configuration = configuration
     cacheCls(configuration, cls)
     return cls
 
