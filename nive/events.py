@@ -133,7 +133,7 @@ class Events(object):
                     if r!=None:
                         # store result if not None as tuple
                         # (result)
-                        result.append((r))
+                        result.append((r, str(fnc)))
             except:
                 if raiseExcp:
                     raise
