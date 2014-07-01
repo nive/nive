@@ -76,7 +76,6 @@ Configurations
 """
 
 import copy
-from types import ListType,TupleType,DictType
 
 from zope.interface import Interface, Attribute, implements, Provides, alsoProvides, directlyProvidedBy, directlyProvides
 
@@ -558,7 +557,7 @@ class AppConf(baseConf):
             if hasattr(m, "test"):
                 report += m.test()
         # check meta
-        if not type(self.meta) in (ListType,TupleType):
+        if not isinstance(self.meta, (list, tuple)):
             report.append((TypeError, " AppConf.meta error: Not a list", self))
         else:
             for m in self.meta:
@@ -732,14 +731,14 @@ class ObjectConf(baseConf):
                 if not o:
                     report.append((ImportError, " for ObjectConf.extensions", e))
         # check views
-        if not type(self.views) in (ListType,TupleType):
+        if not isinstance(self.views, (list, tuple)):
             report.append((TypeError, " ObjectConf.views error: Not a list", self))
         else:
             for m in self.views:
                 if hasattr(m, "test"):
                     report += m.test()
         # check data
-        if not type(self.data) in (ListType,TupleType):
+        if not isinstance(self.data, (list, tuple)):
             report.append((TypeError, " ObjectConf.data error: Not a list", self))
         else:
             for m in self.data:
@@ -752,10 +751,10 @@ class ObjectConf(baseConf):
                 if not isinstance(s, dict):
                     report.append((TypeError, " ObjectConf.forms."+subset+" error: Not a dictionary", self))
                 elif "fields" in s:
-                    if not type(s["fields"]) in (ListType,TupleType):
+                    if not isinstance(s["fields"], (list, tuple)):
                         report.append((TypeError, " ObjectConf.forms."+subset+".fields error: Not a list", self))
                 elif "actions" in s:
-                    if not type(s["actions"]) in (ListType,TupleType):
+                    if not isinstance(s["actions"], (list, tuple)):
                         report.append((TypeError, " ObjectConf.forms."+subset+".actions error: Not a list", self))
                     
         return report
@@ -832,7 +831,7 @@ class RootConf(baseConf):
                 if not o:
                     report.append((ImportError, " for ObjectConf.extensions", e))
         # check views
-        if not type(self.views) in (ListType,TupleType):
+        if not isinstance(self.views, (list, tuple)):
             report.append((TypeError, " RootConf.views error: Not a list", self))
         else:
             for m in self.views:
@@ -939,7 +938,7 @@ class ViewModuleConf(baseConf):
         #    if not o:
         #        report.append((ImportError, " ViewModuleConf.defultTemplatePath error", self))
         # check views
-        if not type(self.views) in (ListType,TupleType):
+        if not isinstance(self.views, (list, tuple)):
             report.append((TypeError, " ViewModuleConf.views error: Not a list", self))
         else:
             for m in self.views:
@@ -1146,14 +1145,14 @@ class ToolConf(baseConf):
         if not o:
             report.append((ImportError, " for ToolConf.context", self))
         # check data
-        if not type(self.data) in (ListType,TupleType):
+        if not isinstance(self.data, (list, tuple)):
             report.append((TypeError, " ToolConf.data error: Not a list", self))
         else:
             for m in self.data:
                 if hasattr(m, "test"):
                     report += m.test()
         # check views
-        if not type(self.views) in (ListType,TupleType):
+        if not isinstance(self.views, (list, tuple)):
             report.append((TypeError, " ToolConf.views error: Not a list", self))
         else:
             for m in self.views:
@@ -1218,7 +1217,7 @@ class ModuleConf(baseConf):
             if not o:
                 report.append((ImportError, " for ModuleConf.context", self))
         # check views
-        if not type(self.views) in (ListType,TupleType):
+        if not isinstance(self.views, (list,tuple)):
             report.append((TypeError, " ModuleConf.views error: Not a list", self))
         else:
             for m in self.views:
