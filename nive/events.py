@@ -47,6 +47,7 @@ to the __init__ function: ::
 """
 
 import weakref
+import inspect
 
 class Events(object):
     
@@ -125,18 +126,14 @@ class Events(object):
                                 # (result, str(fnc), str(cls))
                                 result.append((r, str(fnc), str(cls)))
                 else:
-                    try:
-                        r = fnc(context=self,**kw)
-                        if r!=None:
-                            # store result if not None as tuple
-                            # (result)
-                            result.append((r, str(fnc)))
-                    except TypeError:
+                    if "context" in inspect.getargspec(fnc).args:
+                        r = fnc(context=self, **kw)
+                    else:
                         r = fnc(**kw)
-                        if r!=None:
-                            # store result if not None as tuple
-                            # (result)
-                            result.append((r))
+                    if r!=None:
+                        # store result if not None as tuple
+                        # (result)
+                        result.append((r))
             except:
                 if raiseExcp:
                     raise
