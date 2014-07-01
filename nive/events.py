@@ -50,6 +50,18 @@ import weakref
 
 class Events(object):
     
+    def InitEvents(self):
+        """
+        Call Init() for every super class
+        """
+        if not hasattr(self, "_eventdispatch"):
+            self._eventdispatch = {}
+        for cls in self.__class__.__mro__:
+            f = cls.__dict__.get("Init")
+            if f != None:
+                f(self)
+
+
     def ListenEvent(self, signal, function):
         """
         Register a function for an event. 
@@ -64,7 +76,7 @@ class Events(object):
             self._eventdispatch[signal].append(function)
 
 
-    def RemoveListener(self, signal, function):
+    def RemoveListener(self, signal, function=None):
         """
         Remove the function from an event.
 
@@ -74,60 +86,61 @@ class Events(object):
         """
         if not self._eventdispatch.has_key(signal):
             return
+        if not function:
+            del self._eventdispatch[signal]
+            return
         try:
             self._eventdispatch[signal].remove(function)
-        except:
+        except ValueError:
             pass
     
 
     def Signal(self, signal, raiseExcp=True, **kw):
         """
         Fire an event *signal*. *kw* are the parameters passed to the callback.
+        
+        Functions called by the event system can pass values back if required.
+        The returned values are added to list of results. Each entry is a tuple
+        containing the result, the called function as string and the actual class
+        the function was called for. e.g.
+        
+           ((True, "MyEvent", "<class MyObject ...>"))
+
         """
         if signal==u"init":
             self.InitEvents()
             #return
         if not self._eventdispatch.has_key(signal):
-            return
-        if raiseExcp:
-            for fnc in self._eventdispatch[signal]:
+            return None
+        result = []
+        for fnc in self._eventdispatch[signal]:
+            try:
                 if isinstance(fnc, basestring):
                     for cls in self.__class__.__mro__:
                         f = cls.__dict__.get(fnc)
                         if f != None:
-                            f(self, **kw)
+                            r = f(self, **kw)
+                            if r!=None:
+                                # store result if not None as tuple
+                                # (result, str(fnc), str(cls))
+                                result.append((r, str(fnc), str(cls)))
                 else:
                     try:
-                        fnc(context=self,**kw)
+                        r = fnc(context=self,**kw)
+                        if r!=None:
+                            # store result if not None as tuple
+                            # (result)
+                            result.append((r, str(fnc)))
                     except TypeError:
-                        fnc(**kw)
-        else:
-            for fnc in self._eventdispatch[signal]:
-                try:
-                    if isinstance(fnc, basestring):
-                        for cls in self.__class__.__mro__:
-                            f = cls.__dict__.get(fnc)
-                            if f != None:
-                                f(self, **kw)
-                    else:
-                        try:
-                            fnc(context=self,**kw)
-                        except TypeError:
-                            fnc(**kw)
-                except Exception, e:
-                    pass
-
-
-    def InitEvents(self):
-        """
-        Call Init() for every super class
-        """
-        if not hasattr(self, "_eventdispatch"):
-            self._eventdispatch = {}
-        for cls in self.__class__.__mro__:
-            f = cls.__dict__.get("Init")
-            if f != None:
-                f(self)
+                        r = fnc(**kw)
+                        if r!=None:
+                            # store result if not None as tuple
+                            # (result)
+                            result.append((r))
+            except:
+                if raiseExcp:
+                    raise
+        return result
 
 
 
