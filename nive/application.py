@@ -234,7 +234,12 @@ class Application(object):
     def Close(self):
         """
         Close database and roots.
+
+        Events:
+
+        - close()
         """
+        self.Signal("close")
         self._CloseRootObj()
         if self._dbpool:
             self._dbpool.Close()
