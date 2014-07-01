@@ -34,6 +34,7 @@ Interface: IPortal
 import copy
 import time
 import logging
+import ConfigParser
 
 from pyramid.events import NewRequest
 
@@ -57,6 +58,8 @@ class Portal(Events, object):
 
     __name__ = u""
     __parent__ = None
+    host = None
+    port = None
     
     def __init__(self, configuration = None):
         """
@@ -130,7 +133,7 @@ class Portal(Events, object):
         #self.RegisterGroups(comp)
 
 
-    def Startup(self, pyramidConfig, debug=False):
+    def Startup(self, pyramidConfig, debug=False, **kw):
         """
         *Startup* is called once by the *main* function of the pyramid wsgi app on 
         server startup. All configuration, registration and setup is handled during
@@ -145,7 +148,19 @@ class Portal(Events, object):
         *debug* signals whether running in debug mode or not.
         """
         log = logging.getLogger("portal")
-        log.debug("Portal.Startup with debug=%s", str(debug))
+        log.debug("Startup with debug=%s for config %s", str(debug), str(pyramidConfig))
+        
+        # extract host and port from global config if set
+        if "global_config" in kw:
+            # get host and port from default pyramid ini file
+            ini=ConfigParser.ConfigParser()
+            try:
+                ini.read(kw["global_config"]["__file__"])
+                self.host = ini.get("server:main","host")
+                self.port = int(ini.get("server:main","port"))
+            except (KeyError, ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+                pass
+
         if pyramidConfig:
             self.SetupPortalViews(pyramidConfig)
             #pyramidConfig.add_subscriber(self.StartConnection, iface=NewRequest)
@@ -276,8 +291,11 @@ class Portal(Events, object):
     def Close(self):
         for name in self.components:
             a = getattr(self, name)
-            a.Close()
-            setattr(self, name, None)
+            try:
+                a.Close()
+            except:
+                pass
+            #setattr(self, name, None)
             
 
 
