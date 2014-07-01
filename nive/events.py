@@ -56,12 +56,12 @@ class Events(object):
         Call Init() for every super class
         """
         if not hasattr(self, "_eventdispatch"):
-            self._eventdispatch = {}
+            self._eventdispatch = {"close": "_Cleanup"}
         for cls in self.__class__.__mro__:
             f = cls.__dict__.get("Init")
             if f != None:
                 f(self)
-
+                
 
     def ListenEvent(self, signal, function):
         """
@@ -140,5 +140,7 @@ class Events(object):
         return result
 
 
-
-
+    def _Cleanup(self):
+        for e in self._eventdispatch:
+            self._eventdispatch[e] = None
+        self._eventdispatch = None
