@@ -832,9 +832,11 @@ class SelectWidget(Widget):
             items = items(field, None)
         ids = []
         for i in items:
+            # check list item options. For a control set each item may be a field.
             if value and value!=i.id:
                 continue
             try:
+                # it is a field list. add these ids too. 
                 for v in i.fields:
                     ids.append(v.id)
             except AttributeError:
