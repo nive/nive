@@ -1456,13 +1456,13 @@ default_resources = {
     'jquery.form': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js')),
+                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form-3.50.js')),
             },
         },
     'jquery.maskedinput': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.maskedinput.js', 'nive.components.reform:static/scripts/jquery.maskedinput-1.2.2.min.js')),
+                   ('jquery.maskedinput.js', 'nive.components.reform:static/scripts/jquery.maskedinput-1.3.1.min.js')),
             },
         },
     'datetimepicker': {
