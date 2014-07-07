@@ -389,9 +389,11 @@ class Form(Events, ReForm):
 
     def Validate(self, data, removeNull=True):
         """
-        Extracts fields from request or source data dictionary, converts and
-        validates
+        Extracts fields from request, converts and validates
         
+        Unlike the `ValidateSchema()` function `Validate()` validates html form widget 
+        data fields and does not support raw data validation.   
+
         Event
         - validate(data) before validate is called
         - process(data)  after validate has succeeded, is not called if validate failed
@@ -413,8 +415,11 @@ class Form(Events, ReForm):
 
     def ValidateSchema(self, data, removeNull=True):
         """
-        Extracts fields from request or source data dictionary, converts and
-        validates
+        Extracts fields from source data dictionary, converts and
+        validates. 
+        
+        Unlike the `Validate()` function `ValidateSchema()` validates raw data
+        and does not support html form widget data fields.   
         
         Event
         - validate(data) before validate is called
