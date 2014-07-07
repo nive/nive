@@ -22,7 +22,7 @@
                tal:repeat="f field.children">
          <div tal:replace="structure rndr(tmpl,field=f,cstruct=cstruct.get(f.name, null))"/>
     </tal:block>
-      
+  
     <div class="form-actions">
         <tal:block repeat="button field.buttons">
           <button
@@ -35,16 +35,42 @@
             <span i18n:translate="">${button.title}</span>
           </button>
         </tal:block>
+      
+  <style>
+    .form-progress { display: block; position:relative; border: 1px solid #ddd; padding: 1px; border-radius: 3px; }
+    .form-progress .bar { background-color: #B4F5B4; width:0%; height:20px; border-radius: 3px; }
+    .form-progress .percent { position:absolute; display:inline-block; top:3px; left:48%; }
+  </style>
+  <div class="form-progress">
+      <div class="bar"></div >
+      <div class="percent">0%</div >
+  </div>
     </div>
  
  
 <script type="text/javascript" tal:condition="field.use_ajax">
 function reform_ajaxify(response, status, xhr, form, oid, mthd) {
+  var bar = $('#'+oid+' .bar');
+  var percent = $('#'+oid' .percent');
+
   var options = { 
     target: '#'+oid,
     replaceTarget: true,
 
+    beforeSend: function() {
+      var percentVal = '0%';
+      bar.width(percentVal)
+      percent.html(percentVal);
+    },
+    uploadProgress: function(event, position, total, percentComplete) {
+      var percentVal = percentComplete + '%';
+      bar.width(percentVal)
+      percent.html(percentVal);
+    },
     success:  function(responseText, statusText, xhr, $form) { 
+      var percentVal = '100%';
+      bar.width(percentVal)
+      percent.html(percentVal);
       if(xhr.getResponseHeader('X-Relocate')) window.parent.close(xhr.getResponseHeader('X-Relocate'));
       else {
         $('#'+oid).replaceWith(responseText); 
