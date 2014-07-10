@@ -23,15 +23,9 @@
          <div tal:replace="structure rndr(tmpl,field=f,cstruct=cstruct.get(f.name, null))"/>
     </tal:block>
   
-  <style>
-    .form-progress { display: none; position:relative; border: 1px solid #ddd; padding: 1px; border-radius: 3px; }
-    .form-progress .bar { background-color: #B4F5B4; width:0%; height:20px; border-radius: 3px; }
-    .form-progress .percent { position:absolute; display:inline-block; top:3px; left:48%; }
-  </style>
-  <div class="form-progress">
-      <div class="bar"></div >
-      <div class="percent">0%</div >
-  </div>
+    <div tal:condition="field.uploadProgressBar" style="display:none" class="progress">
+      <div class="bar bar-success" style="width:0%;"></div>
+    </div>
 
     <div class="form-actions">
         <tal:block repeat="button field.buttons">
@@ -47,42 +41,75 @@
         </tal:block>
     </div>
  
- 
 <script type="text/javascript" tal:condition="field.use_ajax">
 function reform_ajaxify(response, status, xhr, form, oid, mthd) {
-  var bar = $('#'+oid+' .bar');
-  var percent = $('#'+oid+' .percent');
+  var useProgressBar = '${field.uploadProgressBar}';
+  
+  if(useProgressBar=='none') {
+    // progress bar disabled
+    var options = { 
+      target: '#'+oid,
+      replaceTarget: true,
 
-  var options = { 
-    target: '#'+oid,
-    replaceTarget: true,
-
-    beforeSend: function() {
-      $('#'+oid+' .form-progress').show();
-      var percentVal = '0%';
-      bar.width(percentVal)
-      percent.html(percentVal);
-    },
-    uploadProgress: function(event, position, total, percentComplete) {
-      var percentVal = percentComplete + '%';
-      bar.width(percentVal)
-      percent.html(percentVal);
-    },
-    success:  function(responseText, statusText, xhr, $form) { 
-      var percentVal = '100%';
-      bar.width(percentVal)
-      percent.html(percentVal);
-      if(xhr.getResponseHeader('X-Relocate')) window.parent.close(xhr.getResponseHeader('X-Relocate'));
-      else {
-        $('#'+oid).replaceWith(responseText); 
-        reform_ajaxify(response, status, xhr, form, oid);
+      success:  function(responseText, statusText, xhr, $form) { 
+        if(xhr.getResponseHeader('X-Relocate')) {
+          if(window!=window.top) window.parent.close(xhr.getResponseHeader('X-Relocate'));
+          else window.location.href = xhr.getResponseHeader('X-Relocate');
+        }
+        else {
+          $('#'+oid).replaceWith(responseText); 
+          reform_ajaxify(response, status, xhr, form, oid);
+        }
+      },
+      error:  function(responseText, statusText, xhr, $form) {
+        $('#'+oid).replaceWith(responseText.responseText); 
+        reform_ajaxify(response, status, xhr, form, oid); 
       }
-    },
-    error:  function(responseText, statusText, xhr, $form) {
-      $('#'+oid).replaceWith(responseText.responseText); 
-      reform_ajaxify(response, status, xhr, form, oid); 
-    }
-  };
+    };
+  } else {
+    var progress = $('#'+oid+' .progress');
+    if(useProgressBar=='always') progress.show();
+    var bar = $('#'+oid+' .progress .bar');
+    var delay = 500; // delay in milliseconds before showing the progress bar 
+    var showbar = 0;
+    var options = { 
+      target: '#'+oid,
+      replaceTarget: true,
+      forceSync: true,
+
+      beforeSend: function() {
+        var percentVal = '0%';
+        bar.width(percentVal)
+      },
+      uploadProgress: function(event, position, total, percentComplete) {
+        // keep some rest to show the server has to process thew file, too
+        if(percentComplete>98) percentComplete = 98;
+        var percentVal = percentComplete + '%';
+        bar.width(percentVal)
+        if(useProgressBar=='auto' && showbar==0) showbar = delay+event.timeStamp;
+        if(useProgressBar=='auto' && showbar>0 && showbar<event.timeStamp) { 
+          showbar=-1;
+          progress.show();
+        }
+      },
+      success:  function(responseText, statusText, xhr, $form) { 
+        var percentVal = '100%';
+        bar.width(percentVal)
+        if(xhr.getResponseHeader('X-Relocate')) {
+          if(window!=window.top) window.parent.close(xhr.getResponseHeader('X-Relocate'));
+          else window.location.href = xhr.getResponseHeader('X-Relocate');
+        }
+        else {
+          $('#'+oid).replaceWith(responseText); 
+          reform_ajaxify(response, status, xhr, form, oid);
+        }
+      },
+      error:  function(responseText, statusText, xhr, $form) {
+        $('#'+oid).replaceWith(responseText.responseText); 
+        reform_ajaxify(response, status, xhr, form, oid); 
+      }
+    };
+  }
   var extra_options = ${field.ajax_options};
   var name;
   if (extra_options) {
