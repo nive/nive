@@ -73,6 +73,8 @@ class viewTest_db:
         self.assert_(view.FileUrl("file1", self.context2))
         self.assert_(view.PageUrl())
         self.assert_(view.PageUrl(self.context, usePageLink=1))
+        self.assert_(view.PageUrl(addAnchor=True))
+        self.assert_(view.PageUrl(self.context, addAnchor=True))
         self.assert_(view.CurrentUrl(retainUrlParams=False))
         self.assert_(view.CurrentUrl(retainUrlParams=True))
 

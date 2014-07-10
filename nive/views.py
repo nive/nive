@@ -152,13 +152,16 @@ class BaseView(object):
             return u""
         return u"%sfile/%s" % (self.Url(resource), file.filename)
 
-    def PageUrl(self, resource=None, usePageLink=0):
+    def PageUrl(self, resource=None, usePageLink=0, addAnchor=False):
         """
         Generates the default page url for the resource with extension. If resource is a page element
         the page containing this element is used for the url. 
         
-        If resource is None the current context object is used as resource.
+        If `resource` is None the current context object is used as resource.
 
+        If `addAnchor` is true and resource is not the actula page the url is generated for, the function 
+        will append a anchor for the resource to the url based on the id.
+        
         returns url
         """
         if not resource:
@@ -171,8 +174,12 @@ class BaseView(object):
         if usePageLink and link:
             return self.ResolveUrl(link, resource)
         if hasattr(page, "extension"):
-            return u"%s.%s" % (resource_url(page, self.request)[:-1], page.extension)
-        return resource_url(page, self.request)
+            url = u"%s.%s" % (resource_url(page, self.request)[:-1], page.extension)
+        else:
+            url = resource_url(page, self.request)
+        if not addAnchor or resource == page:
+            return url
+        return "%s#nive-element%d"%(url,resource.id)
 
     def CurrentUrl(self, retainUrlParams=False):
         """
@@ -192,6 +199,7 @@ class BaseView(object):
         Possible values:
         
         - page_url
+        - page_url_anchor
         - obj_url
         - obj_folder_url
         - parent_url
@@ -202,6 +210,8 @@ class BaseView(object):
             object = self.context
         if url == "page_url":
             url = self.PageUrl(object)
+        elif url == "page_url_anchor":
+            url = self.PageUrl(object, addAnchor=True)
         elif url == "obj_url":
             url = self.Url(object)
         elif url.find("obj_folder_url")!=-1:
