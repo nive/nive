@@ -93,17 +93,21 @@ Control sets for Select and Radio fields
 Conditional sets can be automatically shown and hidden by setting a lists option `controlset:True`
 and extending each listitem with a fields list. :: 
 
-      FieldConf(id="flist",   
-                datatype="list",   
-                size=100,  
-                name="flist", 
-                settings={"controlset":True},
-                listItems=[Conf(id="item 1", name="Item 1", 
-                                fields=[FieldConf(id="ftext",datatype="text",size=10,name="ftext")]),
-                           Conf(id="item 2", name="Item 2", 
-                                fields=[FieldConf(id="fnum",datatype="number",size=8,name="fnum")])
-                           ]
-                ),
+    FieldConf(id="flist",   
+        datatype="list",   
+        size=100,  
+        name="flist", 
+        settings={"controlset":True},
+        listItems=[Conf(id="item 1", name="Item 1", 
+                        fields=[FieldConf(id="ftext",datatype="text",size=10,name="ftext")]),
+                   Conf(id="item 2", name="Item 2", 
+                        fields=[FieldConf(id="fnum",datatype="number",size=8,name="fnum")])
+        ]
+    )
+
+By default additional fields added as control fields will be treated as top level form fields. Control field data
+can be accessed like any other fields data. The controlset option is primarily a visual extension to make
+the more user friendly by showing some fields only in a certain context.
 
 Example
 =======
@@ -115,7 +119,7 @@ Internally the form uses a structure like in the following manually defined form
       FieldConf(id="fdate",   datatype="datetime", size=8,  name="fdate"),
       FieldConf(id="flist",   datatype="list",   size=100,  name="flist", 
                 listItems=[{"id": "item 1", "name":"Item 1"},
-                             {"id": "item 2", "name":"Item 2"}]),
+                           {"id": "item 2", "name":"Item 2"}]),
       FieldConf(id="fmselect", datatype="mselection", size=50, name="fmselect"),
     ]
     
