@@ -210,7 +210,12 @@ def mselection_node(field, kw, kwWidget, form):
     if not "widget" in kw:
         v = form.app.root().LoadListItems(field, form.context)
         values=[(a["id"],a["name"]) for a in v]
-        kw["widget"] = SelectWidget(values=values, size=field.get("len", 4), **kwWidget)
+        if field.settings.get("controlset"):
+            kw["widget"] = SelectWidget(values=values, size=1, **kwWidget)
+            kw["widget"].template = 'select_controlset'
+            kw["widget"].css_class = ''
+        else:
+            kw["widget"] = SelectWidget(values=values, size=field.get("len", 4), **kwWidget)
     return SchemaNode(List(allow_empty=True), **kw)
 
 def mcheckboxes_node(field, kw, kwWidget, form):
