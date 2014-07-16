@@ -332,6 +332,118 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
     return tag
 
 
+# Field list items ------------------------------------------
+
+from nive.security import GetUsers
+from nive.utils.language import LanguageExtension, CountryExtension
+
+def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
+    """
+    Load field list items for the given fieldconf.
+    If `force` is False and fieldconf already contains list items, the existing 
+    `fieldconf.listItems` are returned. Set `force=True` to reload each time this
+    function is called.
+        
+    `obj` and `pool_type` are only used for workflow lookup.
+        
+    returns dict list
+    """
+    values = []
+    if not fieldconf:
+        return values
+
+    if fieldconf.listItems and not force:
+        # skip loading if list filled
+        if hasattr(fieldconf.listItems, '__call__'):
+            return fieldconf.listItems(fieldconf, obj or app)
+        return fieldconf.listItems
+    
+    if not app:
+        if fieldconf.settings:
+            # settings dyn list
+            dyn = fieldconf.settings.get("codelist")
+            if dyn in ("languages", "countries"):
+                # the only two lists not requiring 'app'
+                if dyn == "languages":
+                    return LanguageExtension().Codelist()
+                else:
+                    return CountryExtension().Codelist()
+            
+        # abort here if app is not set
+        return fieldconf.listItems
+
+    # load list items from db, application or user database
+    if fieldconf.settings:
+        # settings dyn list
+        dyn = fieldconf.settings.get("codelist")
+        if not dyn:
+            pass        
+        elif dyn == "users":
+            return GetUsers(app)
+        elif dyn == "groups":
+            portal = app.portal
+            if portal==None:
+                portal = app
+            return portal.GetGroups(sort="name", visibleOnly=True)
+        elif dyn == "localgroups":
+            return app.GetGroups(sort="name", visibleOnly=True)
+        elif dyn == "types":
+            return app.GetAllObjectConfs()
+        elif dyn == "categories":
+            return app.GetAllCategories()
+        elif dyn[:5] == "type:":
+            type = dyn[5:]
+            return app.root().GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
+        elif dyn == "meta":
+            return app.root().GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
+        elif dyn == "languages":
+            return LanguageExtension().Codelist()
+        elif dyn == "countries":
+            return CountryExtension().Codelist()
+
+    fld = fieldconf.id
+    if fld == "pool_type":
+        values = app.GetAllObjectConfs()
+
+    elif fld == "pool_category":
+        values = app.GetAllCategories()
+
+    elif fld == "pool_groups":
+        local = fieldconf.settings.get("local")
+        loader = app
+        if not local:
+            portal = app.portal
+            if portal:
+                loader = portal
+        values = loader.GetGroups(sort="name", visibleOnly=True)
+
+    elif fld == "pool_language":
+        values = app.GetLanguages()
+
+    elif fld == "pool_wfa":
+        # uses type object as param
+        if obj:
+            try:
+                aWfp = obj.meta.get("pool_wfp")
+                obj = app.GetWorkflow(aWfp)
+                if obj:
+                    values = obj.GetActivities()
+            except:
+                pass
+        elif pool_type:
+            aWfp = app.GetObjectConf(pool_type).get("workflowID")
+            try:
+                obj = app.GetWorkflow(aWfp)
+                values = obj.GetActivities()
+            except:
+                pass
+        else:
+            values = []
+
+    elif fld == "pool_wfp":
+        values = app.GetAllWorkflowConfs()
+
+    return values
 
 
 # test request and response --------------------------------------

@@ -12,6 +12,7 @@ from nive.components.reform.template import ZPTRendererFactory
 from nive.i18n import _
 from nive.i18n import translate
 from nive.definitions import ModuleConf, ViewModuleConf
+from nive.helper import LoadListItems
 
 from nive.components.reform.schema import *
 from nive.components.reform.widget import *
@@ -187,7 +188,7 @@ def datetime_node(field, kw, kwWidget, form):
 
 def list_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, form.context)
+        v = LoadListItems(field, app=form.app, obj=form.context)
         if field.settings and field.settings.get("addempty"):
             # copy the list and add empty entry
             v = list(v)
@@ -201,14 +202,14 @@ def list_node(field, kw, kwWidget, form):
 
 def radio_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, form.context)
+        v = LoadListItems(field, app=form.app, obj=form.context)
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
     return SchemaNode(String(), **kw)
 
 def mselection_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, form.context)
+        v = LoadListItems(field, app=form.app, obj=form.context)
         values=[(a["id"],a["name"]) for a in v]
         if field.settings.get("controlset"):
             kw["widget"] = SelectWidget(values=values, size=1, **kwWidget)
@@ -220,7 +221,7 @@ def mselection_node(field, kw, kwWidget, form):
 
 def mcheckboxes_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        v = form.app.root().LoadListItems(field, form.context)
+        v = LoadListItems(field, app=form.app, obj=form.context)
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = CheckboxChoiceWidget(values=values, **kwWidget)
     return SchemaNode(List(allow_empty=True), **kw)

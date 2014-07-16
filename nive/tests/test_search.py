@@ -126,16 +126,6 @@ class SearchTest_db:
         self.assert_(r.SearchFulltextType(pool_type, "text", fields = fields2, sort = "pool_filename", ascending = 1, start = 0, max = 300))   #["count"]
         r.SearchFilename("file1.txt", parameter, fields = [], sort = "pool_filename", ascending = 1, start = 0, max = 100, operators=operators)
         
-        #test_listitems
-        self.assert_(len(r.LoadListItems(self.app.GetFld("pool_type"), obj=None, pool_type=None, force=True))==3)
-        r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"users"}))
-        self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"groups"})))
-        self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"languages"})))
-        self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"countries"})))
-        self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"types"})))
-        self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"meta"})))
-        #self.assert_(r.LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"})))
-
 class SearchTest_db_sqlite(SearchTest_db, __local.SqliteTestCase):
     """
     see tests.__local

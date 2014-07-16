@@ -27,6 +27,7 @@ from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidde
 from pyramid.exceptions import NotFound
 
 from nive.i18n import _
+from nive import helper
 from nive.utils.utils import ConvertToStr, ConvertListToStr, ConvertToDateTime
 from nive.utils.utils import FmtSeconds, FormatBytesForDisplay, CutText, GetMimeTypeExtension
 from nive import FileNotFound
@@ -928,7 +929,7 @@ class FieldRenderer(object):
             if not context:
                 return []
             pool_type = context.GetTypeID() 
-            return context.dataroot.LoadListItems(fld, obj=context, pool_type=pool_type)
+            return helper.LoadListItems(fld, app=context.app, obj=context, pool_type=pool_type)
         
         # format for output
         fType = fieldConf["datatype"]
