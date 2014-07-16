@@ -1955,6 +1955,67 @@ class TestFileData(unittest.TestCase):
         self.assertEqual(result['fp'], 'fp')
         self.assertEqual(result['preview_url'], 'preview_url')
         
+class TestList(unittest.TestCase):
+    def _makeOne(self, **kw):
+        from nive.components.reform.schema import List
+        return List(**kw)
+
+    def test_serialize(self):
+        node = DummySchemaNode2()
+        typ = self._makeOne()
+        provided = []
+        result = typ.serialize(node, provided)
+        self.failUnless(result is provided)
+
+    def test_serialize_null(self):
+        from nive.components.reform.schema import null
+        node = DummySchemaNode2()
+        typ = self._makeOne()
+        result = typ.serialize(node, null)
+        self.assertEqual(result, null)
+
+    def test_deserialize_no_iter(self):
+        node = DummySchemaNode2()
+        typ = self._makeOne()
+        e = invalid_exc(typ.deserialize, node, 123)
+        self.assertEqual(e.msg, '${value} is not iterable')
+
+    def test_deserialize_null(self):
+        from nive.components.reform.schema import null
+        node = DummySchemaNode2()
+        typ = self._makeOne()
+        result = typ.deserialize(node, null)
+        self.assertEqual(result, null)
+
+    def test_deserialize_invalid(self):
+        node = DummySchemaNode2()
+        typ = self._makeOne(allowed=["a","b"])
+        e = invalid_exc(typ.deserialize, node, ('c',))
+        self.assertEqual(e.msg, '${value} not in reference list')
+        
+    def test_deserialize_valid(self):
+        node = DummySchemaNode2()
+        typ = self._makeOne(allowed=["a","b"])
+        result = typ.deserialize(node, ('a',))
+        self.assertEqual(result, ['a'])
+
+        node = DummySchemaNode2()
+        typ = self._makeOne()
+        result = typ.deserialize(node, 'str')
+        self.assertEqual(result, ['str'])
+
+    def test_deserialize_empty_allow_empty_false(self):
+        node = DummySchemaNode2()
+        typ = self._makeOne()
+        e = invalid_exc(typ.deserialize, node, ())
+        self.assertEqual(e.msg, 'Required')
+
+    def test_deserialize_empty_allow_empty_true(self):
+        node = DummySchemaNode2()
+        typ = self._makeOne(allow_empty=True)
+        result = typ.deserialize(node, ())
+        self.assertEqual(result, [])
+        
 class TestCodeList(unittest.TestCase):
     def _makeOne(self, **kw):
         from nive.components.reform.schema import CodeList
@@ -1974,11 +2035,11 @@ class TestCodeList(unittest.TestCase):
         result = typ.serialize(node, null)
         self.assertEqual(result, null)
 
-    def test_deserialize_no_iter(self):
+    def test_deserialize_invalid(self):
         node = DummySchemaNode2()
         typ = self._makeOne(allowed=("aaa","bbb"))
         e = invalid_exc(typ.deserialize, node, 123)
-        self.assertEqual(e.msg, 'Value not in reference list')
+        self.assertEqual(e.msg, '${value} not in reference list')
 
     def test_deserialize_null(self):
         from nive.components.reform.schema import null
@@ -2014,61 +2075,6 @@ class TestCodeList(unittest.TestCase):
         e = invalid_exc(typ.deserialize, node, "")
         self.assertEqual(e.msg, 'Required')
   
-class TestList(unittest.TestCase):
-    def _makeOne(self, **kw):
-        from nive.components.reform.schema import List
-        return List(**kw)
-
-    def test_serialize(self):
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        provided = []
-        result = typ.serialize(node, provided)
-        self.failUnless(result is provided)
-
-    def test_serialize_null(self):
-        from nive.components.reform.schema import null
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        result = typ.serialize(node, null)
-        self.assertEqual(result, null)
-
-    def test_deserialize_no_iter(self):
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        e = invalid_exc(typ.deserialize, node, 123)
-        self.assertEqual(e.msg, '${value} is not iterable')
-
-    def test_deserialize_null(self):
-        from nive.components.reform.schema import null
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        result = typ.deserialize(node, null)
-        self.assertEqual(result, null)
-
-    def test_deserialize_valid(self):
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        result = typ.deserialize(node, ('a',))
-        self.assertEqual(result, ['a'])
-
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        result = typ.deserialize(node, 'str')
-        self.assertEqual(result, ['str'])
-
-    def test_deserialize_empty_allow_empty_false(self):
-        node = DummySchemaNode2()
-        typ = self._makeOne()
-        e = invalid_exc(typ.deserialize, node, ())
-        self.assertEqual(e.msg, 'Required')
-
-    def test_deserialize_empty_allow_empty_true(self):
-        node = DummySchemaNode2()
-        typ = self._makeOne(allow_empty=True)
-        result = typ.deserialize(node, ())
-        self.assertEqual(result, [])
-        
         
 class DummySchemaNode2(object):
     def __init__(self, typ=None, name='', exc=None, default=None):

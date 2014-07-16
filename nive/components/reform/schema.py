@@ -1788,15 +1788,19 @@ class List(object):
     ``allow_empty``
        Boolean representing whether an empty set input to
        deserialize will be considered valid.  Default: ``False``.
+
+    ``allowed``
+       List of strings defining the allowed values to be serialized.
     """
-    def __init__(self, allow_empty=False):
+    def __init__(self, allow_empty=False, allowed=None):
         self.allow_empty = allow_empty
+        self.allowed = allowed
         
     def serialize(self, node, value):
         return value
 
     def deserialize(self, node, value, formstruct=None):
-        if value in (null, None, ""):
+        if value in (null, None):
             return null
         if isinstance(value, basestring):
             value = [value]
@@ -1805,9 +1809,15 @@ class List(object):
                 node,
                 _('${value} is not iterable', mapping={'value':value})
                 )
-        value =  list(value)
+        value = list(value)
         if not value and not self.allow_empty:
             raise Invalid(node, _('Required'))
+
+        if self.allowed:
+            for v in value:
+                if not v in self.allowed:
+                    raise Invalid(node, _('${value} not in reference list', mapping={'value':v}))
+
         return value
         
 class CodeList(object):
@@ -1824,7 +1834,7 @@ class CodeList(object):
     """
     def __init__(self, allow_empty=False, allowed=None):
         self.allow_empty = allow_empty
-        self.allowed = allowed
+        self.allowed = set(allowed)
         
     def serialize(self, node, value):
         return value
@@ -1845,7 +1855,7 @@ class CodeList(object):
         
         if not value in self.allowed:
             if value:
-                raise Invalid(node, _('Value not in reference list'))
+                raise Invalid(node, _('${value} not in reference list', mapping={'value':value}))
             if not value and not self.allow_empty:
                 raise Invalid(node, _('Required'))
         
