@@ -187,25 +187,25 @@ def datetime_node(field, kw, kwWidget, form):
     return SchemaNode(DateTime(), **kw)
 
 def list_node(field, kw, kwWidget, form):
+    v = LoadListItems(field, app=form.app, obj=form.context)
+    if field.settings and field.settings.get("addempty"):
+        # copy the list and add empty entry
+        v = list(v)
+        v.insert(0,{"id":u"","name":u""})
     if not "widget" in kw:
-        v = LoadListItems(field, app=form.app, obj=form.context)
-        if field.settings and field.settings.get("addempty"):
-            # copy the list and add empty entry
-            v = list(v)
-            v.insert(0,{"id":u"","name":u""})
         values = [(a["id"],a["name"]) for a in v]
         kw["widget"] = SelectWidget(values=values, **kwWidget)
         if field.settings.get("controlset"):
             kw["widget"].template = 'select_controlset'
             kw["widget"].css_class = ''
-    return SchemaNode(String(), **kw)
+    return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
 
 def radio_node(field, kw, kwWidget, form):
+    v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
-        v = LoadListItems(field, app=form.app, obj=form.context)
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
-    return SchemaNode(String(), **kw)
+    return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
 
 def mselection_node(field, kw, kwWidget, form):
     if not "widget" in kw:

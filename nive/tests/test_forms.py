@@ -15,7 +15,7 @@ from nive.tests import __local
 data1_1 = { u"ftext": "this is text!",
             u"fnumber": "123456",
             u"fdate": "2008-06-23 16:55:20",#
-            u"flist": ["item 1", "item 2", "item 3"],
+            u"flist": "item 2",
             u"fmselect": "item 5",
             u"funit": "35",
             u"funitlist": "34\r\n35\r\n36",
@@ -87,7 +87,7 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         v,d,e = form.Validate(data=data1_1)
-        self.assert_(v, e)
+        self.assert_(v, str(e))
         
         v,d,e = form.Validate(data1_2)
         self.assertFalse(v, e)
@@ -127,7 +127,7 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         v,d,e = form.Validate(data1_1)
-        self.assert_(v, e)
+        self.assert_(v, str(e))
         
         v,d,e = form.Validate(data1_2)
         self.assertFalse(v, e)

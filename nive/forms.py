@@ -217,8 +217,8 @@ class Form(Events, ReForm):
         """
         # form context
         self.view = view
-        self.context = context or view.context
-        self.request = request or view.request
+        self.context = context or view.context if view else None
+        self.request = request or view.request if view else None
         self.app = app or self.context.app
         
         if loadFromType:
