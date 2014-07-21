@@ -1496,6 +1496,9 @@ class JsonSequenceForm(HTMLForm):
         Initially load data from configured object json data field. 
         context = obj
         
+        Event
+        - delete(data) after data has been deleted
+
         returns bool, html
         """
         sequence = self.context.data.get(self.jsonDataField)
@@ -1521,6 +1524,7 @@ class JsonSequenceForm(HTMLForm):
                 self.context.data[self.jsonDataField] = sequence
                 msgs=[_(u"Item deleted!")]
                 data = []
+                self.Signal("delete", data=sequence)
         else:
             data = []
         return data!=None, self.Render(data, msgs=msgs)
@@ -1548,6 +1552,11 @@ class JsonSequenceForm(HTMLForm):
                 seqindex = int(data.get(self.editKey))
             except:
                 seqindex = 0
+            if seqindex == 0 and data[self.jsonUniqueID] in [i["id"] for i in sequence]:
+                # item already in list and not edit clicked before
+                msgs=[_(u"Item exists!")]
+                return False, self.Render(data, msgs=msgs, errors=errors)
+                
             if self.editKey in data:
                 del data[self.editKey]
             if not seqindex or seqindex > len(sequence):
