@@ -1,6 +1,7 @@
 
 import time
 import unittest
+from pyramid import testing 
 
 from nive.portal import Portal
 from nive.definitions import ConfigurationError
@@ -21,6 +22,8 @@ class DummyClass2(object):
 class portalTest(unittest.TestCase):
     
     def setUp(self):
+        self.request = testing.DummyRequest()
+        self.config = testing.setUp(request=self.request)
         self.portal = Portal()
         self.app = testapp(mApp2)
 
@@ -65,8 +68,8 @@ class portalTest(unittest.TestCase):
 
 
     def test_portal2(self):
-        self.portal.StartConnection(Event())
-        self.portal.FinishConnection(Event())
+        self.portal.StartConnection(Event(self.request))
+        self.portal.FinishConnection(Event(self.request))
 
 
 

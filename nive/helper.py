@@ -460,7 +460,8 @@ class Request(object):
     environ = {}
 
 class Event(object):
-    request = Request()
+    def __init__(self, request=None):
+        self.request = request or Request()
 
 class FakeLocalizer(object):
     def translate(self, text):

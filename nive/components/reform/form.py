@@ -108,6 +108,7 @@ class Form(Field):
         self.formid = formid
         self.use_ajax = use_ajax
         self.ajax_options = Raw(ajax_options.strip())
+        self.uploadProgressBar = ''
         self.widget = FormWidget()
 
 
