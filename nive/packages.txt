@@ -1,11 +1,11 @@
 Package reorganisation
 ----------------------
 
-nive_cms    ->  nive_cms
+nive.cms    ->  nive_cms
 
-nive_userdb ->  nive_userdb
+nive.userdb ->  nive_userdb
 
-nive_datastore ->  nive_datastore
+nive.datastore ->  nive_datastore
 
 nive.components.extensions.fulltextpage -> nive_cms.extensions.fulltextpage
 
