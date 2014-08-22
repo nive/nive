@@ -72,6 +72,15 @@ Callback for dynamic list item loading: ::
 
     FieldConf(..., listItems=loadGroups, ...)
 
+The build in progress bar is activated by default with a delay of 500 milliseconds. So it will only
+pop up if the form transmission takes some time e.g if a file upload is in progress. To disable the
+progress bar or skip the delay set the attribute `HTMLForm.uploadProgressBar` to `none` or `always`.
+::
+
+    form = HTMLForm(view=self)
+    # disable the progress bar
+    form.uploadProgressBar = 'none' 
+ 
 
 In short forms are explained as follows:
 
@@ -159,6 +168,7 @@ import copy, json
 from types import StringType
 
 from pyramid.url import static_url
+from pyramid.httpexceptions import HTTPBadRequest
 
 from nive.definitions import Conf, FieldConf, ConfigurationError
 from nive.definitions import ISort
@@ -688,6 +698,7 @@ class HTMLForm(Form):
     css_class = u"form form-horizontal"
     actionPostfix = u"$"
     anchor = u""
+    uploadProgressBar = u"auto" # other possible values: none or always
     
     # Form actions --------------------------------------------------------------------------------------------
 
@@ -756,7 +767,12 @@ class HTMLForm(Form):
             callKws.update(kw)
         else:
             callKws = kw
-        result, html = method(action, **callKws)
+        try:
+            result, html = method(action, **callKws)
+        except ValueError, e:
+            # handle value errors as client errors, not server errors. 
+            # return a 400 Invalid request exception.
+            raise HTTPBadRequest(str(e))
         return result, html, action
 
 
