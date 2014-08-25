@@ -1,3 +1,4 @@
+<tal:block i18n:domain="nive">
 <input type="text"
        name="${field.name}"
        value="${cstruct}" 
@@ -12,3 +13,4 @@
     }
   );
 </script>
+</tal:block>

@@ -1,4 +1,4 @@
-
+<tal:block i18n:domain="nive">
 <style type="text/css">
 .CodeMirror {
   font-size:1.1em;
@@ -20,3 +20,4 @@
 <script>
   var editor = CodeMirror.fromTextArea(document.getElementById("${field.oid}"), ${field.widget.renderOptions(field)});
 </script>
+</tal:block>

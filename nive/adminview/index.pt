@@ -1,4 +1,5 @@
-<tal:block metal:define-macro="main"><!DOCTYPE html>
+<!DOCTYPE html>
+<tal:block metal:define-macro="main">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" i18n:domain="nive">
 <head>
 <title>${view.context.app.configuration.title} administration</title>

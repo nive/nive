@@ -6,6 +6,7 @@
 - update page changed time on edit elements
 - rewrite tools._LoadConfiguration
   
+- rewrite reform form javascript
 - cms browser application tests
 - queryRestraint tests
 - FieldConf.listItems callback tests

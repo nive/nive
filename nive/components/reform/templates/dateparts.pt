@@ -1,4 +1,4 @@
-<span i18n:domain="nive" tal:omit-tag="">
+<tal:block i18n:domain="nive">
 <ul class="inline">
   <li>
 	  <label for="${field.oid}-year" i18n:translate="">Year</label>
@@ -22,4 +22,4 @@
 	         id="${field.oid}-day"/>
   </li>
 </ul>
-</span>
+</tal:block>

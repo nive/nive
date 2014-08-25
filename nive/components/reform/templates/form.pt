@@ -1,3 +1,4 @@
+<tal:block i18n:domain="nive">
 
 <div tal:condition="field.messages|None" class="alert"> 
   <div tal:repeat="msg field.messages">${msg}</div>
@@ -8,8 +9,7 @@
   action="${field.action}${field.anchor}"
   method="${field.method}"
   class="${field.css_class}"
-  enctype="multipart/form-data"
-  i18n:domain="nive">
+  enctype="multipart/form-data">
 
     <div tal:condition="field.error" class="alert">
       <h5 i18n:translate="">There was a problem with your submission</h5>
@@ -36,7 +36,7 @@
               type="${button.type}"
               class="${button.action.get('css_class', 'btn')}"
               value="${button.value}">
-            <span i18n:translate="">${button.title}</span>
+            <span>${button.title}</span>
           </button>
         </tal:block>
     </div>
@@ -86,11 +86,17 @@ function reform_ajaxify(response, status, xhr, form, oid, mthd) {
         if(percentComplete>98) percentComplete = 98;
         var percentVal = percentComplete + '%';
         bar.width(percentVal)
-        if(useProgressBar=='auto' && showbar==0) showbar = delay+event.timeStamp;
-        if(useProgressBar=='auto' && showbar>0 && showbar<event.timeStamp) { 
-          showbar=-1;
-          progress.show();
-        }
+        if(useProgressBar=='auto') { 
+          if(showbar==0) showbar = delay+event.timeStamp; 
+        };
+        if(useProgressBar=='auto') { 
+          if(showbar > 0) { 
+            if(event.timeStamp > showbar) { 
+              showbar=-1;
+              progress.show();
+            };
+          };
+        };
       },
       success:  function(responseText, statusText, xhr, $form) { 
         var percentVal = '100%';
@@ -131,3 +137,4 @@ reform.addCallback(
 </script>
 
 </form>
+</tal:block>

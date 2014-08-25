@@ -1,306 +1,322 @@
 # Translations template for nive.
-# Copyright (C) 2013 ORGANIZATION
+# Copyright (C) 2014 ORGANIZATION
 # This file is distributed under the same license as the nive project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: nive 0.9.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-12-28 18:30+0100\n"
+"POT-Creation-Date: 2014-08-25 15:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
 
-#: nive/definitions.py:1406
+#: nive/definitions.py:1416
 msgid "String"
 msgstr ""
 
-#: nive/definitions.py:1407
+#: nive/definitions.py:1417
 msgid "Number"
 msgstr ""
 
-#: nive/definitions.py:1408
+#: nive/definitions.py:1418
 msgid "Float"
 msgstr ""
 
-#: nive/definitions.py:1409
+#: nive/definitions.py:1419
 msgid "Bool"
 msgstr ""
 
-#: nive/definitions.py:1410
+#: nive/definitions.py:1420
 msgid "File"
 msgstr ""
 
-#: nive/definitions.py:1411 nive/definitions.py:1498 nive/tools/sendMail.py:49
+#: nive/definitions.py:1421 nive/definitions.py:1508 nive/tools/sendMail.py:48
 msgid "Text"
 msgstr ""
 
-#: nive/definitions.py:1412
+#: nive/definitions.py:1422
 msgid "Date"
 msgstr ""
 
-#: nive/definitions.py:1413
+#: nive/definitions.py:1423
 msgid "Datetime"
 msgstr ""
 
-#: nive/definitions.py:1415
+#: nive/definitions.py:1425
 msgid "HTML Text"
 msgstr ""
 
-#: nive/definitions.py:1416
+#: nive/definitions.py:1426
 msgid "Code (Html, Javascript, Css)"
 msgstr ""
 
-#: nive/definitions.py:1417
+#: nive/definitions.py:1427
 msgid "Json"
 msgstr ""
 
-#: nive/definitions.py:1418
+#: nive/definitions.py:1428
 msgid "Lines"
 msgstr ""
 
-#: nive/definitions.py:1419
+#: nive/definitions.py:1429
 msgid "List"
 msgstr ""
 
-#: nive/definitions.py:1420
+#: nive/definitions.py:1430
 msgid "Radio Selection"
 msgstr ""
 
-#: nive/definitions.py:1421
+#: nive/definitions.py:1431
 msgid "Multiple Selection"
 msgstr ""
 
-#: nive/definitions.py:1422
+#: nive/definitions.py:1432
 msgid "Multiple Checkboxes"
 msgstr ""
 
-#: nive/definitions.py:1423
+#: nive/definitions.py:1433
 msgid "Email"
 msgstr ""
 
-#: nive/definitions.py:1424 nive/components/reform/templates/checked_password.pt:2
+#: nive/definitions.py:1434 nive/components/reform/templates/checked_password.pt:2
 msgid "Password"
 msgstr ""
 
-#: nive/definitions.py:1425
+#: nive/definitions.py:1435
 msgid "URL"
 msgstr ""
 
-#: nive/definitions.py:1426
+#: nive/definitions.py:1436
 msgid "URL List"
 msgstr ""
 
-#: nive/definitions.py:1427
+#: nive/definitions.py:1437
 msgid "ID Reference"
 msgstr ""
 
-#: nive/definitions.py:1428
+#: nive/definitions.py:1438
 msgid "ID Reference List"
 msgstr ""
 
-#: nive/definitions.py:1429 nive/definitions.py:1505
+#: nive/definitions.py:1439 nive/definitions.py:1515
 msgid "Timestamp"
 msgstr ""
 
-#: nive/definitions.py:1431
+#: nive/definitions.py:1441
 msgid "Binary"
 msgstr ""
 
-#: nive/definitions.py:1432
+#: nive/definitions.py:1442
 msgid "List of numbers"
 msgstr ""
 
-#: nive/definitions.py:1441 nive/tools/dbStructureUpdater.py:182
+#: nive/definitions.py:1451 nive/tools/dbStructureUpdater.py:182
 msgid "ID"
 msgstr ""
 
-#: nive/definitions.py:1442 nive/tools/dbStructureUpdater.py:183
+#: nive/definitions.py:1452 nive/tools/dbStructureUpdater.py:183
 msgid "Type"
 msgstr ""
 
-#: nive/definitions.py:1443
+#: nive/definitions.py:1453
 msgid "Container"
 msgstr ""
 
-#: nive/definitions.py:1444 nive/definitions.py:1489
+#: nive/definitions.py:1454 nive/definitions.py:1499
 msgid "Filename"
 msgstr ""
 
-#: nive/definitions.py:1445
+#: nive/definitions.py:1455
 msgid "State"
 msgstr ""
 
-#: nive/definitions.py:1446
+#: nive/definitions.py:1456
 msgid "Select Number"
 msgstr ""
 
-#: nive/definitions.py:1447
+#: nive/definitions.py:1457
 msgid "Data Table Reference"
 msgstr ""
 
-#: nive/definitions.py:1448
+#: nive/definitions.py:1458
 msgid "Data Table Name"
 msgstr ""
 
-#: nive/definitions.py:1452
+#: nive/definitions.py:1462
 msgid "Created"
 msgstr ""
 
-#: nive/definitions.py:1453
+#: nive/definitions.py:1463
 msgid "Changed"
 msgstr ""
 
-#: nive/definitions.py:1454
+#: nive/definitions.py:1464
 msgid "Created by"
 msgstr ""
 
-#: nive/definitions.py:1455
+#: nive/definitions.py:1465
 msgid "Changed by"
 msgstr ""
 
-#: nive/definitions.py:1459 nive/tools/sendMail.py:48
+#: nive/definitions.py:1469 nive/tools/sendMail.py:47
 msgid "Title"
 msgstr ""
 
-#: nive/definitions.py:1460
+#: nive/definitions.py:1470
 msgid "Sort"
 msgstr ""
 
-#: nive/definitions.py:1461
+#: nive/definitions.py:1471
 msgid "Category"
 msgstr ""
 
-#: nive/definitions.py:1465
+#: nive/definitions.py:1475
 msgid "Workflow Process"
 msgstr ""
 
-#: nive/definitions.py:1466
+#: nive/definitions.py:1476
 msgid "Workflow Activity"
 msgstr ""
 
-#: nive/definitions.py:1486
+#: nive/definitions.py:1496
 msgid "Unique ID"
 msgstr ""
 
-#: nive/definitions.py:1487 nive/definitions.py:1497 nive/definitions.py:1509
+#: nive/definitions.py:1497 nive/definitions.py:1507 nive/definitions.py:1519
 msgid "Object ID"
 msgstr ""
 
-#: nive/definitions.py:1488
+#: nive/definitions.py:1498
 msgid "File key"
 msgstr ""
 
-#: nive/definitions.py:1490
+#: nive/definitions.py:1500
 msgid "Internal file path"
 msgstr ""
 
-#: nive/definitions.py:1491
+#: nive/definitions.py:1501
 msgid "File size"
 msgstr ""
 
-#: nive/definitions.py:1492
+#: nive/definitions.py:1502
 msgid "File extension"
 msgstr ""
 
-#: nive/definitions.py:1493
+#: nive/definitions.py:1503
 msgid "Version"
 msgstr ""
 
-#: nive/definitions.py:1499
+#: nive/definitions.py:1509
 msgid "Files"
 msgstr ""
 
-#: nive/definitions.py:1503
+#: nive/definitions.py:1513
 msgid "Key"
 msgstr ""
 
-#: nive/definitions.py:1504 nive/components/reform/widget.py:792
+#: nive/definitions.py:1514 nive/components/reform/widget.py:963
 msgid "Value"
 msgstr ""
 
-#: nive/definitions.py:1510
+#: nive/definitions.py:1520
 msgid "User name"
 msgstr ""
 
-#: nive/definitions.py:1511
+#: nive/definitions.py:1521
 msgid "Group assignment"
 msgstr ""
 
-#: nive/forms.py:1131 nive/forms.py:1169 nive/forms.py:1431 nive/forms.py:1549
+#: nive/forms.py:1167 nive/forms.py:1205 nive/forms.py:1467 nive/forms.py:1594
 #: nive/adminview/view.py:134
 msgid "OK. Data saved."
 msgstr ""
 
-#: nive/forms.py:1502
+#: nive/forms.py:1541
 msgid "Item deleted!"
 msgstr ""
 
-#: nive/portal.py:64
+#: nive/forms.py:1573
+msgid "Item exists!"
+msgstr ""
+
+#: nive/portal.py:70
 msgid "Authenticated"
 msgstr ""
 
-#: nive/views.py:570
+#: nive/views.py:604
 msgid "<em>Unknown field</em>"
 msgstr ""
 
-#: nive/views.py:927
+#: nive/views.py:961
 msgid "Yes"
 msgstr ""
 
-#: nive/views.py:929
+#: nive/views.py:963
 msgid "No"
 msgstr ""
 
-#: nive/adminview/modules.pt:4
+#: nive/adminview/index.pt:15 nive/adminview/view.py:229 nive/tests/index.pt:15
+msgid "administration"
+msgstr ""
+
+#: nive/adminview/index.pt:26
+msgid "Switch location or Logout"
+msgstr ""
+
+#: nive/adminview/index.pt:31
+msgid "Logout"
+msgstr ""
+
+#: nive/adminview/modules.pt:5
 msgid ""
 "This page lists all included <dynamic element> for browsing in readonly mode. <dynamic element>\n"
 "Also this will help you to easily lookup object ids and database fields for developing."
 msgstr ""
 
-#: nive/adminview/modules.pt:7
+#: nive/adminview/modules.pt:8
 msgid "CMS"
 msgstr ""
 
-#: nive/adminview/modules.pt:10
+#: nive/adminview/modules.pt:11
 msgid "Objects"
 msgstr ""
 
-#: nive/adminview/modules.pt:14
+#: nive/adminview/modules.pt:15
 msgid "Roots"
 msgstr ""
 
-#: nive/adminview/modules.pt:18
+#: nive/adminview/modules.pt:19
 msgid "Meta fields"
 msgstr ""
 
-#: nive/adminview/modules.pt:22 nive/adminview/view.py:56
+#: nive/adminview/modules.pt:23 nive/adminview/view.py:56
 msgid "Tools"
 msgstr ""
 
-#: nive/adminview/modules.pt:26
+#: nive/adminview/modules.pt:27
 msgid "Workflow processes"
 msgstr ""
 
-#: nive/adminview/modules.pt:30
+#: nive/adminview/modules.pt:31
 msgid "Others"
 msgstr ""
 
-#: nive/adminview/root.pt:5
+#: nive/adminview/root.pt:6
 msgid "Administration sections"
 msgstr ""
 
-#: nive/adminview/tools.pt:12
+#: nive/adminview/tools.pt:13
 msgid "This page lists all <dynamic element> like database export or database schema manager."
 msgstr ""
 
-#: nive/adminview/tools.pt:14
+#: nive/adminview/tools.pt:15
 msgid "Administration tools"
 msgstr ""
 
@@ -346,10 +362,6 @@ msgstr ""
 
 #: nive/adminview/view.py:227
 msgid "public"
-msgstr ""
-
-#: nive/adminview/view.py:229
-msgid "administration"
 msgstr ""
 
 #: nive/adminview/view.py:232
@@ -440,23 +452,23 @@ msgstr ""
 msgid "User account page url"
 msgstr ""
 
-#: nive/adminview/views.pt:4
+#: nive/adminview/views.pt:5
 msgid "This page lists all included <dynamic element> for browsing in readonly mode."
 msgstr ""
 
-#: nive/adminview/views.pt:6
+#: nive/adminview/views.pt:7
 msgid "View Modules"
 msgstr ""
 
-#: nive/adminview/views.pt:10
+#: nive/adminview/views.pt:11
 msgid "Single Views"
 msgstr ""
 
-#: nive/adminview/views.pt:14
+#: nive/adminview/views.pt:15
 msgid "Widgets"
 msgstr ""
 
-#: nive/adminview/views.pt:18
+#: nive/adminview/views.pt:19
 msgid "Other modules"
 msgstr ""
 
@@ -566,37 +578,69 @@ msgid "\"${val}\" is not a time object"
 msgstr ""
 
 #: nive/components/reform/schema.py:1464 nive/components/reform/schema.py:1466
-#: nive/components/reform/schema.py:1779 nive/components/reform/schema.py:1811
-#: nive/components/reform/schema.py:1864
+#: nive/components/reform/schema.py:1779 nive/components/reform/schema.py:1814
+#: nive/components/reform/schema.py:1860 nive/components/reform/schema.py:1912
 msgid "Required"
 msgstr ""
 
-#: nive/components/reform/schema.py:1731 nive/components/reform/schema.py:1936
+#: nive/components/reform/schema.py:1731 nive/components/reform/schema.py:1984
 msgid "${value} is not a dictionary"
 msgstr ""
 
-#: nive/components/reform/schema.py:1738 nive/components/reform/schema.py:1943
+#: nive/components/reform/schema.py:1738 nive/components/reform/schema.py:1991
 msgid "${value} has no ${key} key"
 msgstr ""
 
-#: nive/components/reform/schema.py:1775 nive/components/reform/schema.py:1807
-#: nive/components/reform/schema.py:1860
+#: nive/components/reform/schema.py:1775 nive/components/reform/schema.py:1810
+#: nive/components/reform/schema.py:1908
 msgid "${value} is not iterable"
 msgstr ""
 
-#: nive/components/reform/widget.py:791
+#: nive/components/reform/schema.py:1819 nive/components/reform/schema.py:1858
+msgid "${value} not in reference list"
+msgstr ""
+
+#: nive/components/reform/schema.py:1849
+msgid "${value} is not a string"
+msgstr ""
+
+#: nive/components/reform/widget.py:582
+msgid "Header 1"
+msgstr ""
+
+#: nive/components/reform/widget.py:583
+msgid "Header 2"
+msgstr ""
+
+#: nive/components/reform/widget.py:584
+msgid "Header 3"
+msgstr ""
+
+#: nive/components/reform/widget.py:585
+msgid "Header 4"
+msgstr ""
+
+#: nive/components/reform/widget.py:586
+msgid "Text (p)"
+msgstr ""
+
+#: nive/components/reform/widget.py:587
+msgid "Formatted (pre)"
+msgstr ""
+
+#: nive/components/reform/widget.py:962
 msgid "Fields did not match"
 msgstr ""
 
-#: nive/components/reform/widget.py:793
+#: nive/components/reform/widget.py:964
 msgid "Confirm Value"
 msgstr ""
 
-#: nive/components/reform/widget.py:843
+#: nive/components/reform/widget.py:1014
 msgid "Password did not match confirm"
 msgstr ""
 
-#: nive/components/reform/widget.py:1072
+#: nive/components/reform/widget.py:1247
 msgid "Incomplete date"
 msgstr ""
 
@@ -626,6 +670,14 @@ msgstr ""
 
 #: nive/components/reform/templates/file_upload.pt:15
 msgid "--disabled!--"
+msgstr ""
+
+#: nive/components/reform/templates/form.pt:15
+msgid "There was a problem with your submission"
+msgstr ""
+
+#: nive/components/reform/templates/form.pt:16
+msgid "Errors have been highlighted below"
 msgstr ""
 
 #: nive/tools/cmsstatistics.py:19
@@ -805,105 +857,109 @@ msgstr ""
 msgid "Include binary file data in json export (encoded as base64)"
 msgstr ""
 
-#: nive/tools/gcdump.py:14
+#: nive/tools/gcdump.py:12
 msgid "Object dump"
 msgstr ""
 
-#: nive/tools/gcdump.py:15
+#: nive/tools/gcdump.py:13
 msgid "This function dumps a list of all objects found in memory."
 msgstr ""
 
-#: nive/tools/sendMail.py:28
+#: nive/tools/sendMail.py:27
 msgid "Send mails to registered users"
 msgstr ""
 
-#: nive/tools/sendMail.py:32
+#: nive/tools/sendMail.py:31
 msgid "SMTP host"
 msgstr ""
 
-#: nive/tools/sendMail.py:33
+#: nive/tools/sendMail.py:32
 msgid "SMTP port"
 msgstr ""
 
-#: nive/tools/sendMail.py:34
+#: nive/tools/sendMail.py:33
 msgid "SMTP sender mail"
 msgstr ""
 
-#: nive/tools/sendMail.py:35
+#: nive/tools/sendMail.py:34
 msgid "SMTP user"
 msgstr ""
 
-#: nive/tools/sendMail.py:36
+#: nive/tools/sendMail.py:35
 msgid "SMTP password"
 msgstr ""
 
-#: nive/tools/sendMail.py:38
+#: nive/tools/sendMail.py:37
 msgid "Sender name"
 msgstr ""
 
-#: nive/tools/sendMail.py:39
+#: nive/tools/sendMail.py:38
 msgid "Sender mail"
 msgstr ""
 
-#: nive/tools/sendMail.py:40
+#: nive/tools/sendMail.py:39
 msgid "Reply to"
 msgstr ""
 
-#: nive/tools/sendMail.py:41
+#: nive/tools/sendMail.py:40
 msgid "Receiver role"
 msgstr ""
 
-#: nive/tools/sendMail.py:42
+#: nive/tools/sendMail.py:41
 msgid "Receiver User IDs"
 msgstr ""
 
-#: nive/tools/sendMail.py:43
+#: nive/tools/sendMail.py:42
 msgid "Receiver Mail"
 msgstr ""
 
-#: nive/tools/sendMail.py:44
+#: nive/tools/sendMail.py:43
 msgid "Ignore notify settings"
 msgstr ""
 
-#: nive/tools/sendMail.py:45
+#: nive/tools/sendMail.py:44
 msgid "CC"
 msgstr ""
 
-#: nive/tools/sendMail.py:46
+#: nive/tools/sendMail.py:45
 msgid "BCC"
 msgstr ""
 
-#: nive/tools/sendMail.py:50
+#: nive/tools/sendMail.py:49
 msgid "Html format"
 msgstr ""
 
-#: nive/tools/sendMail.py:51
+#: nive/tools/sendMail.py:50
 msgid "UTF-8 encoding"
 msgstr ""
 
-#: nive/tools/sendMail.py:52
+#: nive/tools/sendMail.py:51
 msgid "Use SSL"
 msgstr ""
 
-#: nive/tools/sendMail.py:53
+#: nive/tools/sendMail.py:52
 msgid "Log mails"
 msgstr ""
 
-#: nive/tools/sendMail.py:54
+#: nive/tools/sendMail.py:53
 msgid "Show all receivers in header"
 msgstr ""
 
-#: nive/tools/sendMail.py:56
+#: nive/tools/sendMail.py:55
 msgid "Debug mode"
 msgstr ""
 
-#: nive/tools/sendMail.py:56
+#: nive/tools/sendMail.py:55
 msgid ""
 "All mails are sent to 'Receiver role' or 'Receiver User IDs' field default value. No external "
 "mail address is used."
 msgstr ""
 
-#: nive/tools/sendMail.py:116
+#: nive/tools/sendMail.py:115 nive/tools/sendMailTester.py:83
 msgid "No receiver for the e-mail! Aborting."
+msgstr ""
+
+#: nive/tools/sendMailTester.py:24
+msgid "Fake Mailer"
 msgstr ""
 

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
    
 <tal:block metal:fill-slot="editmain">
