@@ -675,10 +675,26 @@ class BaseView(object):
         """ bytes to readable text """
         return FormatBytesForDisplay(size)
 
+    def FmtTag(self, tag, closeTag="tag", **attributes):
+        """ 
+        Write a html tag with attributes. 
+        closeTag: 'tag', 'inline', 'no', 'only'
+        """
+        if closeTag=="only":
+            return u"</%s>" % (tag)
+        attrs = u""
+        if attributes:
+            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in attributes.items()]
+            attrs = u" " + u" ".join(attrs)
+        if closeTag=="inline":
+            return u"<%s%s/>" % (tag, attrs)
+        elif closeTag==None:
+            return u"<%s%s>" % (tag, attrs)
+        return u"<%s%s></%s>" % (tag, attrs, tag)
+
     def CutText(self, text, length):
         """ bytes to readable text """
         return CutText(text, length)
-
 
     # parameter handling ------------------------------------------------------------
 

@@ -209,6 +209,17 @@ class viewTest_db:
         self.assert_(view2.Assets(types="js").find(".css")==-1)
         self.assert_(view2.Assets(types="css").find(".js")==-1)
         
+    
+    def test_htmltag(self):
+        view2 = BaseView(self.context, self.request)
+        self.assert_(view2.FmtTag("div"))
+        self.assert_(view2.FmtTag("div")==u"<div></div>", view2.FmtTag("div"))
+        self.assert_(view2.FmtTag("div", id=0)==u"""<div id="0"></div>""")
+        self.assert_(view2.FmtTag("div", closeTag=None, id=0)==u"""<div id="0">""")
+        self.assert_(view2.FmtTag("div", closeTag="inline", id=0)==u"""<div id="0"/>""")
+        
+
+
 
 class viewTest_db_sqlite(viewTest_db, __local.SqliteTestCase):
     """
