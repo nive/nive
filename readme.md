@@ -14,6 +14,12 @@ The source code is hosted on github: https://github.com/nive/nive
 The reform package is a merge of deform and colander and includes several changes 
 to make form handling easier. Please see nive.components.reform.README.txt for details.
 
+### Translations
+Translations can be extracted using lingua>=3.1
+
+    > pip install lingua-3.1
+    > bin/pot-create -o nive/locale/nive.pot nive
+
 ### Third party modules 
 Some included modules have their own license:
 
