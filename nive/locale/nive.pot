@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2014-08-25 18:19+0200\n"
+"POT-Creation-Date: 2014-08-25 18:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -918,7 +918,7 @@ msgstr ""
 
 #: ./nive/tools/dbStructureUpdater.py:74
 #, python-format
-msgid "<h4>Database '${name}' ${host} </h4><br/>"
+msgid "<h4>Database '${name}' ${host} </h4><br>"
 msgstr ""
 
 #: ./nive/tools/dbStructureUpdater.py:25
@@ -1002,7 +1002,7 @@ msgstr ""
 #: ./nive/tools/dbStructureUpdater.py:166
 msgid ""
 "Changes on existing columns have to be applied manually. This will write "
-"selected 'Configuration settings' to the database.<br/> <b>Warning: This may "
+"selected 'Configuration settings' to the database.<br> <b>Warning: This may "
 "destroy something!</b>"
 msgstr ""
 
