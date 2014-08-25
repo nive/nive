@@ -55,11 +55,13 @@ try:
     # if babel is installed, advertise message extractors (if we pass
     # this to setup() unconditionally, and babel isn't installed,
     # distutils warns pointlessly)
+    # 
+    # pip install lingua==1.3 (lingua version 3 not supported) 
     setupkw['message_extractors'] = { ".": [
         ("**.py", "lingua_python", None ),
         ("**.pt", "lingua_xml", None ),
         ]}
 except ImportError:
-    pass
+    raise
 
 setup(**setupkw)
