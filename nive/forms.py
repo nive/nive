@@ -974,7 +974,7 @@ class HTMLForm(Form):
                 js_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
                 css_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
         js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
-        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
     
         

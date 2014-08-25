@@ -111,8 +111,8 @@ class sendMailTester(sendMail):
         if debug:
             mails_original = u""
             for m in recvs:
-                mails_original += m + u"\r\n<br/>"
-            body += u"""\r\n<br/><br/>\r\nDEBUG\r\n<br/> Original receiver: \r\n<br/>""" + mails_original
+                mails_original += m + u"\r\n<br>"
+            body += u"""\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
             # in debug mode use default receiver mail as receiving address for all mails
             recvs = [(recvmails, u"")]
 

@@ -108,21 +108,21 @@ class BaseView(object):
         *file* is the filename to look the url up for. E.g. for the default static directory use ::
         
             <link tal:attributes="href view.StaticUrl('layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
                   
          to reference a file in a different directory you must include the python module like ::
 
             <link tal:attributes="href view.StaticUrl('my_app.design:static/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
                   
          absolute http urls can also be used based on the url prefix http, https and / ::
 
             <link tal:attributes="href view.StaticUrl('/assets/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
             <link tal:attributes="href view.StaticUrl('http://myserver.com/assets/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
             <link tal:attributes="href view.StaticUrl('https://myserver.com/assets/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
                   
         returns url
         """
@@ -409,7 +409,7 @@ class BaseView(object):
             js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         if types in (None, "css"):
             css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
-            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
         
 
@@ -610,7 +610,7 @@ class BaseView(object):
                 return u""
             url2 = url.lower()
             if url2.find(u".jpg")!=-1 or url2.find(u".jpeg")!=-1 or url2.find(u".png")!=-1 or url2.find(u".gif")!=-1:
-                return u"""<img src="%s" />""" % (url)
+                return u"""<img src="%s">""" % (url)
             return u"""<a href="%s">download</a>""" % (url)
         return FieldRenderer(self.context).Render(fld, data, context=self.context)
     
@@ -631,16 +631,16 @@ class BaseView(object):
     
     def FmtTextAsHTML(self, text):
         """
-        Converts newlines to <br/>.
+        Converts newlines to <br>.
         
         returns string
         """
         if not text:
             return u""
         if text.find(u"\r\n")!=-1:
-            text = text.replace(u"\r\n",u"<br/>\r\n")
+            text = text.replace(u"\r\n",u"<br>\r\n")
         else:
-            text = text.replace(u"\n",u"<br/>\n")
+            text = text.replace(u"\n",u"<br>\n")
         return text
 
     def FmtDateText(self, date, language=None):
@@ -827,7 +827,7 @@ class BaseView(object):
         params = kw
         for p in params.keys():
             value = ConvertToStr(params[p])
-            form.append(u"<input type='hidden' name='%s' value='%s' />" % (p, value))
+            form.append(u"<input type='hidden' name='%s' value='%s'>" % (p, value))
         return "".join(form)
 
 
@@ -969,7 +969,7 @@ class FieldRenderer(object):
             elif fmt=="image":
                 tmpl = fieldConf.settings.get("path", u"")
                 path = tmpl % {"data":data, "static": kw.get("static",u"")}
-                data = """<img src="%(path)s" title="%(name)s" />""" % {"path":path, "name": fieldConf.name}
+                data = """<img src="%(path)s" title="%(name)s">""" % {"path":path, "name": fieldConf.name}
                 return data
         
         if fType == "bool":
@@ -990,7 +990,7 @@ class FieldRenderer(object):
                     pass
 
         elif fType == "text":
-            data = data.replace(u"\r\n", u"\r\n<br />")
+            data = data.replace(u"\r\n", u"\r\n<br>")
 
         elif fType == "date":
             if not isinstance(data, datetime):
@@ -1094,7 +1094,7 @@ class FieldRenderer(object):
                 else:
                     title = url
                 links.append({"id": l, "name": title})
-                data.append(u"<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br/>" % (title, title, url, title))
+                data.append(u"<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br>" % (title, title, url, title))
             data = u"".join(data)
 
         elif fType == "password":

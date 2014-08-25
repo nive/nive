@@ -48,7 +48,7 @@ def DumpObjects(stream):
 
     stream.write(u"Number of objects found: ")
     stream.write(unicode(len(olist)))
-    stream.write(u"<br/>\n")
+    stream.write(u"<br>\n")
     #stream.write(olist[0].__dict__)
     trefs = {}
     for o in olist:#[100000:100200]:

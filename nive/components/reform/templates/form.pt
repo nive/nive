@@ -20,7 +20,7 @@
     <tal:block tal:define="rndr field.renderer;
                            tmpl field.widget.item_template"
                tal:repeat="f field.children">
-         <div tal:replace="structure rndr(tmpl,field=f,cstruct=cstruct.get(f.name, null))"/>
+         <div tal:replace="structure rndr(tmpl,field=f,cstruct=cstruct.get(f.name, null))"></div>
     </tal:block>
   
     <div tal:condition="field.uploadProgressBar" style="display:none" class="progress">
