@@ -22,8 +22,9 @@ except ImportError:
         OperationalError = None
         ProgrammingError = None
         Warning = None
-        def __init__(self, *kw, **kws):
-            raise ImportError, "Python MySQLdb not available. Try 'pip install MySQL-python' to install the package."
+        @staticmethod
+        def connect(*args,**kw):
+            raise ImportError, "Python MySQLdb binding not available. Try 'pip install MySQL-python' to install the package."
     
 from nive.utils.utils import STACKF
 

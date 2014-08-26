@@ -3,6 +3,7 @@
 #
 
 import json
+import datetime
 
 from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, FieldConf, ViewConf
@@ -28,6 +29,16 @@ configuration = ToolConf(
     ]
 )
 
+
+
+
+class JsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)
+    
+
 class dbJsonDump(Tool):
     """
     """
@@ -45,11 +56,11 @@ class dbJsonDump(Tool):
         self.filename = app.configuration.id + ".json"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.poolTag}))
+            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
             return 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.poolTag}))
+            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
             return 0
         
         def mapfields(fields):
@@ -86,7 +97,7 @@ class dbJsonDump(Tool):
                 tvalues.append(recvalue)
             data[tablename] = tvalues
         
-        self.stream.write(json.dumps(data))        
+        self.stream.write(JsonEncoder().encode(data))        
         
         return 1
 

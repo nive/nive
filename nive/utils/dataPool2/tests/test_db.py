@@ -515,7 +515,7 @@ class dbTest(object):
 
 
     def test_groups(self):
-        userid = 123
+        userid = "123"
         group = u"group:test"
         id = 1
         ref = u"o"

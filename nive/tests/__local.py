@@ -1,5 +1,4 @@
 
-
 import sys
 import unittest
 from nive.definitions import DatabaseConf
@@ -9,7 +8,7 @@ from nive.tests import db_app
 # real database test configuration
 # change these to fit your system
 
-WIN = sys.platform == "win32"
+WIN = sys.platform.startswith("win")
 
 # sqlite and mysql
 if WIN:
@@ -105,6 +104,6 @@ else:
 
 # Higher level tests are only run for one database system, not multiple.
 # The database type can be switched here
-DefaultTestCase = SqliteTestCase
+DefaultTestCase = PostgreSqlTestCase
 
     

@@ -354,7 +354,9 @@ class Application(object):
         try:
             db = self.db
             if not db.connection.IsConnected():
-                return False, "No connection"
+                db.connection.connect()
+                if not db.connection.IsConnected():
+                    return False, "No connection"
             r = self.Query("select id from pool_meta where id =1")
             return True, "OK"
 

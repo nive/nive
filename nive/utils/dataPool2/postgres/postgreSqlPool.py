@@ -15,13 +15,18 @@ from time import time, localtime
 
 try:
     import psycopg2
+    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 except ImportError:
     # define fake psycopg class here to avoid test import errors if psycopg is not installed
     class psycopg2(object):
         OperationalError = None
         ProgrammingError = None
         Warning = None
-
+        @staticmethod
+        def connect(*args,**kw):
+            raise ImportError, "Python postgres binding not available. Try 'pip install psycopg2' to install the package."
+            
+            
 from nive.utils.utils import STACKF
 
 from nive.utils.dataPool2.base import Base, Entry
@@ -40,58 +45,54 @@ class PostgresConnection(Connection):
     postgres connection handling class
 
     config parameter in dictionary:
+    dbName = initial database name
     user = database user
+
     password = password user
     host = host postgres server
     port = port postgres server
-    db = initial database name
 
-    timeout is set to 3.
+    user/host/port/password not mandatory if unix socket connection
     """
+    #TODO add all psycopg2 connect options
 
     def connect(self):
         """ Close and connect to server """
-        #t = time()
-        conf = self.configuration
-        db = psycopg2.connect(host=conf.host, 
-                              port=conf.port or None,
-                              database=conf.dbName, 
-                              user=conf.user, 
-                              password=str(conf.password), 
-                              connect_timeout=conf.timeout)
+
+        db = self.PrivateConnection()
         if not db:
             raise OperationalError, "Cannot connect to database '%s.%s'" % (conf.host, conf.dbName)
         self._set(db)
-        #print "connect:", time() - t
         return db
         
 
     def IsConnected(self):
         """ Check if database is connected """
-        try:
-            db = self._get()
-            return db.cursor()!=None
-        except:
-            return False
-
+        db = self._get()
+        return db and not db.closed
 
     def GetDBManager(self):
         """ returns the database manager obj """
         self.VerifyConnection()
-        aDB = PostgresManager()
-        aDB.SetDB(self.PrivateConnection())
-        return aDB
+        manager = PostgresManager()
+        manager.SetDB(self.PrivateConnection())
+        return manager
 
 
     def PrivateConnection(self):
         """ This function will return a new and raw connection. It is up to the caller to close this connection. """
         conf = self.configuration
-        return psycopg2.connect(host=conf.host, 
-                                port=conf.port or None,
-                                database=conf.dbName, 
-                                user=conf.user, 
-                                password=str(conf.password), 
-                                connect_timeout=conf.timeout)
+        kargs = {'database': conf.dbName,
+                'connect_timeout': conf.timeout}
+
+        if conf.host:
+            kargs['host'] = conf.host
+        if conf.port:
+            kargs['port'] = conf.port
+        if conf.user:
+            kargs['user'] = conf.user
+
+        return psycopg2.connect(**kargs)
 
 
     def FmtParam(self, param):
@@ -105,7 +106,6 @@ class PostgresConnection(Connection):
         if d.find(u"'")!=-1:
             d = d.replace(u"'",u"\\'")
         return u"'%s'"%d
-
 
 
 class PgConnThreadLocal(PostgresConnection, ConnectionThreadLocal):
@@ -126,11 +126,6 @@ class PgConnRequest(PostgresConnection, ConnectionRequest):
         self.local = threading.local()
         PostgresConnection.__init__(self, config, connectNow)
 
-
-
-
-
-
 class PostgreSql(FileManager, Base):
     """
     Data Pool Postgres implementation
@@ -141,7 +136,77 @@ class PostgreSql(FileManager, Base):
     _DefaultConnection = PgConnRequest#PgConnThreadLocal
             
 
+    def GetContainedIDs(self, base=0, sort=u"title", parameter=u""):
+        """
+        select list of all entries
+        id needs to be first field, pool_unitref second
+        """
+        def _SelectIDs(base, ids, sql, cursor):
+            cursor.execute(sql%(base))
+            entries = cursor.fetchall()
+            for e in entries:
+                ids.append(e[0])
+                ids = _SelectIDs(e[0], ids, sql, cursor)
+            return ids
+        if parameter != u"":
+            parameter = u"AND " + parameter
+        parameter = (u"WHERE pool_unitref=%d", parameter)
+        sql = u"""SELECT id FROM %s %s ORDER BY %s""" % (self.MetaTable, u" ".join(parameter), sort)
+        cursor = self.connection.cursor()
+        ids = _SelectIDs(base, [], sql, cursor)
+        cursor.close()
+        return ids
+    
+    
+    def _GetInsertIDValue(self, cursor):
+        cursor.execute(u"SELECT LASTVAL()")
+        return cursor.fetchone()[0]
+
+    def _CreateNewID(self, table = u"", dataTbl = None):
+        aC = self.connection.cursor()
+        if table == u"":
+            table = self.MetaTable
+        if table == self.MetaTable:
+            if not dataTbl:
+                raise "Missing data table", "Entry not created"
+
+            # sql insert empty rec in meta table
+            if self._debug:
+                STACKF(0,u"INSERT INTO %s DEFAULT VALUES" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
+            try:
+                aC.execute(u"INSERT INTO %s DEFAULT VALUES" % (dataTbl))
+            except self._Warning:
+                pass
+            # sql get id of created rec
+            if self._debug:
+                STACKF(0,u"SELECT LASTVAL()\r\n",0, self._log,name=self.name)
+            aC.execute(u"SELECT LASTVAL()")
+            dataref = aC.fetchone()[0]
+            # sql insert empty rec in meta table
+            if self._debug:
+                STACKF(0,u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log,name=self.name)
+            aC.execute(u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
+            if self._debug:
+                STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+            aC.execute(u"SELECT LASTVAL()")
+            aID = aC.fetchone()[0]
+            aC.close()
+            return aID, dataref
+
+        # sql insert empty rec in meta table
+        if self._debug:
+            STACKF(0,u"INSERT INTO %s () VALUES ()" % (table)+"\r\n",self._debug, self._log,name=self.name)
+        aC.execute(u"INSERT INTO %s () VALUES ()" % (table))
+        # sql get id of created rec
+        if self._debug:
+            STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+        aC.execute(u"SELECT LAST_INSERT_ID()")
+        aID = aC.fetchone()[0]
+        aC.close()
+        return aID, 0
+
     # types/classes -------------------------------------------------------------------
+
 
     def _GetPoolEntry(self, id, **kw):
         try:
@@ -150,17 +215,13 @@ class PostgreSql(FileManager, Base):
             return None
 
 
-
-
+    def _FmtLimit(self, start, max):
+        if start != None:
+            return u"LIMIT %s OFFSET %s" % (unicode(max), unicode(start))
+        return u"LIMIT %s" % (unicode(max))
 
 
 class PostgreSqlEntry(FileEntry, Entry):
     """
     Data Pool Entry Postgres implementation
     """
-
-    def _FmtLimit(self, start, max):
-        if start != None:
-            return u"OFFSET %s LIMIT %s" % (unicode(start), unicode(max))
-        return u"LIMIT %s" % (unicode(max))
-    

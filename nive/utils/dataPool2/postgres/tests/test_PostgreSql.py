@@ -25,4 +25,3 @@ class PostgreSqlTest(test_db.dbTest, __local.PostgreSqlTestCase):
         self.pool.connection.connect()
 
 
-
