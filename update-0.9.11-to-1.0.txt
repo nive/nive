@@ -14,6 +14,8 @@ nive.userdb ->  nive_userdb
 nive.datastore ->  nive_datastore
 nive.components.tools -> nive.tools
 
+nive_cms.design -> nive_cms_design_bs2 (this package has to be installed first)
+
 
 If you have started custom development you might also need to change further imports. Here is a 
 complete list of the changes: 
