@@ -217,7 +217,7 @@ class FormWidget(Widget):
     
 class TextInputWidget(Widget):
     """
-    Renders an ``<input type="text"/>`` widget.
+    Renders an ``<input type="text">`` widget.
 
     **Attributes/Arguments**
 
@@ -284,7 +284,7 @@ class TextInputWidget(Widget):
 
 class AutocompleteInputWidget(Widget):
     """
-    Renders an ``<input type="text"/>`` widget which provides
+    Renders an ``<input type="text">`` widget which provides
     autocompletion via a list of values.
 
     When this option is used, the :term:`jquery.ui.autocomplete`
@@ -723,7 +723,7 @@ class PasswordWidget(TextInputWidget):
 
 class HiddenWidget(Widget):
     """
-    Renders an ``<input type="hidden"/>`` widget.
+    Renders an ``<input type="hidden">`` widget.
 
     **Attributes/Arguments**
 
@@ -746,7 +746,7 @@ class HiddenWidget(Widget):
 
 class CheckboxWidget(Widget):
     """
-    Renders an ``<input type="checkbox"/>`` widget.
+    Renders an ``<input type="checkbox">`` widget.
 
     **Attributes/Arguments**
 
@@ -848,7 +848,7 @@ class SelectWidget(Widget):
 
 class RadioChoiceWidget(SelectWidget):
     """
-    Renders a sequence of ``<input type="radio"/>`` buttons based on a
+    Renders a sequence of ``<input type="radio">`` buttons based on a
     predefined set of values.
 
     **Attributes/Arguments**
@@ -873,7 +873,7 @@ class RadioChoiceWidget(SelectWidget):
 
 class CheckboxChoiceWidget(Widget):
     """
-    Renders a sequence of ``<input type="check"/>`` buttons based on a
+    Renders a sequence of ``<input type="check">`` buttons based on a
     predefined set of values.
 
     **Attributes/Arguments**
@@ -1191,7 +1191,7 @@ class FileUploadWidget2(Widget):
 
 class DatePartsWidget(Widget):
     """
-    Renders a set of ``<input type='text'/>`` controls based on the
+    Renders a set of ``<input type='text'>`` controls based on the
     year, month, and day parts of the serialization of a
     :class:`colander.Date` object or a string in the format
     ``YYYY-MM-DD``.  This widget is usually meant to be used as widget

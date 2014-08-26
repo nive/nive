@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2014-08-25 18:39+0200\n"
+"POT-Creation-Date: 2014-08-26 11:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -114,6 +114,7 @@ msgid "Email"
 msgstr ""
 
 #: ./nive/definitions.py:1434
+#: ./nive/components/reform/templates/checked_password.pt:3
 msgid "Password"
 msgstr ""
 
@@ -301,8 +302,8 @@ msgstr ""
 #: ./nive/adminview/modules.pt:5
 msgid ""
 "This page lists all included <dynamic element> for browsing in readonly mode."
-" Also this will help you to easily lookup object ids and database fields for "
-"developing."
+" <dynamic element> Also this will help you to easily lookup object ids and "
+"database fields for developing."
 msgstr ""
 
 #: ./nive/adminview/modules.pt:12
@@ -717,6 +718,10 @@ msgstr ""
 
 #: ./nive/components/reform/templates/dateparts.pt:24
 msgid "Day"
+msgstr ""
+
+#: ./nive/components/reform/templates/checked_password.pt:6
+msgid "Confirm Password"
 msgstr ""
 
 #: ./nive/tools/sendMailTester.py:25
