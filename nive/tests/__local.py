@@ -47,20 +47,11 @@ POSTGRES_CONF = DatabaseConf(
     fileRoot = ROOT
 )
 
-# essential system tests are run for both database systems if installed.
+# essential system tests are run for multiple database systems if installed.
 # These switches also allow to manually enable or disable database system tests.
 ENABLE_SQLITE_TESTS = True
 ENABLE_MYSQL_TESTS = False
 ENABLE_POSTGRES_TESTS = False
-try:
-    import MySQLdb
-except ImportError:
-    ENABLE_MYSQL_TESTS = False
-
-try:
-    import psycopg2
-except ImportError:
-    ENABLE_POSTGRES_TESTS = False
 
 
 if ENABLE_SQLITE_TESTS:

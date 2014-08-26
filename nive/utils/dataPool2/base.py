@@ -902,7 +902,7 @@ class Base(object):
         #("assert", "subclass")
         return 0
 
-    def _CreateNewID(self, table = ""):
+    def _CreateNewID(self, table=u"", dataTbl=None):
         #("assert", "subclass")
         return 0
 
