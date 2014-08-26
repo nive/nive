@@ -1,28 +1,34 @@
-Package reorganisation
-----------------------
+Package refactoring from Version 0.9.11 to 1.0.01
+----------------------------------------------------
+The package will soon be released as stable 1.0 version. For a better package management the previous
+`nive` package has been split up into several smaller packages. 
+
+After updating to the new version please make sure the python imports and dotted python strings (important!) 
+point to the new packages. If you are using a scaffold based installation you will only have to look at
+`__init__.py` containing the main() function. 
+
+Search for these four names and replace them:
 
 nive.cms    ->  nive_cms
-
 nive.userdb ->  nive_userdb
-
 nive.datastore ->  nive_datastore
-
-nive.components.extensions.fulltextpage -> nive_cms.extensions.fulltextpage
-
-nive.components.extensions.images -> nive_cms.extensions.images
-
-nive.components.extensions.pages -> nive_cms.extensions.pages
-
-nive.components.extensions.path -> nive_cms.extensions.path
-
-nive.components.extensions.sessionuser -> nive_userdb.extensions.sessionuser
-
-nive.components.objects [part 2] -> nive_cms.baseobjects  (see search and replace)
-
-nive.components.extensions -> nive.extensions
-
 nive.components.tools -> nive.tools
 
+
+If you have started custom development you might also need to change further imports. Here is a 
+complete list of the changes: 
+
+nive.cms    ->  nive_cms
+nive.userdb ->  nive_userdb
+nive.datastore ->  nive_datastore
+nive.components.tools -> nive.tools
+nive.components.extensions.fulltextpage -> nive_cms.extensions.fulltextpage
+nive.components.extensions.images -> nive_cms.extensions.images
+nive.components.extensions.pages -> nive_cms.extensions.pages
+nive.components.extensions.path -> nive_cms.extensions.path
+nive.components.extensions.sessionuser -> nive_userdb.extensions.sessionuser
+nive.components.objects [part 2] -> nive_cms.baseobjects  (see search and replace)
+nive.components.extensions -> nive.extensions
 nive/tools.py -> nive/tool.py
 
     
