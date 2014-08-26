@@ -688,7 +688,7 @@ class BaseView(object):
             attrs = u" " + u" ".join(attrs)
         if closeTag=="inline":
             return u"<%s%s/>" % (tag, attrs)
-        elif closeTag==None:
+        elif closeTag=='no':
             return u"<%s%s>" % (tag, attrs)
         return u"<%s%s></%s>" % (tag, attrs, tag)
 
