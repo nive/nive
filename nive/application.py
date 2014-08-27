@@ -77,6 +77,14 @@ class Application(object):
     - finishRegistration(app, pyramidConfig)
     - run(app)
 
+    All acl definitions are mapped to self.__acl__.
+        
+    ViewModuleConf.acl values are added first, AppConf.acl are appended to the end of the list.
+    This might make it hard to replace single permissions defined by view modules because pyramid
+    uses the first matching definition in the list.
+        
+    To disable any view module acl definitions or replace single permissions use the `FinishRegistration`
+    event and post process acls as needed. 
     """
     
     def __init__(self, configuration=None):
@@ -531,22 +539,19 @@ class Registration(object):
         if not self.configuration:
             raise ConfigurationError, "Configuration is empty"
         c = self.configuration
-        for k in c.keys():
-            # special values
-            if k == "id" and c.id:
-                self.__name__ = c.id
-            if k == "acl" and c.acl:
-                self.__acl__ = c.acl
-                continue
-            if k == "dbConfiguration" and c.dbConfiguration:
-                # bw 0.9.3
-                if type(c.dbConfiguration) == DictType:
-                    self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
-                else:
-                    self.dbConfiguration = c.dbConfiguration
-                continue
-            
-
+        # special values
+        if c.get("id"):
+            self.__name__ = c.id
+        if c.get("acl"):
+            self.__acl__ = tuple(c.acl)
+        if c.get("dbConfiguration"):
+            # bw 0.9.3
+            if type(c.dbConfiguration) == DictType:
+                self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
+            else:
+                self.dbConfiguration = c.dbConfiguration
+        
+        
     def _RegisterConfViews(self, conf):
         """
         Register view configurations included as ``configuration.views`` in other 
@@ -612,6 +617,10 @@ class Registration(object):
             if self.debug:
                 maxage = None
             config.add_static_view(name=viewmod.staticName or viewmod.id, path=viewmod.static, cache_max_age=maxage)
+        
+            # acls
+            if viewmod.get("acl"):
+                self.__acl__ = tuple(list(viewmod.get("acl")) + list(self.__acl__))
         
         return config
 

@@ -457,6 +457,8 @@ class AppConf(baseConf):
         description :  Application description (optional).
             
         # extensions
+        extensions:List of dotted python names or class references to extend context with
+                   additional functionality. Used in object factory.
         meta :    Meta layer definition of custom and system fields.
         modules : List of included configurations. Calls nive.Registration.Include for 
                   each module on startup. 
@@ -511,6 +513,7 @@ class AppConf(baseConf):
         self.acl = []
         
         # extensions
+        self.extensions = None
         self.meta = []
         self.listDefault = []
         self.modules = []
