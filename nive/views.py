@@ -244,7 +244,7 @@ class BaseView(object):
     
     # Response and headers (defined on module level below -------------------------------------------
 
-    def SendResponse(self, data, mime="text/html", filename=None, raiseException=True):
+    def SendResponse(self, data, mime="text/html", filename=None, raiseException=True, status=None):
         """
         Creates a response with data as body. If ``raiseException`` is true the function
         will raise a HTTPOk Exception with data as body.
@@ -252,7 +252,7 @@ class BaseView(object):
         If filename is not none the response will extended with a ``attachment; filename=filename``
         header.
         """
-        return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException)
+        return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException, status=status)
         
         
     def Redirect(self, url, messages=None, slot="", raiseException=True):
@@ -858,7 +858,7 @@ class BaseView(object):
 
 # Response utilities -------------------------------------------------
 
-def SendResponse(data, mime="text/html", filename=None, raiseException=True):
+def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None):
     """
     See views.BaseView class function for docs
     """
@@ -866,8 +866,8 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True):
     if filename:
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
-        raise HTTPOk(content_type=mime, body=data, content_disposition=cd)
-    return Response(content_type=mime, body=data, content_disposition=cd)
+        raise HTTPOk(content_type=mime, body=data, content_disposition=cd, status=status)
+    return Response(content_type=mime, body=data, content_disposition=cd, status=status)
 
 
 def Redirect(url, request, messages=None, slot="", raiseException=True):
