@@ -1,10 +1,12 @@
 
 import time
 import unittest
+import datetime
 
 from nive.definitions import ObjectConf, FieldConf, Conf
-from nive.helper import *
 from nive.utils.path import DvPath
+from nive.utils.dataPool2.files import File
+from nive.helper import *
 
 # -----------------------------------------------------------------
 
@@ -38,6 +40,38 @@ testconf.forms = {
                 "actions": ["save"]}
 }
 configuration = testconf
+
+
+class EncoderTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+    
+    def tearDown(self):
+        pass
+    
+    def test_jsonencoder(self):
+        self.assert_(JsonDataEncoder().encode({})=="{}")
+        self.assert_(JsonDataEncoder().encode({"a":"a","b":1}))
+        self.assert_(JsonDataEncoder().encode({"a":datetime.now()}))
+        self.assert_(JsonDataEncoder().encode({"a":File()}))
+
+    def test_confencoder(self):
+        self.assert_(ConfEncoder().encode(Conf()))
+        self.assert_(ConfEncoder().encode(Conf(**{"a":"a","b":1})))
+        self.assert_(ConfEncoder().encode(ObjectConf()))
+        self.assert_(ConfEncoder().encode(ObjectConf(**{"id":"a","name":"1"})))
+
+    # automatic class exports as ccc not supported yet
+    #def test_confdecoder(self):
+    #    c=ConfEncoder().encode(Conf())
+    #    self.assert_(ConfDecoder().decode(c)!=None)
+    #    c=ConfEncoder().encode(Conf(**{"a":"a","b":1}))
+    #    self.assert_(ConfDecoder().decode(c).a=="a",c)
+    #    c=ConfEncoder().encode(ObjectConf())
+    #    self.assert_(ConfDecoder().decode(c),c)
+    #    c=ConfEncoder().encode(ObjectConf(**{"id":"a","name":"1"}))
+    #    self.assert_(ConfDecoder().decode(c).id=="a",c)
 
 
 class ConfigurationTest(unittest.TestCase):

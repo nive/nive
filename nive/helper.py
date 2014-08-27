@@ -11,9 +11,11 @@ from pyramid.path import AssetResolver
 from pyramid.path import caller_package
 
 
-from nive.definitions import IAppConf, IDatabaseConf, IFieldConf, IRootConf, IObjectConf, IViewModuleConf
-from nive.definitions import IViewConf, IToolConf, IPortalConf, IGroupConf, ICategoryConf, IModuleConf
-from nive.definitions import IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf
+from nive.definitions import (
+    IAppConf, IDatabaseConf, IFieldConf, IRootConf, IObjectConf, IViewModuleConf,
+    IViewConf, IToolConf, IPortalConf, IGroupConf, ICategoryConf, IModuleConf,
+    IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf, IFileStorage
+)
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
 from nive import File
@@ -178,6 +180,18 @@ def ReplaceInListByID(conflist, newconf, id=None):
     return new
             
 
+
+class JsonDataEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return str(obj)
+        elif IFileStorage.providedBy(obj):
+            file = {}
+            file["filekey"] = obj.filekey
+            file["filename"] = obj.filename
+            file["size"] = obj.size
+            return file
+        return json.JSONEncoder.default(self, obj)
 
 class ConfEncoder(json.JSONEncoder):
     def default(self, obj):

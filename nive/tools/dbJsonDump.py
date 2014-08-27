@@ -8,6 +8,7 @@ import datetime
 from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, FieldConf, ViewConf
 from nive.definitions import IApplication, MetaTbl, Structure
+from nive.helper import JsonDataEncoder
 from nive.i18n import _
 
 configuration = ToolConf(
@@ -28,16 +29,6 @@ configuration = ToolConf(
         ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
     ]
 )
-
-
-
-
-class JsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return str(obj)
-        return json.JSONEncoder.default(self, obj)
-    
 
 class dbJsonDump(Tool):
     """
@@ -97,7 +88,7 @@ class dbJsonDump(Tool):
                 tvalues.append(recvalue)
             data[tablename] = tvalues
         
-        self.stream.write(JsonEncoder().encode(data))        
+        self.stream.write(JsonDataEncoder().encode(data))        
         
         return 1
 
