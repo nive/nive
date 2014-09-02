@@ -11,7 +11,7 @@ from nive.utils.path import DvPath
 
 from sqlite3 import OperationalError
 
-from test_Base import conf, stdMeta, struct, SystemFlds, Fulltext, Files, data1_1, data2_1, meta1, file1_1, file1_2
+from nive.utils.dataPool2.tests.test_Base import conf, stdMeta, struct, SystemFlds, Fulltext, Files, data1_1, data2_1, meta1, file1_1, file1_2
 
 
 

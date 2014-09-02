@@ -8,7 +8,7 @@ from nive.definitions import ConfigurationError
 from nive.definitions import ModuleConf
 from nive.helper import Event
 from nive.definitions import OperationalError
-from test_application import testapp, mApp2, mApp
+from nive.tests.test_application import testapp, mApp2, mApp
 
 
 class DummyClass1(object):
