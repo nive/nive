@@ -247,7 +247,8 @@ class BaseView(object):
     def SendResponse(self, data, mime="text/html", filename=None, raiseException=True, status=None):
         """
         Creates a response with data as body. If ``raiseException`` is true the function
-        will raise a HTTPOk Exception with data as body.
+        will raise a HTTPOk Exception with data as body. A custom response status can only be passed
+        if `raiseException` is False.
         
         If filename is not none the response will extended with a ``attachment; filename=filename``
         header.
@@ -688,7 +689,7 @@ class BaseView(object):
             attrs = u" " + u" ".join(attrs)
         if closeTag=="inline":
             return u"<%s%s/>" % (tag, attrs)
-        elif closeTag=='no':
+        elif closeTag in (None,'no'):
             return u"<%s%s>" % (tag, attrs)
         return u"<%s%s></%s>" % (tag, attrs, tag)
 
@@ -866,7 +867,7 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True, sta
     if filename:
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
-        raise HTTPOk(content_type=mime, body=data, content_disposition=cd, status=status)
+        raise HTTPOk(content_type=mime, body=data, content_disposition=cd)
     return Response(content_type=mime, body=data, content_disposition=cd, status=status)
 
 
