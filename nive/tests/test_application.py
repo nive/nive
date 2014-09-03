@@ -2,7 +2,6 @@
 import time
 import unittest
 
-from nive.definitions import OperationalError, ConfigurationError
 from nive.application import *
 from nive.definitions import *
 from nive.workflow import WfProcessConf
@@ -10,6 +9,7 @@ from nive.helper import *
 from nive.events import Events
 from nive.portal import Portal
 from nive.components import baseobjects
+from nive.security import User
 
 from nive.tool import _IGlobal, _GlobalObject
 

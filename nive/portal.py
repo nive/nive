@@ -39,10 +39,10 @@ import ConfigParser
 from pyramid.events import NewRequest
 
 from nive.i18n import _
-from nive.definitions import PortalConf, Conf
+from nive.definitions import PortalConf, Conf, baseConf
 from nive.definitions import implements
 from nive.definitions import ConfigurationError
-from nive.definitions import IModuleConf, IAppConf
+from nive.definitions import IModuleConf, IAppConf, IConf
 from nive.definitions import IPortal, IApplication
 from nive.definitions import ModuleConf
 from nive.helper import ResolveConfiguration, ResolveName
@@ -112,14 +112,16 @@ class Portal(Events, object):
         iface, conf = ResolveConfiguration(comp)
         if not conf and isinstance(comp, basestring):
             raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
-        elif IAppConf.providedBy(conf):
-            comp = ClassFactory(conf)(conf)
-        elif IModuleConf.providedBy(conf):
-            comp = ClassFactory(conf)(conf)
-        elif iface and iface.providedBy(comp):
-            comp = ResolveName(conf.context)(conf)
-        elif isinstance(comp, basestring):
-            comp = ResolveName(conf.context)(conf)
+        if isinstance(comp, basestring) or isinstance(comp, baseConf):
+            # factory methods
+            if IAppConf.providedBy(conf):
+                comp = ClassFactory(conf)(conf)
+            elif IModuleConf.providedBy(conf):
+                comp = ClassFactory(conf)(conf)
+            elif iface and iface.providedBy(comp):
+                comp = ResolveName(conf.context)(conf)
+            elif isinstance(comp, basestring):
+                comp = ResolveName(conf.context)(conf)
 
         try:
             name = name or conf.id
