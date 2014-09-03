@@ -7,316 +7,353 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nive 0.9.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-12-28 18:30+0100\n"
-"PO-Revision-Date: 2013-12-25 13:36+0100\n"
+"POT-Creation-Date: 2014-08-26 11:30+0200\n"
+"PO-Revision-Date: 2014-09-03 15:13+0100\n"
 "Last-Translator: wilk <wilk@flibuste.net>\n"
 "Language-Team: fr_FR <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: nive/definitions.py:1406
-msgid "String"
-msgstr "Chaine"
+#: nive/views.py:604
+msgid "<em>Unknown field</em>"
+msgstr "<em>Champ inconnu</em>"
 
-#: nive/definitions.py:1407
-msgid "Number"
-msgstr "Nombre"
+#: nive/views.py:977
+msgid "Yes"
+msgstr "Oui"
 
-#: nive/definitions.py:1408
-msgid "Float"
-msgstr "Nombre flottant"
+#: nive/views.py:979
+msgid "No"
+msgstr "Non"
 
-#: nive/definitions.py:1409
-msgid "Bool"
-msgstr "Booléen"
+#: nive/portal.py:70
+msgid "Authenticated"
+msgstr "Authentifié"
 
-#: nive/definitions.py:1410
-msgid "File"
-msgstr "Fichier"
-
-#: nive/definitions.py:1411 nive/definitions.py:1498 nive/tools/sendMail.py:49
-msgid "Text"
-msgstr "Texte"
-
-#: nive/definitions.py:1412
-msgid "Date"
-msgstr "Date"
-
-#: nive/definitions.py:1413
-msgid "Datetime"
-msgstr "Date et heure"
-
-#: nive/definitions.py:1415
-msgid "HTML Text"
-msgstr "Texte HTML"
-
-#: nive/definitions.py:1416
-msgid "Code (Html, Javascript, Css)"
-msgstr "Code (Html, Javascript, Css)"
-
-#: nive/definitions.py:1417
-msgid "Json"
-msgstr "Json"
-
-#: nive/definitions.py:1418
-msgid "Lines"
-msgstr "Lignes"
-
-#: nive/definitions.py:1419
-msgid "List"
-msgstr "Liste"
-
-#: nive/definitions.py:1420
-msgid "Radio Selection"
-msgstr "Choix de sélections"
-
-#: nive/definitions.py:1421
-msgid "Multiple Selection"
-msgstr "Sélections multiples"
-
-#: nive/definitions.py:1422
-msgid "Multiple Checkboxes"
-msgstr "Cases à cocher multiples"
-
-#: nive/definitions.py:1423
-msgid "Email"
-msgstr "Email"
-
-#: nive/definitions.py:1424
-#: nive/components/reform/templates/checked_password.pt:2
-msgid "Password"
-msgstr "Mot de passe"
-
-#: nive/definitions.py:1425
-msgid "URL"
-msgstr "URL"
-
-#: nive/definitions.py:1426
-msgid "URL List"
-msgstr "URL liste"
-
-#: nive/definitions.py:1427
-msgid "ID Reference"
-msgstr "ID de référence"
-
-#: nive/definitions.py:1428
-msgid "ID Reference List"
-msgstr "ID de liste de référence"
-
-#: nive/definitions.py:1429 nive/definitions.py:1505
-msgid "Timestamp"
-msgstr "Heure"
-
-#: nive/definitions.py:1431
-msgid "Binary"
-msgstr "Binaire"
-
-#: nive/definitions.py:1432
-msgid "List of numbers"
-msgstr "Liste de nombres"
-
-#: nive/definitions.py:1441 nive/tools/dbStructureUpdater.py:182
-msgid "ID"
-msgstr "ID"
-
-#: nive/definitions.py:1442 nive/tools/dbStructureUpdater.py:183
-msgid "Type"
-msgstr "Type"
-
-#: nive/definitions.py:1443
-msgid "Container"
-msgstr "Conteneur"
-
-#: nive/definitions.py:1444 nive/definitions.py:1489
-msgid "Filename"
-msgstr "Nom de fichier"
-
-#: nive/definitions.py:1445
-msgid "State"
-msgstr "État"
-
-#: nive/definitions.py:1446
-msgid "Select Number"
-msgstr "Nombre sélectionné"
-
-#: nive/definitions.py:1447
-msgid "Data Table Reference"
-msgstr "Table de référence"
-
-#: nive/definitions.py:1448
-msgid "Data Table Name"
-msgstr "Nom de la table"
-
-#: nive/definitions.py:1452
-msgid "Created"
-msgstr "Créé"
-
-#: nive/definitions.py:1453
-msgid "Changed"
-msgstr "Modifié"
-
-#: nive/definitions.py:1454
-msgid "Created by"
-msgstr "Créé par"
-
-#: nive/definitions.py:1455
-msgid "Changed by"
-msgstr "Modifié par"
-
-#: nive/definitions.py:1459 nive/tools/sendMail.py:48
-msgid "Title"
-msgstr "Titre"
-
-#: nive/definitions.py:1460
-msgid "Sort"
-msgstr "Trier"
-
-#: nive/definitions.py:1461
-msgid "Category"
-msgstr "Catégorie"
-
-#: nive/definitions.py:1465
-msgid "Workflow Process"
-msgstr "Flux du travail de publication"
-
-#: nive/definitions.py:1466
-msgid "Workflow Activity"
-msgstr "État de publication"
-
-#: nive/definitions.py:1486
-msgid "Unique ID"
-msgstr "ID unique"
-
-#: nive/definitions.py:1487 nive/definitions.py:1497 nive/definitions.py:1509
-msgid "Object ID"
-msgstr "ID de l'objet"
-
-#: nive/definitions.py:1488
-msgid "File key"
-msgstr "Clé du fichier"
-
-#: nive/definitions.py:1490
-msgid "Internal file path"
-msgstr "Chemin interne du fichier"
-
-#: nive/definitions.py:1491
-msgid "File size"
-msgstr "Taille du fichier"
-
-#: nive/definitions.py:1492
-msgid "File extension"
-msgstr "Extension du fichier"
-
-#: nive/definitions.py:1493
-msgid "Version"
-msgstr "Version"
-
-#: nive/definitions.py:1499
-msgid "Files"
-msgstr "Fichiers"
-
-#: nive/definitions.py:1503
-msgid "Key"
-msgstr "Clé"
-
-#: nive/definitions.py:1504 nive/components/reform/widget.py:792
-msgid "Value"
-msgstr "Valeur"
-
-#: nive/definitions.py:1510
-msgid "User name"
-msgstr "Nom de l'utilisateur"
-
-#: nive/definitions.py:1511
-msgid "Group assignment"
-msgstr "Affectation du groupe"
-
-#: nive/forms.py:1131 nive/forms.py:1169 nive/forms.py:1431 nive/forms.py:1549
+#: nive/forms.py:1594
+#: nive/forms.py:1167
+#: nive/forms.py:1205
+#: nive/forms.py:1467
 #: nive/adminview/view.py:134
 msgid "OK. Data saved."
 msgstr "OK. Données enregistrées."
 
-#: nive/forms.py:1502
+#: nive/forms.py:1573
+msgid "Item exists!"
+msgstr "Élément existant !"
+
+#: nive/forms.py:1541
 msgid "Item deleted!"
 msgstr "Élément supprimé !"
 
-#: nive/portal.py:64
-msgid "Authenticated"
-msgstr "Authentifié"
+#: nive/definitions.py:1416
+msgid "String"
+msgstr "Chaine"
 
-#: nive/views.py:570
-msgid "<em>Unknown field</em>"
-msgstr "<em>Champ inconnu</em>"
+#: nive/definitions.py:1417
+msgid "Number"
+msgstr "Nombre"
 
-#: nive/views.py:927
-msgid "Yes"
-msgstr "Oui"
+#: nive/definitions.py:1418
+msgid "Float"
+msgstr "Nombre flottant"
 
-#: nive/views.py:929
-msgid "No"
-msgstr "Non"
+#: nive/definitions.py:1419
+msgid "Bool"
+msgstr "Booléen"
 
-#: nive/adminview/modules.pt:4
-msgid ""
-"This page lists all included <dynamic element> for browsing in readonly "
-"mode. <dynamic element>\n"
-"Also this will help you to easily lookup object ids and database fields "
-"for developing."
-msgstr "Cette page liste tous les <dynamic element> à consulter en lecture seule."
-" <dynamic element>\n"
-"Cela vous permet également de retrouver facilement les ids d'objets et "
-"les champs de base de données pour le développement."
+#: nive/definitions.py:1420
+msgid "File"
+msgstr "Fichier"
 
-#: nive/adminview/modules.pt:7
+#: nive/definitions.py:1421
+#: nive/definitions.py:1508
+#: nive/tools/sendMail.py:49
+msgid "Text"
+msgstr "Texte"
+
+#: nive/definitions.py:1422
+msgid "Date"
+msgstr "Date"
+
+#: nive/definitions.py:1423
+msgid "Datetime"
+msgstr "Date et heure"
+
+#: nive/definitions.py:1425
+msgid "HTML Text"
+msgstr "Texte HTML"
+
+#: nive/definitions.py:1426
+msgid "Code (Html, Javascript, Css)"
+msgstr "Code (Html, Javascript, Css)"
+
+#: nive/definitions.py:1427
+msgid "Json"
+msgstr "Json"
+
+#: nive/definitions.py:1428
+msgid "Lines"
+msgstr "Lignes"
+
+#: nive/definitions.py:1429
+msgid "List"
+msgstr "Liste"
+
+#: nive/definitions.py:1430
+msgid "Radio Selection"
+msgstr "Choix de sélections"
+
+#: nive/definitions.py:1431
+msgid "Multiple Selection"
+msgstr "Sélections multiples"
+
+#: nive/definitions.py:1432
+msgid "Multiple Checkboxes"
+msgstr "Cases à cocher multiples"
+
+#: nive/definitions.py:1433
+msgid "Email"
+msgstr "Email"
+
+#: nive/definitions.py:1434
+#: nive/components/reform/templates/checked_password.pt:3
+msgid "Password"
+msgstr "Mot de passe"
+
+#: nive/definitions.py:1435
+msgid "URL"
+msgstr "URL"
+
+#: nive/definitions.py:1436
+msgid "URL List"
+msgstr "URL liste"
+
+#: nive/definitions.py:1437
+msgid "ID Reference"
+msgstr "ID de référence"
+
+#: nive/definitions.py:1438
+msgid "ID Reference List"
+msgstr "ID de liste de référence"
+
+#: nive/definitions.py:1439
+#: nive/definitions.py:1515
+msgid "Timestamp"
+msgstr "Heure"
+
+#: nive/definitions.py:1441
+msgid "Binary"
+msgstr "Binaire"
+
+#: nive/definitions.py:1442
+msgid "List of numbers"
+msgstr "Liste de nombres"
+
+#: nive/definitions.py:1451
+#: nive/tools/dbStructureUpdater.py:182
+msgid "ID"
+msgstr "ID"
+
+#: nive/definitions.py:1452
+#: nive/tools/dbStructureUpdater.py:183
+msgid "Type"
+msgstr "Type"
+
+#: nive/definitions.py:1453
+msgid "Container"
+msgstr "Conteneur"
+
+#: nive/definitions.py:1454
+#: nive/definitions.py:1499
+msgid "Filename"
+msgstr "Nom de fichier"
+
+#: nive/definitions.py:1455
+msgid "State"
+msgstr "État"
+
+#: nive/definitions.py:1456
+msgid "Select Number"
+msgstr "Nombre sélectionné"
+
+#: nive/definitions.py:1457
+msgid "Data Table Reference"
+msgstr "Table de référence"
+
+#: nive/definitions.py:1458
+msgid "Data Table Name"
+msgstr "Nom de la table"
+
+#: nive/definitions.py:1462
+msgid "Created"
+msgstr "Créé"
+
+#: nive/definitions.py:1463
+msgid "Changed"
+msgstr "Modifié"
+
+#: nive/definitions.py:1464
+msgid "Created by"
+msgstr "Créé par"
+
+#: nive/definitions.py:1465
+msgid "Changed by"
+msgstr "Modifié par"
+
+#: nive/definitions.py:1469
+#: nive/tools/sendMail.py:48
+msgid "Title"
+msgstr "Titre"
+
+#: nive/definitions.py:1470
+msgid "Sort"
+msgstr "Trier"
+
+#: nive/definitions.py:1471
+msgid "Category"
+msgstr "Catégorie"
+
+#: nive/definitions.py:1475
+msgid "Workflow Process"
+msgstr "Flux du travail de publication"
+
+#: nive/definitions.py:1476
+msgid "Workflow Activity"
+msgstr "État de publication"
+
+#: nive/definitions.py:1496
+msgid "Unique ID"
+msgstr "ID unique"
+
+#: nive/definitions.py:1497
+#: nive/definitions.py:1507
+#: nive/definitions.py:1519
+msgid "Object ID"
+msgstr "ID de l'objet"
+
+#: nive/definitions.py:1498
+msgid "File key"
+msgstr "Clé du fichier"
+
+#: nive/definitions.py:1500
+msgid "Internal file path"
+msgstr "Chemin interne du fichier"
+
+#: nive/definitions.py:1501
+msgid "File size"
+msgstr "Taille du fichier"
+
+#: nive/definitions.py:1502
+msgid "File extension"
+msgstr "Extension du fichier"
+
+#: nive/definitions.py:1503
+msgid "Version"
+msgstr "Version"
+
+#: nive/definitions.py:1509
+msgid "Files"
+msgstr "Fichiers"
+
+#: nive/definitions.py:1513
+msgid "Key"
+msgstr "Clé"
+
+#: nive/definitions.py:1514
+#: nive/components/reform/widget.py:963
+msgid "Value"
+msgstr "Valeur"
+
+#: nive/definitions.py:1520
+msgid "User name"
+msgstr "Nom de l'utilisateur"
+
+#: nive/definitions.py:1521
+msgid "Group assignment"
+msgstr "Affectation du groupe"
+
+#: nive/tests/index.pt:18
+#: nive/adminview/view.py:229
+#: nive/adminview/index.pt:18
+msgid "administration"
+msgstr "administration"
+
+#: nive/adminview/tools.pt:18
+msgid "This page lists all <dynamic element> like database export or database schema manager."
+msgstr "Cette page liste tous les <dynamic element> comme l'export de la base ou l'administration du schéma de la base"
+
+#: nive/adminview/tools.pt:23
+msgid "Administration tools"
+msgstr "Outils d'administration"
+
+#: nive/adminview/views.pt:5
+msgid "This page lists all included <dynamic element> for browsing in readonly mode."
+msgstr "Cette page liste tous les <dynamic element> inclus pour consulter en lecture seule."
+
+#: nive/adminview/views.pt:10
+msgid "View Modules"
+msgstr "Modules des vues"
+
+#: nive/adminview/views.pt:14
+msgid "Single Views"
+msgstr "Vues uniques"
+
+#: nive/adminview/views.pt:18
+msgid "Widgets"
+msgstr "Gadgets"
+
+#: nive/adminview/views.pt:22
+msgid "Other modules"
+msgstr "Autres modules"
+
+#: nive/adminview/modules.pt:5
+#, fuzzy
+msgid "This page lists all included <dynamic element> for browsing in readonly mode. <dynamic element> Also this will help you to easily lookup object ids and database fields for developing."
+msgstr ""
+"Cette page liste tous les <dynamic element> à consulter en lecture seule. <dynamic element>\n"
+"Cela vous permet également de retrouver facilement les ids d'objets et les champs de base de données pour le développement."
+
+#: nive/adminview/modules.pt:12
 msgid "CMS"
 msgstr "CMS"
 
-#: nive/adminview/modules.pt:10
+#: nive/adminview/modules.pt:16
 msgid "Objects"
 msgstr "Objects"
 
-#: nive/adminview/modules.pt:14
+#: nive/adminview/modules.pt:20
 msgid "Roots"
 msgstr "Racines"
 
-#: nive/adminview/modules.pt:18
+#: nive/adminview/modules.pt:24
 msgid "Meta fields"
 msgstr "Champs meta"
 
-#: nive/adminview/modules.pt:22 nive/adminview/view.py:56
+#: nive/adminview/modules.pt:28
+#: nive/adminview/view.py:56
 msgid "Tools"
 msgstr "Outils"
 
-#: nive/adminview/modules.pt:26
+#: nive/adminview/modules.pt:32
 msgid "Workflow processes"
 msgstr "Flux de travail de publication"
 
-#: nive/adminview/modules.pt:30
+#: nive/adminview/modules.pt:36
 msgid "Others"
 msgstr "Autres"
-
-#: nive/adminview/root.pt:5
-msgid "Administration sections"
-msgstr "Section administratives"
-
-#: nive/adminview/tools.pt:12
-msgid ""
-"This page lists all <dynamic element> like database export or database "
-"schema manager."
-msgstr ""
-"Cette page liste tous les <dynamic element> comme l'export de la base ou "
-"l'administration du schéma de la base"
-
-#: nive/adminview/tools.pt:14
-msgid "Administration tools"
-msgstr "Outils d'administration"
 
 #: nive/adminview/view.py:27
 msgid "Administration"
 msgstr "Administration"
+
+#: nive/adminview/view.py:74
+msgid "Database Administration"
+msgstr "Administration de la base de données"
 
 #: nive/adminview/view.py:53
 msgid "Basics"
@@ -336,13 +373,7 @@ msgstr "Vues"
 
 #: nive/adminview/view.py:61
 msgid "Read only listing of all registered views grouped by view modules."
-msgstr ""
-"Liste en lecture seule de toutes les vues répertoriées groupées par "
-"modules."
-
-#: nive/adminview/view.py:74
-msgid "Database Administration"
-msgstr "Administration de la base de données"
+msgstr "Liste en lecture seule de toutes les vues répertoriées groupées par modules."
 
 #: nive/adminview/view.py:85
 msgid "Database"
@@ -350,25 +381,7 @@ msgstr "Base de données"
 
 #: nive/adminview/view.py:136
 msgid "No persistent storage for configurations activated. Nothing saved."
-msgstr ""
-"Aucun stockage persistant pour la configuration n'est activé. Rien n'est "
-"enregistré."
-
-#: nive/adminview/view.py:225
-msgid "editor"
-msgstr "éditeur"
-
-#: nive/adminview/view.py:227
-msgid "public"
-msgstr "public"
-
-#: nive/adminview/view.py:229
-msgid "administration"
-msgstr "administration"
-
-#: nive/adminview/view.py:232
-msgid "user management"
-msgstr "gestion utilisateur"
+msgstr "Aucun stockage persistant pour la configuration n'est activé. Rien n'est enregistré."
 
 #: nive/adminview/view.py:241
 msgid "Application title"
@@ -395,12 +408,8 @@ msgid "Database type to be used"
 msgstr "Type de base de données à utiliser"
 
 #: nive/adminview/view.py:259
-msgid ""
-"Supports 'Sqlite3' and 'MySql' by default. MySql requires python-mysqldb "
-"installed."
-msgstr ""
-"Supporte 'Sqlite3' et 'MySQL' par défaut. MySql nécessite d'installer "
-"python-mysqldb."
+msgid "Supports 'Sqlite3' and 'MySql' by default. MySql requires python-mysqldb installed."
+msgstr "Supporte 'Sqlite3' et 'MySQL' par défaut. MySql nécessite d'installer python-mysqldb."
 
 #: nive/adminview/view.py:260
 msgid "Relative or absolute root directory for files"
@@ -412,9 +421,7 @@ msgstr "Chemin de la base de données ou nom"
 
 #: nive/adminview/view.py:262
 msgid "Sqlite3=database file path, MySql=database name"
-msgstr ""
-"Sqlite3=chemin du fichier de la base de données, MySql=nom de la base de "
-"données"
+msgstr "Sqlite3=chemin du fichier de la base de données, MySql=nom de la base de données"
 
 #: nive/adminview/view.py:263
 msgid "Database server host"
@@ -460,29 +467,48 @@ msgstr "Redirection à la déconnexion"
 msgid "User account page url"
 msgstr "Url de la page du compte utilisateur"
 
-#: nive/adminview/views.pt:4
-msgid ""
-"This page lists all included <dynamic element> for browsing in readonly "
-"mode."
-msgstr ""
-"Cette page liste tous les <dynamic element> inclus pour consulter en "
-"lecture seule."
+#: nive/adminview/view.py:232
+msgid "user management"
+msgstr "gestion utilisateur"
 
-#: nive/adminview/views.pt:6
-msgid "View Modules"
-msgstr "Modules des vues"
+#: nive/adminview/view.py:225
+msgid "editor"
+msgstr "éditeur"
 
-#: nive/adminview/views.pt:10
-msgid "Single Views"
-msgstr "Vues uniques"
+#: nive/adminview/view.py:227
+msgid "public"
+msgstr "public"
 
-#: nive/adminview/views.pt:14
-msgid "Widgets"
-msgstr "Gadgets"
+#: nive/adminview/index.pt:31
+msgid "Switch location or Logout"
+msgstr "Changer d'adresse ou déconnecter"
 
-#: nive/adminview/views.pt:18
-msgid "Other modules"
-msgstr "Autres modules"
+#: nive/adminview/index.pt:44
+msgid "Logout"
+msgstr "Déconnection"
+
+#: nive/adminview/root.pt:6
+msgid "Administration sections"
+msgstr "Section administratives"
+
+#: nive/components/reform/schema.py:294
+#, python-format
+msgid "${val} is less than minimum value ${min}"
+msgstr "${val} est inférieur à la valeur minimum ${min}"
+
+#: nive/components/reform/schema.py:295
+#, python-format
+msgid "${val} is greater than maximum value ${max}"
+msgstr "${val} est supérieur à la valeur maximale ${max}"
+
+#: nive/components/reform/schema.py:1050
+#: nive/components/reform/schema.py:1143
+msgid "Invalid date"
+msgstr "Date invalide"
+
+#: nive/components/reform/schema.py:1229
+msgid "Invalid time"
+msgstr "Heure invalide"
 
 #: nive/components/reform/schema.py:206
 msgid "Invalid value"
@@ -500,418 +526,222 @@ msgstr "Adresse email invalide"
 msgid "Invalid characters in string: Only 'a-zA-Z0-9.-_' allowed."
 msgstr "Caractères invalides dans la chaine: Seulement 'a-zA-Z0-9.-_' autorisés."
 
-#: nive/components/reform/schema.py:294
-msgid "${val} is less than minimum value ${min}"
-msgstr "${val} est inférieur à la valeur minimum ${min}"
-
-#: nive/components/reform/schema.py:295
-msgid "${val} is greater than maximum value ${max}"
-msgstr "${val} est supérieur à la valeur maximale ${max}"
+#: nive/components/reform/schema.py:346
+#, python-format
+msgid "\"${val}\" is not one of ${choices}"
+msgstr "\"${val}\" ne fait pas parti des choix ${choices}"
 
 #: nive/components/reform/schema.py:327
+#, python-format
 msgid "Shorter than minimum length ${min}"
 msgstr "Plus court que la longueur minimale ${min}"
 
 #: nive/components/reform/schema.py:333
+#, python-format
 msgid "Longer than maximum length ${max}"
 msgstr "Plus long que la longueur maximale ${max}"
 
-#: nive/components/reform/schema.py:346
-msgid "\"${val}\" is not one of ${choices}"
-msgstr "\"${val}\" ne fait pas parti des choix ${choices}"
-
-#: nive/components/reform/schema.py:438
-msgid "\"${val}\" is not a mapping type: ${err}"
-msgstr "\"${val}\" n'est pas un type correspondant: ${err}"
-
-#: nive/components/reform/schema.py:462
-msgid "Unrecognized keys in mapping: \"${val}\""
-msgstr "Clé non reconnue dans la correspondance : \"${val}\""
-
 #: nive/components/reform/schema.py:555
+#, python-format
 msgid "\"${val}\" is not iterable"
 msgstr "\"${val}\" n'est pas itérable"
 
 #: nive/components/reform/schema.py:563
-msgid ""
-"\"${val}\" has an incorrect number of elements (expected ${exp}, was "
-"${was})"
+#, python-format
+msgid "\"${val}\" has an incorrect number of elements (expected ${exp}, was ${was})"
 msgstr "\"${val}\" a un nombre d'éléments incorrect (attendu ${exp}, reçu ${was})"
 
-#: nive/components/reform/schema.py:745
-msgid "\"${val} cannot be serialized: ${err}"
-msgstr "\"${val}\" ne peut pas être sérialisé : ${err}"
-
-#: nive/components/reform/schema.py:761
-msgid "${val} is not a string: %{err}"
-msgstr "${val} n'est pas une chaine : ${err}"
-
-#: nive/components/reform/schema.py:781 nive/components/reform/schema.py:792
-msgid "\"${val}\" is not a number"
-msgstr "\"${val}\" n'est pas un nombre"
-
-#: nive/components/reform/schema.py:868
-msgid "${val} is not a string"
-msgstr "${val} n'est pas une chaine"
-
-#: nive/components/reform/schema.py:928 nive/components/reform/schema.py:945
-#: nive/components/reform/schema.py:955
-msgid "relative name \"${val}\" irresolveable without package"
-msgstr "le nom relatif \"${val}\" ne peut pas être résolu sans package"
-
-#: nive/components/reform/schema.py:985
-msgid "\"${val}\" has no __name__"
-msgstr "\"${val}\" n'a pas de __name__"
-
 #: nive/components/reform/schema.py:994
+#, python-format
 msgid "\"${val}\" is not a string"
 msgstr "\"${val}\" n'est pas une chaine"
 
-#: nive/components/reform/schema.py:1003
-msgid "The dotted name \"${name}\" cannot be imported"
-msgstr "Le nom pointé \"${name}\" ne peut pas être importé"
-
-#: nive/components/reform/schema.py:1050 nive/components/reform/schema.py:1143
-msgid "Invalid date"
-msgstr "Date invalide"
-
 #: nive/components/reform/schema.py:1078
+#, python-format
 msgid "\"${val}\" is not a datetime object"
 msgstr "\"${val}\" n'est pas un objet datetime"
 
 #: nive/components/reform/schema.py:1164
+#, python-format
 msgid "\"${val}\" is not a date object"
 msgstr "\"${val}\\ n'est pas un objet date"
 
-#: nive/components/reform/schema.py:1229
-msgid "Invalid time"
-msgstr "Heure invalide"
-
 #: nive/components/reform/schema.py:1253
+#, python-format
 msgid "\"${val}\" is not a time object"
 msgstr "\"${val\" n'est pas un objet heure"
 
-#: nive/components/reform/schema.py:1464 nive/components/reform/schema.py:1466
-#: nive/components/reform/schema.py:1779 nive/components/reform/schema.py:1811
-#: nive/components/reform/schema.py:1864
-msgid "Required"
-msgstr "Requis"
-
-#: nive/components/reform/schema.py:1731 nive/components/reform/schema.py:1936
+#: nive/components/reform/schema.py:1731
+#: nive/components/reform/schema.py:1984
+#, python-format
 msgid "${value} is not a dictionary"
 msgstr "${value} n'est pas un dictionnaire"
 
-#: nive/components/reform/schema.py:1738 nive/components/reform/schema.py:1943
-msgid "${value} has no ${key} key"
-msgstr "${value} n'as las la clé ${key}"
-
-#: nive/components/reform/schema.py:1775 nive/components/reform/schema.py:1807
-#: nive/components/reform/schema.py:1860
+#: nive/components/reform/schema.py:1775
+#: nive/components/reform/schema.py:1810
+#: nive/components/reform/schema.py:1908
+#, python-format
 msgid "${value} is not iterable"
 msgstr "${value} n'est pas iterable"
 
-#: nive/components/reform/widget.py:791
+#: nive/components/reform/schema.py:1779
+#: nive/components/reform/schema.py:1814
+#: nive/components/reform/schema.py:1912
+#: nive/components/reform/schema.py:1464
+#: nive/components/reform/schema.py:1466
+#: nive/components/reform/schema.py:1860
+msgid "Required"
+msgstr "Requis"
+
+#: nive/components/reform/schema.py:438
+#, python-format
+msgid "\"${val}\" is not a mapping type: ${err}"
+msgstr "\"${val}\" n'est pas un type correspondant: ${err}"
+
+#: nive/components/reform/schema.py:462
+#, python-format
+msgid "Unrecognized keys in mapping: \"${val}\""
+msgstr "Clé non reconnue dans la correspondance : \"${val}\""
+
+#: nive/components/reform/schema.py:745
+#, python-format
+msgid "\"${val} cannot be serialized: ${err}"
+msgstr "\"${val}\" ne peut pas être sérialisé : ${err}"
+
+#: nive/components/reform/schema.py:761
+#, python-format
+msgid "${val} is not a string: %{err}"
+msgstr "${val} n'est pas une chaine : ${err}"
+
+#: nive/components/reform/schema.py:781
+#: nive/components/reform/schema.py:792
+#, python-format
+msgid "\"${val}\" is not a number"
+msgstr "\"${val}\" n'est pas un nombre"
+
+#: nive/components/reform/schema.py:868
+#, python-format
+msgid "${val} is not a string"
+msgstr "${val} n'est pas une chaine"
+
+#: nive/components/reform/schema.py:928
+#: nive/components/reform/schema.py:945
+#: nive/components/reform/schema.py:955
+#, python-format
+msgid "relative name \"${val}\" irresolveable without package"
+msgstr "le nom relatif \"${val}\" ne peut pas être résolu sans package"
+
+#: nive/components/reform/schema.py:985
+#, python-format
+msgid "\"${val}\" has no __name__"
+msgstr "\"${val}\" n'a pas de __name__"
+
+#: nive/components/reform/schema.py:1003
+#, python-format
+msgid "The dotted name \"${name}\" cannot be imported"
+msgstr "Le nom pointé \"${name}\" ne peut pas être importé"
+
+#: nive/components/reform/schema.py:1738
+#: nive/components/reform/schema.py:1991
+#, python-format
+msgid "${value} has no ${key} key"
+msgstr "${value} n'as las la clé ${key}"
+
+#: nive/components/reform/schema.py:1849
+#, fuzzy, python-format
+msgid "${value} is not a string"
+msgstr "${val} n'est pas une chaine"
+
+#: nive/components/reform/schema.py:1858
+#: nive/components/reform/schema.py:1819
+#, python-format
+msgid "${value} not in reference list"
+msgstr "${value} n'est pas dans la liste de référence"
+
+#: nive/components/reform/widget.py:962
 msgid "Fields did not match"
 msgstr "Les champs ne correspondent pas"
 
-#: nive/components/reform/widget.py:793
+#: nive/components/reform/widget.py:964
 msgid "Confirm Value"
 msgstr "Confirmer la valeur"
 
-#: nive/components/reform/widget.py:843
+#: nive/components/reform/widget.py:1014
 msgid "Password did not match confirm"
 msgstr "Le mot de passe ne correspond pas à la confirmation"
 
-#: nive/components/reform/widget.py:1072
+#: nive/components/reform/widget.py:582
+msgid "Header 1"
+msgstr "Entête 1"
+
+#: nive/components/reform/widget.py:583
+msgid "Header 2"
+msgstr "Entête 2"
+
+#: nive/components/reform/widget.py:584
+msgid "Header 3"
+msgstr "Entête 3"
+
+#: nive/components/reform/widget.py:585
+msgid "Header 4"
+msgstr "Entête 4"
+
+#: nive/components/reform/widget.py:586
+msgid "Text (p)"
+msgstr "Texte (p)"
+
+#: nive/components/reform/widget.py:587
+msgid "Formatted (pre)"
+msgstr "Formatté (pre)"
+
+#: nive/components/reform/widget.py:1247
 msgid "Incomplete date"
 msgstr "Date incomplète"
 
-#: nive/components/reform/templates/checked_password.pt:7
-msgid "Confirm Password"
-msgstr "Confirmez le mot de passe"
-
-#: nive/components/reform/templates/dateparts.pt:4
-msgid "Year"
-msgstr "Année"
-
-#: nive/components/reform/templates/dateparts.pt:11
-msgid "Month"
-msgstr "Mois"
-
-#: nive/components/reform/templates/dateparts.pt:18
-msgid "Day"
-msgstr "Jour"
-
-#: nive/components/reform/templates/file_upload.pt:9
+#: nive/components/reform/templates/file_upload.pt:12
 msgid "var msg_file_upload='Delete file. Are you sure?';"
 msgstr "var msg_file_upload='Supprimer le fichier. Êtes vous sûr ?';"
 
-#: nive/components/reform/templates/file_upload.pt:10
+#: nive/components/reform/templates/file_upload.pt:15
 msgid "Delete this file"
 msgstr "Supprimer ce fichier"
 
-#: nive/components/reform/templates/file_upload.pt:15
+#: nive/components/reform/templates/file_upload.pt:23
 msgid "--disabled!--"
 msgstr "--désactivé !--"
 
-#: nive/tools/cmsstatistics.py:19
-msgid "CMS Statistics"
-msgstr "Statistiques du CMS"
+#: nive/components/reform/templates/form.pt:14
+msgid "There was a problem with your submission"
+msgstr "Il y a eu un problème avec votre envoi"
 
-#: nive/tools/cmsstatistics.py:20
-msgid ""
-"This function provides a short summary of elements and data contained in "
-"the website."
-msgstr ""
-"Cette fonction fournie un résumé des éléments et données contenues dans "
-"le site web."
+#: nive/components/reform/templates/form.pt:17
+msgid "Errors have been highlighted below"
+msgstr "Les erreurs sont mises en surbrillance ci-dessous"
 
-#: nive/tools/cmsstatistics.py:51
-msgid "<tr><th>Elements in total</th><td>${value}</td></tr>\n"
-msgstr "<tr><th>Éléments au total</th><td>${value}</td></tr>\n"
+#: nive/components/reform/templates/dateparts.pt:6
+msgid "Year"
+msgstr "Année"
 
-#: nive/tools/cmsstatistics.py:56
-msgid "<tr><th>Physical files</th><td>${value}</td></tr>\n"
-msgstr "<tr><th>Fichiers physiques</th><td>${value}</td></tr>\n"
+#: nive/components/reform/templates/dateparts.pt:15
+msgid "Month"
+msgstr "Mois"
 
-#: nive/tools/cmsstatistics.py:61
-msgid "<tr><th>Physical files size</th><td>${value}</td></tr>\n"
-msgstr "<tr><th>Taille des fichiers physiques</th><td>${value}</td></tr>\n"
+#: nive/components/reform/templates/dateparts.pt:24
+msgid "Day"
+msgstr "Jour"
 
-#: nive/tools/cmsstatistics.py:67
-msgid "<tr><th>${name}</th><td>${value}</td></tr>\n"
-msgstr "<tr><th>${name}</th><td>${value}</td></tr>\n"
+#: nive/components/reform/templates/checked_password.pt:6
+msgid "Confirm Password"
+msgstr "Confirmez le mot de passe"
 
-#: nive/tools/dbJsonDump.py:15
-msgid "Database json dump"
-msgstr "Export json de la base de données"
+#: nive/tools/sendMailTester.py:25
+msgid "Fake Mailer"
+msgstr "Simulateur de mail"
 
-#: nive/tools/dbJsonDump.py:16
-msgid ""
-"This function dumps table contents the way records are stored in json "
-"format."
-msgstr ""
-"Cette fonction exporte la table des contenus de la manière dont ils sont"
-"  enregistrés au format json."
-
-#: nive/tools/dbJsonDump.py:24 nive/tools/dbSqlDump.py:24
-msgid "Exclude system columns"
-msgstr "Exclure les colonnes systèmes"
-
-#: nive/tools/dbJsonDump.py:48 nive/tools/dbJsonDump.py:52
-#: nive/tools/dbSqlDump.py:48 nive/tools/dbSqlDump.py:52
-#: nive/tools/exportJson.py:60 nive/tools/exportJson.py:64
-msgid "Database connection error (${name})\n"
-msgstr "Erreur de connexion à la base de données (${name})\n"
-
-#: nive/tools/dbSqlDump.py:14
-msgid "Database sql dump"
-msgstr "Export sql de la base de données"
-
-#: nive/tools/dbSqlDump.py:15
-msgid ""
-"This function dumps table contents as SQL INSERT statements. 'CREATE "
-"table' statements are not included."
-msgstr ""
-"Cette fonction exporte la table des contenues sous la forme de 'SQL "
-"INSERT'. Les 'CREATE TABLE' ne sont pas inclus"
-
-#: nive/tools/dbStructureUpdater.py:20
-msgid "Database Structure"
-msgstr "Structure de la base de données"
-
-#: nive/tools/dbStructureUpdater.py:21
-msgid "Generate or update the database structure based on configuration settings."
-msgstr ""
-"Génère ou met à jour la structure de la base de données suivant les \n"
-"options de configuration."
-
-#: nive/tools/dbStructureUpdater.py:25
-msgid "Modify existing columns"
-msgstr "Modifie les colonnes existantes"
-
-#: nive/tools/dbStructureUpdater.py:25
-msgid ""
-"Change existing database columns to new configuration. Depending on the "
-"changes, data may be lost!"
-msgstr ""
-"Modifie les colonnes existantes de la base de données suivant la nouvelle"
-" configuration. Suivant les changements, des données peuvent être perdus "
-"!"
-
-#: nive/tools/dbStructureUpdater.py:26
-msgid "Show system columns"
-msgstr "Montre les colonnes systèmes"
-
-#: nive/tools/dbStructureUpdater.py:50
-msgid ""
-" <div class=\"well\">\n"
-"This tool compares the physically existing database structure (tables, "
-"columns) with the current configuration settings.\n"
-"The database structure is shown on the left, configuration settings on "
-"the right. <br/><br/>\n"
-"Existing database columns will only be altered if manually selected in "
-"the 'Modify' column. Modifying a table may destroy the data\n"
-"stored (e.g if converted from string to integer), so don't forget to "
-"create backups of the database before modifying anything.<br/>\n"
-"By default this tool will only create new tables and columns and never "
-"delete any column.\n"
-" </div>       "
-msgstr ""
-"<div class=\"well\">\n"
-"\n"
-"Cet outil compare la structure physique existante de la base de données"
-"\n"
-"(tables, colonnes) avec la configuration actuelle.\n"
-"\n"
-"La structure de la base de données est à gauche, la configuration est à droite.<br/><br/>\n"
-"\n"
-"Les colonnes actuelles de la base de données ne seront modifiées que si"
-"\n"
-"elles sont sélectionnées manuellement dans la colonne 'Modification'. "
-"\n"
-"Modifier une table peut détruire les données\n"
-"\n"
-"stockées (ex. si converties d'une chaine vers un entier), aussi "
-"n'oubliez \n"
-"pas de réaliser des sauvegardes de la base de données avant de modifier"
-"\n"
-"quoi que ce soit.<br/>\n"
-"\n"
-"Par défaut cet outil va seulement créer les nouvelles tables et "
-"colonnes \n"
-"sans effacer de colonne.\n"
-"\n"
-"</div>"
-
-#: nive/tools/dbStructureUpdater.py:67 nive/tools/dbStructureUpdater.py:70
-msgid "<div class=\"alert alert-error\">No database connection configured</div>"
-msgstr ""
-"<div class=\"alert alert-error\">Aucune connexion à une base de données "
-"configurée</div>"
-
-#: nive/tools/dbStructureUpdater.py:74
-msgid "<h4>Database '${name}' ${host} </h4><br/>"
-msgstr "<h4>Base de données '${name}' ${host} </h4><br/>"
-
-#: nive/tools/dbStructureUpdater.py:77
-msgid "<div class='alert alert-error'>Database connection error (${name})</div>"
-msgstr ""
-"<div class='alert alert-error'>Erreur de connexion à la base de données "
-"(${name})</div>"
-
-#: nive/tools/dbStructureUpdater.py:85
-msgid "<div class='alert alert-success'>Database created: '${name}'</div>"
-msgstr "<div class='alert alert-success'>Base de données créée : '${name}'</div>"
-
-#: nive/tools/dbStructureUpdater.py:105
-msgid ""
-"<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
-"${name})</div>"
-msgstr ""
-"<div class='alert alert-error'>Échec de la mise à jour de la table : "
-"${dbparam} (type: \n"
-"${name})</div>"
-
-#: nive/tools/dbStructureUpdater.py:118
-msgid "<div class='alert alert-error'>Table creation failed (pool_meta)</div>"
-msgstr ""
-"<div class='alert alert-error'>Échec de la création de la table "
-"(pool_meta)</div>"
-
-#: nive/tools/dbStructureUpdater.py:129
-msgid "<div class='alert alert-error'>Table update failed (pool_meta)</div>"
-msgstr ""
-"<div class='alert alert-error'>Échec de la mise de la table "
-"(pool_meta)</div>"
-
-#: nive/tools/dbStructureUpdater.py:143 nive/tools/dbStructureUpdater.py:154
-msgid "<div class='alert alert-error'>Table creation failed (${name})</div>"
-msgstr "<div class='alert alert-error'>Échec de la création de la table (${name})</div>"
-
-#: nive/tools/dbStructureUpdater.py:165
-msgid "Modify selected columns"
-msgstr "Modifier les colonnes sélectionnées"
-
-#: nive/tools/dbStructureUpdater.py:166
-msgid ""
-"Changes on existing columns have to be applied manually. This will write "
-"selected 'Configuration settings' to the database.<br/> <b>Warning: This "
-"may destroy something!</b>"
-msgstr ""
-"Les modifications sur les colonnes existantes doivent être appliquées "
-"manuellement. Cela va enregistrer les 'options de configuration' "
-"sélectionnées dans la base de données.<br/> <b>Attention : cela peut "
-"détruire quelque chose !</b>"
-
-#: nive/tools/dbStructureUpdater.py:179
-msgid "Table"
-msgstr "Table"
-
-#: nive/tools/dbStructureUpdater.py:180
-msgid "Database settings"
-msgstr "Options de la base de données"
-
-#: nive/tools/dbStructureUpdater.py:181
-msgid "Configuration settings"
-msgstr "Options de configuration"
-
-#: nive/tools/dbStructureUpdater.py:184
-msgid "Default"
-msgstr "Défaut"
-
-#: nive/tools/dbStructureUpdater.py:185
-msgid "Settings"
-msgstr "Options"
-
-#: nive/tools/dbStructureUpdater.py:186
-msgid "Modify?"
-msgstr "Modifier ?"
-
-#: nive/tools/exportJson.py:17
-msgid "Json data export"
-msgstr "Export des données json"
-
-#: nive/tools/exportJson.py:18
-msgid ""
-"This function exports all objects in json format. Optionally as flat list"
-" or tree structure. This is not a simple database table dump. Object "
-"events will be triggered before exporting data."
-msgstr ""
-"Cette fonction exporte tous les objets au format json. En option sous "
-"forme de liste à plat ou de structure en arbre. Ce n'est pas un simple "
-"export de la base de données. Les évènements sur les objets seront "
-"déclanchés avant d'exporter les données."
-
-#: nive/tools/exportJson.py:26
-msgid "Export as tree"
-msgstr "Exporter sous forme d'arbre"
-
-#: nive/tools/exportJson.py:27
-msgid ""
-"Export objects as tree structure (contained objects are included as "
-"'items')"
-msgstr ""
-"Exporte les objets sous forme d'arbre (les objets contenus sont inclus en"
-" tant que section)"
-
-#: nive/tools/exportJson.py:34
-msgid "File data"
-msgstr "Fichier de données"
-
-#: nive/tools/exportJson.py:35
-msgid "Include binary file data in json export (encoded as base64)"
-msgstr ""
-"Inclure les données des fichiers binaires dans l'export json (encodé en "
-"base64)"
-
-#: nive/tools/gcdump.py:14
-msgid "Object dump"
-msgstr "Export objet"
-
-#: nive/tools/gcdump.py:15
-msgid "This function dumps a list of all objects found in memory."
-msgstr "Cette fonction exporte une liste de tous les objets trouvés en mémoire."
+#: nive/tools/sendMailTester.py:84
+#: nive/tools/sendMail.py:116
+msgid "No receiver for the e-mail! Aborting."
+msgstr "Aucun destinataire pour l'email ! Annulation."
 
 #: nive/tools/sendMail.py:28
 msgid "Send mails to registered users"
@@ -998,20 +828,222 @@ msgid "Debug mode"
 msgstr "Mode debug"
 
 #: nive/tools/sendMail.py:56
-msgid ""
-"All mails are sent to 'Receiver role' or 'Receiver User IDs' field "
-"default value. No external mail address is used."
+msgid "All mails are sent to 'Receiver role' or 'Receiver User IDs' field default value. No external mail address is used."
+msgstr "Tous les mails sont envoyés à 'Rôle destinataire' ou à la valeur par défaut du champ 'IDs utilisateur destinataire'.  Aucun mail externer n'est utilisé."
+
+#: nive/tools/cmsstatistics.py:19
+msgid "CMS Statistics"
+msgstr "Statistiques du CMS"
+
+#: nive/tools/cmsstatistics.py:20
+msgid "This function provides a short summary of elements and data contained in the website."
+msgstr "Cette fonction fournie un résumé des éléments et données contenues dans le site web."
+
+#: nive/tools/cmsstatistics.py:51
+#, python-format
+msgid "<tr><th>Elements in total</th><td>${value}</td></tr>\n"
+msgstr "<tr><th>Éléments au total</th><td>${value}</td></tr>\n"
+
+#: nive/tools/cmsstatistics.py:56
+#, python-format
+msgid "<tr><th>Physical files</th><td>${value}</td></tr>\n"
+msgstr "<tr><th>Fichiers physiques</th><td>${value}</td></tr>\n"
+
+#: nive/tools/cmsstatistics.py:61
+#, python-format
+msgid "<tr><th>Physical files size</th><td>${value}</td></tr>\n"
+msgstr "<tr><th>Taille des fichiers physiques</th><td>${value}</td></tr>\n"
+
+#: nive/tools/cmsstatistics.py:67
+#, python-format
+msgid "<tr><th>${name}</th><td>${value}</td></tr>\n"
+msgstr "<tr><th>${name}</th><td>${value}</td></tr>\n"
+
+#: nive/tools/exportJson.py:17
+msgid "Json data export"
+msgstr "Export des données json"
+
+#: nive/tools/exportJson.py:18
+msgid "This function exports all objects in json format. Optionally as flat list or tree structure. This is not a simple database table dump. Object events will be triggered before exporting data."
+msgstr "Cette fonction exporte tous les objets au format json. En option sous forme de liste à plat ou de structure en arbre. Ce n'est pas un simple export de la base de données. Les évènements sur les objets seront déclanchés avant d'exporter les données."
+
+#: nive/tools/exportJson.py:60
+#: nive/tools/exportJson.py:64
+#: nive/tools/dbSqlDump.py:48
+#: nive/tools/dbSqlDump.py:52
+#: nive/tools/dbJsonDump.py:48
+#: nive/tools/dbJsonDump.py:52
+#, python-format
+msgid "Database connection error (${name})\n"
+msgstr "Erreur de connexion à la base de données (${name})\n"
+
+#: nive/tools/exportJson.py:26
+msgid "Export as tree"
+msgstr "Exporter sous forme d'arbre"
+
+#: nive/tools/exportJson.py:27
+msgid "Export objects as tree structure (contained objects are included as 'items')"
+msgstr "Exporte les objets sous forme d'arbre (les objets contenus sont inclus en tant que section)"
+
+#: nive/tools/exportJson.py:34
+msgid "File data"
+msgstr "Fichier de données"
+
+#: nive/tools/exportJson.py:35
+msgid "Include binary file data in json export (encoded as base64)"
+msgstr "Inclure les données des fichiers binaires dans l'export json (encodé en base64)"
+
+#: nive/tools/dbSqlDump.py:14
+msgid "Database sql dump"
+msgstr "Export sql de la base de données"
+
+#: nive/tools/dbSqlDump.py:15
+msgid "This function dumps table contents as SQL INSERT statements. 'CREATE table' statements are not included."
+msgstr "Cette fonction exporte la table des contenues sous la forme de 'SQL INSERT'. Les 'CREATE TABLE' ne sont pas inclus"
+
+#: nive/tools/dbSqlDump.py:24
+#: nive/tools/dbJsonDump.py:24
+msgid "Exclude system columns"
+msgstr "Exclure les colonnes systèmes"
+
+#: nive/tools/dbStructureUpdater.py:20
+msgid "Database Structure"
+msgstr "Structure de la base de données"
+
+#: nive/tools/dbStructureUpdater.py:21
+msgid "Generate or update the database structure based on configuration settings."
 msgstr ""
-"Tous les mails sont envoyés à 'Rôle destinataire' ou à la valeur par "
-"défaut du champ 'IDs utilisateur destinataire'.  Aucun mail externer "
-"n'est utilisé."
+"Génère ou met à jour la structure de la base de données suivant les \n"
+"options de configuration."
 
-#: nive/tools/sendMail.py:116
-msgid "No receiver for the e-mail! Aborting."
-msgstr "Aucun destinataire pour l'email ! Annulation."
+#: nive/tools/dbStructureUpdater.py:50
+msgid ""
+" <div class=\"well\">\n"
+"This tool compares the physically existing database structure (tables, columns) with the current configuration settings.\n"
+"The database structure is shown on the left, configuration settings on the right. <br><br>\n"
+"Existing database columns will only be altered if manually selected in the 'Modify' column. Modifying a table may destroy the data\n"
+"stored (e.g if converted from string to integer), so don't forget to create backups of the database before modifying anything.<br>\n"
+"By default this tool will only create new tables and columns and never delete any column.\n"
+" </div>       "
+msgstr ""
+"<div class=\"well\">\n"
+"\n"
+"Cet outil compare la structure physique existante de la base de données\n"
+"(tables, colonnes) avec la configuration actuelle.\n"
+"\n"
+"La structure de la base de données est à gauche, la configuration est à droite.<br/><br/>\n"
+"\n"
+"Les colonnes actuelles de la base de données ne seront modifiées que si\n"
+"elles sont sélectionnées manuellement dans la colonne 'Modification'. \n"
+"Modifier une table peut détruire les données (par exemple en convertissant une chaine par un entier)\n"
+"\n"
+"stockées (ex. si converties d'une chaine vers un entier), aussi n'oubliez \n"
+"pas de réaliser des sauvegardes de la base de données avant de modifier\n"
+"quoi que ce soit.<br/>\n"
+"\n"
+"Par défaut cet outil va seulement créer les nouvelles tables et colonnes \n"
+"sans effacer de colonne.\n"
+"\n"
+"</div>"
 
-#~ msgid ""
-#~ "<div class='alert alert-error'>Échec de "
-#~ "la création de la table (${name})</div>"
-#~ msgstr ""
+#: nive/tools/dbStructureUpdater.py:74
+#, python-format
+msgid "<h4>Database '${name}' ${host} </h4><br>"
+msgstr "<h4>Base de données '${name}' ${host} </h4><br>"
+
+#: nive/tools/dbStructureUpdater.py:25
+msgid "Modify existing columns"
+msgstr "Modifie les colonnes existantes"
+
+#: nive/tools/dbStructureUpdater.py:25
+msgid "Change existing database columns to new configuration. Depending on the changes, data may be lost!"
+msgstr "Modifie les colonnes existantes de la base de données suivant la nouvelle configuration. Suivant les changements, des données peuvent être perdus !"
+
+#: nive/tools/dbStructureUpdater.py:26
+msgid "Show system columns"
+msgstr "Montre les colonnes systèmes"
+
+#: nive/tools/dbStructureUpdater.py:77
+#, python-format
+msgid "<div class='alert alert-error'>Database connection error (${name})</div>"
+msgstr "<div class='alert alert-error'>Erreur de connexion à la base de données (${name})</div>"
+
+#: nive/tools/dbStructureUpdater.py:85
+#, python-format
+msgid "<div class='alert alert-success'>Database created: '${name}'</div>"
+msgstr "<div class='alert alert-success'>Base de données créée : '${name}'</div>"
+
+#: nive/tools/dbStructureUpdater.py:129
+msgid "<div class='alert alert-error'>Table update failed (pool_meta)</div>"
+msgstr "<div class='alert alert-error'>Échec de la mise de la table (pool_meta)</div>"
+
+#: nive/tools/dbStructureUpdater.py:179
+msgid "Table"
+msgstr "Table"
+
+#: nive/tools/dbStructureUpdater.py:180
+msgid "Database settings"
+msgstr "Options de la base de données"
+
+#: nive/tools/dbStructureUpdater.py:181
+msgid "Configuration settings"
+msgstr "Options de configuration"
+
+#: nive/tools/dbStructureUpdater.py:184
+msgid "Default"
+msgstr "Défaut"
+
+#: nive/tools/dbStructureUpdater.py:185
+msgid "Settings"
+msgstr "Options"
+
+#: nive/tools/dbStructureUpdater.py:186
+msgid "Modify?"
+msgstr "Modifier ?"
+
+#: nive/tools/dbStructureUpdater.py:67
+#: nive/tools/dbStructureUpdater.py:70
+msgid "<div class=\"alert alert-error\">No database connection configured</div>"
+msgstr "<div class=\"alert alert-error\">Aucune connexion à une base de données configurée</div>"
+
+#: nive/tools/dbStructureUpdater.py:105
+#, python-format
+msgid "<div class='alert alert-error'>Table update failed: ${dbparam} (type: ${name})</div>"
+msgstr ""
+"<div class='alert alert-error'>Échec de la mise à jour de la table : ${dbparam} (type: \n"
+"${name})</div>"
+
+#: nive/tools/dbStructureUpdater.py:118
+msgid "<div class='alert alert-error'>Table creation failed (pool_meta)</div>"
+msgstr "<div class='alert alert-error'>Échec de la création de la table (pool_meta)</div>"
+
+#: nive/tools/dbStructureUpdater.py:154
+#: nive/tools/dbStructureUpdater.py:143
+#, python-format
+msgid "<div class='alert alert-error'>Table creation failed (${name})</div>"
+msgstr "<div class='alert alert-error'>Échec de la création de la table (${name})</div>"
+
+#: nive/tools/dbStructureUpdater.py:165
+msgid "Modify selected columns"
+msgstr "Modifier les colonnes sélectionnées"
+
+#: nive/tools/dbStructureUpdater.py:166
+msgid "Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"
+msgstr "Les modifications sur les colonnes existantes doivent être appliquées manuellement. Cela va enregistrer les 'options de configuration' sélectionnées dans la base de données.<br/> <b>Attention : cela peut détruire certaines choses !</b>"
+
+#: nive/tools/gcdump.py:12
+msgid "Object dump"
+msgstr "Export objet"
+
+#: nive/tools/gcdump.py:13
+msgid "This function dumps a list of all objects found in memory."
+msgstr "Cette fonction exporte une liste de tous les objets trouvés en mémoire."
+
+#: nive/tools/dbJsonDump.py:15
+msgid "Database json dump"
+msgstr "Export json de la base de données"
+
+#: nive/tools/dbJsonDump.py:16
+msgid "This function dumps table contents the way records are stored in json format."
+msgstr "Cette fonction exporte la table des contenus de la manière dont ils sont  enregistrés au format json."
 
