@@ -15,7 +15,6 @@ applications in a single pyramid app.
 """
 from nive import __version__
 
-import copy
 import logging
 import uuid
 
@@ -26,14 +25,12 @@ from zope.interface.registry import Components
 from zope.interface import providedBy
 
 from nive.utils.dataPool2.structure import PoolStructure
-from nive.i18n import _
 
 from nive.definitions import AppConf, DatabaseConf, MetaTbl, ReadonlySystemFlds
 from nive.definitions import IViewModuleConf, IViewConf, IRootConf, IObjectConf, IToolConf 
 from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf
 from nive.definitions import ConfigurationError
 
-from nive.security import User, authenticated_userid
 from nive.helper import ResolveName, ResolveConfiguration, FormatConfTestFailure, GetClassRef, ClassFactory
 from nive.tool import _IGlobal, _GlobalObject
 from nive.workflow import IWfProcessConf
@@ -365,7 +362,7 @@ class Application(object):
                 db.connection.connect()
                 if not db.connection.IsConnected():
                     return False, "No connection"
-            r = self.Query("select id from pool_meta where id =1")
+            self.Query("select id from pool_meta where id =1")
             return True, "OK"
 
         except Exception, err:
@@ -1240,6 +1237,7 @@ class AppFactory:
         """
         creates the root object
         """
+        wfConf = None
         if isinstance(name, basestring):
             wfConf = self.GetWorkflowConf(name, contextObject)
             if isinstance(wfConf, (list, tuple)):
