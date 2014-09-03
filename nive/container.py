@@ -816,14 +816,14 @@ class Root(object):
 
         # proxy object
         if kw.has_key("proxyObj") and kw["proxyObj"]:
-            obj = obj._GetObj(id, parentObj = kw["proxyObj"], **kw)
+            obj = self._GetObj(id, parentObj = kw["proxyObj"], **kw)
             if not obj:
                 raise ContainmentError, "Proxy object not found"
             return obj
 
         # load tree structure
         path = self.app.db.GetParentPath(id)
-        if path == None:
+        if path is None:
             return None
             #raise Exception, "NotFound"
         
