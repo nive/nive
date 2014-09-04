@@ -568,7 +568,7 @@ class RichTextWidget(TextInputWidget):
         "convert_urls": False,
 
         # Theme options
-        "theme_advanced_buttons1" : "bold,italic,styleselect,bullist,numlist,outdent,indent,link,unlink,table,|,cut,copy,paste,pasteword,|,undo,redo,|,code",
+        "theme_advanced_buttons1" : "bold,italic,styleselect,justifyleft,justifycenter,justifyright,bullist,numlist,link,unlink,table,|,cut,copy,paste,pasteword,|,undo,redo,|,code",
         "theme_advanced_buttons2" : "",
         "theme_advanced_buttons3" : "",
         "theme_advanced_buttons4" : "",
