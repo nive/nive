@@ -190,8 +190,6 @@ class viewTest_db:
         self.assert_(view2.RenderField("pool_type"))
         self.assert_(view2.RenderField("pool_category"))
         self.assert_(view2.HtmlTitle()=="")
-        self.request.environ["htmltitle"] = "test"
-        self.assert_(view2.HtmlTitle()=="test")
         self.assert_(view2.FmtTextAsHTML("text"))
         self.assert_(view2.FmtDateText("2008/06/23 16:55", language=None))
         self.assert_(view2.FmtDateNumbers( "2008/06/23 16:55", language=None))
