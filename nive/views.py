@@ -126,6 +126,8 @@ class BaseView(object):
                   
         returns url
         """
+        if file is None:
+            return u""
         if file.startswith((u"http://",u"https://",u"/")):
             return file
         if not u":" in file and self.viewModule and self.viewModule.static:
