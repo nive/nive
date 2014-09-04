@@ -1169,17 +1169,25 @@ class AppFactory:
         return None
 
 
-    def _GetRootObj(self, rootConf):
+    def _GetRootObj(self, name):
         """
         creates the root object
         """
-        if isinstance(rootConf, basestring):
-            rootConf = self.GetRootConf(rootConf)
+        useCache = self.configuration.useCache
+        if isinstance(name, basestring):
+            cachename = "_c_root"+name
+            if useCache and hasattr(self, cachename) and getattr(self, cachename):
+                rootObj = getattr(self, cachename)
+                rootObj.Signal("loadFromCache")
+                return rootObj
+            rootConf = self.GetRootConf(name)
+        else:
+            rootConf = name
+
         if not rootConf:
             return None
 
         name = rootConf.id
-        useCache = self.configuration.useCache
         cachename = "_c_root"+name
         if useCache and hasattr(self, cachename) and getattr(self, cachename):
             rootObj = getattr(self, cachename)
