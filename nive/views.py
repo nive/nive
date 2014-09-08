@@ -86,11 +86,14 @@ class BaseView(object):
 
         returns url
         """
-        if not resource:
-            resource=self.context
-        if hasattr(resource, "extension") and resource.extension:
-            return u"%s.%s" % (resource_url(resource, self.request)[:-1], resource.extension)
-        return resource_url(resource, self.request)
+        resource=resource or self.context
+        url = resource_url(resource, self.request)
+        if not hasattr(resource, "extension") or not resource.extension:
+            return url
+        # add extension if it is not the virtual root
+        if self.request.virtual_root == resource:
+            return url
+        return u"%s.%s" % (url[:-1], resource.extension)
 
     def FolderUrl(self, resource=None):
         """
@@ -167,8 +170,7 @@ class BaseView(object):
         
         returns url
         """
-        if not resource:
-            resource=self.context
+        resource=resource or self.context
         try:
             page = resource.GetPage()
         except:
@@ -176,13 +178,16 @@ class BaseView(object):
         link = page.data.get("pagelink")
         if usePageLink and link:
             return self.ResolveUrl(link, resource)
-        if hasattr(page, "extension"):
-            url = u"%s.%s" % (resource_url(page, self.request)[:-1], page.extension)
-        else:
-            url = resource_url(page, self.request)
+
+        url = resource_url(page, self.request)
+        if hasattr(page, "extension") and page.extension:
+            # add extension if it is not the virtual root
+            if self.request.virtual_root != page:
+                url = u"%s.%s" % (url[:-1], page.extension)
+
         if not addAnchor or resource == page:
             return url
-        return "%s#nive-element%d"%(url,resource.id)
+        return "%s#nive-element%d"%(url, resource.id)
 
     def CurrentUrl(self, retainUrlParams=False):
         """

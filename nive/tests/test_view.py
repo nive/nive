@@ -92,6 +92,14 @@ class viewTest_db:
         self.assert_(view.ResolveLink(str(self.context.id))!=str(self.context.id))
         self.assert_(view.ResolveLink("none")=="none")
 
+        self.request.virtual_root = self.app.root()
+        self.assert_(view.PageUrl(self.context))
+        self.assert_(view.Url(self.context))
+        self.assert_(view.PageUrl(self.app.root()))
+        self.assert_(view.Url(self.app.root()))
+
+
+
     
     def test_http(self):
         view = BaseView(self.context2, self.request)
