@@ -15,11 +15,12 @@ from datetime import datetime
 from nive.definitions import Conf
 from nive.definitions import StagContainer, StagRessource, MetaTbl
 from nive.definitions import IContainer, ICache, IObject, IConf 
-from nive.definitions import ContainmentError, ConfigurationError
+from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
-from nive.i18n import translate
+from nive.security import has_permission
 from nive.workflow import WorkflowNotAllowed
 from nive.helper import ResolveName, ClassFactory
+from nive.i18n import translate
 
 
 class Container(object):
@@ -48,6 +49,8 @@ class Container(object):
         Get the subobject by id. ::
         
             id = object id as number
+            permission = check current users permissions for the page. requires securityContext.
+            securityContext = required to check the permission. the request object by default.
             **kw = load information
             returns the object or None
         
@@ -104,7 +107,11 @@ class Container(object):
             try:
                 kw[u"pool_datatbl"] = c[u"pool_datatbl"]
                 kw[u"pool_dataref"] = c[u"pool_dataref"]
-                obj = self._GetObj(c[u"id"], queryRestraints=False, **kw)
+                try:
+                    obj = self._GetObj(c[u"id"], queryRestraints=False, **kw)
+                except PermissionError:
+                    # ignore permission errors and continue
+                    obj = None
                 if obj:
                     objs.append(obj)
             except:
@@ -668,6 +675,13 @@ class ContainerFactory:
                 raise ConfigurationError, "Type not found (%s)" % (str(type))
         obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
         obj = obj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
+
+        # check security if context passed in keywords
+        if kw.get("securityContext") and kw.get("permission"):
+            securityContext = kw["securityContext"]
+            if not has_permission(kw["permission"], obj, securityContext):
+                raise PermissionError, "Permission check failed (%s)" % (str(id))
+
         if useCache:
             self.Cache(obj, obj.id)
         return obj
@@ -712,6 +726,8 @@ class ContainerFactory:
         # create object for type
         if not parentObj:
             parentObj = self
+        securityContext = kw.get("securityContext")
+        permission = kw.get("permission")
         for dbEntry in entries:
             obj = None
             type = dbEntry.meta.get("pool_type")
@@ -722,6 +738,12 @@ class ContainerFactory:
                 continue
             obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
             obj = obj(dbEntry.id, dbEntry, parent=parentObj, configuration=configuration, **kw)
+
+            # check security if context passed in keywords
+            if securityContext and permission:
+                if not has_permission(permission, obj, securityContext):
+                    continue
+
             if useCache:
                 self.Cache(obj, obj.id)
             objs.append(obj)

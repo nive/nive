@@ -12,7 +12,8 @@ from pyramid.security import Deny
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Everyone, Authenticated
 from pyramid.security import remember, forget, authenticated_userid
-from pyramid import threadlocal 
+from pyramid.security import has_permission
+from pyramid import threadlocal
 from pyramid.interfaces import IAuthenticationPolicy, IAuthorizationPolicy
 
 from nive.definitions import ModuleConf, Conf

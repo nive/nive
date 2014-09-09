@@ -1392,6 +1392,8 @@ class OperationalError(Exception):
     pass
 class ProgrammingError(Exception):
     pass
+class PermissionError(Exception):
+    pass
 class Warning(Exception):
     pass
 
