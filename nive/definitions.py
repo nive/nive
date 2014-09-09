@@ -805,6 +805,7 @@ class RootConf(baseConf):
         self.extensions = None
         self.template = None
         self.default = True
+        self.data = []
         self.views = []
         self.subtypes = "*"
         self.workflowEnabled = False

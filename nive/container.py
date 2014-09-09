@@ -916,6 +916,18 @@ class Root(object):
         """ returns the root type name from configuration """
         return self.configuration.name
 
+    def GetFieldConf(self, fldId):
+        """
+        Get the FieldConf for the field with id = fldId. Looks up data, file and meta
+        fields.
+
+        returns FieldConf or None
+        """
+        for f in self.configuration["data"]:
+            if f["id"] == fldId:
+                return f
+        return self.app.GetMetaFld(fldId)
+
     def GetTitle(self):
         """ returns the root title from configuration. """
         return self.meta.get("title","")

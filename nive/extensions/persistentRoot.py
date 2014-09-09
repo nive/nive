@@ -93,6 +93,7 @@ class Persistent(object):
         self.meta.update(meta)
         self.files.update(files)
         self.Commit(user)
+        return True
         
     def SplitData(self, sourceData):
         """
