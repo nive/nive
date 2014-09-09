@@ -951,7 +951,7 @@ class FieldRenderer(object):
         **kw:
         static = static root path for images
         """
-        data = ""
+        data = u""
         if useDefault:
             data = fieldConf["default"]
         if value != None:
@@ -1057,7 +1057,7 @@ class FieldRenderer(object):
                     options = options(fieldConf, self.context)
 
             if isinstance(data, basestring):
-                data = tuple(value.split(u"\n"))
+                data = tuple(data.split(u"\n"))
             for ref in data:
                 if options:
                     for item in options:
