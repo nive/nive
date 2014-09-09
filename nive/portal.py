@@ -329,7 +329,7 @@ def forbidden_view(forbiddenResponse, request):
         return status()
     # login form
     url = request.referrer
-    return Redirect(portal.configuration.forbiddenUrl+"?redirect="+request.url, request, messages=[u"Please log in"], raiseException=False)
+    return Redirect(portal.configuration.forbiddenUrl+"?msg=forbidden&redirect="+request.url, request, raiseException=False)
        
 def login_view(context, request):
     # login form
