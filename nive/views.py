@@ -12,6 +12,10 @@ data rendering, url generation, http headers and user lookup.
 
 import os
 import time
+try:
+    import simplejson
+except:
+    import json
 from datetime import datetime
 from email.utils import formatdate
 
@@ -23,7 +27,7 @@ from pyramid.security import authenticated_userid
 from pyramid.security import has_permission
 from pyramid.i18n import get_localizer
 
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden, HTTPException
 from pyramid.exceptions import NotFound
 
 from nive.i18n import _
@@ -212,7 +216,7 @@ class BaseView(object):
         - obj_folder_url
         - parent_url
         """
-        if url==None:
+        if url is None:
             return u""
         if not object or not IObject.providedBy(object):
             object = self.context
@@ -263,21 +267,21 @@ class BaseView(object):
         return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException, status=status)
         
         
-    def Redirect(self, url, messages=None, slot="", raiseException=True):
+    def Redirect(self, url, messages=None, slot="", raiseException=True, refresh=True):
         """
         Redirect to the given URL. Messages are stored in session and can be accessed
         by calling ``request.session.pop_flash()``. Messages are added by calling
         ``request.session.flash(m, slot)``.
         """
-        return Redirect(url, self.request, messages=messages, slot=slot, raiseException=raiseException)
+        return Redirect(url, self.request, messages=messages, slot=slot, raiseException=raiseException, refresh=refresh)
     
 
-    def Relocate(self, url, messages=None, slot="", raiseException=True):
+    def Relocate(self, url, messages=None, slot="", raiseException=True, refresh=True):
         """
         Returns messages and X-Relocate header in response.
         If raiseException is True HTTPOk is raised with empty body.
         """
-        return Relocate(url, self.request, messages=messages, slot=slot, raiseException=raiseException)
+        return Relocate(url, self.request, messages=messages, slot=slot, raiseException=raiseException, refresh=refresh)
 
 
     def ResetFlashMessages(self, slot=""):
@@ -865,6 +869,25 @@ class BaseView(object):
  
 
 # Response utilities -------------------------------------------------
+from zope.interface import implementer
+from pyramid.interfaces import IExceptionResponse
+
+@implementer(IExceptionResponse)
+class ExceptionalResponse(Response, Exception):
+    def __init__(self, headers=None, **kw):
+        self.detail = self.message = kw.get("status","Response")
+        Response.__init__(self, **kw)
+        Exception.__init__(self, self.detail)
+        if headers:
+            self.headers.extend(headers)
+
+    def __str__(self):
+        return self.detail
+
+    def __call__(self, environ, start_response):
+        return Response.__call__(self, environ, start_response)
+
+
 
 def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None):
     """
@@ -874,14 +897,17 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True, sta
     if filename:
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
-        raise HTTPOk(content_type=mime, body=data, content_disposition=cd)
+        raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status)
     return Response(content_type=mime, body=data, content_disposition=cd, status=status)
 
 
-def Redirect(url, request, messages=None, slot="", raiseException=True):
+def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True):
     """
     See views.BaseView class function for docs
     """
+    if request.environ.get("HTTP_X_REQUESTED_WITH")=="XMLHttpRequest":
+        # ajax call -> use relocate to handle this case
+        return Relocate(url, request, messages, slot, raiseException, refresh)
     if messages:
         if isinstance(messages, basestring):
             request.session.flash(messages, slot)
@@ -896,7 +922,7 @@ def Redirect(url, request, messages=None, slot="", raiseException=True):
     return HTTPFound(location=url, headers=headers)
     
 
-def Relocate(url, request, messages=None, slot="", raiseException=True):
+def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=True):
     """
     See views.BaseView class function for docs
     """
@@ -907,12 +933,13 @@ def Relocate(url, request, messages=None, slot="", raiseException=True):
             for m in messages:
                 request.session.flash(m, slot)
     headers = [('X-Relocate', str(url))]
+    request.response.headerlist = headers
+    body = json.dumps({u"location": url, u"messages": messages, "refresh": refresh})
+    if raiseException:
+        raise ExceptionalResponse(headers=headers, body=body, content_type="application/json", status="200 OK")
     if hasattr(request.response, "headerlist"):
         headers += list(request.response.headerlist)
-    request.response.headerlist = headers    
-    if raiseException:
-        raise HTTPOk(headers=headers, body_template="redirect "+url)
-    return u""
+    return body
 
 
 def ResetFlashMessages(request, slot=""):
