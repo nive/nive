@@ -57,7 +57,7 @@ function reform_ajaxify(response, status, xhr, form, oid, mthd) {
           else window.location.href = xhr.getResponseHeader('X-Relocate');
         }
         else {
-          $('#'+oid).replaceWith(responseText); 
+          //$('#'+oid).replaceWith(responseText);
           reform_ajaxify(response, status, xhr, form, oid);
         }
       },
@@ -106,7 +106,7 @@ function reform_ajaxify(response, status, xhr, form, oid, mthd) {
           else window.location.href = xhr.getResponseHeader('X-Relocate');
         }
         else {
-          $('#'+oid).replaceWith(responseText); 
+          //$('#'+oid).replaceWith(responseText);
           reform_ajaxify(response, status, xhr, form, oid);
         }
       },

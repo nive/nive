@@ -988,23 +988,16 @@ class HTMLForm(Form):
         - renderSuccess
         
         """
-        redirectSuccess = kw.get("redirectSuccess")
-        renderSuccess = kw.get("renderSuccess", True)
-        redirectSuccess = self.view.ResolveUrl(redirectSuccess, result)
-
         if not result:
             return result, self.Render(data, msgs=msgs, errors=errors)
     
-        if self.use_ajax:
-            if redirectSuccess:
-                # raises HTTPFound 
-                return result, self.view.Relocate(redirectSuccess, messages=msgs, raiseException=True)
-        
-        elif redirectSuccess:
-            # raises HTTPFound 
-            return result, self.view.Redirect(redirectSuccess, messages=msgs)
+        redirectSuccess = self.view.ResolveUrl(kw.get("redirectSuccess"), result)
+        if redirectSuccess:
+            # raises HTTPFound
+            return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
-        if not renderSuccess:        
+        renderSuccess = kw.get("renderSuccess", True)
+        if not renderSuccess:
             return result, self._Msgs(msgs=msgs)
         return result, self.Render(data, msgs=msgs, errors=errors)
 
