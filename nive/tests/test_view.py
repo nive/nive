@@ -107,10 +107,10 @@ class viewTest_db:
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=None, slot="")
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=[u"aaa",u"bbb"], slot="")
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=[u"aaa",u"bbb"], slot="test")
-        self.assertRaises(HTTPOk, view.Relocate, "nowhere", messages=None, slot="", raiseException=True)
-        self.assertRaises(HTTPOk, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="", raiseException=True)
-        self.assertRaises(HTTPOk, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=True)
-        self.assert_(view.Relocate("nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=False)==u"")
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=None, slot="", raiseException=True)
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="", raiseException=True)
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=True)
+        self.assert_(view.Relocate("nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=False)!=u"")
         view.ResetFlashMessages(slot="")
         view.ResetFlashMessages(slot="test")
         view.AddHeader("name", "value")
@@ -120,7 +120,7 @@ class viewTest_db:
         view = BaseView(self.context2, self.request)
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename=None))
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename="file.html"))
-        self.assertRaises(HTTPOk, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html")        
+        self.assertRaises(ExceptionalResponse, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html")
 
 
     def test_files(self):
