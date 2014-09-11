@@ -989,6 +989,10 @@ class HTMLForm(Form):
         
         """
         if not result:
+            if self.use_ajax:
+                # return only the rendered form back to the user. stops the request
+                # processing at this point
+                return self.view.SendResponse(data=self.Render(data, msgs=msgs, errors=errors))
             return result, self.Render(data, msgs=msgs, errors=errors)
     
         redirectSuccess = self.view.ResolveUrl(kw.get("redirectSuccess"), result)
@@ -996,11 +1000,15 @@ class HTMLForm(Form):
             # raises HTTPFound
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
-        renderSuccess = kw.get("renderSuccess", True)
-        if not renderSuccess:
-            return result, self._Msgs(msgs=msgs)
-        return result, self.Render(data, msgs=msgs, errors=errors)
-
+        if not kw.get("renderSuccess", True):
+            html = self._Msgs(msgs=msgs)
+        else:
+            html = self.Render(data, msgs=msgs, errors=errors)
+        if self.use_ajax:
+            # return only the rendered form back to the user. stops the request
+            # processing at this point
+            return self.view.SendResponse(data=html)
+        return result, html
 
     def _Msgs(self, **values):
         err = values.get("errors")!=None
