@@ -43,96 +43,77 @@
  
 <script type="text/javascript" tal:condition="field.use_ajax">
 function reform_ajaxify(response, status, xhr, form, oid, mthd) {
-  var useProgressBar = '${field.uploadProgressBar}';
-  
-  if(useProgressBar=='none') {
-    // progress bar disabled
-    var options = { 
-      target: '#'+oid,
-      replaceTarget: true,
+    var showbar=0;
+    var options = {
+        target: '#'+oid,
+        replaceTarget: true,
+        forceSync: true,
+        useProgressBar: '${field.uploadProgressBar}',
+        delay: 500,                                        // delay in milliseconds before showing the progress bar
 
-      success:  function(responseText, statusText, xhr, $form) { 
-        if(xhr.getResponseHeader('X-Relocate')) {
-          if(window!=window.top) window.parent.close(xhr.getResponseHeader('X-Relocate'));
-          else window.location.href = xhr.getResponseHeader('X-Relocate');
-        }
-        else {
-          //$('#'+oid).replaceWith(responseText);
-          reform_ajaxify(response, status, xhr, form, oid);
-        }
-      },
-      error:  function(responseText, statusText, xhr, $form) {
-        $('#'+oid).replaceWith(responseText.responseText); 
-        reform_ajaxify(response, status, xhr, form, oid); 
-      }
-    };
-  } else {
-    var progress = $('#'+oid+' .progress');
-    if(useProgressBar=='always') progress.show();
-    var bar = $('#'+oid+' .progress .bar');
-    var delay = 500; // delay in milliseconds before showing the progress bar 
-    var showbar = 0;
-    var options = { 
-      target: '#'+oid,
-      replaceTarget: true,
-      forceSync: true,
+        beforeSend: function() {
+            if(options.useProgressBar=='none')
+                return;
+            if(options.useProgressBar=='always')
+                $(options.target+' .progress').show();
+            $(options.target+' .progress .bar').width('0%');
+        },
 
-      beforeSend: function() {
-        var percentVal = '0%';
-        bar.width(percentVal)
-      },
-      uploadProgress: function(event, position, total, percentComplete) {
-        // keep some rest to show the server has to process thew file, too
-        if(percentComplete>98) percentComplete = 98;
-        var percentVal = percentComplete + '%';
-        bar.width(percentVal)
-        if(useProgressBar=='auto') { 
-          if(showbar==0) showbar = delay+event.timeStamp; 
-        };
-        if(useProgressBar=='auto') { 
-          if(showbar > 0) { 
-            if(event.timeStamp > showbar) { 
-              showbar=-1;
-              progress.show();
+        uploadProgress: function(event, position, total, percentComplete) {
+            if(options.useProgressBar=='none')
+                return;
+            // keep some rest to show the server has to process thew file, too
+            if(percentComplete>98)
+                percentComplete = 98;
+            $(options.target+' .progress .bar').width(percentComplete + '%');
+            if(options.useProgressBar=='auto') {
+                if(showbar==0)
+                    showbar = options.delay+event.timeStamp;
+                if(showbar > 0) {
+                    if(event.timeStamp > showbar) {
+                        showbar=-1;
+                        $(options.target+' .progress').show();
+                    };
+                };
             };
-          };
+        },
+
+        success:  function(responseText, statusText, xhr, $form) {
+            if(options.useProgressBar!='none')
+                $(options.target+' .progress .bar').width('100%');
+            if(xhr.getResponseHeader('X-Relocate')) {
+                if($(this).nive_actiondelegation!=undefined)
+                    // custom success handling plugin point
+                    $(this).nive_actiondelegation(responseText, status, xhr);
+                else
+                    window.location.href = xhr.getResponseHeader('X-Relocate');
+            }
+            else {
+                reform_ajaxify(response, status, xhr, form, oid);
+            }
+        },
+        error:  function(responseText, statusText, xhr, $form) {
+            $('#'+oid).replaceWith(responseText.responseText);
+            reform_ajaxify(response, status, xhr, form, oid);
+        }
+    };
+    var extra_options = ${field.ajax_options};
+    var name;
+    if (extra_options) {
+        for (name in extra_options) {
+            options[name] = extra_options[name];
         };
-      },
-      success:  function(responseText, statusText, xhr, $form) { 
-        var percentVal = '100%';
-        bar.width(percentVal)
-        if(xhr.getResponseHeader('X-Relocate')) {
-          if(window!=window.top) window.parent.close(xhr.getResponseHeader('X-Relocate'));
-          else window.location.href = xhr.getResponseHeader('X-Relocate');
-        }
-        else {
-          //$('#'+oid).replaceWith(responseText);
-          reform_ajaxify(response, status, xhr, form, oid);
-        }
-      },
-      error:  function(responseText, statusText, xhr, $form) {
-        $('#'+oid).replaceWith(responseText.responseText); 
-        reform_ajaxify(response, status, xhr, form, oid); 
-      }
     };
-  }
-  var extra_options = ${field.ajax_options};
-  var name;
-  if (extra_options) {
-    for (name in extra_options) {
-      options[name] = extra_options[name];
-    };
-  };
-  $('#'+oid).ajaxForm(options);
-  if(mthd){
-    mthd(response, status, xhr, form);
-  }
+    $('#'+oid).ajaxForm(options);
+    if(mthd){
+        mthd(response, status, xhr, form);
+    }
 }
 reform.addCallback(
-  '${field.formid}',
-  function(oid) {
-    reform_ajaxify(null, null, null, null, oid);
-  }
+    '${field.formid}',
+    function(oid) {
+        reform_ajaxify(null, null, null, null, oid);
+    }
 );
 </script>
 
