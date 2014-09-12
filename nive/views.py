@@ -255,7 +255,7 @@ class BaseView(object):
     
     # Response and headers (defined on module level below -------------------------------------------
 
-    def SendResponse(self, data, mime="text/html", filename=None, raiseException=True, status=None):
+    def SendResponse(self, data, mime="text/html", filename=None, raiseException=True, status=None, headers=None):
         """
         Creates a response with data as body. If ``raiseException`` is true the function
         will raise a HTTPOk Exception with data as body. A custom response status can only be passed
@@ -264,7 +264,7 @@ class BaseView(object):
         If filename is not none the response will extended with a ``attachment; filename=filename``
         header.
         """
-        return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException, status=status)
+        return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException, status=status, headers=headers)
         
         
     def Redirect(self, url, messages=None, slot="", raiseException=True, refresh=True):
@@ -889,7 +889,7 @@ class ExceptionalResponse(Response, Exception):
 
 
 
-def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None):
+def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None, headers=None):
     """
     See views.BaseView class function for docs
     """
@@ -897,8 +897,8 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True, sta
     if filename:
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
-        raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status)
-    return Response(content_type=mime, body=data, content_disposition=cd, status=status)
+        raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status, headers=headers)
+    return Response(content_type=mime, body=data, content_disposition=cd, status=status, headers=headers)
 
 
 def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True):
