@@ -1,10 +1,6 @@
 <tal:block i18n:domain="nive">
 
-<div tal:condition="msgs|None and not result|None" class="alert alert-error">
-  <div tal:repeat="msg msgs">${msg}</div>
-</div>
-
-<div tal:condition="msgs|None and result|None" class="alert">
+<div tal:condition="msgs|None" class="alert">
   <div tal:repeat="msg msgs">${msg}</div>
 </div>
 
