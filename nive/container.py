@@ -787,7 +787,10 @@ class Root(object):
                          pool_state=1, 
                          pool_filename=path, 
                          pool_wfa=u"",
-                         pool_change=datetime.now()) # set change time to now by default
+                         pool_change=datetime.now(),
+                         pool_changedby=u"",
+                         pool_create=datetime.now(),
+                         pool_createdby=u"")
         self.data = Conf()
         self.Signal("init")
 
