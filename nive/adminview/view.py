@@ -43,7 +43,7 @@ configuration.views = [
     # User Management Views
     ViewConf(name = "admin",    attr = "view",       renderer = t+"root.pt"),
     ViewConf(name = "basics",   attr = "editbasics", renderer = t+"form.pt"),
-    ViewConf(name = "rootsettings",attr = "editroot",    renderer = t+"form.pt"),
+    #ViewConf(name = "rootsettings",attr = "editroot",    renderer = t+"form.pt"),
     #ViewConf(name = "portal",   attr = "editportal", renderer = t+"form.pt"),
     ViewConf(name = "tools",    attr = "tools",      renderer = t+"tools.pt"),
     ViewConf(name = "modules",  attr = "view",       renderer = t+"modules.pt"),
@@ -51,13 +51,10 @@ configuration.views = [
 ]
 
 configuration.widgets = [
-    WidgetConf(name=_(u"Basics"),    viewmapper="basics",     id="admin.basics",   sort=1000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
-               description=u""),
-    WidgetConf(name=_(u"Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf,
-               description=u""),
+    WidgetConf(name=_(u"Basics"),    viewmapper="basics",     id="admin.basics",   sort=1000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
+    #WidgetConf(name=_(u"Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
     #WidgetConf(name=_(u"Global"),    viewmapper="portal",     id="admin.portal",   sort=300,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    WidgetConf(name=_(u"Tools"),     viewmapper="tools",      id="admin.tools",    sort=5000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
-               description=u""),
+    WidgetConf(name=_(u"Tools"),     viewmapper="tools",      id="admin.tools",    sort=5000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
     WidgetConf(name=_(u"Modules"),   viewmapper="modules",    id="admin.modules",  sort=10000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
                description=_(u"Read only listing of all registered modules and settings.")),
     WidgetConf(name=_(u"Views"),     viewmapper="views",      id="admin.views",    sort=15000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
