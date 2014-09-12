@@ -1,7 +1,11 @@
 <tal:block i18n:domain="nive">
 
-<div tal:condition="field.messages|None" class="alert"> 
-  <div tal:repeat="msg field.messages">${msg}</div>
+<div tal:condition="msgs|None and not result|None" class="alert alert-error">
+  <div tal:repeat="msg msgs">${msg}</div>
+</div>
+
+<div tal:condition="msgs|None and result|None" class="alert">
+  <div tal:repeat="msg msgs">${msg}</div>
 </div>
 
 <form 
@@ -11,7 +15,7 @@
   class="${field.css_class}"
   enctype="multipart/form-data">
 
-    <div tal:condition="field.error" class="alert">
+    <div tal:condition="field.error" class="alert alert-error">
       <h5 i18n:translate="">There was a problem with your submission</h5>
       <p i18n:translate="">Errors have been highlighted below</p>
       <p tal:condition="field.errormsg" class="errorMsg">${field.errormsg}</p>

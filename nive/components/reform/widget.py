@@ -182,12 +182,12 @@ class FormWidget(Widget):
     category = 'structural'
     requirements = ( ('reform', None), )
 
-    def serialize(self, field, cstruct):
+    def serialize(self, field, cstruct, **kw):
         if cstruct in (null, None):
             cstruct = {}
         template = self.template
         return field.renderer(template, field=field, cstruct=cstruct,
-                              null=null)
+                              null=null, **kw)
 
     def deserialize(self, field, pstruct, formstruct=None):
         error = None

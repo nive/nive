@@ -904,7 +904,7 @@ class HTMLForm(Form):
 
     # Form view functions --------------------------------------------------------------------------------------------
 
-    def Render(self, data, msgs=None, errors=None, messagesOnly=False):
+    def Render(self, data, msgs=None, errors=None, messagesOnly=False, result=None):
         """
         renders the form with data, messages
         
@@ -912,24 +912,23 @@ class HTMLForm(Form):
         html block.
         """
         if messagesOnly:
-            return self._Msgs(msgs=msgs)
+            return self._Msgs(msgs=msgs, result=result)
 
         self._SetUpSchema()
         if errors:
-            html = self._Msgs(msgs=msgs)
+            html = self._Msgs(msgs=msgs, result=result)
             return html + errors.render()
             #return html + exception.ValidationFailure(self._form, data, errors).render()
-        self.messages = msgs
-        html = self.render(data)
+        html = self.render(data, msgs=msgs, result=result)
         return html
 
 
-    def RenderBody(self, data, msgs=None, errors=None):
+    def RenderBody(self, data, msgs=None, errors=None, result=None):
         """
         renders the form without header and footer
         """
         self._SetUpSchema()
-        html = self._Msgs(msgs=msgs)
+        html = self._Msgs(msgs=msgs, result=result)
         if errors:
             return html + errors.render()
         self.widget.template = "form_body"
@@ -1001,9 +1000,9 @@ class HTMLForm(Form):
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
         if not kw.get("renderSuccess", True):
-            html = self._Msgs(msgs=msgs)
+            html = self._Msgs(msgs=msgs,result=result)
         else:
-            html = self.Render(data, msgs=msgs, errors=errors)
+            html = self.Render(data, msgs=msgs, errors=errors, result=result)
         if self.use_ajax:
             # return only the rendered form back to the user. stops the request
             # processing at this point
@@ -1011,7 +1010,7 @@ class HTMLForm(Form):
         return result, html
 
     def _Msgs(self, **values):
-        err = values.get("errors")!=None
+        err = values.get("errors")!=None or values.get("result")==False
         msgs = values.get("msgs")
         if not msgs:
             return u""

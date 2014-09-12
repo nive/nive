@@ -410,15 +410,15 @@ class Field(object):
         the return value will be ``None``."""
         return getattr(self.error, 'msg', None)
 
-    def serialize(self, cstruct):
+    def serialize(self, cstruct, **kw):
         """ Serialize the cstruct into HTML.  """
-        return self.widget.serialize(self, cstruct=cstruct)
+        return self.widget.serialize(self, cstruct=cstruct, **kw)
 
     def deserialize(self, pstruct, formstruct=None):
         """ Deserialize the pstruct into a cstruct."""
         return self.widget.deserialize(self, pstruct, formstruct)
 
-    def render(self, appstruct=schema.null):
+    def render(self, appstruct=schema.null, **kw):
         """ Render the field (or form) to HTML using ``appstruct`` as
         a set of default values.  ``appstruct`` is typically a
         dictionary of application values matching the schema used by
@@ -434,7 +434,7 @@ class Field(object):
         :meth:`reform.widget.Widget.serialize` .
         """
         cstruct = self.schema.serialize(appstruct)
-        return self.serialize(cstruct)
+        return self.serialize(cstruct, **kw)
 
     def validate(self, controls):
         """
