@@ -1788,30 +1788,78 @@ class List(object):
     ``allow_empty``
        Boolean representing whether an empty set input to
        deserialize will be considered valid.  Default: ``False``.
+
+    ``allowed``
+       List of strings defining the allowed values to be serialized.
     """
-    def __init__(self, allow_empty=False):
+    def __init__(self, allow_empty=False, allowed=None):
         self.allow_empty = allow_empty
+        self.allowed = allowed
         
     def serialize(self, node, value):
         return value
 
     def deserialize(self, node, value, formstruct=None):
-        if value in (null, None, ""):
+        if value in (null, None):
             return null
-        import types
         if isinstance(value, basestring):
             value = [value]
-        elif not type(value) in (types.ListType, types.TupleType):
+        elif not isinstance(value, (list, tuple)):
             raise Invalid(
                 node,
                 _('${value} is not iterable', mapping={'value':value})
                 )
-        value =  list(value)
+        value = list(value)
         if not value and not self.allow_empty:
             raise Invalid(node, _('Required'))
+
+        if self.allowed:
+            for v in value:
+                if not v in self.allowed:
+                    raise Invalid(node, _('${value} not in reference list', mapping={'value':v}))
+
         return value
         
+class CodeList(object):
+    """ A type representing a single string referenced in a list of items.
 
+    This type constructor accepts one argument:
+
+    ``allow_empty``
+       Boolean representing whether an empty set input to
+       deserialize will be considered valid.  Default: ``False``.
+       
+    ``allowed``
+       List of strings defining the allowed values to be serialized.
+    """
+    def __init__(self, allow_empty=False, allowed=None):
+        self.allow_empty = allow_empty
+        self.allowed = set(allowed)
+        
+    def serialize(self, node, value):
+        return value
+
+    def deserialize(self, node, value, formstruct=None):
+        if value in (null, None):
+            return null
+        if isinstance(value, (list, tuple)):
+            if len(value)>1:
+                raise Invalid(
+                    node,
+                    _('${value} is not a string', mapping={'value':value})
+                    )
+            value = value[0]
+        
+        if not isinstance(value, basestring):
+            value = unicode(value)
+        
+        if not value in self.allowed:
+            if value:
+                raise Invalid(node, _('${value} not in reference list', mapping={'value':value}))
+            if not value and not self.allow_empty:
+                raise Invalid(node, _('Required'))
+        
+        return value
 
 class Lines(object):
     """ A type representing a list of items stored as text one item per line.

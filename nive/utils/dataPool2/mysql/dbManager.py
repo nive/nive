@@ -9,14 +9,12 @@ from datetime import datetime
 from nive.utils.utils import ConvertToDateTime
 from nive.utils.dataPool2.dbManager import DatabaseManager
 
-MYSQL = 0
-
 try:    
     import MySQLdb
-    MYSQL = 1
 except:    
-    pass 
-    #print "MySQLdb not imported!"
+    # ignore to make tests imports pass
+    # __init__() will raise an import error
+    pass
 
 
 

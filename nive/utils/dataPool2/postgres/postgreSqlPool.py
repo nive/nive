@@ -22,7 +22,11 @@ except ImportError:
         OperationalError = None
         ProgrammingError = None
         Warning = None
-
+        @staticmethod
+        def connect(*args,**kw):
+            raise ImportError, "Python postgres binding not available. Try 'pip install psycopg2' to install the package."
+            
+            
 from nive.utils.utils import STACKF
 
 from nive.utils.dataPool2.base import Base, Entry
@@ -64,14 +68,15 @@ class PostgresConnection(Connection):
 
     def IsConnected(self):
         """ Check if database is connected """
-        return self._get().closed
+        db = self._get()
+        return db and not db.closed
 
     def GetDBManager(self):
         """ returns the database manager obj """
         self.VerifyConnection()
-        aDB = PostgresManager()
-        aDB.SetDB(self.PrivateConnection())
-        return aDB
+        manager = PostgresManager()
+        manager.SetDB(self.PrivateConnection())
+        return manager
 
 
     def PrivateConnection(self):
@@ -131,7 +136,28 @@ class PostgreSql(FileManager, Base):
     _DefaultConnection = PgConnRequest#PgConnThreadLocal
             
 
-
+    def GetContainedIDs(self, base=0, sort=u"title", parameter=u""):
+        """
+        select list of all entries
+        id needs to be first field, pool_unitref second
+        """
+        def _SelectIDs(base, ids, sql, cursor):
+            cursor.execute(sql%(base))
+            entries = cursor.fetchall()
+            for e in entries:
+                ids.append(e[0])
+                ids = _SelectIDs(e[0], ids, sql, cursor)
+            return ids
+        if parameter != u"":
+            parameter = u"AND " + parameter
+        parameter = (u"WHERE pool_unitref=%d", parameter)
+        sql = u"""SELECT id FROM %s %s ORDER BY %s""" % (self.MetaTable, u" ".join(parameter), sort)
+        cursor = self.connection.cursor()
+        ids = _SelectIDs(base, [], sql, cursor)
+        cursor.close()
+        return ids
+    
+    
     def _GetInsertIDValue(self, cursor):
         cursor.execute(u"SELECT LASTVAL()")
         return cursor.fetchone()[0]

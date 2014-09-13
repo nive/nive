@@ -217,7 +217,7 @@ class FormWidget(Widget):
     
 class TextInputWidget(Widget):
     """
-    Renders an ``<input type="text"/>`` widget.
+    Renders an ``<input type="text">`` widget.
 
     **Attributes/Arguments**
 
@@ -284,7 +284,7 @@ class TextInputWidget(Widget):
 
 class AutocompleteInputWidget(Widget):
     """
-    Renders an ``<input type="text"/>`` widget which provides
+    Renders an ``<input type="text">`` widget which provides
     autocompletion via a list of values.
 
     When this option is used, the :term:`jquery.ui.autocomplete`
@@ -568,7 +568,7 @@ class RichTextWidget(TextInputWidget):
         "convert_urls": False,
 
         # Theme options
-        "theme_advanced_buttons1" : "bold,italic,styleselect,bullist,numlist,outdent,indent,link,unlink,table,|,cut,copy,paste,pasteword,|,undo,redo,|,code",
+        "theme_advanced_buttons1" : "bold,italic,styleselect,justifyleft,justifycenter,justifyright,bullist,numlist,link,unlink,table,|,cut,copy,paste,pasteword,|,undo,redo,|,code",
         "theme_advanced_buttons2" : "",
         "theme_advanced_buttons3" : "",
         "theme_advanced_buttons4" : "",
@@ -723,7 +723,7 @@ class PasswordWidget(TextInputWidget):
 
 class HiddenWidget(Widget):
     """
-    Renders an ``<input type="hidden"/>`` widget.
+    Renders an ``<input type="hidden">`` widget.
 
     **Attributes/Arguments**
 
@@ -746,7 +746,7 @@ class HiddenWidget(Widget):
 
 class CheckboxWidget(Widget):
     """
-    Renders an ``<input type="checkbox"/>`` widget.
+    Renders an ``<input type="checkbox">`` widget.
 
     **Attributes/Arguments**
 
@@ -827,13 +827,20 @@ class SelectWidget(Widget):
         Returns a list of controlset field ids. If `value` is None all controlled
         fields will be returned otherwise only the ids linked to this value.
         """
-        items = self.form.GetField(field.name).listItems(field, None)
+        items = self.form.GetField(field.name).get("listItems",[])
+        if not isinstance(items, (list,tuple)):
+            items = items(field, None)
         ids = []
         for i in items:
+            # check list item options. For a control set each item may be a field.
             if value and value!=i.id:
                 continue
-            for v in i.fields:
-                ids.append(v.id)
+            try:
+                # it is a field list. add these ids too. 
+                for v in i.fields:
+                    ids.append(v.id)
+            except AttributeError:
+                pass
         if format=="html":
             return json.dumps(ids)
         return ids
@@ -841,7 +848,7 @@ class SelectWidget(Widget):
 
 class RadioChoiceWidget(SelectWidget):
     """
-    Renders a sequence of ``<input type="radio"/>`` buttons based on a
+    Renders a sequence of ``<input type="radio">`` buttons based on a
     predefined set of values.
 
     **Attributes/Arguments**
@@ -866,7 +873,7 @@ class RadioChoiceWidget(SelectWidget):
 
 class CheckboxChoiceWidget(Widget):
     """
-    Renders a sequence of ``<input type="check"/>`` buttons based on a
+    Renders a sequence of ``<input type="check">`` buttons based on a
     predefined set of values.
 
     **Attributes/Arguments**
@@ -1165,7 +1172,11 @@ class FileUploadWidget2(Widget):
     def deserialize(self, field, pstruct, formstruct=None):
         if pstruct in ("", null, None):
             return null
-        file = File()
+        try:
+            cls = self.form.app.db.GetFileClass()
+            file = cls()
+        except AttributeError:
+            file = File()
         file.filename = pstruct.filename
         file.file = pstruct.file
         file.filekey = field.name
@@ -1180,7 +1191,7 @@ class FileUploadWidget2(Widget):
 
 class DatePartsWidget(Widget):
     """
-    Renders a set of ``<input type='text'/>`` controls based on the
+    Renders a set of ``<input type='text'>`` controls based on the
     year, month, and day parts of the serialization of a
     :class:`colander.Date` object or a string in the format
     ``YYYY-MM-DD``.  This widget is usually meant to be used as widget
@@ -1445,13 +1456,13 @@ default_resources = {
     'jquery.form': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js')),
+                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form-3.50.js')),
             },
         },
     'jquery.maskedinput': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.maskedinput.js', 'nive.components.reform:static/scripts/jquery.maskedinput-1.2.2.min.js')),
+                   ('jquery.maskedinput.js', 'nive.components.reform:static/scripts/jquery.maskedinput-1.3.1.min.js')),
             },
         },
     'datetimepicker': {

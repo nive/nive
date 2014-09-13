@@ -32,6 +32,7 @@ class Persistent(object):
 
     def Init(self):
         self.LoadStoredValues()
+
     
     def LoadStoredValues(self):
         """
@@ -54,10 +55,17 @@ class Persistent(object):
     def Commit(self, user):
         """
         Commit data values
+
+        Event: - commit()
         """
         self.CommitInternal(user)
            
     def CommitInternal(self, user):
+        """
+        Commit data values
+
+        Event: - commit()
+        """
         values = {}
         if hasattr(self, "files"):
             values.update(self.files)
@@ -74,6 +82,7 @@ class Persistent(object):
                     continue
                 if IPersistentRoot.providedBy(root):
                     root.LoadStoredValues()
+        self.Signal("commit")
 
     def Update(self, values, user):
         """
@@ -84,6 +93,7 @@ class Persistent(object):
         self.meta.update(meta)
         self.files.update(files)
         self.Commit(user)
+        return True
         
     def SplitData(self, sourceData):
         """

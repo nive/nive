@@ -73,6 +73,8 @@ class viewTest_db:
         self.assert_(view.FileUrl("file1", self.context2))
         self.assert_(view.PageUrl())
         self.assert_(view.PageUrl(self.context, usePageLink=1))
+        self.assert_(view.PageUrl(addAnchor=True))
+        self.assert_(view.PageUrl(self.context, addAnchor=True))
         self.assert_(view.CurrentUrl(retainUrlParams=False))
         self.assert_(view.CurrentUrl(retainUrlParams=True))
 
@@ -90,6 +92,14 @@ class viewTest_db:
         self.assert_(view.ResolveLink(str(self.context.id))!=str(self.context.id))
         self.assert_(view.ResolveLink("none")=="none")
 
+        self.request.virtual_root = self.app.root()
+        self.assert_(view.PageUrl(self.context))
+        self.assert_(view.Url(self.context))
+        self.assert_(view.PageUrl(self.app.root()))
+        self.assert_(view.Url(self.app.root()))
+
+
+
     
     def test_http(self):
         view = BaseView(self.context2, self.request)
@@ -97,10 +107,10 @@ class viewTest_db:
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=None, slot="")
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=[u"aaa",u"bbb"], slot="")
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=[u"aaa",u"bbb"], slot="test")
-        self.assertRaises(HTTPOk, view.Relocate, "nowhere", messages=None, slot="", raiseException=True)
-        self.assertRaises(HTTPOk, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="", raiseException=True)
-        self.assertRaises(HTTPOk, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=True)
-        self.assert_(view.Relocate("nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=False)==u"")
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=None, slot="", raiseException=True)
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="", raiseException=True)
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=True)
+        self.assert_(view.Relocate("nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=False)!=u"")
         view.ResetFlashMessages(slot="")
         view.ResetFlashMessages(slot="test")
         view.AddHeader("name", "value")
@@ -110,7 +120,7 @@ class viewTest_db:
         view = BaseView(self.context2, self.request)
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename=None))
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename="file.html"))
-        self.assertRaises(HTTPOk, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html")        
+        self.assertRaises(ExceptionalResponse, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html")
 
 
     def test_files(self):
@@ -188,8 +198,6 @@ class viewTest_db:
         self.assert_(view2.RenderField("pool_type"))
         self.assert_(view2.RenderField("pool_category"))
         self.assert_(view2.HtmlTitle()=="")
-        self.request.environ["htmltitle"] = "test"
-        self.assert_(view2.HtmlTitle()=="test")
         self.assert_(view2.FmtTextAsHTML("text"))
         self.assert_(view2.FmtDateText("2008/06/23 16:55", language=None))
         self.assert_(view2.FmtDateNumbers( "2008/06/23 16:55", language=None))
@@ -207,6 +215,17 @@ class viewTest_db:
         self.assert_(view2.Assets(types="js").find(".css")==-1)
         self.assert_(view2.Assets(types="css").find(".js")==-1)
         
+    
+    def test_htmltag(self):
+        view2 = BaseView(self.context, self.request)
+        self.assert_(view2.FmtTag("div"))
+        self.assert_(view2.FmtTag("div")==u"<div></div>", view2.FmtTag("div"))
+        self.assert_(view2.FmtTag("div", id=0)==u"""<div id="0"></div>""")
+        self.assert_(view2.FmtTag("div", closeTag=None, id=0)==u"""<div id="0">""")
+        self.assert_(view2.FmtTag("div", closeTag="inline", id=0)==u"""<div id="0"/>""")
+        
+
+
 
 class viewTest_db_sqlite(viewTest_db, __local.SqliteTestCase):
     """

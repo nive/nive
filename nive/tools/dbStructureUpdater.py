@@ -49,9 +49,9 @@ class dbStructureUpdater(Tool):
 
         text = _(u""" <div class="well">
 This tool compares the physically existing database structure (tables, columns) with the current configuration settings.
-The database structure is shown on the left, configuration settings on the right. <br/><br/>
+The database structure is shown on the left, configuration settings on the right. <br><br>
 Existing database columns will only be altered if manually selected in the 'Modify' column. Modifying a table may destroy the data
-stored (e.g if converted from string to integer), so don't forget to create backups of the database before modifying anything.<br/>
+stored (e.g if converted from string to integer), so don't forget to create backups of the database before modifying anything.<br>
 By default this tool will only create new tables and columns and never delete any column.
  </div>       """)
         self.stream.write(localizer.translate(_(text)))
@@ -71,7 +71,7 @@ By default this tool will only create new tables and columns and never delete an
             return 0
 
         db = connection.GetDBManager()
-        self.stream.write(localizer.translate(_(u"<h4>Database '${name}' ${host} </h4><br/>", mapping={"host":conf.host, "name":conf.dbName})))
+        self.stream.write(localizer.translate(_(u"<h4>Database '${name}' ${host} </h4><br>", mapping={"host":conf.host, "name":conf.dbName})))
 
         if not db:
             self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Database connection error (${name})</div>", mapping={"name": app.dbConfiguration.context})))
@@ -161,9 +161,9 @@ By default this tool will only create new tables and columns and never delete an
 
 
         if db.modifyColumns:
-            self.stream.write(u"""<div class="alert alert-error"><input class="btn" type="submit" name="submit" value=" %s "/><br/>%s</div>""" % (
+            self.stream.write(u"""<div class="alert alert-error"><input class="btn" type="submit" name="submit" value=" %s "><br>%s</div>""" % (
                 localizer.translate(_(u"Modify selected columns")), 
-                localizer.translate(_(u"Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br/> <b>Warning: This may destroy something!</b>"))))
+                localizer.translate(_(u"Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"))))
         self.stream.write(localizer.translate(u"</form>"))
         connection.close()
         return result
@@ -194,7 +194,7 @@ By default this tool will only create new tables and columns and never delete an
 <input type="checkbox" name="%s" value="%s">""" 
 
         footer = u"""
-</tbody></table> <br/>"""
+</tbody></table> <br>"""
 
 
         self.stream.write(header)

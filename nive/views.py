@@ -12,6 +12,10 @@ data rendering, url generation, http headers and user lookup.
 
 import os
 import time
+try:
+    import simplejson
+except:
+    import json
 from datetime import datetime
 from email.utils import formatdate
 
@@ -23,10 +27,11 @@ from pyramid.security import authenticated_userid
 from pyramid.security import has_permission
 from pyramid.i18n import get_localizer
 
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden, HTTPException
 from pyramid.exceptions import NotFound
 
 from nive.i18n import _
+from nive import helper
 from nive.utils.utils import ConvertToStr, ConvertListToStr, ConvertToDateTime
 from nive.utils.utils import FmtSeconds, FormatBytesForDisplay, CutText, GetMimeTypeExtension
 from nive import FileNotFound
@@ -85,11 +90,14 @@ class BaseView(object):
 
         returns url
         """
-        if not resource:
-            resource=self.context
-        if hasattr(resource, "extension") and resource.extension:
-            return u"%s.%s" % (resource_url(resource, self.request)[:-1], resource.extension)
-        return resource_url(resource, self.request)
+        resource=resource or self.context
+        url = resource_url(resource, self.request)
+        if not hasattr(resource, "extension") or not resource.extension:
+            return url
+        # add extension if it is not the virtual root
+        if self.request.virtual_root == resource:
+            return url
+        return u"%s.%s" % (url[:-1], resource.extension)
 
     def FolderUrl(self, resource=None):
         """
@@ -107,24 +115,26 @@ class BaseView(object):
         *file* is the filename to look the url up for. E.g. for the default static directory use ::
         
             <link tal:attributes="href view.StaticUrl('layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
                   
          to reference a file in a different directory you must include the python module like ::
 
             <link tal:attributes="href view.StaticUrl('my_app.design:static/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
                   
          absolute http urls can also be used based on the url prefix http, https and / ::
 
             <link tal:attributes="href view.StaticUrl('/assets/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
             <link tal:attributes="href view.StaticUrl('http://myserver.com/assets/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
             <link tal:attributes="href view.StaticUrl('https://myserver.com/assets/layout2.css')" 
-                  rel="stylesheet" type="text/css" media="all" />
+                  rel="stylesheet" type="text/css" media="all" >
                   
         returns url
         """
+        if file is None:
+            return u""
         if file.startswith((u"http://",u"https://",u"/")):
             return file
         if not u":" in file and self.viewModule and self.viewModule.static:
@@ -152,17 +162,19 @@ class BaseView(object):
             return u""
         return u"%sfile/%s" % (self.Url(resource), file.filename)
 
-    def PageUrl(self, resource=None, usePageLink=0):
+    def PageUrl(self, resource=None, usePageLink=0, addAnchor=False):
         """
         Generates the default page url for the resource with extension. If resource is a page element
         the page containing this element is used for the url. 
         
-        If resource is None the current context object is used as resource.
+        If `resource` is None the current context object is used as resource.
 
+        If `addAnchor` is true and resource is not the actula page the url is generated for, the function 
+        will append a anchor for the resource to the url based on the id.
+        
         returns url
         """
-        if not resource:
-            resource=self.context
+        resource=resource or self.context
         try:
             page = resource.GetPage()
         except:
@@ -170,9 +182,16 @@ class BaseView(object):
         link = page.data.get("pagelink")
         if usePageLink and link:
             return self.ResolveUrl(link, resource)
-        if hasattr(page, "extension"):
-            return u"%s.%s" % (resource_url(page, self.request)[:-1], page.extension)
-        return resource_url(page, self.request)
+
+        url = resource_url(page, self.request)
+        if hasattr(page, "extension") and page.extension:
+            # add extension if it is not the virtual root
+            if self.request.virtual_root != page:
+                url = u"%s.%s" % (url[:-1], page.extension)
+
+        if not addAnchor or resource == page:
+            return url
+        return "%s#nive-element%d"%(url, resource.id)
 
     def CurrentUrl(self, retainUrlParams=False):
         """
@@ -192,16 +211,19 @@ class BaseView(object):
         Possible values:
         
         - page_url
+        - page_url_anchor
         - obj_url
         - obj_folder_url
         - parent_url
         """
-        if url==None:
+        if url is None:
             return u""
         if not object or not IObject.providedBy(object):
             object = self.context
         if url == "page_url":
             url = self.PageUrl(object)
+        elif url == "page_url_anchor":
+            url = self.PageUrl(object, addAnchor=True)
         elif url == "obj_url":
             url = self.Url(object)
         elif url.find("obj_folder_url")!=-1:
@@ -233,32 +255,33 @@ class BaseView(object):
     
     # Response and headers (defined on module level below -------------------------------------------
 
-    def SendResponse(self, data, mime="text/html", filename=None, raiseException=True):
+    def SendResponse(self, data, mime="text/html", filename=None, raiseException=True, status=None):
         """
         Creates a response with data as body. If ``raiseException`` is true the function
-        will raise a HTTPOk Exception with data as body.
+        will raise a HTTPOk Exception with data as body. A custom response status can only be passed
+        if `raiseException` is False.
         
         If filename is not none the response will extended with a ``attachment; filename=filename``
         header.
         """
-        return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException)
+        return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException, status=status)
         
         
-    def Redirect(self, url, messages=None, slot="", raiseException=True):
+    def Redirect(self, url, messages=None, slot="", raiseException=True, refresh=True):
         """
         Redirect to the given URL. Messages are stored in session and can be accessed
         by calling ``request.session.pop_flash()``. Messages are added by calling
         ``request.session.flash(m, slot)``.
         """
-        return Redirect(url, self.request, messages=messages, slot=slot, raiseException=raiseException)
+        return Redirect(url, self.request, messages=messages, slot=slot, raiseException=raiseException, refresh=refresh)
     
 
-    def Relocate(self, url, messages=None, slot="", raiseException=True):
+    def Relocate(self, url, messages=None, slot="", raiseException=True, refresh=True):
         """
         Returns messages and X-Relocate header in response.
         If raiseException is True HTTPOk is raised with empty body.
         """
-        return Relocate(url, self.request, messages=messages, slot=slot, raiseException=raiseException)
+        return Relocate(url, self.request, messages=messages, slot=slot, raiseException=raiseException, refresh=refresh)
 
 
     def ResetFlashMessages(self, slot=""):
@@ -398,7 +421,7 @@ class BaseView(object):
             js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         if types in (None, "css"):
             css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
-            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
         
 
@@ -550,9 +573,7 @@ class BaseView(object):
         
         returns True / False
         """
-        if not context:
-            context = self.context
-        return has_permission(permission, context, self.request)
+        return has_permission(permission, context or self.context, self.request)
     
     def InGroups(self, groups):
         """
@@ -601,7 +622,7 @@ class BaseView(object):
                 return u""
             url2 = url.lower()
             if url2.find(u".jpg")!=-1 or url2.find(u".jpeg")!=-1 or url2.find(u".png")!=-1 or url2.find(u".gif")!=-1:
-                return u"""<img src="%s" />""" % (url)
+                return u"""<img src="%s">""" % (url)
             return u"""<a href="%s">download</a>""" % (url)
         return FieldRenderer(self.context).Render(fld, data, context=self.context)
     
@@ -622,16 +643,16 @@ class BaseView(object):
     
     def FmtTextAsHTML(self, text):
         """
-        Converts newlines to <br/>.
+        Converts newlines to <br>.
         
         returns string
         """
         if not text:
             return u""
         if text.find(u"\r\n")!=-1:
-            text = text.replace(u"\r\n",u"<br/>\r\n")
+            text = text.replace(u"\r\n",u"<br>\r\n")
         else:
-            text = text.replace(u"\n",u"<br/>\n")
+            text = text.replace(u"\n",u"<br>\n")
         return text
 
     def FmtDateText(self, date, language=None):
@@ -666,10 +687,26 @@ class BaseView(object):
         """ bytes to readable text """
         return FormatBytesForDisplay(size)
 
+    def FmtTag(self, tag, closeTag="tag", **attributes):
+        """ 
+        Write a html tag with attributes. 
+        closeTag: 'tag', 'inline', 'no', 'only'
+        """
+        if closeTag=="only":
+            return u"</%s>" % (tag)
+        attrs = u""
+        if attributes:
+            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in attributes.items()]
+            attrs = u" " + u" ".join(attrs)
+        if closeTag=="inline":
+            return u"<%s%s/>" % (tag, attrs)
+        elif closeTag in (None,'no'):
+            return u"<%s%s>" % (tag, attrs)
+        return u"<%s%s></%s>" % (tag, attrs, tag)
+
     def CutText(self, text, length):
         """ bytes to readable text """
         return CutText(text, length)
-
 
     # parameter handling ------------------------------------------------------------
 
@@ -802,7 +839,7 @@ class BaseView(object):
         params = kw
         for p in params.keys():
             value = ConvertToStr(params[p])
-            form.append(u"<input type='hidden' name='%s' value='%s' />" % (p, value))
+            form.append(u"<input type='hidden' name='%s' value='%s'>" % (p, value))
         return "".join(form)
 
 
@@ -832,8 +869,27 @@ class BaseView(object):
  
 
 # Response utilities -------------------------------------------------
+from zope.interface import implementer
+from pyramid.interfaces import IExceptionResponse
 
-def SendResponse(data, mime="text/html", filename=None, raiseException=True):
+@implementer(IExceptionResponse)
+class ExceptionalResponse(Response, Exception):
+    def __init__(self, headers=None, **kw):
+        self.detail = self.message = kw.get("status","Response")
+        Response.__init__(self, **kw)
+        Exception.__init__(self, self.detail)
+        if headers:
+            self.headers.extend(headers)
+
+    def __str__(self):
+        return self.detail
+
+    def __call__(self, environ, start_response):
+        return Response.__call__(self, environ, start_response)
+
+
+
+def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None):
     """
     See views.BaseView class function for docs
     """
@@ -841,14 +897,17 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True):
     if filename:
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
-        raise HTTPOk(content_type=mime, body=data, content_disposition=cd)
-    return Response(content_type=mime, body=data, content_disposition=cd)
+        raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status)
+    return Response(content_type=mime, body=data, content_disposition=cd, status=status)
 
 
-def Redirect(url, request, messages=None, slot="", raiseException=True):
+def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True):
     """
     See views.BaseView class function for docs
     """
+    if request.environ.get("HTTP_X_REQUESTED_WITH")=="XMLHttpRequest":
+        # ajax call -> use relocate to handle this case
+        return Relocate(url, request, messages, slot, raiseException, refresh)
     if messages:
         if isinstance(messages, basestring):
             request.session.flash(messages, slot)
@@ -863,7 +922,7 @@ def Redirect(url, request, messages=None, slot="", raiseException=True):
     return HTTPFound(location=url, headers=headers)
     
 
-def Relocate(url, request, messages=None, slot="", raiseException=True):
+def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=True):
     """
     See views.BaseView class function for docs
     """
@@ -874,12 +933,13 @@ def Relocate(url, request, messages=None, slot="", raiseException=True):
             for m in messages:
                 request.session.flash(m, slot)
     headers = [('X-Relocate', str(url))]
+    request.response.headerlist = headers
+    body = json.dumps({u"location": url, u"messages": messages, "refresh": refresh})
+    if raiseException:
+        raise ExceptionalResponse(headers=headers, body=body, content_type="application/json", status="200 OK")
     if hasattr(request.response, "headerlist"):
         headers += list(request.response.headerlist)
-    request.response.headerlist = headers    
-    if raiseException:
-        raise HTTPOk(headers=headers, body_template="redirect "+url)
-    return u""
+    return body
 
 
 def ResetFlashMessages(request, slot=""):
@@ -918,7 +978,7 @@ class FieldRenderer(object):
         **kw:
         static = static root path for images
         """
-        data = ""
+        data = u""
         if useDefault:
             data = fieldConf["default"]
         if value != None:
@@ -930,7 +990,7 @@ class FieldRenderer(object):
             if not context:
                 return []
             pool_type = context.GetTypeID() 
-            return context.dataroot.LoadListItems(fld, obj=context, pool_type=pool_type)
+            return helper.LoadListItems(fld, app=context.app, obj=context, pool_type=pool_type)
         
         # format for output
         fType = fieldConf["datatype"]
@@ -944,7 +1004,7 @@ class FieldRenderer(object):
             elif fmt=="image":
                 tmpl = fieldConf.settings.get("path", u"")
                 path = tmpl % {"data":data, "static": kw.get("static",u"")}
-                data = """<img src="%(path)s" title="%(name)s" />""" % {"path":path, "name": fieldConf.name}
+                data = """<img src="%(path)s" title="%(name)s">""" % {"path":path, "name": fieldConf.name}
                 return data
         
         if fType == "bool":
@@ -965,7 +1025,7 @@ class FieldRenderer(object):
                     pass
 
         elif fType == "text":
-            data = data.replace(u"\r\n", u"\r\n<br />")
+            data = data.replace(u"\r\n", u"\r\n<br>")
 
         elif fType == "date":
             if not isinstance(data, datetime):
@@ -1024,7 +1084,7 @@ class FieldRenderer(object):
                     options = options(fieldConf, self.context)
 
             if isinstance(data, basestring):
-                data = tuple(value.split(u"\n"))
+                data = tuple(data.split(u"\n"))
             for ref in data:
                 if options:
                     for item in options:
@@ -1032,8 +1092,10 @@ class FieldRenderer(object):
                             values.append(item["name"])
                 else:
                     values.append(ref)
-                
-            data = u", ".join(values)
+            delimiter = u", "
+            if fieldConf.settings and u"delimiter" in fieldConf.settings:
+                delimiter = fieldConf.settings[u"delimiter"]
+            data = delimiter.join(values)
 
         elif fType == "url":
             if render:
@@ -1067,7 +1129,7 @@ class FieldRenderer(object):
                 else:
                     title = url
                 links.append({"id": l, "name": title})
-                data.append(u"<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br/>" % (title, title, url, title))
+                data.append(u"<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br>" % (title, title, url, title))
             data = u"".join(data)
 
         elif fType == "password":

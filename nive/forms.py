@@ -72,6 +72,15 @@ Callback for dynamic list item loading: ::
 
     FieldConf(..., listItems=loadGroups, ...)
 
+The build in progress bar is activated by default with a delay of 500 milliseconds. So it will only
+pop up if the form transmission takes some time e.g if a file upload is in progress. To disable the
+progress bar or skip the delay set the attribute `HTMLForm.uploadProgressBar` to `none` or `always`.
+::
+
+    form = HTMLForm(view=self)
+    # disable the progress bar
+    form.uploadProgressBar = 'none' 
+ 
 
 In short forms are explained as follows:
 
@@ -90,20 +99,24 @@ or rendering use a form library directly.
 
 Control sets for Select and Radio fields
 ========================================
-Conditional sets can be automatically shown and hidden by setting a list `controlset:True`
+Conditional sets can be automatically shown and hidden by setting a lists option `controlset:True`
 and extending each listitem with a fields list. :: 
 
-      FieldConf(id="flist",   
-                datatype="list",   
-                size=100,  
-                name="flist", 
-                settings={"controlset":True},
-                listItems=[Conf(id="item 1", name="Item 1", 
-                                fields=[FieldConf(id="ftext",datatype="text",size=10,name="ftext")]),
-                           Conf(id="item 2", name="Item 2", 
-                                fields=[FieldConf(id="fnum",datatype="number",size=8,name="fnum")])
-                           ]
-                ),
+    FieldConf(id="flist",   
+        datatype="list",   
+        size=100,  
+        name="flist", 
+        settings={"controlset":True},
+        listItems=[Conf(id="item 1", name="Item 1", 
+                        fields=[FieldConf(id="ftext",datatype="text",size=10,name="ftext")]),
+                   Conf(id="item 2", name="Item 2", 
+                        fields=[FieldConf(id="fnum",datatype="number",size=8,name="fnum")])
+        ]
+    )
+
+By default additional fields added as control fields will be treated as top level form fields. Control field data
+can be accessed like any other fields data. The controlset option is primarily a visual extension to make
+the more user friendly by showing some fields only in a certain context.
 
 Example
 =======
@@ -115,7 +128,7 @@ Internally the form uses a structure like in the following manually defined form
       FieldConf(id="fdate",   datatype="datetime", size=8,  name="fdate"),
       FieldConf(id="flist",   datatype="list",   size=100,  name="flist", 
                 listItems=[{"id": "item 1", "name":"Item 1"},
-                             {"id": "item 2", "name":"Item 2"}]),
+                           {"id": "item 2", "name":"Item 2"}]),
       FieldConf(id="fmselect", datatype="mselection", size=50, name="fmselect"),
     ]
     
@@ -155,6 +168,7 @@ import copy, json
 from types import StringType
 
 from pyramid.url import static_url
+from pyramid.httpexceptions import HTTPBadRequest
 
 from nive.definitions import Conf, FieldConf, ConfigurationError
 from nive.definitions import ISort
@@ -213,8 +227,8 @@ class Form(Events, ReForm):
         """
         # form context
         self.view = view
-        self.context = context or view.context
-        self.request = request or view.request
+        self.context = context or view.context if view else None
+        self.request = request or view.request if view else None
         self.app = app or self.context.app
         
         if loadFromType:
@@ -389,9 +403,11 @@ class Form(Events, ReForm):
 
     def Validate(self, data, removeNull=True):
         """
-        Extracts fields from request or source data dictionary, converts and
-        validates
+        Extracts fields from request, converts and validates
         
+        Unlike the `ValidateSchema()` function `Validate()` validates html form widget 
+        data fields and does not support raw data validation.   
+
         Event
         - validate(data) before validate is called
         - process(data)  after validate has succeeded, is not called if validate failed
@@ -413,8 +429,11 @@ class Form(Events, ReForm):
 
     def ValidateSchema(self, data, removeNull=True):
         """
-        Extracts fields from request or source data dictionary, converts and
-        validates
+        Extracts fields from source data dictionary, converts and
+        validates. 
+        
+        Unlike the `Validate()` function `ValidateSchema()` validates raw data
+        and does not support html form widget data fields.   
         
         Event
         - validate(data) before validate is called
@@ -679,6 +698,7 @@ class HTMLForm(Form):
     css_class = u"form form-horizontal"
     actionPostfix = u"$"
     anchor = u""
+    uploadProgressBar = u"auto" # other possible values: none or always
     
     # Form actions --------------------------------------------------------------------------------------------
 
@@ -747,7 +767,12 @@ class HTMLForm(Form):
             callKws.update(kw)
         else:
             callKws = kw
-        result, html = method(action, **callKws)
+        try:
+            result, html = method(action, **callKws)
+        except ValueError, e:
+            # handle value errors as client errors, not server errors. 
+            # return a 400 Invalid request exception.
+            raise HTTPBadRequest(str(e))
         return result, html, action
 
 
@@ -949,7 +974,7 @@ class HTMLForm(Form):
                 js_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
                 css_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
         js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
-        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all"/>' % link for link in css_links]
+        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
     
         
@@ -963,23 +988,16 @@ class HTMLForm(Form):
         - renderSuccess
         
         """
-        redirectSuccess = kw.get("redirectSuccess")
-        renderSuccess = kw.get("renderSuccess", True)
-        redirectSuccess = self.view.ResolveUrl(redirectSuccess, result)
-
         if not result:
             return result, self.Render(data, msgs=msgs, errors=errors)
     
-        if self.use_ajax:
-            if redirectSuccess:
-                # raises HTTPFound 
-                return result, self.view.Relocate(redirectSuccess, messages=msgs, raiseException=True)
-        
-        elif redirectSuccess:
-            # raises HTTPFound 
-            return result, self.view.Redirect(redirectSuccess, messages=msgs)
+        redirectSuccess = self.view.ResolveUrl(kw.get("redirectSuccess"), result)
+        if redirectSuccess:
+            # raises HTTPFound
+            return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
-        if not renderSuccess:        
+        renderSuccess = kw.get("renderSuccess", True)
+        if not renderSuccess:
             return result, self._Msgs(msgs=msgs)
         return result, self.Render(data, msgs=msgs, errors=errors)
 
@@ -1487,6 +1505,9 @@ class JsonSequenceForm(HTMLForm):
         Initially load data from configured object json data field. 
         context = obj
         
+        Event
+        - delete(data) after data has been deleted
+
         returns bool, html
         """
         sequence = self.context.data.get(self.jsonDataField)
@@ -1512,6 +1533,7 @@ class JsonSequenceForm(HTMLForm):
                 self.context.data[self.jsonDataField] = sequence
                 msgs=[_(u"Item deleted!")]
                 data = []
+                self.Signal("delete", data=sequence)
         else:
             data = []
         return data!=None, self.Render(data, msgs=msgs)
@@ -1539,6 +1561,11 @@ class JsonSequenceForm(HTMLForm):
                 seqindex = int(data.get(self.editKey))
             except:
                 seqindex = 0
+            if seqindex == 0 and data[self.jsonUniqueID] in [i["id"] for i in sequence]:
+                # item already in list and not edit clicked before
+                msgs=[_(u"Item exists!")]
+                return False, self.Render(data, msgs=msgs, errors=errors)
+                
             if self.editKey in data:
                 del data[self.editKey]
             if not seqindex or seqindex > len(sequence):

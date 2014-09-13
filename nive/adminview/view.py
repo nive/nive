@@ -15,7 +15,7 @@ from nive.definitions import IWebsiteRoot, ICMSRoot
 
 from nive.views import BaseView
 from nive.forms import ValidationError, HTMLForm
-
+from nive.extensions.persistentRoot import IPersistentRoot
 from nive.utils.utils import SortConfigurationList, ConvertDictToStr
 
 
@@ -43,6 +43,7 @@ configuration.views = [
     # User Management Views
     ViewConf(name = "admin",    attr = "view",       renderer = t+"root.pt"),
     ViewConf(name = "basics",   attr = "editbasics", renderer = t+"form.pt"),
+    ViewConf(name = "rootsettings",attr = "editroot",    renderer = t+"form.pt"),
     #ViewConf(name = "portal",   attr = "editportal", renderer = t+"form.pt"),
     ViewConf(name = "tools",    attr = "tools",      renderer = t+"tools.pt"),
     ViewConf(name = "modules",  attr = "view",       renderer = t+"modules.pt"),
@@ -51,6 +52,8 @@ configuration.views = [
 
 configuration.widgets = [
     WidgetConf(name=_(u"Basics"),    viewmapper="basics",     id="admin.basics",   sort=1000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
+               description=u""),
+    WidgetConf(name=_(u"Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf,
                description=u""),
     #WidgetConf(name=_(u"Global"),    viewmapper="portal",     id="admin.portal",   sort=300,   apply=(IApplication,), widgetType=IAdminWidgetConf),
     WidgetConf(name=_(u"Tools"),     viewmapper="tools",      id="admin.tools",    sort=5000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
@@ -145,6 +148,73 @@ class ConfigurationForm(HTMLForm):
         return result, self.Render(data, msgs=msgs, errors=errors)    
 
 
+from nive.components.reform.schema import Invalid
+
+def RootnameValidator(node, value):
+    """
+    Validator which succeeds if the username does not exist.
+    Can be used for the name input field in a sign up form.
+    """
+    # lookup name in database
+    app = node.widget.form.context.app
+    for root in app.GetAllRootConfs():
+        if root.id == value:
+            err = _(u"'${name}' already in use. Please choose a different name.", mapping={'name':value})
+            raise Invalid(node, err)
+
+class RootForm(HTMLForm):
+
+    actions = [
+        Conf(id=u"default",    method="Start",   name=u"Initialize", hidden=True,  css_class=u"",            html=u"", tag=u""),
+        Conf(id=u"edit",       method="Update",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+    ]
+
+    def Start(self, action, **kw):
+        """
+        Initially load data from root object.
+        context = root
+
+        returns bool, html
+        """
+        root = self.context
+        data = {}
+        for f in self.GetFields():
+            # data
+            if f.datatype=="password":
+                continue
+
+            if f.id in root.data:
+                data[f.id] = root.data.get(f.id,"")
+            elif f.id in root.meta:
+                data[f.id] = root.meta.get(f.id,"")
+
+        return data!=None, self.Render(data)
+
+
+    def Update(self, action, **kw):
+        """
+        Process request data and update object.
+
+        returns bool, html
+        """
+        redirectSuccess = kw.get("redirectSuccess")
+        msgs = []
+        result,data,errors = self.Validate(self.request)
+        if result:
+            # lookup persistent manager for configuration
+            root = self.context
+            root.Update(data, user=self.view.User())
+            msgs.append(_(u"OK. Data saved."))
+            errors=None
+            if self.view and redirectSuccess:
+                redirectSuccess = self.view.ResolveUrl(redirectSuccess, obj)
+                if self.use_ajax:
+                    self.view.Relocate(redirectSuccess, messages=msgs, raiseException=True)
+                else:
+                    self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True)
+        return result, self.Render(data, msgs=msgs, errors=errors)
+
+
 class AdminBasics(BaseView):
 
     def __init__(self, context, request):
@@ -166,7 +236,7 @@ class AdminBasics(BaseView):
         return SortConfigurationList(confs, "sort")
 
     def RenderConf(self, c):
-        return u"""<strong><a onclick="$('#%d').toggle()" style="cursor:pointer">%s</a></strong><br/>%s""" % (
+        return u"""<strong><a onclick="$('#%d').toggle()" style="cursor:pointer">%s</a></strong><br>%s""" % (
                 abs(id(c)), 
                 unicode(c).replace("<", "&lt;").replace(">", "&gt;"), 
                 self.Format(c, str(abs(id(c))))
@@ -199,10 +269,10 @@ class AdminBasics(BaseView):
                     if hasattr(i, "ccc"):
                         a.append(self.RenderConf(i))
                     else:
-                        a.append(unicode(i).replace(u"<", u"&lt;").replace(u">", u"&gt;")+u"<br/>")
+                        a.append(unicode(i).replace(u"<", u"&lt;").replace(u">", u"&gt;")+u"<br>")
                 value = u"".join(a)
             elif isinstance(value, dict):
-                value = ConvertDictToStr(value, u"<br/>")
+                value = ConvertDictToStr(value, u"<br>")
             else:
                 value = unicode(value).replace(u"<", u"&lt;").replace(u">", u"&gt;")
             v.append(u"<tr><th>%s</th><td>%s</td></tr>\r\n" % (d[0], value))
@@ -247,6 +317,26 @@ class AdminView(AdminBasics):
         form = ConfigurationForm(view=self, context=self.context.configuration, app=self.context)
         form.fields = fields
         form.Setup() 
+        # process and render the form.
+        result, data, action = form.Process()
+        return {u"content": data, u"result": result, u"head": form.HTMLHead()}
+
+
+    def editroot(self):
+        root = self.context.app.root(name="")
+        if not IPersistentRoot.providedBy(root):
+            return {u"content": _(u"The default root does not support persistent data storage."), u"result": False, u"head": u""}
+        fields = (
+            FieldConf(id=u"pool_filename",   datatype="string", size=30,   required=1, name=_(u"Default root url name"),
+                      settings={"validator": RootnameValidator}, default=root.configuration.id),
+            FieldConf(id=u"title",           datatype="string", size=255,  required=0, name=_(u"Root title"), default=root.configuration.name),
+            FieldConf(id=u"description",     datatype="text",   size=5000, required=0, name=_(u"Root description")),
+            FieldConf(id="pool_groups",      datatype="mcheckboxes", size=250, default="", name=_(u"Permission"),
+                      description=_(u"Only displayed to users in the selected group"))
+        )
+        form = RootForm(view=self, context=root, app=self.context)
+        form.fields = fields
+        form.Setup()
         # process and render the form.
         result, data, action = form.Process()
         return {u"content": data, u"result": result, u"head": form.HTMLHead()}

@@ -7,12 +7,12 @@ import string, time, cPickle, re, types
 from nive.utils.dataPool2.dbManager import DatabaseManager
 
 
-PSYCOPG = 0
 
 try:    
     import psycopg2
-    PSYCOPG = 1
 except:
+    # ignore to make tests imports pass
+    # __init__() will raise an import error
     pass
 
 

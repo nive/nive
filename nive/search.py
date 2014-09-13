@@ -70,9 +70,7 @@ sql            the sql statement used
 import time
 
 from nive.utils.utils import ConvertToNumberList
-from nive.utils.language import LanguageExtension, CountryExtension
 from nive.views import FieldRenderer
-from nive.security import GetUsers
 from nive.definitions import IFieldConf
 from nive.definitions import FieldConf
 from nive.definitions import ConfigurationError
@@ -660,6 +658,29 @@ class Search:
             fldList.append(f["id"])
         return fields, fldList, groupcol
     
+    def _GetFieldDefinitions(self, fields, pool_type = None):
+        f = []
+        for fld in fields:
+            if IFieldConf.providedBy(fld):
+                f.append(fld)
+                continue
+            if not isinstance(fld, basestring):
+                continue
+            if fld in ("__preview__",):
+                continue
+            # skip custom flds
+            if fld[0] == "+":
+                continue
+            # Aggregate functions, custom flds
+            if fld[0] == "-":
+                f.append(FieldConf(**{"id": fld, "name": fld, "datatype": "string"}))
+                continue
+
+            fl = self.app.GetFld(fld, pool_type)
+            if fl:
+                f.append(fl)
+        return f
+
     def _HandleGroupByQueries(self, fields, fldList, groupcol, kws):
         # add id. required for group by  queries
         removeID = False
@@ -1004,123 +1025,9 @@ class Search:
 
     def LoadListItems(self, fieldconf, obj=None, pool_type=None, force=False):
         """
-        Load field list items in correspondance to to field.id and field.settings.
-        if force is false and fieldconf contains list items, the existing 
-        field.listItems are returned. set force=true to reload.
-        
-        obj and pool_type only used for workflow lookup
-        
-        returns dict list
+        bw 0.9.12 
+        `LoadListItems` moved to nive.helper
         """
-        values = []
-        if not fieldconf:
-            return values
+        import nive
+        return nive.helper.LoadListItems(fieldconf, app=self.app, obj=obj, pool_type=pool_type, force=force)
 
-        if fieldconf.listItems and not force:
-            # skip loading if list filled
-            if hasattr(fieldconf.listItems, '__call__'):
-                return fieldconf.listItems(fieldconf, obj or self)
-            return fieldconf.listItems
-
-        fld = fieldconf.id
-        # load list items
-
-        if fieldconf.settings:
-            # settings dyn list
-            dyn = fieldconf.settings.get("codelist")
-            if not dyn:
-                pass
-            elif dyn == "users":
-                return GetUsers(self.app)
-            elif dyn == "groups":
-                portal = self.app.portal
-                if portal==None:
-                    portal = self.app
-                return portal.GetGroups(sort="name", visibleOnly=True)
-            elif dyn == "localgroups":
-                return self.app.GetGroups(sort="name", visibleOnly=True)
-            elif dyn == "languages":
-                return LanguageExtension().Codelist()
-            elif dyn == "countries":
-                return CountryExtension().Codelist()
-            elif dyn == "types":
-                return self.app.GetAllObjectConfs()
-            elif dyn == "categories":
-                return self.app.GetAllCategories()
-            elif dyn[:5] == "type:":
-                type = dyn[5:]
-                return self.GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
-            elif dyn == "meta":
-                return self.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
-
-        if fld == "pool_type":
-            values = self.app.GetAllObjectConfs()
-
-        elif fld == "pool_category":
-            values = self.app.GetAllCategories()
-
-        elif fld == "pool_groups":
-            local = fieldconf.settings.get("local")
-            loader = self.app
-            if not local:
-                portal = self.app.portal
-                if portal:
-                    loader = portal
-            values = loader.GetGroups(sort="name", visibleOnly=True)
-
-        elif fld == "pool_language":
-            values = self.app.GetLanguages()
-
-        elif fld == "pool_wfa":
-            # uses type object as param
-            if obj:
-                try:
-                    aWfp = obj.meta.get("pool_wfp")
-                    obj = self.app.GetWorkflow(aWfp)
-                    if obj:
-                        values = obj.GetActivities()
-                except:
-                    pass
-            elif pool_type:
-                aWfp = self.app.GetObjectConf(pool_type).get("workflowID")
-                try:
-                    obj = self.app.GetWorkflow(aWfp)
-                    values = obj.GetActivities()
-                except:
-                    pass
-            else:
-                values = []
-
-        elif fld == "pool_wfp":
-            values = self.app.GetAllWorkflowConfs()
-
-        return values
-
-
-
-
-
-    # Internal functions--------------------------------------------------------------------
-
-    def _GetFieldDefinitions(self, fields, pool_type = None):
-        f = []
-        for fld in fields:
-            if IFieldConf.providedBy(fld):
-                f.append(fld)
-                continue
-            if not isinstance(fld, basestring):
-                continue
-            if fld in ("__preview__",):
-                continue
-            # skip custom flds
-            if fld[0] == "+":
-                continue
-            # Aggregate functions, custom flds
-            if fld[0] == "-":
-                f.append(FieldConf(**{"id": fld, "name": fld, "datatype": "string"}))
-                continue
-
-            fl = self.app.GetFld(fld, pool_type)
-            if fl:
-                f.append(fl)
-        return f

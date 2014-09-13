@@ -1,3 +1,4 @@
+<tal:block i18n:domain="nive">
 <div tal:condition="field.widget.hidden">
   <span tal:replace="structure field.serialize(cstruct)"/>
 </div>
@@ -12,3 +13,4 @@
           class="help-inline" i18n:translate="">${msg}</span>
   </div>
 </div>
+</tal:block>

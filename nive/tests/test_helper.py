@@ -1,10 +1,12 @@
 
 import time
 import unittest
+import datetime
 
 from nive.definitions import ObjectConf, FieldConf, Conf
-from nive.helper import *
 from nive.utils.path import DvPath
+from nive.utils.dataPool2.files import File
+from nive.helper import *
 
 # -----------------------------------------------------------------
 
@@ -38,6 +40,38 @@ testconf.forms = {
                 "actions": ["save"]}
 }
 configuration = testconf
+
+
+class EncoderTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+    
+    def tearDown(self):
+        pass
+    
+    def test_jsonencoder(self):
+        self.assert_(JsonDataEncoder().encode({})=="{}")
+        self.assert_(JsonDataEncoder().encode({"a":"a","b":1}))
+        self.assert_(JsonDataEncoder().encode({"a":datetime.now()}))
+        self.assert_(JsonDataEncoder().encode({"a":File()}))
+
+    def test_confencoder(self):
+        self.assert_(ConfEncoder().encode(Conf()))
+        self.assert_(ConfEncoder().encode(Conf(**{"a":"a","b":1})))
+        self.assert_(ConfEncoder().encode(ObjectConf()))
+        self.assert_(ConfEncoder().encode(ObjectConf(**{"id":"a","name":"1"})))
+
+    # automatic class exports as ccc not supported yet
+    #def test_confdecoder(self):
+    #    c=ConfEncoder().encode(Conf())
+    #    self.assert_(ConfDecoder().decode(c)!=None)
+    #    c=ConfEncoder().encode(Conf(**{"a":"a","b":1}))
+    #    self.assert_(ConfDecoder().decode(c).a=="a",c)
+    #    c=ConfEncoder().encode(ObjectConf())
+    #    self.assert_(ConfDecoder().decode(c),c)
+    #    c=ConfEncoder().encode(ObjectConf(**{"id":"a","name":"1"}))
+    #    self.assert_(ConfDecoder().decode(c).id=="a",c)
 
 
 class ConfigurationTest(unittest.TestCase):
@@ -115,3 +149,45 @@ class ConfigurationTest(unittest.TestCase):
         self.assert_(new!=alist)
         self.assert_(new[1].value==999)
 
+
+from nive.tests import db_app
+from nive.tests import __local
+
+class ListItemTest_db:
+
+    def setUp(self):
+        self._loadApp()
+        r=self.app.root()
+
+    def tearDown(self):
+        self.app.Close()
+
+
+    def test_listitems(self):
+        self._loadApp()
+        r=self.app.root()
+
+        self.assert_(len(LoadListItems(self.app.GetFld("pool_type"), app=self.app, obj=None, pool_type=None, force=True))==3)
+        LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"users"}), app=self.app)
+        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"groups"}), app=self.app))
+        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"languages"}), app=self.app))
+        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"countries"}), app=self.app))
+        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"types"}), app=self.app))
+        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"meta"}), app=self.app))
+        #self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"})))
+
+
+class ListItemTest_db_sqlite(ListItemTest_db, __local.SqliteTestCase):
+    """
+    see tests.__local
+    """
+
+class ListItemTest_db_mysql(ListItemTest_db, __local.MySqlTestCase):
+    """
+    see tests.__local
+    """
+
+class ListItemTest_db_pg(ListItemTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """

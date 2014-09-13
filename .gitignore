@@ -26,8 +26,9 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-#eclipse
+#ide
 .project
 .pydevproject
 .amateras
 .settings
+.idea

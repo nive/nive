@@ -11,9 +11,11 @@ from pyramid.path import AssetResolver
 from pyramid.path import caller_package
 
 
-from nive.definitions import IAppConf, IDatabaseConf, IFieldConf, IRootConf, IObjectConf, IViewModuleConf
-from nive.definitions import IViewConf, IToolConf, IPortalConf, IGroupConf, ICategoryConf, IModuleConf
-from nive.definitions import IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf
+from nive.definitions import (
+    IAppConf, IDatabaseConf, IFieldConf, IRootConf, IObjectConf, IViewModuleConf,
+    IViewConf, IToolConf, IPortalConf, IGroupConf, ICategoryConf, IModuleConf,
+    IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf, IFileStorage
+)
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
 from nive import File
@@ -179,6 +181,18 @@ def ReplaceInListByID(conflist, newconf, id=None):
             
 
 
+class JsonDataEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return str(obj)
+        elif IFileStorage.providedBy(obj):
+            file = {}
+            file["filekey"] = obj.filekey
+            file["filename"] = obj.filename
+            file["size"] = obj.size
+            return file
+        return json.JSONEncoder.default(self, obj)
+
 class ConfEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, baseConf):
@@ -246,7 +260,7 @@ def LoadJSONConf(jsondata, default=None):
 
 
 
-def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
+def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, storeConfAsStaticClassVar=False):
     """
     Creates a python class reference from configuration. Uses configuration.context as class
     and dynamically adds classes listed as configuration.extensions as base classes.
@@ -257,6 +271,10 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
     - configuration.extensions [optional]
     
     If reloadClass = False the class is cached as configuration._v_class.
+    
+    storeConfAsStaticClassVar: experimental option. If true stores the configuration as part of the 
+    class.
+    
     """
     if not reloadClass:
         try:
@@ -282,6 +300,9 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
             configuration.lock()
     
     if not bases:
+        if storeConfAsStaticClassVar:
+            cls = type("_factory_"+cls.__name__, (cls,), {})
+            cls.configuration = configuration
         cacheCls(configuration, cls)
         return cls
 
@@ -298,6 +319,8 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None):
 
     # create new class with name configuration.context
     cls = type("_factory_"+cls.__name__, tuple(b), {})
+    if storeConfAsStaticClassVar:
+        cls.configuration = configuration
     cacheCls(configuration, cls)
     return cls
 
@@ -323,6 +346,118 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
     return tag
 
 
+# Field list items ------------------------------------------
+
+from nive.security import GetUsers
+from nive.utils.language import LanguageExtension, CountryExtension
+
+def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
+    """
+    Load field list items for the given fieldconf.
+    If `force` is False and fieldconf already contains list items, the existing 
+    `fieldconf.listItems` are returned. Set `force=True` to reload each time this
+    function is called.
+        
+    `obj` and `pool_type` are only used for workflow lookup.
+        
+    returns dict list
+    """
+    values = []
+    if not fieldconf:
+        return values
+
+    if fieldconf.listItems and not force:
+        # skip loading if list filled
+        if hasattr(fieldconf.listItems, '__call__'):
+            return fieldconf.listItems(fieldconf, obj or app)
+        return fieldconf.listItems
+    
+    if not app:
+        if fieldconf.settings:
+            # settings dyn list
+            dyn = fieldconf.settings.get("codelist")
+            if dyn in ("languages", "countries"):
+                # the only two lists not requiring 'app'
+                if dyn == "languages":
+                    return LanguageExtension().Codelist()
+                else:
+                    return CountryExtension().Codelist()
+            
+        # abort here if app is not set
+        return fieldconf.listItems
+
+    # load list items from db, application or user database
+    if fieldconf.settings:
+        # settings dyn list
+        dyn = fieldconf.settings.get("codelist")
+        if not dyn:
+            pass        
+        elif dyn == "users":
+            return GetUsers(app)
+        elif dyn == "groups":
+            portal = app.portal
+            if portal==None:
+                portal = app
+            return portal.GetGroups(sort="name", visibleOnly=True)
+        elif dyn == "localgroups":
+            return app.GetGroups(sort="name", visibleOnly=True)
+        elif dyn == "types":
+            return app.GetAllObjectConfs()
+        elif dyn == "categories":
+            return app.GetAllCategories()
+        elif dyn[:5] == "type:":
+            type = dyn[5:]
+            return app.root().GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
+        elif dyn == "meta":
+            return app.root().GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
+        elif dyn == "languages":
+            return LanguageExtension().Codelist()
+        elif dyn == "countries":
+            return CountryExtension().Codelist()
+
+    fld = fieldconf.id
+    if fld == "pool_type":
+        values = app.GetAllObjectConfs()
+
+    elif fld == "pool_category":
+        values = app.GetAllCategories()
+
+    elif fld == "pool_groups":
+        local = fieldconf.settings.get("local")
+        loader = app
+        if not local:
+            portal = app.portal
+            if portal:
+                loader = portal
+        values = loader.GetGroups(sort="name", visibleOnly=True)
+
+    elif fld == "pool_language":
+        values = app.GetLanguages()
+
+    elif fld == "pool_wfa":
+        # uses type object as param
+        if obj:
+            try:
+                aWfp = obj.meta.get("pool_wfp")
+                obj = app.GetWorkflow(aWfp)
+                if obj:
+                    values = obj.GetActivities()
+            except:
+                pass
+        elif pool_type:
+            aWfp = app.GetObjectConf(pool_type).get("workflowID")
+            try:
+                obj = app.GetWorkflow(aWfp)
+                values = obj.GetActivities()
+            except:
+                pass
+        else:
+            values = []
+
+    elif fld == "pool_wfp":
+        values = app.GetAllWorkflowConfs()
+
+    return values
 
 
 # test request and response --------------------------------------
@@ -339,7 +474,8 @@ class Request(object):
     environ = {}
 
 class Event(object):
-    request = Request()
+    def __init__(self, request=None):
+        self.request = request or Request()
 
 class FakeLocalizer(object):
     def translate(self, text):

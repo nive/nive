@@ -34,14 +34,19 @@ Interface: IPortal
 import copy
 import time
 import logging
+import ConfigParser
 
 from pyramid.events import NewRequest
 
 from nive.i18n import _
-from nive.definitions import PortalConf, Conf
-from nive.definitions import implements, IPortal, IApplication
+from nive.definitions import PortalConf, Conf, baseConf
+from nive.definitions import implements
 from nive.definitions import ConfigurationError
+from nive.definitions import IModuleConf, IAppConf, IConf
+from nive.definitions import IPortal, IApplication
+from nive.definitions import ModuleConf
 from nive.helper import ResolveConfiguration, ResolveName
+from nive.helper import ClassFactory
 from nive.security import User, authenticated_userid, Allow, ALL_PERMISSIONS
 from nive.events import Events
 from nive.utils.utils import SortConfigurationList
@@ -54,6 +59,8 @@ class Portal(Events, object):
 
     __name__ = u""
     __parent__ = None
+    host = None
+    port = None
     
     def __init__(self, configuration = None):
         """
@@ -78,6 +85,8 @@ class Portal(Events, object):
         event: getitem(obj) called with the traversed object
         """
         try:
+            if not name in self.components:
+                raise KeyError, name
             obj = getattr(self, name)
             self.Signal("getitem", obj=obj)
             return obj
@@ -101,19 +110,22 @@ class Portal(Events, object):
         """
         log = logging.getLogger("portal")
         iface, conf = ResolveConfiguration(comp)
-        if not conf:
-            if not name or isinstance(comp, basestring):
-                raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
-        elif isinstance(comp, basestring):
-            c = ResolveName(conf.context)
-            comp = c(conf)
-        elif iface and iface.providedBy(comp):
-            c = ResolveName(conf.context)
-            comp = c(conf)
+        if not conf and isinstance(comp, basestring):
+            raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
+        if isinstance(comp, basestring) or isinstance(comp, baseConf):
+            # factory methods
+            if IAppConf.providedBy(conf):
+                comp = ClassFactory(conf)(conf)
+            elif IModuleConf.providedBy(conf):
+                comp = ClassFactory(conf)(conf)
+            elif iface and iface.providedBy(comp):
+                comp = ResolveName(conf.context)(conf)
+            elif isinstance(comp, basestring):
+                comp = ResolveName(conf.context)(conf)
+
         try:
-            if not name:
-                name = conf.id
-        except:
+            name = name or conf.id
+        except AttributeError:
             pass
         if not name:
             raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
@@ -126,7 +138,7 @@ class Portal(Events, object):
         #self.RegisterGroups(comp)
 
 
-    def Startup(self, pyramidConfig, debug=False):
+    def Startup(self, pyramidConfig, debug=False, **kw):
         """
         *Startup* is called once by the *main* function of the pyramid wsgi app on 
         server startup. All configuration, registration and setup is handled during
@@ -141,7 +153,19 @@ class Portal(Events, object):
         *debug* signals whether running in debug mode or not.
         """
         log = logging.getLogger("portal")
-        log.debug("Portal.Startup with debug=%s", str(debug))
+        log.debug("Startup with debug=%s for config %s", str(debug), str(pyramidConfig))
+        
+        # extract host and port from global config if set
+        if "global_config" in kw:
+            # get host and port from default pyramid ini file
+            ini=ConfigParser.ConfigParser()
+            try:
+                ini.read(kw["global_config"]["__file__"])
+                self.host = ini.get("server:main","host")
+                self.port = int(ini.get("server:main","port"))
+            except (KeyError, ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+                pass
+
         if pyramidConfig:
             self.SetupPortalViews(pyramidConfig)
             #pyramidConfig.add_subscriber(self.StartConnection, iface=NewRequest)
@@ -272,8 +296,11 @@ class Portal(Events, object):
     def Close(self):
         for name in self.components:
             a = getattr(self, name)
-            a.Close()
-            setattr(self, name, None)
+            try:
+                a.Close()
+            except:
+                pass
+            #setattr(self, name, None)
             
 
 
@@ -302,7 +329,7 @@ def forbidden_view(forbiddenResponse, request):
         return status()
     # login form
     url = request.referrer
-    return Redirect(portal.configuration.forbiddenUrl+"?redirect="+request.url, request, messages=[u"Please log in"], raiseException=False)
+    return Redirect(portal.configuration.forbiddenUrl+"?msg=forbidden&redirect="+request.url, request, raiseException=False)
        
 def login_view(context, request):
     # login form

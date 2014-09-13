@@ -2,7 +2,6 @@
 import time
 import unittest
 
-from nive.definitions import OperationalError, ConfigurationError
 from nive.application import *
 from nive.definitions import *
 from nive.workflow import WfProcessConf
@@ -10,6 +9,7 @@ from nive.helper import *
 from nive.events import Events
 from nive.portal import Portal
 from nive.components import baseobjects
+from nive.security import User
 
 from nive.tool import _IGlobal, _GlobalObject
 
@@ -337,10 +337,10 @@ class appTest_db:
 
     def test_db(self):
         v,r=self.app.TestDB()
-        self.assert_(v)
+        self.assert_(v,r)
         self.app.db.connection.close()
         v,r=self.app.TestDB()
-        self.assert_(v)
+        self.assert_(v,r)
 
     
     def test_cacheddb(self):
@@ -354,12 +354,12 @@ class appTest_db:
         a.Register(conn.configuration)
         a.Startup(None, cachedDbConnection=conn)
         v,r=self.app.TestDB()
-        self.assert_(v)
+        self.assert_(v,r)
 
         
     def test_dbfncs(self):
         v,r=self.app.TestDB()
-        self.assert_(v)
+        self.assert_(v,r)
         self.assert_(self.app.db)
         self.assert_(self.app.GetDB())
         self.assert_(self.app.db.connection.VerifyConnection())
@@ -367,7 +367,7 @@ class appTest_db:
         ph = self.app.db.placeholder
         self.assert_(len(self.app.Query("select id from pool_meta where pool_type="+ph, values = ["type1"])))
         v,r=self.app.TestDB()
-        self.assert_(v)
+        self.assert_(v,r)
         self.assert_(self.app.NewConnection())
         self.assert_(self.app.NewDBApi())
     

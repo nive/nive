@@ -113,7 +113,7 @@ class Test_default_renderer(unittest.TestCase):
         result = result.strip()
         self.assertEqual(result,
                          u'<input type="checkbox" name="name" value="true" '
-                         'id="oid"/>')
+                         'id="oid">')
 
 class DummyWidget(object):
     name = 'name'

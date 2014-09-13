@@ -45,11 +45,11 @@ class dbSqlDump(Tool):
         self.filename = app.configuration.id + ".sql"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.poolTag}))
+            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
             return 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.poolTag}))
+            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
             return 0
         
         def mapfields(fields):

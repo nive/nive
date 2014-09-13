@@ -1,3 +1,4 @@
+<tal:block i18n:domain="nive">
 <div tal:condition="field.widget.hidden">
   <span tal:replace="structure field.serialize(cstruct)"/>
 </div>
@@ -17,7 +18,7 @@
     <span tal:replace="structure field.serialize(cstruct)"/>
     <span tal:condition="field.error"
           tal:repeat="msg field.error.messages()"
-          class="help-inline" i18n:translate="">${msg}</span>
+          class="help-inline">${msg}</span>
   </div>
   <span tal:condition="field.widget.category not in ('structural','full-width')"
         tal:content="structure field.description" class="help-block"></span>
@@ -25,3 +26,4 @@
 </div>
 <div tal:condition="field.widget.category == 'full-width' and not field.widget.hidden"
      tal:content="structure field.description" class="help-block-br"></div>
+</tal:block>

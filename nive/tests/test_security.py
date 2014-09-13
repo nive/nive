@@ -26,7 +26,7 @@ class securityTest(unittest.TestCase):
         u.GetGroups()
 
     def test_adminuser(self):
-        u = AdminUser({"name":"admin", "password":"11111", "email":"admin@aaa.ccc", "groups":("group:admin",)}, "admin")
+        u = AdminUser({"name":"admin", "password":"11111", "email":"admin@aaa.ccc"}, "admin")
         
         self.assert_(u.identity=="admin")
         self.assert_(str(u)=="admin")
@@ -34,11 +34,25 @@ class securityTest(unittest.TestCase):
         self.assertFalse(u.Authenticate("aaaaaaa"))
         u.Login()
         u.Logout()
+        self.assert_(u.ReadableName()=="admin")
+        
+    def test_adminuser_groups(self):
+        u = AdminUser({"name":"admin", "password":"11111", "email":"admin@aaa.ccc"}, "admin")
         self.assert_(u.GetGroups()==("group:admin",))
         self.assert_(u.InGroups("group:admin"))
         self.assertFalse(u.InGroups("group:traa"))
-        self.assert_(u.ReadableName()=="admin")
         
+        u = AdminUser({"name":"admin", "password":"11111", "email":"admin@aaa.ccc", "groups":("group:admin",)}, "admin")
+        self.assert_(u.GetGroups()==("group:admin",))
+        self.assert_(u.InGroups("group:admin"))
+        self.assertFalse(u.InGroups("group:traa"))
+
+        u = AdminUser({"name":"admin", "password":"11111", "email":"admin@aaa.ccc", "groups":("group:admin","group:another")}, "admin")
+        self.assert_(len(u.GetGroups())==2)
+        self.assert_(u.InGroups("group:admin"))
+        self.assert_(u.InGroups("group:another"))
+        self.assertFalse(u.InGroups("group:traa"))
+
     def test_principals(self):
         p = effective_principals()
         self.assert_(p==None)

@@ -3,10 +3,12 @@
 #
 
 import json
+import datetime
 
 from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, FieldConf, ViewConf
 from nive.definitions import IApplication, MetaTbl, Structure
+from nive.helper import JsonDataEncoder
 from nive.i18n import _
 
 configuration = ToolConf(
@@ -45,11 +47,11 @@ class dbJsonDump(Tool):
         self.filename = app.configuration.id + ".json"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.poolTag}))
+            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
             return 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.poolTag}))
+            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
             return 0
         
         def mapfields(fields):
@@ -86,7 +88,7 @@ class dbJsonDump(Tool):
                 tvalues.append(recvalue)
             data[tablename] = tvalues
         
-        self.stream.write(json.dumps(data))        
+        self.stream.write(JsonDataEncoder().encode(data))        
         
         return 1
 

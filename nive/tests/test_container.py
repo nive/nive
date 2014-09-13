@@ -10,8 +10,14 @@ from nive.portal import Portal
 from nive.tests.db_app import *
 
 from nive.tests import __local
-    
-    
+
+
+class TestSecurityContext(object):
+    ppp="view"
+    def has_permission(self,p,c):
+        print p, c
+        return p==self.ppp
+
 class containerTest_db:
     
     def setUp(self):
@@ -396,6 +402,25 @@ class containerTest_db:
         o1.Close()
         self.assertEqual(ccc+1, a.db.GetCountEntries())
         r.Delete(o1.id, user)
+
+
+    def test_permissions(self):
+        #print "Testing shortcuts"
+        a=self.app
+        user = User(u"test")
+        ccc = a.db.GetCountEntries()
+        self.assert_(a.root())
+        self.assert_(a.db)
+        r = a.root()
+        o1 = createObj1(r)
+        self.assert_(o1)
+        self.remove.append(o1.id)
+        #root
+        testsec = TestSecurityContext()
+        self.assert_(a.root().GetObj(self.remove[-1], permission="view", securityContext=testsec))
+        self.assertRaises(PermissionError, a.root().GetObj, self.remove[-1], permission="none", securityContext=testsec)
+        r.Delete(o1.id, user)
+
 
 
 class containerTest_db_sqlite(containerTest_db, __local.SqliteTestCase):

@@ -15,7 +15,6 @@ applications in a single pyramid app.
 """
 from nive import __version__
 
-import copy
 import logging
 import uuid
 
@@ -26,14 +25,12 @@ from zope.interface.registry import Components
 from zope.interface import providedBy
 
 from nive.utils.dataPool2.structure import PoolStructure
-from nive.i18n import _
 
 from nive.definitions import AppConf, DatabaseConf, MetaTbl, ReadonlySystemFlds
 from nive.definitions import IViewModuleConf, IViewConf, IRootConf, IObjectConf, IToolConf 
 from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf
 from nive.definitions import ConfigurationError
 
-from nive.security import User, authenticated_userid
 from nive.helper import ResolveName, ResolveConfiguration, FormatConfTestFailure, GetClassRef, ClassFactory
 from nive.tool import _IGlobal, _GlobalObject
 from nive.workflow import IWfProcessConf
@@ -77,6 +74,14 @@ class Application(object):
     - finishRegistration(app, pyramidConfig)
     - run(app)
 
+    All acl definitions are mapped to self.__acl__.
+        
+    ViewModuleConf.acl values are added first, AppConf.acl are appended to the end of the list.
+    This might make it hard to replace single permissions defined by view modules because pyramid
+    uses the first matching definition in the list.
+        
+    To disable any view module acl definitions or replace single permissions use the `FinishRegistration`
+    event and post process acls as needed. 
     """
     
     def __init__(self, configuration=None):
@@ -113,8 +118,8 @@ class Application(object):
         self._structure = PoolStructure()
         self._dbpool = None
         
-        log = logging.getLogger(self.id)
-        log.debug("Initialize %s", repr(configuration))
+        self.log = logging.getLogger(self.id)
+        self.log.debug("Initialize %s", repr(configuration))
         self.Signal("init", configuration=configuration)
 
         self.starttime = 0
@@ -154,8 +159,7 @@ class Application(object):
         - startup(app)
         """
         self.starttime = time()
-        log = logging.getLogger(self.id)
-        log.debug("Startup with debug=%s", str(debug))
+        self.log.debug("Startup with debug=%s", str(debug))
         self.debug = debug
         self.Signal("startup", app=self)
         self.SetupRegistry()
@@ -200,8 +204,7 @@ class Application(object):
         - finishRegistration(app, pyramidConfig)
         """
         self.Signal("finishRegistration", app=self, pyramidConfig=pyramidConfig)
-        log = logging.getLogger(self.id)
-        log.debug('Finished registration.')
+        self.log.debug('Finished registration.')
         
         # reload database structure
         self._LoadStructure(forceReload = True)
@@ -212,9 +215,9 @@ class Application(object):
             self.GetTool("nive.tools.dbStructureUpdater", self).Run()
             result, report = self.TestDB()
             if result:
-                log.info('Database test result: %s %s', str(result), report)
+                self.log.info('Database test result: %s %s', str(result), report)
             else:
-                log.error('Database test result: %s %s', str(result), report)
+                self.log.error('Database test result: %s %s', str(result), report)
  
         self._Lock()
         
@@ -229,15 +232,19 @@ class Application(object):
         """
         # start
         self.Signal("run", app=self)
-        log = logging.getLogger(self.id)
-        log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-self.starttime)
+        self.log.info('Application running. Runtime logging as [%s]. Startup time: %.05f.', self.configuration.id, time()-self.starttime)
         self.id = self.configuration.id
-
+        self.log=logging.getLogger(self.id)
     
     def Close(self):
         """
         Close database and roots.
+
+        Events:
+
+        - close()
         """
+        self.Signal("close")
         self._CloseRootObj()
         if self._dbpool:
             self._dbpool.Close()
@@ -285,6 +292,7 @@ class Application(object):
         
         Events:
         - loadRoot(root)
+        - loadFromCache() called for the root
 
         returns root object
         """
@@ -351,8 +359,10 @@ class Application(object):
         try:
             db = self.db
             if not db.connection.IsConnected():
-                return False, "No connection"
-            r = self.Query("select id from pool_meta where id =1")
+                db.connection.connect()
+                if not db.connection.IsConnected():
+                    return False, "No connection"
+            self.Query("select id from pool_meta where id =1")
             return True, "OK"
 
         except Exception, err:
@@ -418,10 +428,9 @@ class Registration(object):
         
         raises TypeError, ConfigurationError, ImportError
         """
-        log = logging.getLogger(self.id)
         iface, conf = ResolveConfiguration(module)
         if not conf:
-            log.debug('Register python module: %s', str(module))
+            self.log.debug('Register python module: %s', str(module))
             return self.registry.registerUtility(module, **kw)
         
         # test conf
@@ -429,10 +438,10 @@ class Registration(object):
             r=conf.test()
             if r:
                 v = FormatConfTestFailure(r)
-                log.warn('Configuration test failed:\r\n%s', v)
+                self.log.warn('Configuration test failed:\r\n%s', v)
                 #return False
         
-        log.debug('Register module: %s %s', str(conf), str(iface))
+        self.log.debug('Register module: %s %s', str(conf), str(iface))
         # register module views
         if iface not in (IViewModuleConf, IViewConf):
             self._RegisterConfViews(conf)
@@ -450,7 +459,7 @@ class Registration(object):
         # events
         if conf.get("events"):
             for e in conf.events:
-                log.debug('Register Event: %s for %s', str(e.event), str(e.callback))
+                self.log.debug('Register Event: %s for %s', str(e.event), str(e.callback))
                 self.ListenEvent(e.event, e.callback)
 
         if iface == IRootConf:
@@ -527,22 +536,19 @@ class Registration(object):
         if not self.configuration:
             raise ConfigurationError, "Configuration is empty"
         c = self.configuration
-        for k in c.keys():
-            # special values
-            if k == "id" and c.id:
-                self.__name__ = c.id
-            if k == "acl" and c.acl:
-                self.__acl__ = c.acl
-                continue
-            if k == "dbConfiguration" and c.dbConfiguration:
-                # bw 0.9.3
-                if type(c.dbConfiguration) == DictType:
-                    self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
-                else:
-                    self.dbConfiguration = c.dbConfiguration
-                continue
-            
-
+        # special values
+        if c.get("id"):
+            self.__name__ = c.id
+        if c.get("acl"):
+            self.__acl__ = tuple(c.acl)
+        if c.get("dbConfiguration"):
+            # bw 0.9.3
+            if type(c.dbConfiguration) == DictType:
+                self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
+            else:
+                self.dbConfiguration = c.dbConfiguration
+        
+        
     def _RegisterConfViews(self, conf):
         """
         Register view configurations included as ``configuration.views`` in other 
@@ -608,6 +614,10 @@ class Registration(object):
             if self.debug:
                 maxage = None
             config.add_static_view(name=viewmod.staticName or viewmod.id, path=viewmod.static, cache_max_age=maxage)
+        
+            # acls
+            if viewmod.get("acl"):
+                self.__acl__ = tuple(list(viewmod.get("acl")) + list(self.__acl__))
         
         return config
 
@@ -1159,17 +1169,25 @@ class AppFactory:
         return None
 
 
-    def _GetRootObj(self, rootConf):
+    def _GetRootObj(self, name):
         """
         creates the root object
         """
-        if isinstance(rootConf, basestring):
-            rootConf = self.GetRootConf(rootConf)
+        useCache = self.configuration.useCache
+        if isinstance(name, basestring):
+            cachename = "_c_root"+name
+            if useCache and hasattr(self, cachename) and getattr(self, cachename):
+                rootObj = getattr(self, cachename)
+                rootObj.Signal("loadFromCache")
+                return rootObj
+            rootConf = self.GetRootConf(name)
+        else:
+            rootConf = name
+
         if not rootConf:
             return None
 
         name = rootConf.id
-        useCache = self.configuration.useCache
         cachename = "_c_root"+name
         if useCache and hasattr(self, cachename) and getattr(self, cachename):
             rootObj = getattr(self, cachename)
@@ -1227,6 +1245,7 @@ class AppFactory:
         """
         creates the root object
         """
+        wfConf = None
         if isinstance(name, basestring):
             wfConf = self.GetWorkflowConf(name, contextObject)
             if isinstance(wfConf, (list, tuple)):

@@ -17,13 +17,14 @@ class LocalGroups(object):
     """
     """
     _owner = u"group:owner"
+    _secid = None
     implements(ILocalGroups)
-    
+
     def Init(self):
         self._localRoles = {}
         self.ListenEvent("create", "AddOwner")
         self.ListenEvent("delete", "RemoveGroups")
-        self._secid = self.id or self.idhash
+        self._secid = self._secid or self.id or self.idhash
         
     
     def GetLocalGroups(self, username, user=None):
@@ -133,7 +134,9 @@ def SetupLocalGroups(app, pyramidConfig):
             if isinstance(e, tuple):
                 e = list(e)
             e.append(extension)
-            c.extensions = tuple(e) 
+            c.unlock()
+            c.extensions = tuple(e)
+            c.lock()
     
     add(app.GetAllRootConfs())
     add(app.GetAllObjectConfs())

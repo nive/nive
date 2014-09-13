@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
    
 <tal:block metal:fill-slot="editmain">
-<div class="alert alert-success" i18n:translate="">This page lists all included <em>modules</em> for browsing in readonly mode. <br/>
+<div class="alert alert-success" i18n:translate="">This page lists all included <em>modules</em> for browsing in readonly mode. <br>
 Also this will help you to easily lookup object ids and database fields for developing.</div>
 
 <h2 i18n:translate="">CMS</h2>

@@ -8,7 +8,7 @@ from nive.tests import db_app
 # real database test configuration
 # change these to fit your system
 
-WIN = sys.platform == "win32"
+WIN = sys.platform.startswith("win")
 
 # sqlite and mysql
 if WIN:
@@ -39,28 +39,18 @@ MYSQL_CONF = DatabaseConf(
 POSTGRES_CONF = DatabaseConf(
     context = "PostgreSql",
     dbName = "ut_nive",
-    host = "",
-    user = "",
-    password = "",
+    host = "localhost",
+    user = "postgres",
+    password = "postgres",
     port = "",
     fileRoot = ROOT
 )
 
-# essential system tests are run for both database systems if installed.
+# essential system tests are run for multiple database systems if installed.
 # These switches also allow to manually enable or disable database system tests.
 ENABLE_SQLITE_TESTS = True
 ENABLE_MYSQL_TESTS = False
 ENABLE_POSTGRES_TESTS = False
-
-try:
-    import MySQLdb
-except ImportError:
-    ENABLE_MYSQL_TESTS = False
-
-try:
-    import psycopg2
-except ImportError:
-    ENABLE_POSTGRES_TESTS = False
 
 
 if ENABLE_SQLITE_TESTS:

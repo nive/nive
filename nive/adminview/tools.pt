@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
    
 <tal:block metal:fill-slot="editmain">
@@ -14,7 +15,7 @@ like database export or database schema manager. </div>
 <h2 i18n:translate="">Administration tools</h2>
 <tal:block tal:repeat="tool tools">
 <div class="well">
-  <strong><a name="${tool.id}" href="?t=${tool.id}">${tool.name}</a></strong><br/>
+  <strong><a name="${tool.id}" href="?t=${tool.id}">${tool.name}</a></strong><br>
   ${tool.description}
 </div>
 </tal:block>

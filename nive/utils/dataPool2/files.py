@@ -171,7 +171,7 @@ class File(object):
         
         maxFileSize = fileentry.maxFileSize
         if self.size and self.size > maxFileSize:
-            raise IOError, "File too big"
+            raise ValueError, "File too big"
 
         # create temp path for current
         backupPath = None
@@ -192,7 +192,7 @@ class File(object):
             while data:
                 size += len(data)
                 if maxFileSize and size > maxFileSize:
-                    raise IOError, "File too big"
+                    raise ValueError, "File too big"
                 out.write(data)
                 data = self.read(10000)
             out.close()
@@ -490,7 +490,7 @@ class FileEntry(object):
         or a File object.
         """
         if key in (u"", None):
-            raise IOError("File key invalid")
+            raise ValueError("File key invalid")
 
         # convert to File object
         if isinstance(file, dict):

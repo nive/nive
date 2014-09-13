@@ -12,7 +12,8 @@ from pyramid.security import Deny
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Everyone, Authenticated
 from pyramid.security import remember, forget, authenticated_userid
-from pyramid import threadlocal 
+from pyramid.security import has_permission
+from pyramid import threadlocal
 from pyramid.interfaces import IAuthenticationPolicy, IAuthorizationPolicy
 
 from nive.definitions import ModuleConf, Conf
@@ -102,13 +103,17 @@ class AdminUser(object):
         self.data = Conf(**values)
         self.meta = Conf()
         self.identity = ident or str(self.id)
-        self.groups = self.data.groups = (u"group:admin",)
+        if values.get("groups"):
+            groups = tuple(values.get("groups"))
+        else:
+            groups = (u"group:admin",)
+        self.groups = self.data.groups = groups
 
     def __str__(self):
         return str(self.identity)
 
     def Authenticate(self, password):
-        return password == self.data["password"]
+        return password == unicode(self.data["password"])
     
     def Login(self):
         """ """

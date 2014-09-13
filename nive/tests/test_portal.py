@@ -1,18 +1,29 @@
 
 import time
 import unittest
+from pyramid import testing 
 
 from nive.portal import Portal
 from nive.definitions import ConfigurationError
+from nive.definitions import ModuleConf
 from nive.helper import Event
 from nive.definitions import OperationalError
-from test_application import testapp, mApp2, mApp
+from nive.tests.test_application import testapp, mApp2, mApp
 
-    
+
+class DummyClass1(object):
+    def __init__(self, conf):
+        pass
+class DummyClass2(object):
+    def hello(self):
+        return "hello"
+        
 
 class portalTest(unittest.TestCase):
     
     def setUp(self):
+        self.request = testing.DummyRequest()
+        self.config = testing.setUp(request=self.request)
         self.portal = Portal()
         self.app = testapp(mApp2)
 
@@ -27,6 +38,18 @@ class portalTest(unittest.TestCase):
         self.assertRaises(ImportError, self.portal.Register, "nive.tests.test_application.mApp56875854")
         self.assertRaises(ConfigurationError, self.portal.Register, time)
 
+    def test_module(self):
+        testconf = ModuleConf(
+            id = "module",
+            name = "Module",
+            context = "nive.tests.test_portal.DummyClass1",
+            extensions = (DummyClass2,),
+            events = None,
+            description = ""
+        )
+        self.portal.Register(testconf, "test")
+        m=self.portal["test"]
+        self.assert_(self.portal["test"].hello()=="hello")
 
     def test_portal(self):
         self.portal.Register(mApp2)
@@ -45,8 +68,8 @@ class portalTest(unittest.TestCase):
 
 
     def test_portal2(self):
-        self.portal.StartConnection(Event())
-        self.portal.FinishConnection(Event())
+        self.portal.StartConnection(Event(self.request))
+        self.portal.FinishConnection(Event(self.request))
 
 
 

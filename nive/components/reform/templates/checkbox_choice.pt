@@ -6,7 +6,7 @@
              type="checkbox"
              name="${field.name}"
              value="${value}"
-             id="${field.oid}-${repeat.choice.index}"/>
+             id="${field.oid}-${repeat.choice.index}">
     ${title}</label>
   </tal:def>
 </tal:loop>
