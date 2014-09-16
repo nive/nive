@@ -48,7 +48,10 @@ class Unauthorized(Exception):
 
 class BaseView(object):
     """    """
+    configuration = None
+    # bw 0.9.13
     viewModuleID = None
+
     
     def __init__(self, context, request):
         self.context = context
@@ -61,19 +64,19 @@ class BaseView(object):
     @property
     def viewModule(self):
         """
-        View module configuration lookup
+        View module configuration
         
-        Views in pyramid are not connected to configuration settings by default. In `nive` view
-        configurations can be linked to view classes by setting the view module configuraions ID
-        as a class attribute.  
-        
-        E.g. the following line will link all instances of the view class to the registered 
-        ``IViewModuleConf`` with id = `design`.
-        
-            self.viewModuleID = "design"
-            
-        The configurations are stored and looked in the applications registry. 
+        If views are registered by using `ViewModuleConf.views` the ViewModuleConf is automatically
+        available as class attribute of the view instance. Any specific configuration values are
+        avalilable directly through the configuration. E.g.
+
+            index = self.viewModule.template
+
+        returns ViewModuleConf
         """
+        if self.configuration:
+            return self.configuration()
+        # bw 0.9.13
         if not self.viewModuleID:
             return self._c_vm
         self._c_vm = self._c_vm or self.context.app.QueryConfByName(IViewModuleConf, self.viewModuleID)
@@ -303,9 +306,10 @@ class BaseView(object):
     def index_tmpl(self, path=None):
         if path:
             return get_renderer(path).implementation()
-        if not self.viewModule or not self.viewModule.mainTemplate:
+        conf = self.viewModule
+        if not conf or not conf.template:
             return None
-        tmpl = self._LookupTemplate(self.viewModule.mainTemplate)
+        tmpl = self._LookupTemplate(conf.template)
         return get_renderer(tmpl).implementation()
         
 
@@ -844,17 +848,25 @@ class BaseView(object):
 
 
     def _LookupTemplate(self, tmplfile):
-        if not self.viewModule or u":" in tmplfile:
+        conf = self.viewModule
+        if not conf or u":" in tmplfile:
             return tmplfile
-        fn = self.viewModule.templates + u"/" + tmplfile
+        path = conf.templates
+        if not path.endswith((u":",u"/")):
+            path += u"/"
+        fn = path + tmplfile
         try:
             if get_renderer(fn):
                 return fn
         except ValueError:
             pass
-        if not self.viewModule.parent:
+        if not conf.parent:
             return tmplfile
-        return u"%s/%s" % (self.viewModule.parent.templates, tmplfile)
+        path = conf.parent.templates
+        if not path.endswith((u":",u"/")):
+            path += u"/"
+        fn = path + tmplfile
+        return fn
 
 
     def mark(self):

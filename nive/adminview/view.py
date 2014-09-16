@@ -28,7 +28,7 @@ configuration = ViewModuleConf(
     context = IApplication,
     view = "nive.adminview.view.AdminView",
     templates = "nive.adminview:",
-    mainTemplate = "index.pt",
+    template = "index.pt",
     permission = "administration",
     static = "nive.adminview:static",
     assets = [
@@ -217,7 +217,7 @@ class AdminBasics(BaseView):
     def __init__(self, context, request):
         super(AdminBasics, self).__init__(context, request)
         # the viewModule is used for template/template directory lookup 
-        self.viewModuleID = "administration"
+        #self.viewModuleID = "administration"
 
     def view(self):
         return {}

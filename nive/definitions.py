@@ -279,11 +279,17 @@ class baseConf(object):
     def get(self, key, default=None):
         if key in self.__dict__:
             return self.__dict__[key]
+        if self._parent:
+            if key in self._parent.__dict__:
+                return self._parent.__dict__[key]
         return default
 
     def __getattr__(self, key):
         if key in self.__dict__:
             return self.__dict__[key]
+        if self._parent:
+            if key in self._parent.__dict__:
+                return self._parent.__dict__[key]
         raise AttributeError, key
 
     def __setattr__(self, key, value):
@@ -349,6 +355,7 @@ class FieldConf(baseConf):
                     If listItems is a callable the callback must take two arguments:
                     callback(fieldconf, object) and return a list with id and name items.
         settings :  Extended settings for fields. Possible values depend on datatype.
+        unique   :  The field value has to be unique on database level.
         fulltext :  Use this field in fulltext index.
         
     Extended values (optional and used as default for forms) ::
@@ -410,6 +417,7 @@ class FieldConf(baseConf):
         self.default = u""
         self.listItems = None
         self.settings = {}
+        self.unique = False
         self.fulltext = False
         # used as default for forms
         self.name = u""
@@ -856,7 +864,7 @@ class ViewModuleConf(baseConf):
         *id    : Unique view module id as ascii string. Used to register and 
                  lookup the view module.
         name   : Display name 
-        mainTemplate : The main template containing the slots to insert content.
+        template : The main template containing the slots to insert content.
         static : Static directory
         staticName : By default ViewModule.id is used as url name to map the static
                      directory. To change the default specify a different name here.  
@@ -896,7 +904,7 @@ class ViewModuleConf(baseConf):
         self.static = ""
         self.staticName = None
         self.assets = None
-        self.mainTemplate = None
+        self.template = None
         self.widgets = None
         self.acl = None
         self.translations = None
@@ -912,6 +920,9 @@ class ViewModuleConf(baseConf):
         self.templates = ""
         self.views = []
         baseConf.__init__(self, copyFrom, **values)
+        # bw 0.9.13
+        if self.get("mainTemplate") and not self.get("template"):
+            self.template = self.mainTemplate
 
 
     def __str__(self):
@@ -949,8 +960,7 @@ class ViewModuleConf(baseConf):
                 if hasattr(m, "test"):
                     report += m.test(viewModule=self)
         return report
-        
-        
+
 
 class ViewConf(baseConf):
     """

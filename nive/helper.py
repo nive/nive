@@ -2,6 +2,7 @@
 # Released under GPL3. See license.txt
 #
 
+import weakref
 import json
 import os
 from datetime import datetime
@@ -345,6 +346,14 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
     # tag is class ref
     return tag
 
+
+def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
+    ref = weakref.ref(viewModuleConf)
+    if isinstance(cls, basestring):
+        cls = ResolveName(cls)
+    cls = type("_factory_"+cls.__name__, (cls,), {})
+    cls.configuration = ref
+    return cls
 
 # Field list items ------------------------------------------
 

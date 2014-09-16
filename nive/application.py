@@ -32,6 +32,7 @@ from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf
 from nive.definitions import ConfigurationError
 
 from nive.helper import ResolveName, ResolveConfiguration, FormatConfTestFailure, GetClassRef, ClassFactory
+from nive.helper import DecorateViewClassWithViewModuleConf
 from nive.tool import _IGlobal, _GlobalObject
 from nive.workflow import IWfProcessConf
 from nive.utils.utils import SortConfigurationList
@@ -597,11 +598,16 @@ class Registration(object):
         """
         mods = self.registry.getAllUtilitiesRegisteredFor(IViewModuleConf)
         for viewmod in mods:
+            # decorate viewmod to add a pointer to the view module configuration. otherwise there is no way
+            # to access the configuration from inside the view callable
+            viewcls = viewmod.view
+            if viewcls:
+                viewcls = DecorateViewClassWithViewModuleConf(viewmod, viewcls)
             # object views
             for view in viewmod.views:
                 config.add_view(attr=view.attr,
                                 name=view.name,
-                                view=view.view or viewmod.view,
+                                view=view.view or viewcls,
                                 context=view.context or viewmod.context,
                                 renderer=view.renderer or viewmod.renderer,
                                 permission=view.permission or viewmod.permission,

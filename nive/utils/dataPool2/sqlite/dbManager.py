@@ -184,6 +184,8 @@ class Sqlite3Manager(DatabaseManager):
                 aN = long(aN)
             aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
 
+        if conf.get("unique"):
+            aStr += " UNIQUE"
         return aStr
 
 

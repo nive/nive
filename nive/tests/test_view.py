@@ -20,7 +20,7 @@ def getRequest():
     return r
 
 class viewModule(object):
-    mainTemplate = "nive.tests:index.pt"
+    template = "nive.tests:index.pt"
     templates = u"nive.tests:"
     parent = None
     static = u"nive.tests:"

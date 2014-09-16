@@ -268,6 +268,8 @@ class MySQLManager(DatabaseManager):
                 aN = long(aN)
             aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
 
+        if conf.get("unique"):
+            aStr += " UNIQUE"
         return aStr
 
 
