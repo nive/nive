@@ -991,7 +991,7 @@ class HTMLForm(Form):
             if self.use_ajax:
                 # return only the rendered form back to the user. stops the request
                 # processing at this point
-                return self.view.SendResponse(data=self.Render(data, msgs=msgs, errors=errors))
+                return self.view.SendResponse(data=self.Render(data, msgs=msgs, errors=errors), headers=[("X-Result", "false")])
             return result, self.Render(data, msgs=msgs, errors=errors)
     
         redirectSuccess = self.view.ResolveUrl(kw.get("redirectSuccess"), result)
@@ -1006,7 +1006,7 @@ class HTMLForm(Form):
         if self.use_ajax:
             # return only the rendered form back to the user. stops the request
             # processing at this point
-            return self.view.SendResponse(data=html)
+            return self.view.SendResponse(data=html, headers=[("X-Result", "true")])
         return result, html
 
     def _Msgs(self, **values):
