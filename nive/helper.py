@@ -352,8 +352,9 @@ def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
     if isinstance(cls, basestring):
         cls = ResolveName(cls)
     cls = type("_factory_"+cls.__name__, (cls,), {})
-    cls.configuration = ref
+    cls.__configuration__ = ref
     return cls
+
 
 # Field list items ------------------------------------------
 

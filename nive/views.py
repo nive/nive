@@ -48,7 +48,7 @@ class Unauthorized(Exception):
 
 class BaseView(object):
     """    """
-    configuration = None
+    __configuration__ = None
     # bw 0.9.13
     viewModuleID = None
 
@@ -59,13 +59,14 @@ class BaseView(object):
         self.appRequestKeys = []
         self.fileExpires = 3600
         self._t = time.time()
+        # bw 0.9.13
         self._c_vm = None     # caches the view module configuration
 
     @property
-    def viewModule(self):
+    def configuration(self):
         """
         View module configuration
-        
+
         If views are registered by using `ViewModuleConf.views` the ViewModuleConf is automatically
         available as class attribute of the view instance. Any specific configuration values are
         avalilable directly through the configuration. E.g.
@@ -74,14 +75,10 @@ class BaseView(object):
 
         returns ViewModuleConf
         """
-        if self.configuration:
-            return self.configuration()
-        # bw 0.9.13
-        if not self.viewModuleID:
-            return self._c_vm
-        self._c_vm = self._c_vm or self.context.app.QueryConfByName(IViewModuleConf, self.viewModuleID)
-        return self._c_vm
-        
+        if self.__configuration__:
+            return self.__configuration__()
+        return None
+
     # url handling ----------------------------------------------------------------
 
     def Url(self, resource=None):
@@ -534,6 +531,27 @@ class BaseView(object):
         return response
 
 
+    # configuration -------------------------------------------------
+
+    def GetViewConf(self, view_name=None):
+        """
+        Looks up the current view configuration `nive.definitions.ViewConf`.
+        Please note: Unique view names on view module level are required for this
+        function!
+
+        view_name: If None the current view_name is used.
+        returns `nive.definitions.ViewConf` or None
+        """
+        c = self.configuration
+        if not c:
+            return None
+        name = view_name or self.request.view_name
+        for v in c.views:
+            if v.name==name:
+                return v
+        return None
+
+
     # user and security -------------------------------------------------
     
     @property
@@ -878,6 +896,21 @@ class BaseView(object):
         except:
             return u""
 
+
+    # to be removed in the future
+
+    @property
+    def viewModule(self):
+        # bw 0.9.13
+        # use self.configuration instead
+        if self.__configuration__:
+            return self.configuration
+        if not self.viewModuleID:
+            return self._c_vm
+        self._c_vm = self._c_vm or self.context.app.QueryConfByName(IViewModuleConf, self.viewModuleID)
+        return self._c_vm
+
+
  
 
 # Response utilities -------------------------------------------------
@@ -910,7 +943,7 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True, sta
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
         raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status, headers=headers)
-    return Response(content_type=mime, body=data, content_disposition=cd, status=status, headers=headers)
+    return Response(content_type=mime, body=data, content_disposition=cd, status=status, headerlist=headers)
 
 
 def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True):

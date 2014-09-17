@@ -7,6 +7,7 @@ from nive.definitions import *
 from nive.security import *
 from nive.tests import db_app
 from nive.views import *
+from nive.helper import DecorateViewClassWithViewModuleConf
 from nive.tests import __local
 
 from pyramid.response import Response
@@ -54,6 +55,14 @@ class viewTest_db:
         testing.tearDown()
         pass
     
+
+    def test_conf(self):
+        view = BaseView(self.context2, self.request)
+        self.assertFalse(view.configuration)
+        conf = Conf(id="test")
+        newcls = DecorateViewClassWithViewModuleConf(conf, BaseView)
+        view = newcls(self.context2, self.request)
+        self.assert_(view.configuration.id=="test")
 
     def test_excp(self):
         def rtest():
@@ -119,8 +128,8 @@ class viewTest_db:
     def test_send(self):
         view = BaseView(self.context2, self.request)
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename=None))
-        self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename="file.html"))
-        self.assertRaises(ExceptionalResponse, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html")
+        self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename="file.html", headers=[("X-Result", "true")]))
+        self.assertRaises(ExceptionalResponse, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html", headers=[("X-Result", "true")])
 
 
     def test_files(self):

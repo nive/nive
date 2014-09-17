@@ -3,7 +3,7 @@ import time
 import unittest
 import datetime
 
-from nive.definitions import ObjectConf, FieldConf, Conf
+from nive.definitions import ObjectConf, FieldConf, Conf, ViewModuleConf
 from nive.utils.path import DvPath
 from nive.utils.dataPool2.files import File
 from nive.helper import *
@@ -148,6 +148,19 @@ class ConfigurationTest(unittest.TestCase):
         new = ReplaceInListByID(alist, repl)
         self.assert_(new!=alist)
         self.assert_(new[1].value==999)
+
+
+    def test_decorator(self):
+        class someclass(object):
+            pass
+        conf = ViewModuleConf(id="test")
+        newcls = DecorateViewClassWithViewModuleConf(conf, someclass)
+        self.assert_(newcls.__configuration__)
+        self.assert_(newcls.__configuration__().id=="test")
+
+        newcls = DecorateViewClassWithViewModuleConf(conf, "nive.tests.test_helper.text")
+        self.assert_(newcls.__configuration__)
+        self.assert_(newcls.__configuration__().id=="test")
 
 
 from nive.tests import db_app
