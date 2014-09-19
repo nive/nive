@@ -708,7 +708,7 @@ class HTMLForm(Form):
         
             defaultAction: default action if none found in request. Can also be configured in subset
             redirectSuccess: default=None. url to redirect on action success 
-            renderSuccess: default=False. render the form on action success 
+            renderSuccess: default=True. render the form on action success
         
         If renderSuccess is set to False the form itself will not be rendered if 
         the action succeeds. Only the feedback message will be rendered.
@@ -743,7 +743,7 @@ class HTMLForm(Form):
         if not action and defaultAction:
             # lookup default action 
             if isinstance(defaultAction, basestring):
-                for a in self.actions:
+                for a in list(self.actions) + self.GetActions():
                     if a["id"]==defaultAction:
                         action = a
                         break
