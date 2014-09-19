@@ -35,7 +35,6 @@ class Container(object):
         return self.GetObj(id, **kw)
 
     def __getitem__(self, id):
-        id = id.split(".")[0]
         o = self.GetObj(id)
         if o:
             return o
@@ -593,6 +592,8 @@ class ContainerSecurity:
         if not subtypes:
             return False
         if isinstance(type, basestring):
+            if type in subtypes:
+                return True
             # dotted python to obj configuration
             type = self.app.GetObjectConf(type)
             if not type:

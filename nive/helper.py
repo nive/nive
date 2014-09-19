@@ -314,7 +314,7 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, s
         r = GetClassRef(r, reloadClass, raiseError, base)
         if not r:
             continue
-        b.append(r)
+        b.insert(0,r)
     if len(b)==1:
         return cls
 

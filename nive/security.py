@@ -42,8 +42,8 @@ class User(object):
     def __init__(self, name, id=0):
         self.id = id
         self.groups = []
-        self.meta = Conf(title=name)
-        self.data = Conf(name=name,email="")
+        self.meta = Conf(title=name,pool_state=1)
+        self.data = Conf(name=name,email="",groups=[])
 
     @property
     def identity(self):
