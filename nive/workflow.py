@@ -48,8 +48,8 @@ from zope.interface import implements
 
 WfAllRoles = "*"
 WfAllActions = "*"
+wfAllStates = "*"
 WfEntryActions = ("create", "duplicate")
-
 
 class WfProcessConf(baseConf):
     """
@@ -385,7 +385,12 @@ class Process(object):
         returns list
         """
         trans = []
+        wc = []
         for t in self.transitions:
+            if t.fromstate == wfAllStates:
+                # store wildcard transition. wildcard transitions come last in sequence
+                wc.append(t)
+                continue
             if t.fromstate == state:
                 if user:
                     if not t.Allow(context, user):
@@ -397,6 +402,7 @@ class Process(object):
                     trans.append(t)
                 elif t.id == transition:
                     trans.append(t)
+        trans.extend(wc)
         return trans
 
 
