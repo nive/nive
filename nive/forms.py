@@ -695,7 +695,7 @@ class HTMLForm(Form):
     """
     # html styling
     formid = u"upload"
-    css_class = u"form form-horizontal"
+    css_class = u"form"
     actionPostfix = u"$"
     anchor = u""
     uploadProgressBar = u"auto" # other possible values: none or always

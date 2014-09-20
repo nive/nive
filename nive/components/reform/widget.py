@@ -110,7 +110,7 @@ class Widget(object):
     hidden = False
     category = 'default'
     error_class = 'error'
-    css_class = None
+    css_class = 'form-control'
     requirements = ()
     configuration = None
 
@@ -999,7 +999,7 @@ class CheckedPasswordWidget(CheckedInputWidget):
 
     template
         The template name used to render the widget.  Default:
-        ``checked_password``.
+        ``password_confirm``.
 
     size
         The ``size`` attribute of the password input field (default:
@@ -1010,7 +1010,7 @@ class CheckedPasswordWidget(CheckedInputWidget):
         Instead ``placeholder`` is used.
         
     """
-    template = 'checked_password'
+    template = 'password_confirm'
     mismatch_message = _('Password did not match confirm')
     size = None
     update = False

@@ -1,7 +1,7 @@
 <tal:block i18n:domain="nive">
 
-<div tal:condition="msgs|None" class="alert alert-info">
-  <div tal:repeat="msg msgs">${msg}</div>
+<div tal:condition="msgs|None" class="alert alert-warning">
+  <p tal:repeat="msg msgs">${msg}</p>
 </div>
 
 <form 
@@ -9,10 +9,11 @@
   action="${field.action}${field.anchor}"
   method="${field.method}"
   class="${field.css_class}"
-  enctype="multipart/form-data">
+  enctype="multipart/form-data"
+  role="form">
 
     <div tal:condition="field.error" class="alert alert-warning">
-      <h5 i18n:translate="">There was a problem with your submission</h5>
+      <h4 i18n:translate="">There was a problem with your submission</h4>
       <p i18n:translate="">Errors have been highlighted below</p>
       <p tal:condition="field.errormsg" class="errorMsg">${field.errormsg}</p>
     </div>
@@ -27,20 +28,8 @@
       <div class="bar bar-success" style="width:0%;"></div>
     </div>
 
-    <div class="form-actions">
-        <tal:block repeat="button field.buttons">
-          <button
-              tal:attributes="disabled button.disabled"
-              id="${field.formid+button.name}"
-              name="${button.name}"
-              type="${button.type}"
-              class="${button.action.get('css_class', 'btn')}"
-              value="${button.value}">
-            <span>${button.title}</span>
-          </button>
-        </tal:block>
-    </div>
- 
+    <div tal:replace="structure field.renderer('form_actions', form=field, buttons=field.buttons)"></div>
+
 <script type="text/javascript" tal:condition="field.use_ajax">
 function reform_ajaxify(response, status, xhr, form, oid, mthd) {
     var showbar=0;

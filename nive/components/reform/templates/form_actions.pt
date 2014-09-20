@@ -1,0 +1,20 @@
+<div class="form-actions">
+<div class="row">
+  <div class="span2">
+  </div>
+  <div class="span7">
+    <tal:block repeat="button buttons">
+      <button
+        tal:attributes="disabled button.disabled"
+        id="${form.formid+button.name}"
+        name="${button.name}"
+        type="${button.type}"
+        class="${button.action.get('css_class', 'btn')}"
+        value="${button.value}">
+        <span>${button.title}</span>
+      </button>
+    </tal:block>
+  </div>
+</div>
+</div>
+  

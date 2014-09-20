@@ -1,6 +1,6 @@
 import re
 
-from nive.components.reform.widget import FormWidget 
+from nive.components.reform.widget import FormWidget
 from nive.components.reform.field import Field
 from nive.components.reform.schema import Schema
 
@@ -20,7 +20,7 @@ class Form(Field):
 
     method
         The form method (inserted into the ``method`` attribute of
-        the form's form tag when rendered).  Default: ``POST``.
+        the form's form tag when rendered).  Default: ``POST``. 
 
     buttons
         A sequence of strings or :class:`reform.form.Button`
@@ -92,6 +92,7 @@ class Form(Field):
     view = None
     anchor = ''
     uploadProgressBar = ''
+    buttontmpl = 'form_actions'
         
     
     def __init__(self, schema=None, action='', method='POST', buttons=(),
@@ -111,6 +112,7 @@ class Form(Field):
         self.use_ajax = use_ajax
         self.ajax_options = Raw(ajax_options.strip())
         self.widget = FormWidget()
+        self.actionwidget = FormWidget(category='actions')
 
 
     def add(self, node, **kw):
@@ -182,6 +184,7 @@ class Button(object):
         self.disabled = disabled
         self.action = action
         self.cls = cls
+
 
 
 class MemoryTmpStore(dict):
