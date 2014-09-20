@@ -793,6 +793,7 @@ class Root(object):
                          pool_create=datetime.now(),
                          pool_createdby=u"")
         self.data = Conf()
+        self.files = Conf()
         self.Signal("init")
 
 

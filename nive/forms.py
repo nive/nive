@@ -693,6 +693,13 @@ class HTMLForm(Form):
     Simple HTML form 
 
     """
+    actions = [
+        Conf(id=u"default", method="StartForm",    name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
+        Conf(id=u"edit",    method="ProcessForm",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+    ]
+    subsets = {
+        "edit":   {"actions": [u"edit"],    "defaultAction": "default"}
+    }
     # html styling
     formid = u"upload"
     css_class = u"form"
@@ -813,6 +820,9 @@ class HTMLForm(Form):
         - defaultData is passed in kw
         - load form default data
 
+        Event
+        - loadDefault(data) after data has been looked up
+
         returns bool, html
         """
         if self.startEmpty:
@@ -853,9 +863,30 @@ class HTMLForm(Form):
             # disabled default message. msgs.append(_(u"OK."))
             errors=None
             result = data
-            #data = {}
+            self.Signal("success", data=data)
         return result, self.Render(data, msgs=msgs, errors=errors)
 
+
+    def ProcessForm(self, action, **kw):
+        """
+        Process request data and returns validated data as `result` and rendered
+        form as `data`. If validation fails `result` is False. `redirectSuccess`
+        is ignored.
+        
+        A custom success message can be passed as success_message as keyword.
+
+        returns bool, html
+        """
+        msgs = []
+        result,data,errors = self.Validate(self.request)
+        if result:
+            if kw.get("success_message"):
+                msgs.append(kw.get("success_message"))
+            # disabled default message. msgs.append(_(u"OK."))
+            errors=None
+            result = data
+            self.Signal("success", data=data)
+        return self._FinishFormProcessing(result, data, msgs, errors, **kw)
     
     def Cancel(self, action, **kw):
         """
