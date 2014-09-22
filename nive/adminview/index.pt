@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<div id="container">
+<div class="container">
 <header id="header">
  <h1>${view.context.app.configuration.title} <span i18n:translate="">administration</span></h1>
 </header>
