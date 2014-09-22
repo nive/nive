@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
+
+# Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
 # Released under GPL3. See license.txt
 #
 
@@ -134,7 +135,6 @@ class sendMail(Tool):
             fromMail = sender
             senderMail = u""
 
-        #raise "1", mails
         if not host:
             raise ConfigurationError, "Empty mail host"
         mailer = DvSMTP(host, port)
