@@ -679,8 +679,7 @@ class ContainerFactory:
 
         # check security if context passed in keywords
         if kw.get("securityContext") and kw.get("permission"):
-            securityContext = kw["securityContext"]
-            if not has_permission(kw["permission"], obj, securityContext):
+            if not has_permission(kw["permission"], obj, kw["securityContext"]):
                 raise PermissionError, "Permission check failed (%s)" % (str(id))
 
         if useCache:

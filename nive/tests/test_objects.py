@@ -81,8 +81,8 @@ class objTest_db:
         self.assert_(o1.GetFld(u"pool_filename")==data1_2[u"pool_filename"])
         del o1
         o1 = oo.obj(id)
-        self.assertFalse(o1.GetFld(u"ftext")==data1_1[u"ftext"])
-        self.assertFalse(o1.GetFld(u"pool_filename")==data1_1[u"pool_filename"])
+        self.assert_(o1.GetFld(u"ftext")!=data1_1[u"ftext"])
+        self.assert_(o1.GetFld(u"pool_filename")!=data1_1[u"pool_filename"])
         
         o1.UpdateInternal(data1_1)
         o1.CommitInternal(user)

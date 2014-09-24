@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import time
-import unittest
-
-from nive.portal import Portal
-
 from nive.adminview import view
-from nive.views import BaseView
 
 from nive.tests.db_app import *
 from nive.tests import __local
 
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden
-from pyramid import testing 
+from pyramid import testing
 from pyramid.renderers import render
 
 

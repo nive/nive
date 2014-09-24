@@ -15,7 +15,6 @@ from nive.tests import __local
 class TestSecurityContext(object):
     ppp="view"
     def has_permission(self,p,c):
-        print p, c
         return p==self.ppp
 
 class containerTest_db:
@@ -404,22 +403,7 @@ class containerTest_db:
         r.Delete(o1.id, user)
 
 
-    def test_permissions(self):
-        #print "Testing shortcuts"
-        a=self.app
-        user = User(u"test")
-        ccc = a.db.GetCountEntries()
-        self.assert_(a.root())
-        self.assert_(a.db)
-        r = a.root()
-        o1 = createObj1(r)
-        self.assert_(o1)
-        self.remove.append(o1.id)
-        #root
-        testsec = TestSecurityContext()
-        self.assert_(a.root().GetObj(self.remove[-1], permission="view", securityContext=testsec))
-        self.assertRaises(PermissionError, a.root().GetObj, self.remove[-1], permission="none", securityContext=testsec)
-        r.Delete(o1.id, user)
+
 
 
 
@@ -440,10 +424,15 @@ class containerTest_db_pg(containerTest_db, __local.PostgreSqlTestCase):
     
 
 
+from pyramid import testing
 
 class groupsrootTest_db:
     
     def setUp(self):
+        request = testing.DummyRequest()
+        request._LOCALE_ = "en"
+        self.request = request
+        self.request.content_type = ""
         self._loadApp(["nive.extensions.localgroups"])
         self.remove=[]
 
@@ -452,7 +441,24 @@ class groupsrootTest_db:
         root = self.app.root()
         for r in self.remove:
             root.Delete(r, u)
-        pass
+        self.app.Close()
+
+    def test_permissions(self):
+        #print "Testing shortcuts"
+        a=self.app
+        user = User(u"test")
+        ccc = a.db.GetCountEntries()
+        self.assert_(a.root())
+        self.assert_(a.db)
+        r = a.root()
+        o1 = createObj1(r)
+        self.assert_(o1)
+        self.remove.append(o1.id)
+        #root
+        testsec = TestSecurityContext()
+        self.assert_(a.root().GetObj(self.remove[-1], permission="view", securityContext=testsec))
+        self.assertRaises(PermissionError, a.root().GetObj, self.remove[-1], permission="none", securityContext=testsec)
+        r.Delete(o1.id, user)
 
     def test_rootsGroups(self):
         a=self.app
