@@ -543,7 +543,7 @@ class Form(Events, ReForm):
         """
         data = dict(filter(lambda y: y[1]!=None, 
                            map(lambda x: (x["id"],x["default"]), self.GetFields())))
-        self.Signal("loadDefaultForm", data=data)
+        self.Signal("loadDefault", data=data)
         return data
 
 
@@ -680,7 +680,7 @@ class Form(Events, ReForm):
         file = self.app.db.GetFileClass()()
         file.filename = value.get('filename','')
         file.file = value.get('file')
-        file.filekey = ticket.filekey
+        file.filekey = value.get('filekey')
         file.mime = value.get('mimetype')
         file.size = value.get('size')
         file.tempfile = True
@@ -750,7 +750,7 @@ class HTMLForm(Form):
         if not action and defaultAction:
             # lookup default action 
             if isinstance(defaultAction, basestring):
-                for a in list(self.actions) + self.GetActions():
+                for a in list(self.actions) + list(self.GetActions()):
                     if a["id"]==defaultAction:
                         action = a
                         break
@@ -829,6 +829,7 @@ class HTMLForm(Form):
             data = {}
         elif "defaultData" in kw:
             data = kw["defaultData"]
+            self.Signal("loadDefault", data=data)
         else:
             data = self.LoadDefaultData()
         return True, self.Render(data)
@@ -941,6 +942,9 @@ class HTMLForm(Form):
         
         messagesOnly=True will skip form and error rendering on just render the messages as 
         html block.
+
+        Event
+        - render(data) before the form is rendered
         """
         if messagesOnly:
             return self._Msgs(msgs=msgs, result=result)
@@ -950,6 +954,8 @@ class HTMLForm(Form):
             html = self._Msgs(msgs=msgs, result=result)
             return html + errors.render()
             #return html + exception.ValidationFailure(self._form, data, errors).render()
+
+        self.Signal("render", data=data)
         html = self.render(data, msgs=msgs, result=result)
         return html
 
@@ -1396,7 +1402,7 @@ class WorkflowForm(HTMLForm):
             wfa = ""
             wft = ""
             user = kw.get("user") or self.view.User()
-            if not obj.WfAction(action=wfa, transition=wft, user = user):
+            if not self.context.WfAction(action=wfa, transition=wft, user = user):
                 result = False
 
         return self._FinishFormProcessing(result, data, msgs, errors, **kw)
