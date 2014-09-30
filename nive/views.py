@@ -867,6 +867,8 @@ class BaseView(object):
 
     def _LookupTemplate(self, tmplfile):
         conf = self.viewModule
+        if not tmplfile:
+            raise TypeError, "'tmplfile' is None. Need a template name to lookup the path."
         if not conf or u":" in tmplfile:
             return tmplfile
         path = conf.templates
