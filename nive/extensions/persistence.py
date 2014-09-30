@@ -12,6 +12,7 @@ Remaining values are loaded from python and configuration files in the file syst
 For configuration storage and reference ``configuration.uid()`` is used as key.  
 """
 import pickle
+import json
 import time
 import logging 
 
@@ -111,10 +112,15 @@ class DbPersistence(PersistentConf):
             db.close()
         if data:
             try:
-                values = pickle.loads(data[0][0])
-            except KeyError:
+                values = json.loads(data[0][0])
+            except ValueError:
                 # Invalid data
-                return None
+                # bw 0.9.13 try previously used pickled data conversion
+                try:
+                    values = pickle.loads(data[0][0])
+                except KeyError:
+                    # Invalid data
+                    return None
             lock = 0
             if self.conf.locked:
                 lock = 1
@@ -142,7 +148,7 @@ class DbPersistence(PersistentConf):
                 db = self.app.db
             sql = """select ts from pool_sys where id=%s""" % (db.placeholder)
             r = db.Query(sql, (self._GetUid(),))
-            data = pickle.dumps(values)
+            data = json.dumps(values)
             if len(r):
                 db.UpdateFields("pool_sys", self._GetUid(), {"value":data,"ts":ts})
             else:
