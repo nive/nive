@@ -1030,7 +1030,7 @@ class FieldRenderer(object):
             data = fieldConf["default"]
         if value != None:
             data = value
-        if fieldConf.id in self.skipRender:
+        if fieldConf["id"] in self.skipRender:
             return data
 
         def loadListItems(fld, context):
@@ -1043,13 +1043,14 @@ class FieldRenderer(object):
         fType = fieldConf["datatype"]
 
         # fomat settings
-        fmt = fieldConf.settings.get("format")
-        if fmt:
+        settings = fieldConf.get("settings",{})
+        if settings:
+            fmt = settings.get("format")
             if fmt=="bytesize":
                 data = FormatBytesForDisplay(data)
                 return data
             elif fmt=="image":
-                tmpl = fieldConf.settings.get("path", u"")
+                tmpl = settings.get("path", u"")
                 path = tmpl % {"data":data, "static": kw.get("static",u"")}
                 data = """<img src="%(path)s" title="%(name)s">""" % {"path":path, "name": fieldConf.name}
                 return data
@@ -1061,7 +1062,7 @@ class FieldRenderer(object):
                 data = _(u"No")
 
         elif fType == "string":
-            if fieldConf.settings.get("relation") == u"userid":
+            if settings.get("relation") == u"userid":
                 # load user name from database
                 try:
                     udb = context.app.portal.userdb.root()
@@ -1079,23 +1080,23 @@ class FieldRenderer(object):
                 if not data:
                     return u""
                 data = ConvertToDateTime(data)
-            fmt = fieldConf.settings.get("strftime", u"%x")
+            fmt = settings.get("strftime", u"%x")
             return data.strftime(fmt)
 
         elif fType in ("datetime", "timestamp"):
-            fmt = fieldConf.settings.get("format")
+            fmt = settings.get("format")
             if not isinstance(data, datetime):
                 if not data:
                     return u""
                 data = ConvertToDateTime(data)
             # defaults
-            fmt = fieldConf.settings.get("strftime")
+            fmt = settings.get("strftime")
             if not fmt:
                 fmt = u"%x %H:%M"
                 # hide hour and minutes if zero
                 if data.hour==0 and data.minute==0 and data.second==0:
                     fmt = u"%x"
-                elif fieldConf.settings.get("seconds"):
+                elif settings.get("seconds"):
                     fmt = u"%x %X"
             return data.strftime(fmt)
 
@@ -1140,8 +1141,8 @@ class FieldRenderer(object):
                 else:
                     values.append(ref)
             delimiter = u", "
-            if fieldConf.settings and u"delimiter" in fieldConf.settings:
-                delimiter = fieldConf.settings[u"delimiter"]
+            if settings and u"delimiter" in settings:
+                delimiter = settings[u"delimiter"]
             data = delimiter.join(values)
 
         elif fType == "url":

@@ -1,7 +1,7 @@
 <tal:block i18n:domain="nive">
 
 <div tal:condition="msgs|None" class="alert alert-warning">
-  <p tal:repeat="msg msgs">${msg}</p>
+  <div tal:repeat="msg msgs">${msg}</div>
 </div>
 
 <form 
