@@ -104,6 +104,6 @@ else:
 
 # Higher level tests are only run for one database system, not multiple.
 # The database type can be switched here
-DefaultTestCase = PostgreSqlTestCase
+DefaultTestCase = SqliteTestCase
 
     

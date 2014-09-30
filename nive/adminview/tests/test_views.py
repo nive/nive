@@ -9,6 +9,7 @@ from pyramid import testing
 from pyramid.renderers import render
 
 
+
 class tViews(__local.DefaultTestCase):
 
     def setUp(self):
@@ -46,6 +47,7 @@ class tViews(__local.DefaultTestCase):
 
     def test_views(self):
         v = view.AdminView(context=self.app, request=self.request)
+        v.__configuration__ = lambda: view.configuration
         v.view()
         self.assert_(v.index_tmpl())
         self.assert_(v.editbasics())
@@ -98,6 +100,7 @@ class tTemplates(__local.DefaultTestCase):
 
     def test_templates(self):
         v = view.AdminView(context=self.app, request=self.request)
+        v.__configuration__ = lambda: view.configuration
         vrender = {"context":self.app, "view":v, "request": self.request}
 
         values = v.editbasics()
