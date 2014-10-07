@@ -11,14 +11,14 @@
 
   <tal:block tal:condition="field.widget.category!='full-width'">
   <!-- mapping_item 3 column -->
-  <div class="span2">
+  <div class="${field.widget.form.widget.settings.get('column1_css', 'span2')}">
     <label tal:condition="field.widget.category != 'structural'"
            tal:content="field.title"
            class="control-label ${'required' if field.required else ''}"
            title="${field.description}"
            for="${field.oid}"></label>
   </div>
-  <div class="span7">
+  <div class="${field.widget.form.widget.settings.get('column2_css', 'span7')}">
     <div class="controls">
       <span tal:replace="structure field.serialize(cstruct)"/>
       <span tal:condition="field.error"
@@ -26,7 +26,7 @@
             class="help-inline">${msg}</span>
     </div>
   </div>
-  <div class="span3">
+  <div class="${field.widget.form.widget.settings.get('column3_css', 'span3')}">
     <div tal:content="structure field.description" class="help-block"></div>
   </div>
   <!-- /mapping_item -->

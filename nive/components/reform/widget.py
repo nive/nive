@@ -2,11 +2,11 @@ import csv
 import random
 import string
 import StringIO
-import urllib
 import copy
 
 from nive.i18n import _
-from nive.components.reform import schema 
+from nive.definitions import Conf
+from nive.components.reform import schema
 from nive.components.reform.schema import Invalid
 from nive.components.reform.schema import null
 from nive.helper import File
@@ -113,9 +113,13 @@ class Widget(object):
     css_class = 'form-control'
     requirements = ()
     configuration = None
+    # test support
+    form = Conf(widget=Conf(settings={}))
 
     def __init__(self, **kw):
         self.__dict__.update(kw)
+        self.settings = {}
+
 
     def serialize(self, field, cstruct):
         """
@@ -178,6 +182,7 @@ class FormWidget(Widget):
     """
     template = 'form'
     item_template = 'field'
+    action_template = 'form_actions'
     error_class = None
     category = 'structural'
     requirements = ( ('reform', None), )

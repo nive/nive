@@ -92,8 +92,7 @@ class Form(Field):
     view = None
     anchor = ''
     uploadProgressBar = ''
-    buttontmpl = 'form_actions'
-        
+
     
     def __init__(self, schema=None, action='', method='POST', buttons=(),
                  formid='reform', use_ajax=False, ajax_options='{}', **kw):
@@ -112,7 +111,6 @@ class Form(Field):
         self.use_ajax = use_ajax
         self.ajax_options = Raw(ajax_options.strip())
         self.widget = FormWidget()
-        self.actionwidget = FormWidget(category='actions')
 
 
     def add(self, node, **kw):

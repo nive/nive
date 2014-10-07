@@ -263,7 +263,7 @@ class Field(object):
         the form rendering in order for some widget on the page to
         function properly.
         
-        The second element in each two-tuple is the reqested version
+        The second element in each two-tuple is the requested version
         of the library resource.  It may be ``None``, in which case
         the version is unspecified.
 

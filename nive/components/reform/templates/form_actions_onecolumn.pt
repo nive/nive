@@ -1,8 +1,5 @@
 <div class="form-actions">
-<div class="row">
-  <div class="${form.widget.settings.get('column1_css', 'span2')}">
-  </div>
-  <div class="${form.widget.settings.get('column2_css', 'span7')}">
+  <div class="">
     <tal:block repeat="button buttons">
       <button
         tal:attributes="disabled button.disabled"
@@ -15,5 +12,4 @@
       </button>
     </tal:block>
   </div>
-</div>
 </div>

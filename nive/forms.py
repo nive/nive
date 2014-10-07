@@ -159,6 +159,23 @@ Internally the form uses a structure like in the following manually defined form
     # validating data
     result,data,errors = form.Validate(data)
     
+
+Form styling options
+====================
+By default 3 column form layouts are used. Each column can get a custom css class by setting e.g. ::
+
+    form.widget.settings["column1_css"] = "span4"
+    form.widget.settings["column2_css"] = "span8"
+    form.widget.settings["column3_css"] = "none"
+
+To switch to a one column layout use the following code: ::
+
+    form.widget.item_template = "field_onecolumn"
+    form.widget.action_template = "form_actions_onecolumn"
+
+
+
+
 Requires: Events
 
 --------------------------------------------------------------------------

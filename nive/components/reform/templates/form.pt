@@ -1,7 +1,8 @@
 <tal:block i18n:domain="nive">
 
 <div tal:condition="msgs|None" class="alert alert-warning">
-  <div tal:repeat="msg msgs">${msg}</div>
+  <div tal:repeat="msg msgs"
+       tal:content="structure msg"></div>
 </div>
 
 <form 
@@ -28,7 +29,7 @@
       <div class="bar bar-success" style="width:0%;"></div>
     </div>
 
-    <div tal:replace="structure field.renderer('form_actions', form=field, buttons=field.buttons)"></div>
+    <div tal:replace="structure field.renderer(field.widget.action_template, form=field, buttons=field.buttons)"></div>
 
 <script type="text/javascript" tal:condition="field.use_ajax">
 function reform_ajaxify(response, status, xhr, form, oid, mthd) {
