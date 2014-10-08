@@ -1,11 +1,4 @@
 
-import time
-import unittest
-
-from nive.application import *
-from nive.definitions import *
-from nive.helper import *
-from nive.portal import Portal
 
 from nive.tests.db_app import *
 

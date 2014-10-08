@@ -71,7 +71,7 @@ class Connection(object):
 
     def close(self):
         """ Close database connection """
-        db = self._get()
+        db = self._get(connect=False)
         if db:
             db.close()
             self._set(None)
@@ -137,7 +137,7 @@ class Connection(object):
         raise TypeError, "please use a subclassed connection"
 
 
-    def _get(self):
+    def _get(self, connect=True):
         # get stored database connection
         return self.db
         
@@ -163,7 +163,7 @@ class ConnectionThreadLocal(Connection):
         self.local = threading.local()
         Connection.__init__(self, config, False)
         
-    def _get(self):
+    def _get(self, connect=True):
         # get stored database connection
         if not hasattr(self.local, "db"):
             return None
@@ -232,7 +232,7 @@ class ConnectionRequest(Connection):
         return True
     
     
-    def _get(self):
+    def _get(self, connect=True):
         # get stored database connection
         req = get_current_request()
         if not req:
@@ -241,8 +241,13 @@ class ConnectionRequest(Connection):
                 return None
             return self.local.db
         try:
-            return req.__nive_db__[self.configuration.dbName] or  self.connect()
-        except (AttributeError, KeyError):
+            db = req.__nive_db__[self.configuration.dbName]
+            if not connect:
+                return db
+            return db or self.connect()
+        except (AttributeError, KeyError), e:
+            if not connect:
+                return None
             return self.connect()
         
     def _set(self, dbconn):

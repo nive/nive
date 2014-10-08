@@ -12,7 +12,7 @@ from nive.tests import __local
 
 from pyramid.response import Response
 from pyramid.request import Request
-from pyramid import testing 
+from pyramid import testing
 
 def getRequest():
     r = Request({"PATH_INFO": "http://aaa.com/test?key=123", "wsgi.url_scheme":"http", "SERVER_NAME": "testserver.de","SERVER_PORT":80, "REQUEST_METHOD": "GET"})

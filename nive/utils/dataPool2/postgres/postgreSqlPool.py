@@ -36,7 +36,7 @@ from nive.utils.dataPool2.connection import Connection, ConnectionThreadLocal, C
 from nive.utils.dataPool2.postgres.dbManager import PostgresManager
 from nive.utils.dataPool2.files import FileManager, FileEntry
 
-
+from nive.definitions import OperationalError
 
 
 
@@ -61,6 +61,7 @@ class PostgresConnection(Connection):
 
         db = self.PrivateConnection()
         if not db:
+            conf = self.configuration
             raise OperationalError, "Cannot connect to database '%s.%s'" % (conf.host, conf.dbName)
         self._set(db)
         return db

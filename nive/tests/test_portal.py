@@ -1,7 +1,7 @@
 
 import time
 import unittest
-from pyramid import testing 
+from pyramid import testing
 
 from nive.portal import Portal
 from nive.definitions import ConfigurationError
