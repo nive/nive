@@ -623,7 +623,7 @@ class BaseView(object):
         self._c_tz = l
         return l
     
-    def RenderField(self, fld, data=None):
+    def RenderField(self, fld, data=None, context=None):
         """
         Render the data field for html display. Rendering depends on the datatype defined
         in the field configuration.
@@ -632,12 +632,14 @@ class BaseView(object):
         
         returns string
         """
+        if context is None:
+            context = self.context
         if isinstance(fld, basestring):
-            fld = self.context.GetFieldConf(fld)
+            fld = context.GetFieldConf(fld)
         if not fld:
             return _(u"<em>Unknown field</em>")
-        if data == None:
-            data = self.context.data.get(fld['id'], self.context.meta.get(fld['id']))
+        if data is None:
+            data = context.data.get(fld['id'], context.meta.get(fld['id']))
         if fld['datatype']=='file':
             url = self.FileUrl(fld['id'])
             if not url:
@@ -646,7 +648,7 @@ class BaseView(object):
             if url2.find(u".jpg")!=-1 or url2.find(u".jpeg")!=-1 or url2.find(u".png")!=-1 or url2.find(u".gif")!=-1:
                 return u"""<img src="%s">""" % (url)
             return u"""<a href="%s">download</a>""" % (url)
-        return FieldRenderer(self.context).Render(fld, data, context=self.context)
+        return FieldRenderer(context).Render(fld, data, context=context)
     
     def HtmlTitle(self):
         t = self.request.environ.get(u"htmltitle")
