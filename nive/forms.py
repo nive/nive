@@ -1622,7 +1622,7 @@ class JsonSequenceForm(HTMLForm):
                 seqindex = int(data.get(self.editKey))
             except:
                 seqindex = 0
-            if seqindex == 0 and data[self.jsonUniqueID] in [i["id"] for i in sequence]:
+            if seqindex == 0 and data[self.jsonUniqueID] in [i[self.jsonUniqueID] for i in sequence]:
                 # item already in list and not edit clicked before
                 msgs=[_(u"Item exists!")]
                 return False, self.Render(data, msgs=msgs, errors=errors)
