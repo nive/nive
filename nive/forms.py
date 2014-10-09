@@ -1072,11 +1072,11 @@ class HTMLForm(Form):
         if isinstance(msgs, basestring):
             msgs = [msgs]
         for m in msgs:
-            h.append(u"""<li>%s</li>""" % (m))
+            h.append(u"""<p>%s</p>""" % (m))
         css = u"alert"
         if err:
-            css = u"alert alert-danger"
-        return u"""<div class="%s"><ul>%s</ul></div>
+            css = u"alert alert-warning"
+        return u"""<div class="%s">%s</div>
         """ % (css, u"".join(h))
 
 
