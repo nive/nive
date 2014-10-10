@@ -137,7 +137,7 @@ def string_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",255))
     if not "widget" in kw:
-        kw["widget"] = TextInputWidget(size=field.get("len",50), **kwWidget)
+        kw["widget"] = TextInputWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def number_node(field, kw, kwWidget, form):
@@ -166,7 +166,7 @@ def text_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",1000000))
     if not "widget" in kw:
-        kw["widget"] = TextAreaWidget(rows=10, cols=60, **kwWidget)
+        kw["widget"] = TextAreaWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def code_node(field, kw, kwWidget, form):
@@ -232,7 +232,7 @@ def mselection_node(field, kw, kwWidget, form):
             kw["widget"].template = 'select_controlset'
             kw["widget"].css_class = ''
         else:
-            kw["widget"] = SelectWidget(values=values, size=field.get("len", 4), **kwWidget)
+            kw["widget"] = SelectWidget(values=values, **kwWidget)
     return SchemaNode(List(allow_empty=True, allowed=[e["id"] for e in v]), **kw)
 
 def mcheckboxes_node(field, kw, kwWidget, form):
@@ -246,26 +246,26 @@ def lines_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",1000000))
     if not "widget" in kw:
-        kw["widget"] = TextAreaWidget(rows=10, cols=60, **kwWidget)
+        kw["widget"] = TextAreaWidget(**kwWidget)
     return SchemaNode(Lines(), **kw)
 
 def email_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Email()
     if not "widget" in kw:
-        kw["widget"] = TextInputWidget(size=field.get("len",50), **kwWidget)
+        kw["widget"] = TextInputWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def url_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",255))
-    kw["widget"] = TextInputWidget(size=field.get("len",50), **kwWidget)
+    kw["widget"] = TextInputWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def urllist_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",1000000))
-    kw["widget"] = TextAreaWidget(rows=10, cols=60, **kwWidget)
+    kw["widget"] = TextAreaWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def password_node(field, kw, kwWidget, form):
@@ -273,9 +273,11 @@ def password_node(field, kw, kwWidget, form):
         kw["validator"] = Length(min=5, max=20)
     if not "widget" in kw:
         if field.settings.get("single",False):
-            kw["widget"] = PasswordWidget(size=field.get("len",50), **kwWidget)
-        else:    
-            kw["widget"] = CheckedPasswordWidget(size=field.get("len",50), update=field.settings.get("update",False), **kwWidget)
+            kw["widget"] = PasswordWidget(**kwWidget)
+        else:
+            if not "update" in kwWidget:
+                kwWidget["update"] = field.settings.get("update",False)
+            kw["widget"] = CheckedPasswordWidget(**kwWidget)
     return SchemaNode(String(), **kw)
 
 def unit_node(field, kw, kwWidget, form):
@@ -285,7 +287,7 @@ def unitlist_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",255))
     if not "widget" in kw:
-        kw["widget"] = TextInputWidget(size=field.get("len",50), **kwWidget)
+        kw["widget"] = TextInputWidget(**kwWidget)
     return SchemaNode(Lines(), **kw)
 
 def timestamp_node(field, kw, kwWidget, form):

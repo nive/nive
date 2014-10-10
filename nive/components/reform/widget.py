@@ -496,8 +496,8 @@ class TextAreaWidget(TextInputWidget):
         and trailing whitespace (default ``True``).
     """
     template = 'textarea'
-    cols = None
-    rows = None
+    cols = 60
+    rows = 10
     strip = True
 
 class RichTextWidget(TextInputWidget):
