@@ -12,7 +12,7 @@ from nive.components.reform.template import ZPTRendererFactory
 from nive.i18n import _
 from nive.i18n import translate
 from nive.definitions import ModuleConf, ViewModuleConf
-from nive.helper import LoadListItems
+from nive.helper import LoadListItems, ResolveName
 
 from nive.components.reform.schema import *
 from nive.components.reform.widget import *
@@ -63,6 +63,8 @@ def SchemaFactory(form, fields, actions, force=False):
             "form": form,
             "configuration": field
         }
+        if field.settings and isinstance(field.settings, dict):
+            kwWidget.update(field.settings)
 
         # ----------------------------------------------------------
         # bw 0.9.12 -> moved from `field.settings` to `field`
@@ -79,6 +81,13 @@ def SchemaFactory(form, fields, actions, force=False):
         # custom widget
         if field.get("widget"):
             kw["widget"] = field.widget
+
+        # setup custom widgets
+        if "widget" in kw and kw["widget"]:
+            widget = kw["widget"]
+            if isinstance(widget, basestring):
+                widget = ResolveName(widget)
+            kw["widget"] = widget(**kwWidget)
 
         # setup missing and default value
         if not field.required:
