@@ -538,7 +538,7 @@ class Registration(object):
             raise ConfigurationError, "Configuration is empty"
         c = self.configuration
         # special values
-        if c.get("id"):
+        if c.get("id") and not self.__name__:
             self.__name__ = c.id
         if c.get("acl"):
             self.__acl__ = tuple(c.acl)
