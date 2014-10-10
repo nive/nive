@@ -1,0 +1,12 @@
+<tal:block i18n:domain="nive">
+
+  <p tal:condition="cstruct">
+    <label for="${field.name}_delfile" class="checkbox">
+        <input type="checkbox" name="${field.name}_delfile" value="1"> Delete this file</label>
+  </p>
+
+  <input type="file" name="${field.name}"
+         tal:attributes="size field.widget.size; class field.widget.css_class"
+         id="${field.oid}">
+
+</tal:block>

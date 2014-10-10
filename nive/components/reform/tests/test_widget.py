@@ -1211,6 +1211,73 @@ class TestFileUploadWidget2(unittest.TestCase):
         self.assertEqual(result.file, file.file)
 
 
+class TestFileToDataUploadWidget(unittest.TestCase):
+    def _makeOne(self, **kw):
+        from nive.components.reform.widget import FileToDataUploadWidget
+        return FileToDataUploadWidget(**kw)
+
+    def test_serialize_null(self):
+        from nive.components.reform.schema import null
+        renderer = DummyRenderer()
+        schema = DummySchema()
+        field = DummyField(schema, renderer)
+        widget = self._makeOne()
+        widget.serialize(field, null)
+        self.assertEqual(renderer.template, widget.template)
+        self.assertEqual(renderer.kw['field'], field)
+        self.assertEqual(renderer.kw['cstruct'], {})
+
+    def test_serialize_None(self):
+        renderer = DummyRenderer()
+        schema = DummySchema()
+        field = DummyField(schema, renderer)
+        widget = self._makeOne()
+        widget.serialize(field, None)
+        self.assertEqual(renderer.template, widget.template)
+        self.assertEqual(renderer.kw['field'], field)
+        self.assertEqual(renderer.kw['cstruct'], {})
+
+    def test_deserialize_null(self):
+        from nive.components.reform.schema import null
+        schema = DummySchema()
+        field = DummyField(schema)
+        widget = self._makeOne()
+        result = widget.deserialize(field, null)
+        self.assertEqual(result, null)
+
+    def test_deserialize_file(self):
+        from nive.components.reform.schema import null
+        from nive.helper import File
+        schema = DummySchema()
+        field = DummyField(schema)
+        widget = self._makeOne()
+        file = File(file=StringIO("contents"))
+        result = widget.deserialize(field, file)
+        self.assertEqual(result, "contents")
+
+    def test_deserialize_file_del(self):
+        from nive.components.reform.schema import null
+        from nive.helper import File
+        schema = DummySchema()
+        field = DummyField(schema)
+        field.name="fname"
+        widget = self._makeOne()
+        file = File()
+        result = widget.deserialize(field, "", {"fname_delfile":"1"})
+        self.assertEqual(result, "")
+
+    def test_deserialize_file_b64(self):
+        from nive.components.reform.schema import null
+        from nive.helper import File
+        from StringIO import StringIO
+        import base64
+        schema = DummySchema()
+        field = DummyField(schema)
+        widget = self._makeOne()
+        widget.base64 = True
+        file = File(file=StringIO("contents"))
+        result = widget.deserialize(field, file)
+        self.assertEqual(result, base64.b64encode("contents"))
 
 class DummyRenderer(object):
     def __init__(self, result=''):

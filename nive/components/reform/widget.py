@@ -3,6 +3,7 @@ import random
 import string
 import StringIO
 import copy
+import base64
 
 from nive.i18n import _
 from nive.definitions import Conf
@@ -1191,6 +1192,51 @@ class FileUploadWidget2(Widget):
             file.mime = pstruct.type
         file.tempfile = True
         return file
+
+
+class FileToDataUploadWidget(Widget):
+    """
+    Represent a file upload. Uploaded file data is extracted and
+    return as simple data/string object. Optionally data can be encoded
+    as base64 to get a valid string.
+
+    Extended version using nive `File` class instead of
+    schema.filedict().
+
+    **Attributes/Arguments**
+
+    template
+        The template name used to render the widget.  Default:
+        ``filetodata_upload``.
+
+    size
+        The ``size`` attribute of the input field (default ``None``).
+    """
+    template = 'filetodata_upload'
+    size = None
+    base64 = False
+
+    def __init__(self, **kw):
+        Widget.__init__(self, **kw)
+
+    def serialize(self, field, cstruct):
+        if cstruct in ("", null, None):
+            cstruct = {}
+        template = self.template
+        return field.renderer(template, field=field, cstruct=cstruct)
+
+    def deserialize(self, field, pstruct, formstruct=None):
+        if pstruct in ("", null, None):
+            # check if delfile checkbox ticked and return an empty string
+            # to reset field contents
+            if formstruct.get(field.name+"_delfile")=="1":
+                return ""
+            return null
+        file = pstruct.file.read()
+        if self.base64:
+            file = base64.b64encode(file)
+        return file
+
 
 
 
