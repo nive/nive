@@ -1628,6 +1628,8 @@ class JsonSequenceForm(HTMLForm):
             sequence = self.context.data.get(self.jsonDataField)
             if sequence in (u"", None):
                 sequence = []
+            elif isinstance(sequence, tuple):
+                sequence = list(sequence)
             try:
                 seqindex = int(data.get(self.editKey))
             except:
