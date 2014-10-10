@@ -267,13 +267,16 @@ class BaseView(object):
         return SendResponse(data, mime=mime, filename=filename, raiseException=raiseException, status=status, headers=headers)
         
         
-    def Redirect(self, url, messages=None, slot="", raiseException=True, refresh=True):
+    def Redirect(self, url, messages=None, slot="", raiseException=True, refresh=True, force=False):
         """
         Redirect to the given URL. Messages are stored in session and can be accessed
         by calling ``request.session.pop_flash()``. Messages are added by calling
         ``request.session.flash(m, slot)``.
+
+        `Redirect` automatically detects ajax requests and calls `Relocate` in such a case to prevent a page refresh.
+        Set `force=True` to force redirects even for ajax requests.
         """
-        return Redirect(url, self.request, messages=messages, slot=slot, raiseException=raiseException, refresh=refresh)
+        return Redirect(url, self.request, messages=messages, slot=slot, raiseException=raiseException, refresh=refresh, force=force)
     
 
     def Relocate(self, url, messages=None, slot="", raiseException=True, refresh=True):
@@ -950,11 +953,11 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True, sta
     return Response(content_type=mime, body=data, content_disposition=cd, status=status, headerlist=headers)
 
 
-def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True):
+def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True, force=False):
     """
     See views.BaseView class function for docs
     """
-    if request.environ.get("HTTP_X_REQUESTED_WITH")=="XMLHttpRequest":
+    if not force and request.environ.get("HTTP_X_REQUESTED_WITH")=="XMLHttpRequest":
         # ajax call -> use relocate to handle this case
         return Relocate(url, request, messages, slot, raiseException, refresh)
     if messages:
@@ -981,13 +984,18 @@ def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=
         else:
             for m in messages:
                 request.session.flash(m, slot)
-    headers = [('X-Relocate', str(url))]
-    request.response.headerlist = headers
+    if isinstance(url, unicode):
+        url = url.encode("utf-8")
     body = json.dumps({u"location": url, u"messages": messages, "refresh": refresh})
-    if raiseException:
-        raise ExceptionalResponse(headers=headers, body=body, content_type="application/json", status="200 OK")
+    headers = [('X-Relocate', url)]
     if hasattr(request.response, "headerlist"):
-        headers += list(request.response.headerlist)
+        for h in list(request.response.headerlist):
+            # remove content type and content length
+            if h[0].lower() in ("content-type", "content-length"):
+                continue
+            headers.append(h)
+    if raiseException:
+        raise ExceptionalResponse(headers=headers, body=body, content_type="application/json; charset=utf-8", status="200 OK")
     return body
 
 
