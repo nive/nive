@@ -89,6 +89,13 @@ def SchemaFactory(form, fields, actions, force=False):
                 widget = ResolveName(widget)
             kw["widget"] = widget(**kwWidget)
 
+        # setup custom validator
+        if "validator" in kw and kw["validator"]:
+            validator = kw["validator"]
+            if isinstance(validator, basestring):
+                validator = ResolveName(validator)
+            kw["validator"] = validator
+
         # setup missing and default value
         if not field.required:
             kw["missing"] = null # or "" ?

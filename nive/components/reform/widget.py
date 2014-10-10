@@ -1229,7 +1229,7 @@ class FileToDataUploadWidget(Widget):
         if pstruct in ("", null, None):
             # check if delfile checkbox ticked and return an empty string
             # to reset field contents
-            if formstruct.get(field.name+"_delfile")=="1":
+            if formstruct and formstruct.get(field.name+"_delfile")=="1":
                 return ""
             return null
         file = pstruct.file.read()

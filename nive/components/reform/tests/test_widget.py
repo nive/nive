@@ -1248,6 +1248,7 @@ class TestFileToDataUploadWidget(unittest.TestCase):
     def test_deserialize_file(self):
         from nive.components.reform.schema import null
         from nive.helper import File
+        from StringIO import StringIO
         schema = DummySchema()
         field = DummyField(schema)
         widget = self._makeOne()

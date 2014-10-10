@@ -47,15 +47,22 @@ class TestSchema(unittest.TestCase):
         self.assert_(len(nodes)==1)
         
     def test_validator(self):
-        field = FieldConf(datatype="string",id="field",name="Field", validator="validator")
+        def Validator():
+            return
+        field = FieldConf(datatype="string",id="field",name="Field", validator=Validator)
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
         self.assert_(len(nodes)==1)
         
     def test_widget(self):
-        field = FieldConf(datatype="string",id="field",name="Field", widget="widget")
+        field = FieldConf(datatype="string",id="field",name="Field", widget=Widget)
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
         self.assert_(len(nodes)==1)
         
+    def test_widget2(self):
+        field = FieldConf(datatype="string",id="field",name="Field", widget="nive.components.reform.widget.Widget")
+        nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
+        self.assert_(len(nodes)==1)
+
     def test_widget(self):
         field = FieldConf(datatype="string",id="field",name="Field", required=True, default="widget")
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
@@ -65,7 +72,7 @@ class TestSchema(unittest.TestCase):
         self.assert_(len(nodes)==1)
         
     def test_actions(self):
-        field = FieldConf(datatype="string",id="field",name="Field", widget="widget")
+        field = FieldConf(datatype="string",id="field",name="Field")
         action1 = Conf(id="action1", name="Action 1", cls="btn", hidden=False)
         action2 = Conf(id="action2", name="Action 2", cls="btn", hidden=True)
         nodes, buttons = SchemaFactory(testform(), [field], [action1,action2], force=False)
