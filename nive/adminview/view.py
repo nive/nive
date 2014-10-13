@@ -324,7 +324,7 @@ class AdminView(AdminBasics):
         if not IPersistentRoot.providedBy(root):
             return {u"content": _(u"The default root does not support persistent data storage."), u"result": False, u"head": u""}
         fields = (
-            FieldConf(id=u"pool_filename",   datatype="string", size=30,   required=1, name=_(u"Default root url name"),
+            FieldConf(id=u"pool_filename",   datatype="string", size=30,   required=1, name=_(u"Root url name"),
                       settings={"validator": RootnameValidator}, default=root.configuration.id),
             FieldConf(id=u"title",           datatype="string", size=255,  required=0, name=_(u"Root title"), default=root.configuration.name),
             FieldConf(id=u"description",     datatype="text",   size=5000, required=0, name=_(u"Root description")),
