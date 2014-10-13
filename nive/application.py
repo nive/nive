@@ -1179,6 +1179,8 @@ class AppFactory:
         """
         creates the root object
         """
+        if not name:
+            name = self.GetDefaultRootName()
         useCache = self.configuration.useCache
         if isinstance(name, basestring):
             cachename = "_c_root"+name
