@@ -304,12 +304,14 @@ class BaseView(object):
     # render other elements and objects ---------------------------------------------
     
     def index_tmpl(self, path=None):
-        if path:
-            return get_renderer(path).implementation()
-        conf = self.viewModule
-        if not conf or not conf.template:
-            return None
-        tmpl = self._LookupTemplate(conf.template)
+        #if path:
+        #    return get_renderer(path).implementation()
+        if not path:
+            conf = self.viewModule
+            if not conf or not conf.template:
+                return None
+            path = conf.template
+        tmpl = self._LookupTemplate(path)
         return get_renderer(tmpl).implementation()
         
 
@@ -1083,7 +1085,11 @@ class FieldRenderer(object):
                     pass
 
         elif fType == "text":
-            data = data.replace(u"\r\n", u"\r\n<br>")
+            if settings.get("format")=="markdown":
+                import markdown2
+                data = markdown2.markdown(data)
+            else:
+                data = data.replace(u"\r\n", u"\r\n<br>")
 
         elif fType == "date":
             if not isinstance(data, datetime):
