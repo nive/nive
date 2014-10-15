@@ -11,6 +11,7 @@ from pyramid.path import DottedNameResolver
 from pyramid.path import AssetResolver
 from pyramid.path import caller_package
 
+from pyramid.renderers import JSON
 
 from nive.definitions import (
     IAppConf, IDatabaseConf, IFieldConf, IRootConf, IObjectConf, IViewModuleConf,
@@ -181,6 +182,18 @@ def ReplaceInListByID(conflist, newconf, id=None):
     return new
             
 
+def ReplaceRenderer(viewModule, viewname, renderer):
+    """
+    Replace the renderer for a view in the given view module.
+    :param viewModule:
+    :param viewname:
+    :param renderer:
+    :return:
+    """
+    for v in viewModule.views:
+        if v.name==viewname:
+            v.renderer = renderer
+
 
 class JsonDataEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -221,7 +234,40 @@ class ConfDecoder(object):
             return obj
         return json.JSONDecoder(object_hook=object_hook).decode(jsonstring) 
 
-        
+
+def SetupJSONRenderer(pyramid_config):
+    """
+    Extend the default pyramid json renderer with support for datetime and file storage
+    objects. Call `SetupJSONRenderer` in the main function e.g. ::
+
+        config = Configurator(root_factory = getRoot, settings = settings)
+        SetupJSONRenderer(config)
+        config.include('pyramid_chameleon')
+
+    :param pyramid_config:
+    :return:
+    """
+    json_renderer = JSON()
+
+    def datetimeAdapter(obj, request):
+        return obj.isoformat()
+    json_renderer.add_adapter(datetime, datetimeAdapter)
+
+    def fileStorageAdapter(obj, request):
+        file = {}
+        file["filekey"] = obj.filekey
+        file["filename"] = obj.filename
+        file["size"] = obj.size
+        return file
+    json_renderer.add_adapter(IFileStorage, fileStorageAdapter)
+
+    def confAdapter(obj, request):
+        return DumpJSONConf(obj)
+    json_renderer.add_adapter(baseConf, confAdapter)
+
+    pyramid_config.add_renderer('json', json_renderer)
+
+
 def DumpJSONConf(conf):
     # dump configuration to json
     values = {}
