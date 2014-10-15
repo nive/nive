@@ -176,14 +176,15 @@ To switch to a one column layout use the following code: ::
 Replacing default widgets or validators
 =======================================
 
-      FieldConf(id="ftext", datatype="text", size=1000, name="ftext",
+    FieldConf(id="ftext", datatype="text", size=1000, name="ftext",
 
-                # pass in a custom widget and settings as kw argument
-                widget="nive.components.reform.widget.FileToDataUploadWidget",
-                settings={"base64": True},
+              # pass in a custom widget and settings as kw argument
+              widget="nive.components.reform.widget.FileToDataUploadWidget",
+              settings={"base64": True},
 
-                # pass in a custom validator
-                validator=myValidator),
+              # pass in a custom validator
+              validator=myValidator
+    ),
 
 
 Requires: Events
