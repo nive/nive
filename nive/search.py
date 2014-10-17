@@ -46,6 +46,12 @@ skipRender        render result flds as html element.
 skipCount         enable or disable second query to get the number of all records. 
 ================  =====================================================================
 
+Adding custom join statements
+
+    "join" = "inner join pool_meta as __parent on __parent.id = meta__.pool_unitref"
+
+    fields = ["-__parent.pool_filename as profile_filename"]
+
 
 =============  ========================================================================
 Search result  (supported by Search*() functions)

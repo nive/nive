@@ -284,7 +284,7 @@ class Form(Events, ReForm):
         2) Loads subsets and actions from object form definition
         
         Event
-        - loadFields() after fields have been loaded
+        - setup() after fields have been loaded
         """
         self._c_form = None
         self._c_fields = None
@@ -405,11 +405,21 @@ class Form(Events, ReForm):
                         # raise ConfigurationError, "Form action lookup failed: " + a
                     a = action
                 self._c_actions.append(a)
-                
-        self.Signal("loadFields")
-        
-        
-        
+
+        if subsets and subset in subsets and "options" in subsets[subset]:
+            self.ApplyOptions(subsets[subset]["options"])
+
+        self.Signal("setup")
+
+
+    def ApplyOptions(self, settings):
+        if "item_template" in settings:
+            self.widget.item_template = settings["item_template"]
+        if "action_template" in settings:
+            self.widget.action_template = settings["action_template"]
+        self.__dict__.update(settings)
+
+
     def _SetUpSchema(self, force=False):
         """
         set up form schema for configured configuration.
@@ -734,6 +744,9 @@ class HTMLForm(Form):
     actionPostfix = u"$"
     anchor = u""
     uploadProgressBar = u"auto" # other possible values: none or always
+    renderSuccess = True
+    successResponseBody = None
+    use_ajax = False
     
     # Form actions --------------------------------------------------------------------------------------------
 
@@ -743,8 +756,7 @@ class HTMLForm(Form):
         
             defaultAction: default action if none found in request. Can also be configured in subset
             redirectSuccess: default=None. url to redirect on action success 
-            renderSuccess: default=True. render the form on action success
-        
+
         If renderSuccess is set to False the form itself will not be rendered if 
         the action succeeds. Only the feedback message will be rendered.
          
@@ -755,9 +767,9 @@ class HTMLForm(Form):
 
         returns bool, html, dict (result, data, action)
         """
-        # bw 0.9.7
-        if u"redirect_success" in kw:
-            redirectSuccess = kw[u"redirect_success"]
+        # bw 0.9.13
+        if u"renderSuccess" in kw:
+            self.renderSuccess = kw[u"renderSuccess"]
 
         # find default action
         defaultAction = None
@@ -1049,8 +1061,7 @@ class HTMLForm(Form):
         
         Used kw arguments:
         - redirectSuccess
-        - renderSuccess
-        
+
         """
         if not result:
             if self.use_ajax:
@@ -1064,7 +1075,10 @@ class HTMLForm(Form):
             # raises HTTPFound
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
-        if not kw.get("renderSuccess", True):
+        if self.successResponseBody:
+            return self.view.SendResponse(data=self.successResponseBody, headers=[("X-Result", "true")])
+
+        if not self.renderSuccess:
             html = self._Msgs(msgs=msgs,result=result)
         else:
             html = self.Render(data, msgs=msgs, errors=errors, result=result)
@@ -1122,7 +1136,7 @@ class ObjectForm(HTMLForm):
         2) Loads subsets and actions from object form definition
         
         Event
-        - loadFields() after fields have been loaded
+        - setup() after fields have been loaded
         """
         Form.Setup(self, subset)
         if not addTypeField:
@@ -1297,7 +1311,7 @@ class ToolForm(HTMLForm):
         2) Loads subsets and actions from tool form definition
         
         Event
-        - loadFields() after fields have been loaded
+        - setup() after fields have been loaded
         """
         self._c_form = None
         self._c_fields = None
@@ -1394,7 +1408,7 @@ class ToolForm(HTMLForm):
                     a = action
                 self._c_actions.append(a)
                 
-        self.Signal("loadFields")
+        self.Signal("setup")
         
             
     def RunTool(self, action, **kw):
@@ -1566,7 +1580,7 @@ class JsonSequenceForm(HTMLForm):
     editKeyFld = FieldConf(id=editKey, name=u"indexKey", datatype="number", hidden=True, default=u"")
     
     def Init(self):
-        self.ListenEvent("loadFields", "AddKeyFld")
+        self.ListenEvent("setup", "AddKeyFld")
         
     def AddKeyFld(self):
         self._c_fields.append(self.editKeyFld)

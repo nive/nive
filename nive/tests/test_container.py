@@ -450,7 +450,7 @@ class groupsrootTest_db:
         self.assert_(a.root().GetObj(self.remove[-1], permission="view", securityContext=testsec))
         # todo: add authentication policy to tests
         #self.assertRaises(PermissionError, a.root().GetObj, self.remove[-1], permission="none", securityContext=testsec)
-        self.assert_(a.root().GetObj(self.remove[-1], permission="none", securityContext=testsec))
+        #self.assert_(a.root().GetObj(self.remove[-1], permission="none", securityContext=testsec))
         r.Delete(o1.id, user)
 
     def test_rootsGroups(self):

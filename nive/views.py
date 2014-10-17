@@ -356,29 +356,23 @@ class BaseView(object):
         """
         # store original context to reset after calling render_view
         orgctx = self.request.context
+        orgresp = self.request.response
+        orgname = self.request.view_name
+
         self.request.context = obj
-        if not raiseUnauthorized:
-            try:
-                value = render_view(obj, self.request, name, secure)
-                self.request.context = orgctx
-            except HTTPNotFound:
-                self.request.context = orgctx
-                return u"Not found!"
-            except HTTPForbidden:
-                self.request.context = orgctx
-                return u""
-        else:
-            try:
-                value = render_view(obj, self.request, name, secure)
-            except HTTPNotFound:
-                self.request.context = orgctx
-                return u"Not found!"
-            except:
-                self.request.context = orgctx
-                raise
-        self.request.context = orgctx
-        if not value:
-            return u""
+        self.request.response = Response()
+        self.request.view_name = name
+        try:
+            value = render_view(obj, self.request, name, secure)
+        except HTTPNotFound:
+            value = "Not found!"
+        except HTTPForbidden:
+            value = ""
+        finally:
+            self.request.context = orgctx
+            self.request.response = orgresp
+            self.request.view_name = orgname
+
         return unicode(value, codepage)
 
     
