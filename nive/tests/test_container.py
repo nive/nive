@@ -1,5 +1,3 @@
-
-
 from nive.tests.db_app import *
 
 from nive.tests import __local
