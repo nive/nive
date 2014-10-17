@@ -13,6 +13,9 @@ class FilenameLookup(object):
     Extensions like *.html* are not stored. Path matching works independent 
     from extensions.
     """
+    def Init(self):
+        self.__name__ = self.meta.pool_filename or str(self.id)
+
     def __getitem__(self, id):
         """
         Traversal lookup based on object.pool_filename and object.id. Trailing extensions 
