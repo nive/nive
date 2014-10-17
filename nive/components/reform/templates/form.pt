@@ -105,6 +105,7 @@ reform.addCallback(
         reform_ajaxify(null, null, null, null, oid);
     }
 );
+${'reform_loaded=false; reform.load();' if True else ''}
 </script>
 
 </form>
