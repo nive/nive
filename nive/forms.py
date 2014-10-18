@@ -160,6 +160,44 @@ Internally the form uses a structure like in the following manually defined form
     result,data,errors = form.Validate(data)
     
 
+HTML form options
+-----------------
+Form setup: element id, css classes, url ::
+
+    formid = u"upload"
+    css_class = u"form"
+    actionPostfix = u"$"
+    method = u"POST"
+    action = u""
+    anchor = u""
+
+Display options ::
+
+    uploadProgressBar = u"auto" # other possible values: none or always
+
+Ajax forms ::
+
+    use_ajax = False
+
+Success options ::
+
+    renderSuccess = True
+    successResponseBody = None
+    redirectSuccess = u"obj_url"
+
+Cancel button ::
+
+    redirectCancel = u""
+
+Url placeholders to be used with `redirectCancel` and `redirectSuccess` ::
+
+- obj_url
+- obj_folder_url
+- parent_url
+- page_url
+- page_url_anchor
+
+
 Form styling options
 ====================
 By default 3 column form layouts are used. Each column can get a custom css class by setting e.g. ::
@@ -187,7 +225,8 @@ Replacing default widgets or validators
     ),
 
 
-Requires: Events
+
+
 
 --------------------------------------------------------------------------
 """
@@ -728,9 +767,29 @@ class Form(Events, ReForm):
 
 class HTMLForm(Form):
     """
-    Simple HTML form 
-
+    Basic HTML Form
     """
+    # form setup: element id, css classes, url
+    formid = u"upload"
+    css_class = u"form"
+    actionPostfix = u"$"
+    action = u""
+    anchor = u""
+
+    # display options
+    uploadProgressBar = u"auto" # other possible values: none or always
+
+    # ajax forms
+    use_ajax = False
+
+    # success options
+    renderSuccess = True
+    successResponseBody = None
+    redirectSuccess = u""
+
+    # redirect urls
+    redirectCancel = u""
+
     actions = [
         Conf(id=u"default", method="StartForm",    name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
         Conf(id=u"edit",    method="ProcessForm",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
@@ -738,16 +797,8 @@ class HTMLForm(Form):
     subsets = {
         "edit":   {"actions": [u"edit"],    "defaultAction": "default"}
     }
-    # html styling
-    formid = u"upload"
-    css_class = u"form"
-    actionPostfix = u"$"
-    anchor = u""
-    uploadProgressBar = u"auto" # other possible values: none or always
-    renderSuccess = True
-    successResponseBody = None
-    use_ajax = False
-    
+
+
     # Form actions --------------------------------------------------------------------------------------------
 
     def Process(self, **kw):
@@ -755,9 +806,10 @@ class HTMLForm(Form):
         Processes the request and calls the required actions. kw parameter ::
         
             defaultAction: default action if none found in request. Can also be configured in subset
-            redirectSuccess: default=None. url to redirect on action success 
 
-        If renderSuccess is set to False the form itself will not be rendered if 
+        `redirectSuccess` can be used to redirect on action success.
+
+        If `renderSuccess` is set to False the form itself will not be rendered if
         the action succeeds. Only the feedback message will be rendered.
          
         Action definitions must define a callback method to process the action. 
@@ -770,6 +822,8 @@ class HTMLForm(Form):
         # bw 0.9.13
         if u"renderSuccess" in kw:
             self.renderSuccess = kw[u"renderSuccess"]
+        if u"redirectSuccess" in kw:
+            self.redirectSuccess = kw[u"redirectSuccess"]
 
         # find default action
         defaultAction = None
@@ -933,11 +987,18 @@ class HTMLForm(Form):
         """
         Cancel form action
         
+        Event
+        - cancel() before validate is called
+
+        Used options:
+        - redirectCancel
+
         returns bool, string
         """
-        redirectSuccess = kw.get("redirectSuccess")
-        if self.view and redirectSuccess:
-            self.view.Redirect(redirectSuccess)
+        self.Signal("success")
+        if self.view and self.redirectCancel:
+            redirectCancel = self.view.ResolveUrl(self.redirectCancel)
+            return self.view.Redirect(redirectCancel, raiseException=True, refresh=True)
         return True, ""
 
 
@@ -1051,7 +1112,7 @@ class HTMLForm(Form):
                 css_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
         js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
-        return (u"\r\n").join(js_tags + css_tags)
+        return (u"\r\n").join(css_tags + js_tags)
     
         
     def _FinishFormProcessing(self, result, data, msgs, errors, **kw):
@@ -1070,7 +1131,7 @@ class HTMLForm(Form):
                 return self.view.SendResponse(data=self.Render(data, msgs=msgs, errors=errors), headers=[("X-Result", "false")])
             return result, self.Render(data, msgs=msgs, errors=errors)
     
-        redirectSuccess = self.view.ResolveUrl(kw.get("redirectSuccess"), result)
+        redirectSuccess = self.view.ResolveUrl(self.redirectSuccess, result)
         if redirectSuccess:
             # raises HTTPFound
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
@@ -1234,7 +1295,6 @@ class ObjectForm(HTMLForm):
 
         returns form data or false, html or redirects
         """
-        redirectSuccess = kw.get("redirectSuccess")
         msgs = []
         obj=self.context
         result,data,errors = self.Validate(self.request)
@@ -1264,7 +1324,6 @@ class ObjectForm(HTMLForm):
 
         returns new object or none, html or redirects
         """
-        redirectSuccess = kw.get("redirectSuccess")
         msgs = []
         result,data,errors = self.Validate(self.request)
         if result:
@@ -1437,7 +1496,6 @@ class WorkflowForm(HTMLForm):
         process request data and call workflow transition for object. 
         context = obj
         """
-        redirectSuccess = kw.get("redirectSuccess")
         msgs = []
         result,data,errors = self.Validate(self.request)
         if result:
@@ -1534,7 +1592,6 @@ class JsonMappingForm(HTMLForm):
 
         returns bool, html
         """
-        redirectSuccess = kw.get("redirectSuccess")
         msgs = []
         obj=self.context
         result,data,errors = self.Validate(self.request)
@@ -1634,7 +1691,6 @@ class JsonSequenceForm(HTMLForm):
 
         returns bool, html
         """
-        redirectSuccess = kw.get("redirectSuccess")
         msgs = []
         result,data,errors = self.Validate(self.request)
         if result:
