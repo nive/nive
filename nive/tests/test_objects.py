@@ -41,6 +41,22 @@ class objTest_db:
         r.Delete(id, user=user)
 
 
+    def test_objectacl(self):
+        #print "Testing object update and commit"
+        a=self.app
+        ccc = a.db.GetCountEntries()
+        # create
+        user = User(u"test")
+
+        r=root(a)
+        self.assert_(r.__acl__[0][2]=='view')
+
+        oo = createObj1(r)
+        self.assert_(oo.__acl__[0][2]=='view')
+
+        r.Delete(oo, user=user)
+
+
     def test_objectedit(self):
         #print "Testing object update and commit"
         a=self.app

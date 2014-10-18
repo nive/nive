@@ -17,7 +17,7 @@ from nive.definitions import StagContainer, StagRessource, MetaTbl
 from nive.definitions import IContainer, ICache, IObject, IConf 
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
-from nive.security import has_permission
+from nive.security import has_permission, SetupRuntimeAcls
 from nive.workflow import WorkflowNotAllowed
 from nive.helper import ResolveName, ClassFactory
 from nive.i18n import translate
@@ -793,6 +793,13 @@ class Root(object):
                          pool_createdby=u"")
         self.data = Conf()
         self.files = Conf()
+
+        # load security
+        acl = SetupRuntimeAcls(rootDef.acl, self)
+        if acl:
+            # omit if empty. acls will be loaded from parent object
+            self.__acl__ = acl
+
         self.Signal("init")
 
 

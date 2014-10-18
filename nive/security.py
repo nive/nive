@@ -139,7 +139,37 @@ class AdminUser(object):
     def ReadableName(self):
         return self.data.name
 
-    
+
+def SetupRuntimeAcls(acl, context):
+    """
+    Can be used during object initialisation to process acls.
+    Acls can have a additional callback parameter called with the context
+    to find out whetther to apply the single acl or not. The callback should return
+    true or false. e.g. ::
+
+        (Allow, "group:reader", "read", lambda context: context.meta.pool_state),
+
+    or ::
+
+        def check(context):
+            return context.meta.pool_state
+
+        (Allow, "group:reader", "read", check),
+
+    :param acl:
+    :param context:
+    :return: tuple of acls to be stored as __acl__
+    """
+    processed = []
+    for a in acl:
+        if len(a)==4:
+            if apply(a[3], (context,)):
+                processed.append(tuple(list(a[:3])))
+            continue
+        processed.append(tuple(a))
+    return tuple(processed)
+
+
 def effective_principals(request=None):
     # uses pyramid authentication groupfinder callback to lookup principals
     # returns None if no auth policy is configured (e.g. in tests)

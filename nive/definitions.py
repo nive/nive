@@ -679,7 +679,10 @@ class ObjectConf(baseConf):
         workflowEnabled : Enable or disable workflow for this type.
         workflowID       : Workflow process id.
 
-        events  : Register for one or multiple Application events. 
+        # security
+        acl :     List of pyramid acls for permission settings.
+
+        events  : Register for one or multiple Application events.
                   Register each event as e.g. Conf(event="run", callback=function).
         translations : A single or multiple directories containing translation files. 
         version   : Optional version string.
@@ -704,6 +707,7 @@ class ObjectConf(baseConf):
         self.data = []
         self.forms = {}
         self.views = []
+        self.acl = []
         self.workflowEnabled = False
         self.workflowID = ""
         self.subtypes = "*"
@@ -789,13 +793,17 @@ class RootConf(baseConf):
                    absolute dotted python name ('my_app.templates:root.pt').
         views    : List of object view definitions. Either nive.definitions.ViewConf 
                    or nive.definitions.ViewModuleConf.
+
         default  : Use this root as default root
         subtypes : Define possible subtypes. None=no objects allowed, *=all objects allowed, 
                    [IContainer,IPageElement]=list with interfaces of allowed objects.
         urlTraversal : if True the root name is allowed to be used in url traversal.
         workflowEnabled : Enable or disable workflow for this type.
         workflowID       : Workflow process id.
-        events  : Register for one or multiple Application events. 
+
+        acl :     List of pyramid acls for permission settings.
+
+        events  : Register for one or multiple Application events.
                   Register each event as e.g. Conf(event="run", callback=function).
         translations : A single or multiple directories containing translation files. 
         description : Description.
@@ -815,6 +823,7 @@ class RootConf(baseConf):
         self.default = True
         self.data = []
         self.views = []
+        self.acl = []
         self.subtypes = "*"
         self.workflowEnabled = False
         self.urlTraversal = True

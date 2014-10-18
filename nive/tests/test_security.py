@@ -3,9 +3,10 @@ import time
 import unittest
 from types import DictType
 
-from nive.definitions import implements
+from nive.definitions import implements, Conf
 from nive.security import User, AdminUser, GetUsers, Unauthorized, UserFound, IAdminUser
 from nive.security import effective_principals
+from nive.security import SetupRuntimeAcls
 
 
 class securityTest(unittest.TestCase):
@@ -56,4 +57,27 @@ class securityTest(unittest.TestCase):
     def test_principals(self):
         p = effective_principals()
         self.assert_(p==None)
+
+
+    def test_setupacls(self):
+        acl = [("Allow", "group:reader", "read", lambda context: context.pool_state)]
+
+        a = SetupRuntimeAcls(acl, Conf(pool_state=1))
+        self.assert_(len(a)==1)
+        self.assert_(len(a[0])==3)
+
+        a = SetupRuntimeAcls(acl, Conf(pool_state=0))
+        self.assert_(len(a)==0)
+
+        def check(context):
+            return context.pool_state
+        acl = [("Allow", "group:reader", "read", check)]
+
+        a = SetupRuntimeAcls(acl, Conf(pool_state=1))
+        self.assert_(len(a)==1)
+        self.assert_(len(a[0])==3)
+
+        a = SetupRuntimeAcls(acl, Conf(pool_state=0))
+        self.assert_(len(a)==0)
+
 

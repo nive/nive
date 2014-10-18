@@ -27,6 +27,7 @@ import weakref
 from nive.definitions import StagContainer, ReadonlySystemFlds, ICache, IContainer
 from nive.definitions import ConfigurationError
 from nive.workflow import WorkflowNotAllowed
+from nive.security import SetupRuntimeAcls
 
 
 class Object(object):
@@ -42,7 +43,13 @@ class Object(object):
         self.path = str(id)
         self.dbEntry = dbEntry
         self.configuration = configuration
-        self.selectTag = configuration.get("selectTag", StagContainer) 
+        self.selectTag = configuration.get("selectTag", StagContainer)
+
+        # load security
+        acl = SetupRuntimeAcls(configuration.acl, self)
+        if acl:
+            # omit if empty. acls will be loaded from parent object
+            self.__acl__ = acl
 
         self.Signal("init")
 

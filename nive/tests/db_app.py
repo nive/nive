@@ -8,7 +8,7 @@ from nive.utils.path import DvPath
 
 from nive.definitions import *
 from nive.portal import Portal
-from nive.security import User
+from nive.security import User, Allow, Everyone
 
 from nive.components.objects.base import ApplicationBase
 
@@ -18,7 +18,8 @@ root = RootConf(
     name = u"Data root",
     default = 1,
     context = "nive.components.objects.base.RootBase",
-    subtypes = [IObject]
+    subtypes = [IObject],
+    acl = ((Allow, Everyone, 'view'),)
 )
 
 type1 = ObjectConf(
@@ -27,7 +28,8 @@ type1 = ObjectConf(
     hidden = False,
     dbparam = u"data1",
     context = "nive.components.objects.base.ObjectContainerBase",
-    subtypes = [IObject]
+    subtypes = [IObject],
+    acl = ((Allow, Everyone, 'view'),)
 )
 type1.data = [
     FieldConf(id="ftext", datatype="text", size=1000, name=u"ftext", fulltext=1),
