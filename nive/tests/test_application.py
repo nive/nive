@@ -407,7 +407,7 @@ class appTest_db:
         
         # should reopen the connection
         self.app.Close()
-        self.assertFalse(self.app.db.usedconnection.IsConnected())
+        self.assert_(self.app.db.usedconnection.IsConnected())
         self.assert_(self.app.LookupObj(id))
 
 

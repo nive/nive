@@ -364,6 +364,8 @@ class BaseView(object):
         self.request.view_name = name
         try:
             value = render_view(obj, self.request, name, secure)
+            if value is None:
+                value = ""
         except HTTPNotFound:
             value = "Not found!"
         except HTTPForbidden:
@@ -742,6 +744,8 @@ class BaseView(object):
         """
         if not request:
             request = self.request
+        if method is None and hasattr(self.request, "method"):
+            method = self.request.method
         try:
             if method == "POST":
                 if request.content_type=="application/json":
@@ -799,7 +803,8 @@ class BaseView(object):
         """
         if not request:
             request = self.request
-        #method = method or request.method
+        if method is None and hasattr(self.request, "method"):
+            method = self.request.method
         try:
             if method == "POST":
                 if request.content_type=="application/json":
