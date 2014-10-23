@@ -37,7 +37,8 @@ class File(object):
                  fileid=0, 
                  uid="", 
                  tempfile=False, 
-                 filedict=None, 
+                 filedict=None,
+                 mtime=None,
                  fileentry=None):
         self.filekey = filekey
         self.filename = filename
@@ -48,6 +49,7 @@ class File(object):
         self.path = path
         self.extension = extension
         self.tempfile = tempfile
+        self._mtime = mtime
         if fileentry:
             self.fileentry = weakref.ref(fileentry)
         else:
@@ -145,8 +147,9 @@ class File(object):
             return None
         return self._Path()
     
+    @property
     def mtime(self):
-        return os.path.getmtime(self.abspath())
+        return self._mtime or os.path.getmtime(self.abspath())
 
 
     def commitTemp(self, fileentry):

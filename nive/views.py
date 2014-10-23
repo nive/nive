@@ -471,7 +471,7 @@ class BaseView(object):
         """
         if not file:
             return HTTPNotFound()
-        last_mod = file.mtime()
+        last_mod = file.mtime
         if not last_mod:
             last_mod = self.context.meta.pool_change
         r = Response(content_type=str(GetMimeTypeExtension(file.extension)), conditional_response=True)
