@@ -1355,7 +1355,7 @@ class Entry(object):
 
     # Transactions ------------------------------------------------------------------------
 
-    def Commit(self, user=""):
+    def Commit(self, user="", dbCommit=True):
         """
         Commit temporary changes (meta, data, files) to database
         """
@@ -1371,7 +1371,8 @@ class Entry(object):
             # files
             if self.files.HasTemp():
                 self.CommitFiles(self.files.GetTemp(), cursor=cursor)
-            self.pool.Commit()
+            if dbCommit:
+                self.pool.Commit()
             cursor.close()
             # remove previous files
             self.Cleanup(self.files.GetTemp())

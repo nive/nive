@@ -12,7 +12,7 @@ See :py:mod:`nive.components.objects.base` for subclassing containers.
 from time import time
 from datetime import datetime
 
-from nive.definitions import Conf
+from nive.definitions import Conf, baseConf
 from nive.definitions import StagContainer, StagRessource, MetaTbl
 from nive.definitions import IContainer, ICache, IObject, IConf 
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
@@ -271,7 +271,11 @@ class ContainerEdit:
             user = the currently active user
             **kw = version information
             returns the new object or None
-            
+
+        Keyword options:
+
+        - nocommit: pass `nocommit=True` to skip a database commit after creation.
+
         Events
         
         - beforeAdd(data=data, type=type, user=user, kw) called for the container
@@ -289,7 +293,7 @@ class ContainerEdit:
             raise ConfigurationError, "Type not found (%s)" % (str(type))
 
         # allow subobject
-        if not self.IsTypeAllowed(type, user):
+        if not self.IsTypeAllowed(typedef, user):
             raise ContainmentError, "Add type not allowed here (%s)" % (str(type))
 
         if not self.WfAllow("add", user=user):
@@ -304,7 +308,7 @@ class ContainerEdit:
             obj.CreateSelf(data, user=user, **kw)
             self.WfAction("add", user=user)
             obj.Signal("create", user=user, **kw)
-            if app.configuration.autocommit:
+            if not kw.get("no-commit") and app.configuration.autocommit:
                 obj.CommitInternal(user=user)
         except Exception, e:
             #try:
@@ -316,6 +320,35 @@ class ContainerEdit:
             db.Undo()
             raise 
         self.Signal("afterAdd", obj=obj, user=user, **kw)
+        return obj
+
+
+    def CreateWithoutEventsAndSecurity(self, typedef, data, user, **kw):
+        """
+        Creates a new sub object. Unlike `Create` this function does not trigger any events
+        or workflow actions. Subtype configuration is not validated.
+        Also commit is not called. Can be used to speed up batch creation. ::
+
+            typedef = object type configuration
+            data = dictionary containing data for the new object
+            user = the currently active user
+            **kw = version information
+            returns the new object or None
+
+        """
+        app = self.app
+        db = app.db
+        dbEntry = None
+        try:
+            dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
+            obj = self._GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj.UpdateInternal(data)
+            obj.meta["pool_type"] = typedef.id
+            obj.meta["pool_unitref"] = obj.parent.id
+            obj.meta["pool_stag"] = obj.selectTag
+        except Exception, e:
+            db.Undo()
+            raise
         return obj
 
 
@@ -584,24 +617,34 @@ class ContainerSecurity:
         - configuration object
         - type object instance
         """
-        if not type:
+        if type is None:
             return False
         subtypes = self.configuration.subtypes
         if subtypes == AllTypesAllowed:
             return True
         if not subtypes:
             return False
+
         if isinstance(type, basestring):
             if type in subtypes:
                 return True
             # dotted python to obj configuration
             type = self.app.GetObjectConf(type)
-            if not type:
+            if type is None:
                 return False
             # create type from configuration
             type = self._GetVirtualObj(type)
-            if not type:
+            if type is None:
                 return False
+
+        if isinstance(type, baseConf):
+            if type.id in subtypes:
+                return True
+            # create type from configuration
+            type = self._GetVirtualObj(type)
+            if type is None:
+                return False
+
         if not IObject.providedBy(type) and not IConf.providedBy(type):
             return False
         # loop subtypes

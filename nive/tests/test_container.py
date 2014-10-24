@@ -130,6 +130,35 @@ class containerTest_db:
         r.Delete(newO.GetID(), user=user)
         self.assertEqual(ccc, a.db.GetCountEntries())
         
+    def test_createobjs_simple(self):
+        #print "Testing new object creation, values and delete"
+        a=self.app
+        r=root(a)
+        # create
+        user = User(u"test")
+        ccc = a.db.GetCountEntries()
+
+        typedef = a.GetObjectConf("type1")
+        data = data1_1
+
+        o1 = r.CreateWithoutEventsAndSecurity(typedef, data, user)
+        self.assert_(o1)
+        self.remove.append(o1.id)
+        o1.Commit(user)
+        self.assert_(r.obj(o1.id))
+
+        o2 = r.CreateWithoutEventsAndSecurity(typedef, data, user)
+        self.assert_(o2)
+        self.remove.append(o2.id)
+        o2.Commit(user)
+        self.assert_(r.obj(o2.id))
+
+        o3 = o2.CreateWithoutEventsAndSecurity(typedef, data, user)
+        self.assert_(o3)
+        self.assert_(o3.parent.id==o2.id)
+        o3.Commit(user)
+        self.assert_(o2.obj(o3.id))
+
 
     def test_lists(self):
         #print "Testing objects and subobjects"
