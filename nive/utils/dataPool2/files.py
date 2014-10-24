@@ -644,7 +644,7 @@ class FileIterable(object):
 
 
 class FileIterator(object):
-    chunk_size = 4096*20
+    chunk_size = 10*1024
 
     def __init__(self, file, start, stop):
         if isinstance(file, basestring):
