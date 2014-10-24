@@ -1180,17 +1180,17 @@ class FileUploadWidget2(Widget):
             return null
         try:
             cls = self.form.app.db.GetFileClass()
-            file = cls()
         except AttributeError:
-            file = File()
-        file.filename = pstruct.filename
-        file.file = pstruct.file
-        file.filekey = field.name
-        if hasattr(pstruct, "length"):
-            file.size = pstruct.length
+            cls = File
+        file = cls(
+            filename = pstruct.filename,
+            file = pstruct.file,
+            filekey = field.name,
+            size = pstruct.length if hasattr(pstruct, "length") else -1,
+            tempfile = True
+        )
         if hasattr(pstruct, "type"):
             file.mime = pstruct.type
-        file.tempfile = True
         return file
 
 
