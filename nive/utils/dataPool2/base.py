@@ -810,7 +810,7 @@ class Base(object):
         c.execute(sql, values)
         n = c.fetchone()
         c.close()
-        return n!=None
+        return n is not None
 
 
     def GetBatch(self, ids, **kw):
