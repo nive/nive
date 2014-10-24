@@ -1469,7 +1469,11 @@ class SchemaNode(object):
 
         if self.validator is not None:
             if not isinstance(self.validator, deferred): # unbound
-                self.validator(self, appstruct)
+                if isinstance(self.validator, (list,tuple)):
+                    for v in self.validator:
+                        v(self, appstruct)
+                else:
+                    self.validator(self, appstruct)
         return appstruct
 
     def add(self, node):
