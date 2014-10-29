@@ -4,6 +4,7 @@ import string
 import StringIO
 import copy
 import base64
+import os
 
 from nive.i18n import _
 from nive.definitions import Conf
@@ -1189,6 +1190,14 @@ class FileUploadWidget2(Widget):
             size = pstruct.length if hasattr(pstruct, "length") else -1,
             tempfile = True
         )
+        # check file size, might be -1
+        if 0 and file.size==-1 and file.file:
+            file.file.seek(0, os.SEEK_END)
+            size = file.file.tell()
+            # reset
+            file.file.seek(0)
+            if size:
+                file.size = size
         if hasattr(pstruct, "type"):
             file.mime = pstruct.type
         return file
