@@ -927,7 +927,7 @@ from zope.interface import implementer
 from pyramid.interfaces import IExceptionResponse
 
 @implementer(IExceptionResponse)
-class ExceptionalResponse(Response, Exception):
+class ExceptionalResponse(HTTPFound):
     def __init__(self, headers=None, **kw):
         self.detail = self.message = kw.get("status","Response")
         Response.__init__(self, **kw)
