@@ -77,10 +77,8 @@ Configurations
 
 import copy
 
-from zope.interface import Interface, Attribute, implements, Provides, alsoProvides, directlyProvidedBy, directlyProvides
-
+from zope.interface import Interface, implements
 from pyramid.path import DottedNameResolver
-from pyramid.renderers import render
 
 from nive.i18n import _
 
@@ -161,10 +159,6 @@ class IPortalConf(Interface):
 class IFieldConf(Interface):
     pass
 class IGroupConf(Interface):
-    pass
-class IAclConf(Interface):
-    pass
-class ICategoryConf(Interface):
     pass
 class IWorkflowConf(Interface):
     pass
@@ -339,6 +333,16 @@ class baseConf(object):
         self.__dict__["locked"] = 0
     
 
+class Conf(baseConf):
+    """
+    Configuration class with no predefined fields
+
+    Interface: IConf
+    """
+    implements(IConf)
+
+
+
 class FieldConf(baseConf):
     """
     Definition of a field used for object.data, object.meta, form.field and tool.data
@@ -471,7 +475,7 @@ class AppConf(baseConf):
         modules : List of included configurations. Calls nive.Registration.Include for 
                   each module on startup. 
                   Refer to helper.ResolveConfiguration for possible values. 
-        categories : list of CategoryConf definitions.
+        categories : list of categories {'id': 'the id', 'name': 'the name'}.
         listDefault: list of meta field names to be used as default list fields in
                      database query results.
     
@@ -1353,60 +1357,13 @@ class GroupConf(baseConf):
         baseConf.__init__(self, copyFrom, **values)
 
 
-class AclConf(baseConf):
-    """
-    Configuration of a acl definition 
-
-    Values ::
-
-        access : Access definition. Allow or Deny.
-        principal : User/Group to map this acl to. Group or 'Everyone'. 
-        permission : Permission name of this acl. custom string or 'ALL_PERMISSIONS'
-
-    Interface: IGroupConf
-    """
-    implements(IAclConf)
-    
-    def __init__(self, copyFrom=None, **values):
-        self.access = Allow
-        self.principal = u""
-        self.permission = u""
-        baseConf.__init__(self, copyFrom, **values)
-
-
-class CategoryConf(baseConf):
-    """
-    Configuration of a category
-
-    id : Unique type id as ascii string with maximum 25 chars.
-    name : Display name. 
-    hidden : Hide in select lists in user interface.
-    description : Description.
-    """
-    implements(ICategoryConf)
-    
-    def __init__(self, copyFrom=None, **values):
-        self.id = ""
-        self.name = u""
-        self.hidden = False
-        self.description = u""
-        baseConf.__init__(self, copyFrom, **values)
-
-
-class Conf(baseConf):
-    """
-    Configuration class with no predefined fields
-    
-    Interface: IConf
-    """
-    implements(IConf)
-    
-        
 
 
 class ConfigurationError(Exception):
     pass
 class ContainmentError(Exception):
+    pass
+class ConnectionError(Exception):
     pass
 class OperationalError(Exception):
     pass

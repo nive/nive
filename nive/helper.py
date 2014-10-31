@@ -15,7 +15,7 @@ from pyramid.renderers import JSON
 
 from nive.definitions import (
     IAppConf, IDatabaseConf, IFieldConf, IRootConf, IObjectConf, IViewModuleConf,
-    IViewConf, IToolConf, IPortalConf, IGroupConf, ICategoryConf, IModuleConf,
+    IViewConf, IToolConf, IPortalConf, IGroupConf, IModuleConf,
     IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf, IFileStorage
 )
 from nive.definitions import baseConf
@@ -75,7 +75,7 @@ def ResolveConfiguration(conf, base=None):
     - Path and file name to .json file. requires `type` set to one of the 
       configuration types: 
       *AppConf, FieldConf, DatabaseConf, RootConf, ObjectConf, ViewModuleConf, ViewConf, ToolConf, 
-      GroupConf, CategoryConf*
+      GroupConf*
     - Dotted python name for configuration object including attribute name of configuration instance.
     - Dotted python name for object. Uses the convention to load the configuration from the 
       'configuration' attribute of the referenced object.
@@ -126,7 +126,6 @@ def ResolveConfiguration(conf, base=None):
     if IToolConf.providedBy(conf): return IToolConf, conf
     if IPortalConf.providedBy(conf): return IPortalConf, conf
     if IGroupConf.providedBy(conf): return IGroupConf, conf
-    if ICategoryConf.providedBy(conf): return ICategoryConf, conf
     if IModuleConf.providedBy(conf): return IModuleConf, conf
     if IWidgetConf.providedBy(conf): return IWidgetConf, conf
     if IWfProcessConf.providedBy(conf): return IWfProcessConf, conf
