@@ -25,7 +25,10 @@ class LocalGroups(object):
         self.ListenEvent("create", "AddOwner")
         self.ListenEvent("delete", "RemoveGroups")
         self._secid = self._secid or self.id or self.idhash
-        
+
+    @property
+    def securityID(self):
+        return self._secid
     
     def GetLocalGroups(self, username, user=None):
         """
