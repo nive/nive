@@ -899,11 +899,11 @@ class HTMLForm(Form):
                 action = a
                 try:
                     del self.request.POST[a["id"]+self.actionPostfix]
-                except:
+                except (AttributeError, KeyError):
                     pass
                 try:
                     del self.request.GET[a["id"]+self.actionPostfix]
-                except:
+                except (AttributeError, KeyError):
                     pass
             
 

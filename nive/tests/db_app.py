@@ -69,8 +69,8 @@ data3 = []
 data3.append(FieldConf(**{"id":u"fstr", "datatype": "string", "size": 100, "name": u"fstr", "fulltext": 1}))
 type3.data = data3
 
-cat1 = CategoryConf(**{u"id":u"cat1", u"name":u"Category 1"})
-cat2 = CategoryConf(**{u"id":u"cat2", u"name":u"Category 2"})
+cat1 = Conf(**{u"id":u"cat1", u"name":u"Category 1"})
+cat2 = Conf(**{u"id":u"cat2", u"name":u"Category 2"})
 
 group1 = GroupConf(**{u"id":u"group1", u"name":u"Group 1"})
 group2 = GroupConf(**{u"id":u"group2", u"name":u"Group 2"})
@@ -94,14 +94,14 @@ appconf.meta.append(FieldConf(id="pool_wfa", datatype="string", size=20, name=u"
 appconf.meta.append(FieldConf(id="pool_wfp", datatype="string", size=20, name=u"Workflow"))
 
 # test data -----------------------------------------------------------------------
-data1_1 = { u"ftext": "this is text!",
+data1_1 = { u"ftext": u"this is text!",
             u"fnumber": 123456,
             u"fdate": "2008/06/23 16:55:00",
             u"flist": ["item 1", "item 2", "item 3"],
             u"fmselect": "item 5",
             u"funit": 35,
             u"funitlist": [34, 35, 36],
-            u"pool_filename":"äüöß and others",
+            u"pool_filename":u"äüöß and others",
             u"pool_type": "type1"}
 data2_1 = { u"fstr": u"this is sting!",
             u"ftext": u"this is text!",
@@ -110,11 +110,11 @@ data2_1 = { u"fstr": u"this is sting!",
 data3_1 = { u"pool_filename": u"title data 3",
             u"fstr": u"testing type 3!"}
 
-data1_2 = { u"ftext": "this is a new text!",
+data1_2 = { u"ftext": u"this is a new text!",
             u"funit": 0,
-            u"pool_filename":"new title data 1"}
-data2_2 = { u"fstr": "this is new sting!",
-            u"pool_filename": "new title data 2"}
+            u"pool_filename":u"new title data 1"}
+data2_2 = { u"fstr": u"this is new sting!",
+            u"pool_filename": u"new title data 2"}
 
 file2_1_data="This is the first text"
 file2_2_data=u"This is the text in the second file"

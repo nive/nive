@@ -338,16 +338,18 @@ class objToolTest_db:
     """
     """
     def setUp(self):
-        self.app = app()
+        self._loadApp()
 
     def tearDown(self):
         self.app.Close()
         pass
 
     
+    """
     def test_tools(self):
         GetTool(name)
         GetTools(user)
+    """
 
 class objToolTest_db_: #(objToolTest_db, unittest.TestCase):
     """
@@ -357,13 +359,14 @@ class objWfTest_db:
     """
     """
     def setUp(self):
-        self.app = app()
+        self._loadApp()
 
     def tearDown(self):
         self.app.Close()
         pass
 
     
+    """
     def test_wf(self):
         GetWorkflow()
         GetNewWfID()
@@ -377,7 +380,8 @@ class objWfTest_db:
         GetWfData(state = None, key = None)
         DeleteWfData(user, state = None, key = None)
         GetWfLog(lastEntryOnly=1)
-        AddWfLog(action, transition, user, comment="")    
+        AddWfLog(action, transition, user, comment="")
+    """
 
 
 class objWfTest_db_:#(objWfTest_db, unittest.TestCase):

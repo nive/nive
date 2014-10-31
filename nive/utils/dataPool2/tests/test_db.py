@@ -159,7 +159,7 @@ class dbTest(object):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
         s=e.GetFile(u"file2")
-        s.read()
+        d=s.read()
         s.close()
         self.assert_(d == file1_2)
         #print "OK"
@@ -522,10 +522,12 @@ class dbTest(object):
         self.pool.RemoveGroups(id=id)
         self.assertFalse(self.pool.GetGroups(id, userid, group))
         self.assertFalse(self.pool.GetGroups(id))
+        self.assertFalse(self.pool.GetGroups((id,id)))
         self.pool.AddGroup(id, userid, group)
         self.assert_(self.pool.GetGroups(id, userid, group))
         self.assert_(self.pool.GetGroups(id))
-        
+        self.assert_(self.pool.GetGroups((id,id)))
+
         self.pool.RemoveGroups(userid=userid, group=group, id=id)
         self.assertFalse(self.pool.GetGroups(id, userid, group))
 

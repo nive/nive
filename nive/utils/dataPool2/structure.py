@@ -358,7 +358,7 @@ class PoolStructure(object):
         if not fieldtype:
             # no datatype information set
             if isinstance(value, datetime):
-                return value.strftime("%Y-%m-%d %H:%M:%S")
+                return value.strftime(u"%Y-%m-%d %H:%M:%S")
             elif isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:

@@ -234,27 +234,27 @@ class WfTransitionConf(baseConf):
         report = []
         #check id
         if not self.id:
-            report.append((ConfigurationError, " WfTransitionConf.id is empty", self))
+            report.append((ConfigurationError, u" WfTransitionConf.id is empty", self))
         # check context
         o = TryResolveName(self.context)
         if not o:
-            report.append((ImportError, " for WfTransitionConf.context", self))
+            report.append((ImportError, u" for WfTransitionConf.context", self))
         #check from state
         if not self.fromstate:
-            report.append((ConfigurationError, " WfTransitionConf.fromstate is empty", self))
+            report.append((ConfigurationError, u" WfTransitionConf.fromstate is empty", self))
         #check to state
         if not self.tostate:
-            report.append((ConfigurationError, " WfTransitionConf.tostate is empty", self))
+            report.append((ConfigurationError, u" WfTransitionConf.tostate is empty", self))
         for c in self.conditions:
             if isinstance(c, basestring):
                 o=TryResolveName(c)
                 if not o:
-                    report.append((ConfigurationError, " WfTransitionConf.conditions not found: "+c, self))
+                    report.append((ConfigurationError, u" WfTransitionConf.conditions not found: "+c, self))
         for c in self.execute:
             if isinstance(c, basestring):
                 o=TryResolveName(c)
                 if not o:
-                    report.append((ConfigurationError, " WfTransitionConf.execute not found: "+c, self))
+                    report.append((ConfigurationError, u" WfTransitionConf.execute not found: "+c, self))
         return report
 
 
@@ -424,13 +424,13 @@ class Process(object):
         
         returns dict
         """
-        state = transition = None
+        state = transitions = None
         if extended:
             wfa = context.GetWfState()
             state = self.GetState(wfa)
             transitions = self.PossibleTransitions(wfa, user=user, context=context)
-        return {"id": self.id,
-                "name": self.name,
+        return {"id": self.configuration.id,
+                "name": self.configuration.name,
                 "state": state,
                 "transitions": transitions,
                 "process": self,

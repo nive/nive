@@ -189,6 +189,7 @@ class File(object):
             tempPath.Delete()
         tempPath.CreateDirectories()
         size = 0
+        out = None
         try:
             out = open(tempPath.GetStr(), "wb")
             data = self.read(10000)
@@ -201,13 +202,18 @@ class File(object):
             out.close()
             #file.close()
         except Exception, e:
-            try:    self.file.close()
-            except: pass
-            try:    out.close()
-            except: pass
+            try:
+                self.file.close()
+            except:
+                pass
+            try:
+                if out is not None:
+                    out.close()
+            except:
+                pass
             # reset old file
             tempPath.Delete()
-            raise Exception, e
+            raise
 
         # store path for cleanup on success
         if str(originalPath) and originalPath.Exists():

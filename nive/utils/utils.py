@@ -332,12 +332,14 @@ def ConvertToInt(data, raiseExcp = False):
     try:
         return int(data)
     except:
-        if ConvertToBool(data, raiseExcp):
-            return 1
-        else:
-            return 0
-        if raiseExcp:
-            raise 
+        try:
+            if ConvertToBool(data, raiseExcp):
+                return 1
+            else:
+                return 0
+        except:
+            if raiseExcp:
+                raise
         return 0
 
 def ConvertToFloat(data, raiseExcp = False):
@@ -356,12 +358,14 @@ def ConvertToLong(data, raiseExcp = False):
     try:
         return long(data)
     except:
-        if ConvertToBool(data, raiseExcp):
-            return 1L
-        else:
-            return 0L
-        if raiseExcp:
-            raise 
+        try:
+            if ConvertToBool(data, raiseExcp):
+                return 1L
+            else:
+                return 0L
+        except:
+            if raiseExcp:
+                raise
         return 0L
 
 def ConvertToList(data, raiseExcp = False):
@@ -449,6 +453,7 @@ def ConvertDictToStr(values, sep = u"\n"):
 
 
 def StrAscii(s):
+    import string
     return filter(lambda x: x in string.ascii_lowercase+"0123456789_.", s.lower())
 
 
@@ -458,12 +463,10 @@ def StrAscii(s):
 def DUMP(data, path = "dump.txt", addTime=False):
     if addTime:
         date = datetime.now()
-        aS = "\r\n\r\n" + date.strftime("%Y-%m-%d %H:%M:%S") + "\r\n" + str(data)
+        value = "\r\n\r\n" + date.strftime("%Y-%m-%d %H:%M:%S") + "\r\n" + str(data)
     else:
-        aS = "\r\n\r\n" + str(data)
+        value = "\r\n\r\n" + str(data)
     file = open(path, "ab+")
-    if not file:
-        return 
     file.write(value)
     file.close()
 

@@ -36,15 +36,12 @@ import time
 import logging
 import ConfigParser
 
-from pyramid.events import NewRequest
-
 from nive.i18n import _
 from nive.definitions import PortalConf, Conf, baseConf
 from nive.definitions import implements
 from nive.definitions import ConfigurationError
-from nive.definitions import IModuleConf, IAppConf, IConf
+from nive.definitions import IModuleConf, IAppConf
 from nive.definitions import IPortal, IApplication
-from nive.definitions import ModuleConf
 from nive.helper import ResolveConfiguration, ResolveName
 from nive.helper import ClassFactory
 from nive.security import User, authenticated_userid, Allow, ALL_PERMISSIONS

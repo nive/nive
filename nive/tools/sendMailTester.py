@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
+
+# Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
 # Released under GPL3. See license.txt
 #
 
@@ -8,14 +9,10 @@ Test version of nive.tools.sendMail. Use `sendMailTester` as a replacement for `
 or to disable actual mail delivery
 """
 
-import types, string
-import time
 import logging
 
 from nive.utils.utils import ConvertToList
-from nive.definitions import ConfigurationError
-from nive.definitions import ToolConf, FieldConf
-from nive.tool import Tool
+from nive.definitions import ToolConf
 from nive.tools.sendMail import sendMail
 from nive.i18n import _
 
@@ -119,7 +116,6 @@ class sendMailTester(sendMail):
         result = 1
         if showToListInHeader:
             self.stream.write((u", ").join(r))
-            mailer.quit()
         else:
             for recv in recvs:
                 self.stream.write(recv[0] + u" ok, ")
@@ -136,28 +132,3 @@ class sendMailTester(sendMail):
             return u'"%s" <%s>' % (mail[1], mail[0])
         return mail[0]
         
-
-    def _GetRecv(self, recvids, recvrole, force, app):
-        try:
-            userdb = app.root()
-            userdb.GetUsersWithRole
-        except:
-            try:
-                userdb = app.portal.userdb.GetRoot()
-            except:
-                return []
-        recvList = []
-        # check roles
-        recvids2 = []
-        if recvrole:
-            recvids2 = userdb.GetUsersWithRole(recvrole, activeOnly=not force)
-        # get users
-        if recvids:
-            if isinstance(recvids, basestring):
-                recvids = ConvertToList(recvids)
-            for user in userdb.GetUserInfos(recvids+recvids2, ["name", "email", "title"], activeOnly=not force):
-                if user and user["email"] != u"":
-                    if force or user.get("notify", 1):
-                        recvList.append([user["email"], user["title"]])
-        return recvList
-

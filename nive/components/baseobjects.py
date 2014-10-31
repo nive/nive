@@ -15,6 +15,7 @@ from nive.events import Events
 from nive.search import Search
 from nive.definitions import implements
 from nive.definitions import IApplication, IContainer, IRoot, IReadonly, INonContainer, IObject
+# bw 0.9.12: might be used by other files
 from nive.definitions import IPage, IPageContainer, IPageElement, IFile, IPageElementContainer, IFolder
 
 

@@ -36,6 +36,7 @@ from nive.utils.utils import ConvertToStr, ConvertListToStr, ConvertToDateTime
 from nive.utils.utils import FmtSeconds, FormatBytesForDisplay, CutText, GetMimeTypeExtension
 from nive import FileNotFound
 from nive.definitions import IPage, IObject, IViewModuleConf
+from nive.definitions import ConfigurationError
 
 
 
@@ -1121,7 +1122,7 @@ class FieldRenderer(object):
             return data
 
         elif fType == "unitlist":
-            if(type(data) == ListType):
+            if isinstance(data, (list, tuple)):
                 return ConvertListToStr(data)
             return str(data)
 

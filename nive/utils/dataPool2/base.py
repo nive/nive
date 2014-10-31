@@ -5,15 +5,14 @@
 __doc__ = "Data Pool 2 SQL Base Module"
 
 import weakref
-from time import time
 from datetime import datetime
 
 from nive.utils.utils import ConvertToDateTime
 from nive.utils.utils import ConvertListToStr
-from nive.utils.utils import STACKF, DUMP
+from nive.utils.utils import STACKF
 from nive.utils.path import DvPath
 
-from nive.definitions import ConfigurationError, OperationalError, ProgrammingError, Warning
+from nive.definitions import ConfigurationError, OperationalError, ProgrammingError, ConnectionError, Warning
 
 from nive.utils.dataPool2.structure import PoolStructure, DataWrapper, MetaWrapper, FileWrapper
 
@@ -430,7 +429,7 @@ class Base(object):
         return u"LIMIT %s" % (unicode(max))
 
 
-    def GetFulltextSQL(self, searchPhrase, flds, parameter, dataTable = "", **kw):
+    def GetFulltextSQL(self, searchPhrase, flds, parameter, dataTable = u"", **kw):
         """
         generate sql statement for fulltext query
 
@@ -447,15 +446,15 @@ class Base(object):
         if not searchPhrase in (u"", u"'%%'", None):
             if sql.find(u"WHERE ") == -1:
                 if sql.find(u"ORDER BY ") != -1:
-                    sql = sql.replace(u"ORDER BY ", "WHERE %s \r\n        ORDER BY " % (phrase))
+                    sql = sql.replace(u"ORDER BY ", u"WHERE %s \r\n        ORDER BY " % (phrase))
                 elif sql.find(u"LIMIT ") != -1:
-                    sql = sql.replace(u"LIMIT ", "WHERE %s \r\n        LIMIT " % (phrase))
+                    sql = sql.replace(u"LIMIT ", u"WHERE %s \r\n        LIMIT " % (phrase))
                 else:
                     sql += u"WHERE %s " % (phrase)
             else:
-                sql = sql.replace(u"WHERE ", "WHERE %s AND " % (phrase))
+                sql = sql.replace(u"WHERE ", u"WHERE %s AND " % (phrase))
 
-        sql = sql.replace(u"FROM %s AS meta__"%(self.MetaTable), "FROM %s AS meta__\r\n        LEFT JOIN %s ON (meta__.id = %s.id)"%(self.MetaTable, self.FulltextTable, self.FulltextTable))
+        sql = sql.replace(u"FROM %s AS meta__"%(self.MetaTable), u"FROM %s AS meta__\r\n        LEFT JOIN %s ON (meta__.id = %s.id)"%(self.MetaTable, self.FulltextTable, self.FulltextTable))
         return sql, values
     
     
@@ -564,6 +563,7 @@ class Base(object):
         if not cursor:
             cc = 1
             cursor = self.connection.cursor()
+        result = ()
         try:
             cursor.execute(sql, dataList)
             result = cursor.fetchall()
@@ -960,7 +960,7 @@ class Base(object):
         return ids
 
 
-    def GetTree(self, flds=[u"id"], sort=u"title", base=0, parameter=u""):
+    def GetTree(self, flds=None, sort=u"title", base=0, parameter=u""):
         """
         Loads a subtree as dictionary. 
         The returned dictionary has the following format:
@@ -968,6 +968,8 @@ class Base(object):
         
         id needs to be first field, pool_unitref second
         """
+        if flds is None:
+            flds = [u"id"]
         refs = u"""
         pool_unitref as ref1,
         (select pool_unitref from %(meta)s where id = ref1) as ref2,
@@ -1163,21 +1165,31 @@ class Base(object):
     def GetGroups(self, id, userid=None, group=None):
         """
         Get local group assignment for userid.
-        
+
+        `id` can be a single value or a tuple. If its a tuple the groups for
+        all matching ids are returned.
+
         returns a group assignment list [["userid", "groupid", "id"], ...]
         """
         # check if exists
-        p = {}
+        parameter = {}
         
         if id!=None:
-            p["id"] = id
+            parameter[u"id"] = id
         else:
             raise TypeError, "id must not be none"
         if userid:
-            p["userid"] = userid
+            parameter[u"userid"] = userid
         if group:
-            p["groupid"] = group
-        sql, values = self.FmtSQLSelect(["userid", "groupid", "id"], parameter=p, dataTable = self.GroupsTable, singleTable=1)
+            parameter[u"groupid"] = group
+        operators = {}
+        if isinstance(id, (list, tuple)):
+            operators[u"id"] = u"IN"
+        sql, values = self.FmtSQLSelect([u"userid", u"groupid", u"id"],
+                                        parameter=parameter,
+                                        operators=operators,
+                                        dataTable=self.GroupsTable,
+                                        singleTable=1)
         r = self.Query(sql, values)
         return r
 
@@ -1722,7 +1734,7 @@ class Entry(object):
 
     # SQL functions -------------------------------------------------------------------------------------------
 
-    def _GetFld(self, sql):
+    def _GetFld(self, sql, values):
         """
         select single field from sql
         """
@@ -1730,7 +1742,7 @@ class Entry(object):
             cursor = self.pool.connection.cursor()
             if self.pool._debug:
                 STACKF(0,sql+"\r\n",self.pool._debug, self.pool._log,name=self.pool.name)
-            cursor.execute(sql)
+            cursor.execute(sql, values)
             r = cursor.fetchone()
             cursor.close()
             return r[0]
@@ -1923,5 +1935,3 @@ class NotFound(Exception):
 class FileNotFound(Exception):
     """ raised if physical file not found """
 
-class ConnectionError(Exception):
-    """ No connection """

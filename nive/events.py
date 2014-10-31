@@ -46,7 +46,6 @@ to the __init__ function: ::
     
 """
 
-import weakref
 import inspect
 
 class Events(object):

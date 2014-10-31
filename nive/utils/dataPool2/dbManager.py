@@ -2,12 +2,11 @@
 # Released under GPL3. See license.txt
 #
 
-import os, sys
-import string, time, cPickle, re, types
+import string, time
 from datetime import datetime
 
-from nive.utils.path import DvPath
 from nive.utils.utils import ConvertToDateTime
+from nive.definitions import ConfigurationError, OperationalError
 
 
 

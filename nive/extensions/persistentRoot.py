@@ -1,5 +1,4 @@
 
-import json
 from datetime import datetime
 
 from nive.definitions import Conf, IConf 

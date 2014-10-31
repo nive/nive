@@ -9,9 +9,8 @@ Data Pool MySql Module
 """
 
 
-import string, re, os
 import threading
-from time import time, localtime
+from nive.definitions import OperationalError, ConfigurationError
 
 try:
     import MySQLdb
@@ -163,7 +162,7 @@ class MySql(FileManager, Base):
             table = self.MetaTable
         if table == self.MetaTable:
             if not dataTbl:
-                raise "Missing data table", "Entry not created"
+                raise ConfigurationError("Missing data table - Entry not created")
 
             # sql insert empty rec in meta table
             if self._debug:

@@ -166,7 +166,7 @@ class sendMail(Tool):
         result = 1
         if showToListInHeader:
             result = mailer.Send3(fromMail, recvs, title, body, fromName=sendername, inTo=to, contentType=contentType, cc=cc, bcc=bcc, sender=senderMail, replyTo=replyTo)
-            self.stream.write((u", ").join(r))
+            self.stream.write(result)
             mailer.quit()
         else:
             for recv in recvs:
@@ -203,14 +203,9 @@ class sendMail(Tool):
         
 
     def _GetRecv(self, recvids, recvrole, force, app):
-        try:
-            userdb = app.root()
-            userdb.GetUsersWithRole
-        except:
-            try:
-                userdb = app.portal.userdb.GetRoot()
-            except:
-                return []
+        userdb = app.root()
+        if not hasattr(userdb, "GetUsersWithRole"):
+            userdb = app.portal.userdb.GetRoot()
         recvList = []
         # check roles
         recvids2 = []

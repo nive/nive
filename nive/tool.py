@@ -38,6 +38,7 @@ Subclass and overwrite ``def _Run()`` function. Use self.stream to write result 
 from StringIO import StringIO
 
 from nive.definitions import Interface, ITool, implements
+from nive.definitions import ConfigurationError
 from nive.views import BaseView
 from nive.forms import ToolForm
 

@@ -18,7 +18,7 @@ from nive.tests import __local
 
 mApp = AppConf(id="app", 
                groups=[GroupConf(id="g1",name="G1")], 
-               categories=[CategoryConf(id="c1",name="C1")], 
+               categories=[Conf(id="c1",name="C1")],
                modules = [DatabaseConf(dbName="test")],
                translations="nive:locale/")
 
@@ -43,14 +43,14 @@ mApp2 = AppConf(id="app2",
                 context="nive.tests.test_application.testapp",
                 modules=[mObject,mRoot,mTool,mViewm,mView,mMod,mDb], 
                 groups=[GroupConf(id="g1",name="G1")], 
-                categories=[CategoryConf(id="c1",name="C1")]
+                categories=[Conf(id="c1",name="C1")]
 )
 
 mAppErr = AppConf(id="app2", 
                 context="nive.tests.test_application.testapp",
                 modules=[mObject,mRoot,mTool,mViewm,mView,mMod], 
                 groups=[GroupConf(id="g1",name="G1")], 
-                categories=[CategoryConf(id="c1",name="C1")]
+                categories=[Conf(id="c1",name="C1")]
 )
 
 

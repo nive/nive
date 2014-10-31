@@ -88,8 +88,8 @@ class DbPersistence(PersistentConf):
         Uses a raw database connection to access the database to allow being called 
         before startup. 
         """
+        close = 0
         try:
-            close = 0
             if not db:
                 close = 1
                 db = self.app.NewDBApi()
@@ -141,8 +141,8 @@ class DbPersistence(PersistentConf):
         Uses the datapool class to access the database.
         """
         ts = time.time()
+        close = 0
         try:
-            close = 0
             if not db:
                 close = 1
                 db = self.app.db

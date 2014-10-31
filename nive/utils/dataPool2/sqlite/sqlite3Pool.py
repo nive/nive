@@ -9,13 +9,14 @@ Data Pool Sqlite Module
 
 import threading
 import sqlite3
-from time import time
 
 from nive.utils.utils import STACKF
+from nive.definitions import ConfigurationError
 
 from nive.utils.dataPool2.base import Base, Entry
 from nive.utils.dataPool2.base import NotFound
 from nive.utils.dataPool2.connection import Connection, ConnectionThreadLocal, ConnectionRequest
+from nive.utils.utils import ConvertListToStr
 
 from nive.utils.dataPool2.files import FileManager, FileEntry
 from nive.utils.dataPool2.sqlite.dbManager import Sqlite3Manager
@@ -167,11 +168,13 @@ class Sqlite3(FileManager, Base):
         return ids
 
 
-    def GetTree(self, flds=[u"id"], sort=u"title", base=0, parameter=u""):
+    def GetTree(self, flds=None, sort=u"title", base=0, parameter=u""):
         """
         select list of all entries
         id needs to be first field if flds
         """
+        if flds is None:
+            flds = [u"id"]
         def _Select(base, tree, flds, sql, cursor):
             cursor.execute(sql%(base))
             entries = cursor.fetchall()
@@ -205,7 +208,7 @@ class Sqlite3(FileManager, Base):
             table = self.MetaTable
         if table == self.MetaTable:
             if not dataTbl:
-                raise "Missing data table", "Entry not created"
+                raise ConfigurationError("Missing data table - Entry not created")
 
             # sql insert empty rec in data table
             if self._debug:

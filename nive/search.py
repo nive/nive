@@ -79,7 +79,7 @@ from nive.utils.utils import ConvertToNumberList
 from nive.views import FieldRenderer
 from nive.definitions import IFieldConf
 from nive.definitions import FieldConf
-from nive.definitions import ConfigurationError
+from nive.definitions import ConfigurationError, ConnectionError
 
 class Search:
     """    """
@@ -234,7 +234,7 @@ class Search:
 
         # convert records
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw)
+        skipRender, converter = self._PrepareRenderer(kw, fldList)
         items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
 
         # total records
@@ -307,7 +307,7 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw)
+        skipRender, converter = self._PrepareRenderer(kw, fldList)
         items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
 
         # total records
@@ -376,7 +376,7 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw)
+        skipRender, converter = self._PrepareRenderer(kw, fldList)
         items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
 
         # total records
@@ -453,7 +453,7 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw)
+        skipRender, converter = self._PrepareRenderer(kw, fldList)
         items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
         
         # total records
@@ -538,7 +538,7 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw)
+        skipRender, converter = self._PrepareRenderer(kw, fldList)
         items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
 
         # total records
@@ -712,7 +712,7 @@ class Search:
         return default_join
 
     
-    def _PrepareRenderer(self, kws):
+    def _PrepareRenderer(self, kws, fldList):
         # prepare field renderer
         converter = FieldRenderer(self)
         skipRender = kws.get("skipRender", False)
@@ -926,7 +926,7 @@ class Search:
             if len(recs) == 0:
                 return 0
             return recs[0][0]
-        return l
+        return recs
 
 
     def IDToFilename(self, id):

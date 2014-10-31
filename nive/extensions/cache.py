@@ -43,6 +43,7 @@ class ContainerCache:
         except:
             if self.cacheTypes:
                 return False
+        lock = None
         try:
             lock = thread.allocate_lock()
             lock.acquire(1)
@@ -62,6 +63,7 @@ class ContainerCache:
         if not self.useCache:
             return None
         n = self._Cachename(id)
+        lock = None
         try:
             lock = thread.allocate_lock()
             lock.acquire(1)
@@ -80,6 +82,7 @@ class ContainerCache:
         returns all cached objects
         """
         objs = []
+        lock = None
         try:
             lock = thread.allocate_lock()
             lock.acquire(1)

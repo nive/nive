@@ -1,9 +1,8 @@
 
-import time
 import unittest
-from types import DictType
 
 from nive.definitions import *
+from nive.helper import FormatConfTestFailure
 
 # -----------------------------------------------------------------
 class DummyClass(object):
@@ -282,7 +281,7 @@ class ConfTest(unittest.TestCase):
         self.assert_(repr(testconf))
     
     def test_obj11(self, **kw):
-        testconf = CategoryConf(
+        testconf = Conf(
             id = "category",
             name = "Category",
             hidden = True,

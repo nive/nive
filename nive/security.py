@@ -6,17 +6,18 @@ __doc__ = """
 User and security functions.
 """
 
-
+# imports used by other files
 from pyramid.security import Allow 
 from pyramid.security import Deny
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Everyone, Authenticated
 from pyramid.security import remember, forget, authenticated_userid
 from pyramid.security import has_permission
+
 from pyramid import threadlocal
 from pyramid.interfaces import IAuthenticationPolicy, IAuthorizationPolicy
 
-from nive.definitions import ModuleConf, Conf
+from nive.definitions import Conf
 from nive.definitions import Interface, implements
 
 

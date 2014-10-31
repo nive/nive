@@ -1,11 +1,10 @@
 # Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
 # Released under GPL3. See license.txt
 #
-import os, sys
-import string, time, cPickle, re, types
+import string, time
 
 from nive.utils.dataPool2.dbManager import DatabaseManager
-
+from nive.definitions import ConfigurationError
 
 
 try:    
@@ -22,6 +21,7 @@ class PostgresManager(DatabaseManager):
     modifyColumns = True
 
     def __init__(self):
+        # might not be imported on startup
         import psycopg2
         self.db = None
         self.dbConn = None
@@ -44,7 +44,7 @@ class PostgresManager(DatabaseManager):
         if columnOptions == u"" or columnName == u"" or tableName == u"":
             return False
         if inNewColumnName:
-            self.db.execute(u"alter table %s rename column %s to %s" % (tableName, columnName, aN))
+            self.db.execute(u"alter table %s rename column %s to %s" % (tableName, columnName, inNewColumnName))
         opt = columnOptions.split(u" ")
         self.db.execute(u"alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
         return True
@@ -263,13 +263,12 @@ class PostgresManager(DatabaseManager):
         return False
 
 
-    def CreateTable(self, tableName, columns = None, createIdentity = True, primaryKeyName="id"):
+    def CreateTable(self, tableName, columns=None, createIdentity=True, primaryKeyName=u"id"):
         if not self.IsDB():
             return False
-        if not tableName or tableName == "":
+        if not tableName:
             return False
         assert(tableName != "user")
-        aSql = u""
         if createIdentity:
             aSql = u"CREATE TABLE %s(%s SERIAL PRIMARY KEY" % (tableName, primaryKeyName)
             if columns:
@@ -330,12 +329,12 @@ class PostgresManager(DatabaseManager):
         return False
 
 
-    def CreateColumn(self, tableName, columnName, columnOptions=""):
+    def CreateColumn(self, tableName, columnName, columnOptions=u""):
         if not self.IsDB():
             return False
-        if columnName == "" or tableName == "":
+        if columnName == u"" or tableName == u"":
             return False
-        if columnOptions == "identity":
+        if columnOptions == u"identity":
             return self.CreateIdentityColumn(tableName, columnName)
         self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True

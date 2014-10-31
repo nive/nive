@@ -2,10 +2,10 @@
 # Released under GPL3. See license.txt
 #
 
-import os, sys
-import string, time, cPickle, re, types
+import string, time
 from datetime import datetime
 
+from nive.definitions import OperationalError, ConfigurationError
 from nive.utils.utils import ConvertToDateTime
 from nive.utils.dataPool2.dbManager import DatabaseManager
 
@@ -25,6 +25,7 @@ class MySQLManager(DatabaseManager):
     modifyColumns = True
 
     def __init__(self):
+        # might not be imported on startup
         import MySQLdb
         self.db = None
         self.dbConn = None

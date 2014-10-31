@@ -2,12 +2,10 @@
 # Released under GPL3. See license.txt
 #
 
-import os, sys
-import string, time, cPickle, re, types
-from datetime import datetime
+import string, time
 
 from nive.utils.dataPool2.dbManager import DatabaseManager
-
+from nive.definitions import ConfigurationError
 
 SQLITE3 = 0
 
@@ -26,6 +24,7 @@ class Sqlite3Manager(DatabaseManager):
     modifyColumns = True #False
 
     def __init__(self):
+        # might not be imported on startup
         import sqlite3
         self.db = None
         self.dbConn = None
@@ -244,13 +243,12 @@ class Sqlite3Manager(DatabaseManager):
         return False
 
 
-    def CreateTable(self, tableName, columns = None, createIdentity = True, primaryKeyName="id"):
+    def CreateTable(self, tableName, columns=None, createIdentity=True, primaryKeyName=u"id"):
         if not self.IsDB():
             return False
-        if not tableName or tableName == "":
+        if not tableName or tableName == u"":
             return False
-        assert(tableName != "user")
-        aSql = u""
+        assert(tableName != u"user")
         if createIdentity:
             aSql = u"CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT" % (tableName, primaryKeyName)
             if columns:
@@ -299,12 +297,12 @@ class Sqlite3Manager(DatabaseManager):
         ColumnList --> ColumnName1,ColumName2,...
     """
 
-    def CreateColumn(self, tableName, columnName, columnOptions=""):
+    def CreateColumn(self, tableName, columnName, columnOptions=u""):
         if not self.IsDB():
             return False
-        if columnName == "" or tableName == "":
+        if columnName == u"" or tableName == u"":
             return False
-        if columnOptions == "identity":
+        if columnOptions == u"identity":
             return self.CreateIdentityColumn(tableName, columnName)
         self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True

@@ -9,10 +9,9 @@ Data Pool Postgres Module
 """
 
 
-import string, re, os
 import threading
-from time import time, localtime
 
+from nive.definitions import ConfigurationError
 try:
     import psycopg2
     psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -169,7 +168,7 @@ class PostgreSql(FileManager, Base):
             table = self.MetaTable
         if table == self.MetaTable:
             if not dataTbl:
-                raise "Missing data table", "Entry not created"
+                raise ConfigurationError("Missing data table - Entry not created")
 
             # sql insert empty rec in meta table
             if self._debug:
