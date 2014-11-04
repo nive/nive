@@ -397,8 +397,8 @@ class FieldConf(baseConf):
     datetime     Datetime 
     list         List 
     radio        Radio Selection 
-    mselection   Multiple Selection 
-    mcheckboxes  Multiple Checkboxes 
+    multilist    Multiple Selection
+    checkbox     Multiple Checkboxes
     lines        Lines 
     email        E-Mail 
     url          URL 
@@ -1411,8 +1411,8 @@ Conf(id="json",        name=_(u"Json"),               description=u""),
 Conf(id="lines",       name=_(u"Lines"),              description=u""),
 Conf(id="list",        name=_(u"List"),               description=u""),
 Conf(id="radio",       name=_(u"Radio Selection"),    description=u""),
-Conf(id="mselection",  name=_(u"Multiple Selection"), description=u""),
-Conf(id="mcheckboxes", name=_(u"Multiple Checkboxes"),description=u""),
+Conf(id="multilist",   name=_(u"Multiple Selection"), description=u""),
+Conf(id="checkbox",    name=_(u"Multiple Checkboxes"),description=u""),
 Conf(id="email",       name=_(u"Email"),              description=u""),
 Conf(id="password",    name=_(u"Password"),           description=u""),
 Conf(id="url",         name=_(u"URL"),                description=u""),
@@ -1423,6 +1423,9 @@ Conf(id="timestamp",   name=_(u"Timestamp"),          description=u""),
 # not supported as database field yet
 Conf(id="binary",      name=_(u"Binary"),             description=u""),   
 Conf(id="nlist",       name=_(u"List of numbers"),    description=u""),
+# bw 0.9.23
+Conf(id="mselection",  name=_(u"Multiple Selection"), description=u""), # use multilist instead
+Conf(id="mcheckboxes", name=_(u"Multiple Checkboxes"),description=u""), # use checkbox instead
 )
 
 

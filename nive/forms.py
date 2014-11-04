@@ -129,7 +129,7 @@ Internally the form uses a structure like in the following manually defined form
       FieldConf(id="flist",   datatype="list",   size=100,  name="flist", 
                 listItems=[{"id": "item 1", "name":"Item 1"},
                            {"id": "item 2", "name":"Item 2"}]),
-      FieldConf(id="fmselect", datatype="mselection", size=50, name="fmselect"),
+      FieldConf(id="fmselect", datatype="multilist", size=50, name="fmselect"),
     ]
     
     actions = [

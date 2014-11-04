@@ -160,15 +160,15 @@ class TestNodes(unittest.TestCase):
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
         self.assert_(len(nodes)==1)
 
-    def test_mselection(self):
-        field = FieldConf(datatype="mselection",id="field",name="Field")
-        self.assert_(mselection_node(field, {}, {}, testform()))
+    def test_multilist(self):
+        field = FieldConf(datatype="multilist",id="field",name="Field")
+        self.assert_(multilist_node(field, {}, {}, testform()))
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
         self.assert_(len(nodes)==1)
 
-    def test_mcheckboxes(self):
-        field = FieldConf(datatype="mcheckboxes",id="field",name="Field")
-        self.assert_(mcheckboxes_node(field, {}, {}, testform()))
+    def test_checkbox(self):
+        field = FieldConf(datatype="checkbox",id="field",name="Field")
+        self.assert_(checkbox_node(field, {}, {}, testform()))
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
         self.assert_(len(nodes)==1)
 

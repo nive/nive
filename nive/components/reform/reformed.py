@@ -229,7 +229,7 @@ def radio_node(field, kw, kwWidget, form):
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
     return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
 
-def mselection_node(field, kw, kwWidget, form):
+def multilist_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
         values=[(a["id"],a["name"]) for a in v]
@@ -241,7 +241,7 @@ def mselection_node(field, kw, kwWidget, form):
             kw["widget"] = SelectWidget(values=values, **kwWidget)
     return SchemaNode(List(allow_empty=True, allowed=[e["id"] for e in v]), **kw)
 
-def mcheckboxes_node(field, kw, kwWidget, form):
+def checkbox_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
         values=[(a["id"],a["name"]) for a in v]
@@ -323,8 +323,8 @@ nodeMapping = {
     "time": time_node,
     "list": list_node,
     "radio": radio_node,
-    "mselection": mselection_node,
-    "mcheckboxes": mcheckboxes_node,
+    "multilist": multilist_node,
+    "checkbox": checkbox_node,
     "lines": lines_node,
     "email": email_node,
     "url": url_node,
@@ -334,6 +334,9 @@ nodeMapping = {
     "unitlist": unitlist_node,
     "timestamp": timestamp_node,
     "nlist": nlist_node,
-    "binary": binary_node
+    "binary": binary_node,
+    # bw 0.9.23
+    "mselection": multilist_node,
+    "mcheckboxes": checkbox_node,
 }
 

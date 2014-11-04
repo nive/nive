@@ -64,7 +64,7 @@ class Sqlite3Manager(DatabaseManager):
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
-        mselection, mcodelist, mcheckboxes -> VARCHAR(2048) NOT NULL DEFAULT default
+        multilist, checkbox -> VARCHAR(2048) NOT NULL DEFAULT default
         [file] -> BLOB
         [bytesize] -> BIGINT(20) NOT NULL DEFAULT default
         url -> TEXT NOT NULL DEFAULT default
@@ -183,7 +183,7 @@ class Sqlite3Manager(DatabaseManager):
                 aN = int(aN)
             aStr = "SMALLINT NOT NULL DEFAULT %d" % (aN)
 
-        elif datatype in ("mselection", "mcheckboxes", "mcodelist", "radio"):
+        elif datatype in ("multilist", "checkbox", "mselection", "mcheckboxes", "radio"):
             aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "file":

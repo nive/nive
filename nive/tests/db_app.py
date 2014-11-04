@@ -37,7 +37,7 @@ type1.data = [
     FieldConf(id="fdate", datatype="datetime", size=8, name=u"fdate"),
     FieldConf(id="ftime", datatype="time",     size=8, name=u"ftime"),
     FieldConf(id="flist", datatype="list",     size=100, name=u"flist", listItems=[{"id": u"item 1", "name":u"Item 1"},{"id": u"item 2", "name":u"Item 2"},{"id": u"item 3", "name":u"Item 3"}]),
-    FieldConf(id="fmselect", datatype="mselection", size=50, name=u"fmselect"),
+    FieldConf(id="fmselect", datatype="multilist", size=50, name=u"fmselect"),
     FieldConf(id="funit", datatype="unit", size=8, name=u"funit"),
     FieldConf(id="funitlist", datatype="unitlist", size=100, name=u"funitlist"),
     FieldConf(id="fjson", datatype="json", size=1000, name=u"fjson"),

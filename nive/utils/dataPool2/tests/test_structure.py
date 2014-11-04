@@ -16,8 +16,8 @@ ftypes = {}
 ftypes[u"data2"] = {u"fstr":"string",
                     u"ftext":"text", 
                     u"ftime":"timestamp", 
-                    u"fmselection":"mselection",
-                    u"fmcheckboxes":"mcheckboxes", 
+                    u"fmultilist":"multilist",
+                    u"fcheckbox":"checkbox",
                     u"furllist":"urllist", 
                     u"funitlist":"unitlist",
                     u"fbool":"bool",
@@ -117,7 +117,7 @@ class ConversionTest(unittest.TestCase):
         value = [1,2,3]
         self.assert_(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
         
-    def test_se_mselection(self):
+    def test_se_multilist(self):
         v = {u"id":u"123", u"pool_stag":u"123.12", u"pool_wfa":["value"], u"somevalue": "test"}
         values = self.structure.serialize(u"pool_meta", None, v)
         self.assert_(values[u"id"]==123)
@@ -150,12 +150,12 @@ class ConversionTest(unittest.TestCase):
         self.assert_(self.structure.serialize(u"pool_meta", u"pool_wfa", ())=="")
 
     def test_se_mlist(self):
-        self.assert_(self.structure.serialize(u"data2", u"fmselection", u"value"))
-        self.assert_(self.structure.serialize(u"data2", u"fmselection", [u"value"]))
-        self.assert_(self.structure.serialize(u"data2", u"fmselection", ("value",)))
-        self.assertFalse(self.structure.serialize(u"data2", u"fmselection", u""))
+        self.assert_(self.structure.serialize(u"data2", u"fmultilist", u"value"))
+        self.assert_(self.structure.serialize(u"data2", u"fmultilist", [u"value"]))
+        self.assert_(self.structure.serialize(u"data2", u"fmultilist", ("value",)))
+        self.assertFalse(self.structure.serialize(u"data2", u"fmultilist", u""))
         
-        self.assert_(self.structure.serialize(u"data2", u"mcheckboxes", u"value"))
+        self.assert_(self.structure.serialize(u"data2", u"checkbox", u"value"))
         self.assert_(self.structure.serialize(u"data2", u"furllist", u"value"))
         self.assert_(self.structure.serialize(u"data2", u"funitlist", u"value"))
 
@@ -179,10 +179,10 @@ class ConversionTest(unittest.TestCase):
         self.assert_(self.structure.deserialize(u"pool_meta", u"somevalue", value)[0]==u"aaa")
         self.assert_(self.structure.deserialize(u"pool_meta", u"somevalue", "somevalue")==u"somevalue")
         
-    def test_ds_mselection(self):
-        v = {u"fmselection": json.dumps(["aaa","bbb"]),u"furllist":json.dumps(["aaa","bbb"]), u"somevalue": "test"}
+    def test_ds_multilist(self):
+        v = {u"fmultilist": json.dumps(["aaa","bbb"]),u"furllist":json.dumps(["aaa","bbb"]), u"somevalue": "test"}
         values = self.structure.deserialize(u"data2", None, v)
-        self.assert_(values[u"fmselection"][0]=="aaa")
+        self.assert_(values[u"fmultilist"][0]=="aaa")
         self.assert_(values[u"furllist"][0]=="aaa")
 
     def test_ds_date(self):
@@ -195,14 +195,14 @@ class ConversionTest(unittest.TestCase):
         value = time.time()
         self.assert_(self.structure.deserialize(u"data2", u"ftime", value))
 
-    def test_ds_mselection(self):
-        self.assert_(self.structure.deserialize(u"data2", u"fmselection", json.dumps(["aaa","bbb"]))[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"fmcheckboxes", json.dumps(["aaa","bbb"]))[0]=="aaa")
+    def test_ds_multilist(self):
+        self.assert_(self.structure.deserialize(u"data2", u"fmultilist", json.dumps(["aaa","bbb"]))[0]=="aaa")
+        self.assert_(self.structure.deserialize(u"data2", u"fcheckbox", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assert_(self.structure.deserialize(u"data2", u"furllist", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assert_(self.structure.deserialize(u"data2", u"funitlist", json.dumps(["123","123"]))[0]==123)
         self.assertRaises(ValueError, self.structure.deserialize, u"data2", u"funitlist", json.dumps(["aaa","bbb"]))
-        self.assert_(self.structure.deserialize(u"data2", u"fmcheckboxes", "aaa")[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"fmcheckboxes", ["aaa","bbb"])[0]=="aaa")
+        self.assert_(self.structure.deserialize(u"data2", u"fcheckbox", "aaa")[0]=="aaa")
+        self.assert_(self.structure.deserialize(u"data2", u"fcheckbox", ["aaa","bbb"])[0]=="aaa")
         
     def test_ds_json(self):
         self.assert_(self.structure.deserialize(u"data2", u"fjson", json.dumps(["aaa","bbb"]))[0]=="aaa")
@@ -236,7 +236,7 @@ class CallbackTest(unittest.TestCase):
         self.assert_(self.structure.deserialize(u"pool_meta", u"title", u"somevalue")==u"Somevalue")
 
         
-    def test_se_mselection(self):
+    def test_se_multilist(self):
         v = {u"id":u"123", u"pool_stag":u"123.12", u"pool_wfa":["value"], u"somevalue": "test"}
         values = self.structure.serialize(u"pool_meta", None, v)
         self.assert_(values[u"id"]==123)

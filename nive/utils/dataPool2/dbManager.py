@@ -141,7 +141,7 @@ class DatabaseManager(object):
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
-        mselection, mcodelist, mcheckboxes -> VARCHAR(2048) NOT NULL DEFAULT default
+        multilist, checkbox -> VARCHAR(2048) NOT NULL DEFAULT default
         json -> TEXT
         [file] -> BLOB
         [bytesize] -> BIGINT(20) NOT NULL DEFAULT default

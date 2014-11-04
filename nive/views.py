@@ -1139,7 +1139,7 @@ class FieldRenderer(object):
                         data = item["name"]
                         break
                 
-        elif fType == "mselection" or fType == "mcheckboxes":
+        elif fType in("multilist", "checkbox", "mselection", "mcheckboxes"):
             values = []
             options = listItems or loadListItems(fieldConf, context)
             if not options:

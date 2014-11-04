@@ -18,7 +18,7 @@ configuration = ToolConf(
 )
 configuration.data = [
     FieldConf(id="excludeSystem", 
-              datatype="mcheckboxes", 
+              datatype="checkbox",
               default=[], 
               listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
               name=_(u"Exclude system columns"))

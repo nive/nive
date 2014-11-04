@@ -328,7 +328,7 @@ class AdminView(AdminBasics):
                       settings={"validator": RootnameValidator}, default=root.configuration.id),
             FieldConf(id=u"title",           datatype="string", size=255,  required=0, name=_(u"Root title"), default=root.configuration.name),
             FieldConf(id=u"description",     datatype="text",   size=5000, required=0, name=_(u"Root description")),
-            FieldConf(id="pool_groups",      datatype="mcheckboxes", size=250, default="", name=_(u"Permission"),
+            FieldConf(id="pool_groups",      datatype="checkbox", size=250, default="", name=_(u"Permission"),
                       description=_(u"Only displayed to users in the selected group"))
         )
         form = RootForm(view=self, context=root, app=self.context)

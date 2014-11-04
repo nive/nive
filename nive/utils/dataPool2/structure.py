@@ -252,7 +252,7 @@ class PoolStructure(object):
         file -> bytes
         timestamp -> float
         date, datetime -> datetime
-        mselection, mcheckboxes, urllist -> unicode tuple
+        multilist, checkbox, urllist -> unicode tuple
         unitlist -> number tuple
         json -> python type list, tuple or dict
 
@@ -264,7 +264,7 @@ class PoolStructure(object):
         file -> bytes
         timestamp -> float
         date, datetime -> datetime
-        mselection, mcheckboxes, urllist -> json
+        multilist, checkbox, urllist -> json
         unitlist -> json
         json -> json
         
@@ -416,7 +416,7 @@ class PoolStructure(object):
                 else:
                     value = u""
 
-        elif fieldtype in ("mselection", "mcheckboxes", "urllist", "unitlist"):
+        elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
             # to json formatted list
             if not value:
                 value = u""
@@ -490,7 +490,7 @@ class PoolStructure(object):
             if isinstance(value, basestring):
                 value = float(value)
                     
-        elif fieldtype in ("mselection", "mcheckboxes", "urllist", "unitlist"):
+        elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
             # -> to string tuple
             # unitlist -> to number tuple
             if not value:

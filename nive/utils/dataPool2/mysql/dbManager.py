@@ -149,7 +149,7 @@ class MySQLManager(DatabaseManager):
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
-        mselection, mcodelist, mcheckboxes -> VARCHAR(2048) NOT NULL DEFAULT default
+        multilist, checkbox -> VARCHAR(2048) NOT NULL DEFAULT default
         json -> TEXT
         [file] -> BLOB
         [bytesize] -> BIGINT(20) NOT NULL DEFAULT default
@@ -269,7 +269,7 @@ class MySQLManager(DatabaseManager):
                 aN = int(aN)
             aStr = u"SMALLINT(6) NOT NULL DEFAULT %d" % (aN)
 
-        elif datatype == "mselection" or datatype == "mcheckboxes" or datatype == "mcodelist" or datatype == "radio":
+        elif datatype in ("multilist", "mselection", "checkbox", "mcheckboxes", "radio"):
             aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "file":
