@@ -2,6 +2,7 @@
 
 import time
 import unittest
+from datetime import time as datetime_time
 
 from nive.application import *
 from nive.definitions import *
@@ -72,12 +73,14 @@ class objTest_db:
         self.assert_(oo.GetFieldConf("ftext").name=="ftext")
         self.assert_(oo.GetTitle()==u"")
         self.assert_(oo.GetPath()==str(oo.id))
+        self.assert_(str(o1.GetFld(u"ftime"))==str(datetime_time(16,55)), str(datetime_time(16,55)))
 
         id = o1.GetID()
         o1.Update(data1_2, user)
         self.assert_(o1.GetID()==id)
         self.assert_(o1.GetFld(u"ftext")==data1_2[u"ftext"])
         self.assert_(o1.GetFld(u"pool_filename")==data1_2[u"pool_filename"])
+        self.assert_(str(o1.GetFld(u"ftime"))==str(datetime_time(23,8,13,500)), str(o1.GetFld(u"ftime")))
         del o1
         o1 = oo.obj(id)
         self.assert_(o1.GetFld(u"ftext")==data1_2[u"ftext"])

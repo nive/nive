@@ -72,6 +72,7 @@ class PostgresManager(DatabaseManager):
         unitlist -> VARCHAR(2048) NOT NULL DEFAULT default
         date -> TIMESTAMP NULL DEFAULT default
         datetime -> TIMESTAMP NULL DEFAULT default
+        time -> TIMESTAMP NULL DEFAULT default
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
@@ -159,6 +160,19 @@ class PostgresManager(DatabaseManager):
             if aD == () or aD == "()":
                 aD = "NULL"
             if aD in ("now", "nowdate", "nowtime"):
+                aD = ""
+            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+                aD = self.ConvertDate(aD)
+            if aD == "":
+                aStr = u"TIMESTAMP NULL"
+            else:
+                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+
+        elif datatype == "time":
+            aD = conf["default"]
+            if aD == () or aD == "()":
+                aD = "NULL"
+            if aD in ("now", "nowtime"):
                 aD = ""
             if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)

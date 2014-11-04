@@ -6,6 +6,7 @@ import weakref
 import json
 import os
 from datetime import datetime
+from datetime import time as datetime_time
 
 from pyramid.path import DottedNameResolver
 from pyramid.path import AssetResolver
@@ -198,6 +199,8 @@ class JsonDataEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return str(obj)
+        elif isinstance(obj, datetime_time):
+            return str(obj)
         elif IFileStorage.providedBy(obj):
             file = {}
             file["filekey"] = obj.filekey
@@ -214,6 +217,8 @@ class ConfEncoder(json.JSONEncoder):
                 values[k] = obj[k]
             return values
         elif isinstance(obj, datetime):
+            return str(obj)
+        elif isinstance(obj, datetime_time):
             return str(obj)
         return json.JSONEncoder.default(self, obj)
 

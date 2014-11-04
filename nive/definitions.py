@@ -1403,6 +1403,7 @@ Conf(id="file",        name=_(u"File"),               description=u""),
 Conf(id="text",        name=_(u"Text"),               description=u""),
 Conf(id="date",        name=_(u"Date"),               description=u""),
 Conf(id="datetime",    name=_(u"Datetime"),           description=u""),
+Conf(id="time",        name=_(u"Time"),               description=u""),
 # extended data types, handled like basic with different validation and renderer
 Conf(id="htext",       name=_(u"HTML Text"),          description=u""),
 Conf(id="code",        name=_(u"Code (Html, Javascript, Css)"), description=u""),

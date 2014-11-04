@@ -202,6 +202,12 @@ def datetime_node(field, kw, kwWidget, form):
     #kw["options"] = {'dateFormat': 'yyyy/mm/dd', 'timeFormat': 'hh:mm:ss', 'separator': ' '}
     return SchemaNode(DateTime(), **kw)
 
+def time_node(field, kw, kwWidget, form):
+    if not "widget" in kw:
+        kw["widget"] = TextInputWidget(**kwWidget)
+    #kw["options"] = {'dateFormat': 'yyyy/mm/dd', 'timeFormat': 'hh:mm:ss', 'separator': ' '}
+    return SchemaNode(Time(), **kw)
+
 def list_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)
     if field.settings and field.settings.get("addempty"):
@@ -314,6 +320,7 @@ nodeMapping = {
     "file": file_node,
     "date": date_node,
     "datetime": datetime_node,
+    "time": time_node,
     "list": list_node,
     "radio": radio_node,
     "mselection": mselection_node,

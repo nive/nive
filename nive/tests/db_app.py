@@ -35,7 +35,8 @@ type1.data = [
     FieldConf(id="ftext", datatype="text", size=1000, name=u"ftext", fulltext=1),
     FieldConf(id="fnumber", datatype="number", size=8, name=u"fnumber", required=1),
     FieldConf(id="fdate", datatype="datetime", size=8, name=u"fdate"),
-    FieldConf(id="flist", datatype="list", size=100, name=u"flist", listItems=[{"id": u"item 1", "name":u"Item 1"},{"id": u"item 2", "name":u"Item 2"},{"id": u"item 3", "name":u"Item 3"}]),
+    FieldConf(id="ftime", datatype="time",     size=8, name=u"ftime"),
+    FieldConf(id="flist", datatype="list",     size=100, name=u"flist", listItems=[{"id": u"item 1", "name":u"Item 1"},{"id": u"item 2", "name":u"Item 2"},{"id": u"item 3", "name":u"Item 3"}]),
     FieldConf(id="fmselect", datatype="mselection", size=50, name=u"fmselect"),
     FieldConf(id="funit", datatype="unit", size=8, name=u"funit"),
     FieldConf(id="funitlist", datatype="unitlist", size=100, name=u"funitlist"),
@@ -97,6 +98,7 @@ appconf.meta.append(FieldConf(id="pool_wfp", datatype="string", size=20, name=u"
 data1_1 = { u"ftext": u"this is text!",
             u"fnumber": 123456,
             u"fdate": "2008/06/23 16:55:00",
+            u"ftime": "16:55:00",
             u"flist": ["item 1", "item 2", "item 3"],
             u"fmselect": "item 5",
             u"funit": 35,
@@ -111,6 +113,7 @@ data3_1 = { u"pool_filename": u"title data 3",
             u"fstr": u"testing type 3!"}
 
 data1_2 = { u"ftext": u"this is a new text!",
+            u"ftime": "23:08:13.000500",
             u"funit": 0,
             u"pool_filename":u"new title data 1"}
 data2_2 = { u"fstr": u"this is new sting!",

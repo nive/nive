@@ -145,6 +145,7 @@ class MySQLManager(DatabaseManager):
         unitlist -> VARCHAR(2048) NOT NULL DEFAULT default
         date -> DATE NULL DEFAULT default
         datetime -> DATETIME NULL DEFAULT default
+        time -> DATETIME NULL DEFAULT default
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
@@ -240,6 +241,19 @@ class MySQLManager(DatabaseManager):
                 aStr = u"DATETIME NULL"
             else:
                 aStr = u"DATETIME NULL DEFAULT '%s'" % (aD)
+
+        elif datatype == "time":
+            aD = conf["default"]
+            if aD == () or aD == "()":
+                aD = u"NULL"
+            elif aD in ("now", "nowtime"):
+                aD = u""
+            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+                aD = self.ConvertDate(aD)
+            if aD == u"":
+                aStr = u"TIME NULL"
+            else:
+                aStr = u"TIME NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "timestamp":
             aStr = u"TIMESTAMP"

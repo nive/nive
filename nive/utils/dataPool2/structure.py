@@ -5,6 +5,7 @@
 import json
 import time
 from datetime import datetime
+from datetime import time as datetime_time
 
 from nive.utils.utils import ConvertToDateTime
 from nive.utils.dataPool2.files import File
@@ -89,10 +90,10 @@ class Wrapper(object):
     def get(self, key, default=None):
         try:
             data = self[key]
-            if data == None:
+            if data is None:
                 return default
             return data
-        except:
+        except AttributeError:
             return default
 
 
@@ -388,11 +389,19 @@ class PoolStructure(object):
         elif fieldtype in ("date", "datetime"):
             if isinstance(value, (float,int,long)):
                 value = unicode(datetime.fromtimestamp(value))
-            elif value==None:
+            elif value is None:
                 pass
             elif not isinstance(value, unicode):
                 value = unicode(value)
         
+        elif fieldtype == "time":
+            if isinstance(value, (float,int,long)):
+                value = unicode(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
+            elif value is None:
+                pass
+            elif not isinstance(value, unicode):
+                value = unicode(value)
+
         elif fieldtype == "timestamp":
             if value==None:
                 pass
@@ -461,12 +470,22 @@ class PoolStructure(object):
             return self.deserializeCallbacks[fieldtype](value, field)
 
         if fieldtype in ("date", "datetime"):
-            # -> to datatime
+            # -> to datetime
             if isinstance(value, basestring):
                 value = ConvertToDateTime(value)
             elif isinstance(value, (float,int,long)):
                 value = datetime.fromtimestamp(value)
                     
+        elif fieldtype == "time":
+            # -> to datetime.time
+            # misuse datetime parser
+            if isinstance(value, basestring):
+                value = ConvertToDateTime(u"2013-12-31 "+value)
+                value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
+            elif isinstance(value, (float,int,long)):
+                value = datetime.fromtimestamp(value)
+                value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
+
         elif fieldtype == "timestamp":
             if isinstance(value, basestring):
                 value = float(value)

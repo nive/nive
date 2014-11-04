@@ -1242,8 +1242,11 @@ class Time(SchemaType):
                 except ValueError:
                     try:
                         appstruct = timeparse(appstruct, '%H:%M')
-                    except:
-                        pass
+                    except ValueError:
+                        try:
+                            appstruct = timeparse(appstruct, '%H')
+                        except:
+                            pass
 
         if isinstance(appstruct, datetime.datetime):
             appstruct = appstruct.time()
@@ -1268,11 +1271,14 @@ class Time(SchemaType):
             except ValueError:
                 try:
                     result = timeparse(cstruct, '%H:%M')
-                except Exception, e:
-                    raise Invalid(node,
-                                  _(self.err_template,
-                                    mapping={'val':cstruct, 'err':e})
-                                  )
+                except ValueError:
+                    try:
+                        result = timeparse(cstruct, '%H')
+                    except Exception, e:
+                        raise Invalid(node,
+                                      _(self.err_template,
+                                        mapping={'val':cstruct, 'err':e})
+                                      )
         return result
 
 def timeparse(t, format):

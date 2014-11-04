@@ -255,9 +255,9 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         f = form.GetFields(removeReadonly=True)
-        self.assert_(len(f)==8)
+        self.assert_(len(f)==9)
         f = form.GetFields(removeReadonly=False)
-        self.assert_(len(f)==13)
+        self.assert_(len(f)==14)
 
         
 
