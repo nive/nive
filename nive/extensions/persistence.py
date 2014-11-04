@@ -98,10 +98,10 @@ class DbPersistence(PersistentConf):
             c.execute(sql, (self._GetUid(),))
             data = c.fetchall()
             c.close()
-        except OperationalError:
+        except db.OperationalError:
             data = None
             db.rollback()
-        except ProgrammingError: 
+        except db.ProgrammingError:
             data = None
             db.rollback()
         except Exception, e:
