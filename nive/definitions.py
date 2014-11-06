@@ -314,9 +314,9 @@ class baseConf(object):
     
     def __str__(self):
         if hasattr(self, "id"):
-            return str(self.id)
+            return self.id
         elif hasattr(self, "name"):
-            return str(self.name)
+            return self.name
         return ""
 
     def __repr__(self):
@@ -547,7 +547,7 @@ class AppConf(baseConf):
         
  
     def __str__(self):
-        return "%(id)s (%(title)s) implemented by %(context)s" % self
+        return "%(id)s implemented by %(context)s" % self
 
     def uid(self):
         # create a unique identifier for the configuration to support persistence
@@ -732,7 +732,7 @@ class ObjectConf(baseConf):
 
 
     def __str__(self):
-        return "%(id)s (%(name)s) implemented by %(context)s" % self
+        return "%(id)s implemented by %(context)s" % self
 
     def test(self):
         report = []
@@ -838,7 +838,7 @@ class RootConf(baseConf):
 
 
     def __str__(self):
-        return "%(name)s (%(id)s) implemented by %(context)s" % self
+        return "%(id)s implemented by %(context)s" % self
 
     def test(self):
         report = []

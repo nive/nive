@@ -12,7 +12,26 @@ from operator import itemgetter, attrgetter
 from path import DvPath
 
 
-def ConvertHTMLToText(html, url="", removeReST=True):
+def MakeListItems(items):
+    """
+    Turns a list into listItems used by form fields. Each item in the list is
+    converted into a dict. e.g. ``("a","b","c")`` or ``(("a","Name a"),("b","Name b"),("c","Name c"))``
+
+    :param items: list of items
+    :return: listItems
+    """
+    li = []
+    for i in items:
+        if isinstance(i,basestring):
+            li.append({u"id":i, u"name":i})
+        elif isinstance(i,(list,tuple)):
+            li.append({u"id":i[0], u"name":i[1]})
+        else:
+            i = str(i)
+            li.append({u"id":i, u"name":i})
+    return li
+
+def ConvertHTMLToText(html, removeReST=True, url=""):
     # requires html2text module
     try:
         import html2text
@@ -57,13 +76,6 @@ def ConvertToDateTime(date):
         return datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
     except ValueError:
         pass
-
-
-def ConvertHexToBin(m):
-    return u''.join(map(lambda x: chr(16*int(u'0x%s'%m[x*2],0)+int(u'0x%s'%m[x*2+1],0)),range(len(m)/2)))
-
-def ConvertBinToHex(m):
-    return u''.join(map(lambda x: hex(ord(x)/16)[-1]+hex(ord(x)%16)[-1],m))
 
 
 def CutText(text, textlen, cutchars=" ;:,.\r\n", postfix=u" ..."):
@@ -450,11 +462,6 @@ def ConvertDictToStr(values, sep = u"\n"):
     """
     s = [u"%s: %s" % (key, ConvertToStr(value, sep)) for key, value in values.items()]
     return sep.join(s)
-
-
-def StrAscii(s):
-    import string
-    return filter(lambda x: x in string.ascii_lowercase+"0123456789_.", s.lower())
 
 
 # Logging --------------------------------------------------------------------------
