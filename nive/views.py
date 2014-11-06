@@ -76,7 +76,7 @@ class BaseView(object):
 
         returns ViewModuleConf
         """
-        if self.__configuration__:
+        if self.__configuration__ is not None:
             return self.__configuration__()
         return None
 
@@ -545,7 +545,7 @@ class BaseView(object):
         returns `nive.definitions.ViewConf` or None
         """
         c = self.configuration
-        if not c:
+        if c is None:
             return None
         name = view_name or self.request.view_name
         for v in c.views:

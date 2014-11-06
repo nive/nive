@@ -5,6 +5,7 @@ import StringIO
 import copy
 import base64
 import os
+import datetime
 
 from nive.i18n import _
 from nive.definitions import Conf
@@ -401,10 +402,14 @@ class DateInputWidget(Widget):
         The template name used to render the widget.  Default:
         ``dateinput``.
 
+    dateFormat
+        A list of allowed date formats. Used to parsed the input.
+
     """
     template = 'dateinput'
     size = None
     requirements = ( ('jqueryui', None), )
+    dateFormat = ("%Y-%m-%d","%Y/%m/%d","%m/%d/%y","%m/%d/%Y")
 
     def serialize(self, field, cstruct):
         if cstruct in (null, None):
@@ -415,6 +420,14 @@ class DateInputWidget(Widget):
     def deserialize(self, field, pstruct, formstruct=None):
         if pstruct in ('', null):
             return null
+        pstruct = pstruct.replace(" ", "")
+        for fmt in self.dateFormat:
+            try:
+                dt = datetime.datetime.strptime(pstruct,fmt)
+                pstruct = dt.strftime("%Y-%m-%d")
+                break
+            except ValueError:
+                pass
         return pstruct
 
 class DateTimeInputWidget(DateInputWidget):

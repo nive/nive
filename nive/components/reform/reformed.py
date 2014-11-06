@@ -193,19 +193,16 @@ def file_node(field, kw, kwWidget, form):
 def date_node(field, kw, kwWidget, form):
     if not "widget" in kw:
         kw["widget"] = DateInputWidget(**kwWidget)
-    #kw["options"] = {'dateFormat': 'yyyy/mm/dd', 'timeFormat': 'hh:mm:ss', 'separator': ' '}
     return SchemaNode(Date(), **kw)
 
 def datetime_node(field, kw, kwWidget, form):
     if not "widget" in kw:
         kw["widget"] = DateTimeInputWidget(**kwWidget)
-    #kw["options"] = {'dateFormat': 'yyyy/mm/dd', 'timeFormat': 'hh:mm:ss', 'separator': ' '}
     return SchemaNode(DateTime(), **kw)
 
 def time_node(field, kw, kwWidget, form):
     if not "widget" in kw:
         kw["widget"] = TextInputWidget(**kwWidget)
-    #kw["options"] = {'dateFormat': 'yyyy/mm/dd', 'timeFormat': 'hh:mm:ss', 'separator': ' '}
     return SchemaNode(Time(), **kw)
 
 def list_node(field, kw, kwWidget, form):
