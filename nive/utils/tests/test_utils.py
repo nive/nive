@@ -5,7 +5,6 @@ import os
 import tempfile
 
 from nive.utils.utils import MakeListItems, ConvertHTMLToText, ConvertToDateTime
-from nive.utils.utils import ConvertBinToHex, ConvertHexToBin
 
 
 
