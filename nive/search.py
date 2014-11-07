@@ -234,8 +234,8 @@ class Search:
 
         # convert records
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw, fldList)
-        items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
+        converter = self._PrepareRenderer(kw, fldList)
+        items, cnt = self._ConvertRecords(records, converter, fields, fldList, kw)
 
         # total records
         total = len(items) + start
@@ -307,8 +307,8 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw, fldList)
-        items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
+        converter = self._PrepareRenderer(kw, fldList)
+        items, cnt = self._ConvertRecords(records, converter, fields, fldList, kw)
 
         # total records
         total = len(items) + start
@@ -376,8 +376,8 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw, fldList)
-        items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
+        converter = self._PrepareRenderer(kw, fldList)
+        items, cnt = self._ConvertRecords(records, converter, fields, fldList, kw)
 
         # total records
         total = len(items) + start
@@ -453,8 +453,8 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw, fldList)
-        items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
+        converter = self._PrepareRenderer(kw, fldList)
+        items, cnt = self._ConvertRecords(records, converter, fields, fldList, kw)
         
         # total records
         total = len(items) + start
@@ -538,8 +538,8 @@ class Search:
             
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
-        skipRender, converter = self._PrepareRenderer(kw, fldList)
-        items, cnt = self._ConvertRecords(records, converter, fields, fldList, skipRender, kw)
+        converter = self._PrepareRenderer(kw, fldList)
+        items, cnt = self._ConvertRecords(records, converter, fields, fldList, kw)
 
         # total records
         total = len(items) + start
@@ -714,13 +714,13 @@ class Search:
     
     def _PrepareRenderer(self, kws, fldList):
         # prepare field renderer
-        converter = FieldRenderer(self)
         skipRender = kws.get("skipRender", False)
         if skipRender == True:
             skipRender = fldList
         elif not skipRender:
             skipRender = (u"pool_type", u"pool_wfa", u"pool_wfp")
-        return skipRender, converter
+        converter = FieldRenderer(self, skip=skipRender)
+        return converter
     
     def _RenameFieldAlias(self, fldList):
         # parse alias field names used in sql query
@@ -734,7 +734,7 @@ class Search:
             p += 1
         return fldList
 
-    def _ConvertRecords(self, records, converter, fields, fldList, skipRender, kws):
+    def _ConvertRecords(self, records, converter, fields, fldList, kws):
         # convert result
         db = self.db
         items = []
@@ -742,7 +742,7 @@ class Search:
             rec2 = []
             for p in range(len(fields)):
                 value = db.structure._de(rec[p], fields[p][u"datatype"], fields[p])
-                rec2.append(converter.Render(fields[p], value, False, render=(fldList[p] not in skipRender), **kws))
+                rec2.append(converter.Render(fields[p], value, False, **kws))
             items.append(dict(zip(fldList, rec2)))
         return items, len(items)
     
