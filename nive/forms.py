@@ -1288,6 +1288,9 @@ class ObjectForm(HTMLForm):
         """
         Process request data and update object.
         
+        You can also pass additional values not used as form fields to be stored
+        when the object is updated. Pass a dictionary as `kw['values']`.
+
         `Process()` returns the form data as result if update succeeds.
 
         Event
@@ -1300,6 +1303,9 @@ class ObjectForm(HTMLForm):
         result,data,errors = self.Validate(self.request)
         if result:
             user = kw.get("user") or self.view.User()
+            values = kw.get("values")
+            if values is not None:
+                data.update(values)
             result = obj.Update(data, user)
             if result:
                 #obj.Commit(user)
@@ -1314,8 +1320,11 @@ class ObjectForm(HTMLForm):
         """
         Process request data and create object as child for current context.
         
-        Pass kw['pool_type'] to specify type to be created. If not passed pool_type
+        Pass `kw['pool_type']` to specify type to be created. If not passed pool_type
         will be extracted from data dictionary.
+
+        You can also pass additional values not used as form fields to be stored
+        when the object is created. Pass a dictionary as `kw['values']`.
 
         `Process()` returns the new object as result if create succeeds.
 
@@ -1331,6 +1340,10 @@ class ObjectForm(HTMLForm):
                 objtype = kw["pool_type"]
             else:
                 objtype = data.get("pool_type")
+
+            values = kw.get("values")
+            if values is not None:
+                data.update(values)
                 
             user=kw.get("user") or self.view.User()
             result = self.context.Create(objtype, data, user)

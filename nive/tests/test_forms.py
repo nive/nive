@@ -306,7 +306,7 @@ class FormTest_db:
         req = {"create$":1, "pool_type":"type1"}
         req.update(data1_1)
         form.request = req
-        result, data, action=form.Process()
+        result, data, action=form.Process(values={"fnumber":999})
         self.assert_(result)
         self.assertEqual(action.id,"create")
         self.assertEqual(count+1, self.app.db.GetCountEntries())
@@ -408,7 +408,7 @@ class FormTest_db:
         req = {"edit$":1}
         req.update(data1_2)
         form.request = req
-        form.Process()
+        form.Process(values={"fnumber":333})
         req = {"cancel$":1}
         form.request = req
         form.Process()
