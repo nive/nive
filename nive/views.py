@@ -548,9 +548,21 @@ class BaseView(object):
         if c is None:
             return None
         name = view_name or self.request.view_name
+        found = []
         for v in c.views:
             if v.name==name:
-                return v
+                found.append(v)
+        if len(found)==1:
+            return found[0]
+        elif len(found)==0:
+            return None
+        # try to find the right one if multiple names match
+        for v in found:
+            if v.custom_predicates:
+                for c in v.custom_predicates:
+                    # match the first one
+                    if apply(c, (self.context, self.request)):
+                        return v
         return None
 
 
