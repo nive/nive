@@ -43,7 +43,10 @@ addID             Add fld.id in query without showing in result list. used for c
 skipRender        render result flds as html element. 
                   default: ``pool_type, pool_wfa, pool_wfp`` 
                   to skip all: *True*, or a list of fields  ("pool_wfa","pool_type")
-skipCount         enable or disable second query to get the number of all records. 
+skipCount         enable or disable second query to get the number of all records.
+relation          Resolve a relation and load the related entry as object. For example
+                  you load the user object by settings `relation=pool_createdby`. The
+                  result set will include the user object instead of the user name.
 ================  =====================================================================
 
 Adding custom join statements
@@ -261,6 +264,7 @@ class Search:
                 val = db.Query(sql2, values)
                 total = len(val) if val else 0
 
+        items = self._HandleRelations(kw.get("relations"), items, kw)
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
 
@@ -330,6 +334,7 @@ class Search:
             else:
                 total = len(val) if val else 0
 
+        items = self._HandleRelations(kw.get("relations"), items, kw)
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
 
@@ -402,6 +407,7 @@ class Search:
             else:
                 total = len(val) if val else 0
                 
+        items = self._HandleRelations(kw.get("relations"), items, kw)
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
 
@@ -478,6 +484,7 @@ class Search:
             else:
                 total = len(val) if val else 0
 
+        items = self._HandleRelations(kw.get("relations"), items, kw)
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         result["phrase"] = searchFor
         return result
@@ -564,6 +571,7 @@ class Search:
             else:
                 total = len(val) if val else 0
 
+        items = self._HandleRelations(kw.get("relations"), items, kw)
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         result["phrase"] = searchFor
         return result
@@ -746,6 +754,26 @@ class Search:
             items.append(dict(zip(fldList, rec2)))
         return items, len(items)
     
+    def _HandleRelations(self, relations, items, kws):
+        if not relations:
+            return items
+        if isinstance(relations, basestring):
+            relations = (relations,)
+        cache = {}
+        for r in relations:
+            # special cases: user lookup pool_createdby, pool_changedby
+            if r in (u"pool_createdby", u"pool_changedby"):
+                GetUser = self.app.portal.userdb.root().GetUser
+                for i in items:
+                    ref = u"user:"+i[r]
+                    if ref in cache:
+                        user = cache[ref]
+                    else:
+                        user = GetUser(i[r])
+                        cache[ref] = user
+                    i[r] = user
+        return items
+
     def _PrepareResult(self, items, parameter, cnt, total, start, max, t, sql):
         # prepare result dictionary and paging information
         result = {}
