@@ -434,7 +434,7 @@ class FieldConf(baseConf):
         baseConf.__init__(self, copyFrom, **values)
 
     def __str__(self):
-        return "%(id)s (%(name)s): %(datatype)s" % self
+        return "%(id)s: %(datatype)s" % self
 
     def test(self):
         report = []

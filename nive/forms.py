@@ -1136,9 +1136,14 @@ class HTMLForm(Form):
             # raises HTTPFound
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
-        if self.successResponseBody:
-            return self.view.SendResponse(data=self.successResponseBody, headers=[("X-Result", "true")])
+        if self.successResponseBody is not None:
+            if callable(self.successResponseBody):
+                body = self.successResponseBody(self)
+            else:
+                body = self.successResponseBody
+            return self.view.SendResponse(data=body, headers=[("X-Result", "true")])
 
+        self.Signal("messages", messages=msgs, result=result)
         if not self.renderSuccess:
             html = self._Msgs(msgs=msgs,result=result)
         else:
@@ -1253,10 +1258,17 @@ class ObjectForm(HTMLForm):
         Default action. Called if no action in request or self.actions.default set.
         Loads default data from request for initial from display on object creation.
         
+        You can also pass additional default values for form fields as dictionary as
+        `kw['defaults']`.
+
         returns bool, html
         """
         if self.startEmpty:
             data = {}
+        elif kw.get("defaults"):
+            data = kw.get("defaults")
+            if callable(data):
+                data = data(self)
         else:
             data = self.LoadDefaultData()
             r, d = self.ExtractSchema(self.GetFormValues(method=u"ALL"), removeNull=True, removeEmpty=True)

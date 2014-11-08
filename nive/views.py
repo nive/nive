@@ -209,18 +209,25 @@ class BaseView(object):
         """
         Resolve a string to url for object or the current context.
 
-        Possible values:
+        'url' can be callable for dynamic url creation. The callback is
+        invoked with two parameters `(context, view_class_instance)`.
+
+        Possible string values:
         
         - page_url
         - page_url_anchor
         - obj_url
         - obj_folder_url
         - parent_url
+
+        returns url
         """
         if url is None:
             return u""
         if not object or not IObject.providedBy(object):
             object = self.context
+        if callable(url):
+            url = url(object, self)
         if url == "page_url":
             url = self.PageUrl(object)
         elif url == "page_url_anchor":
@@ -745,6 +752,34 @@ class BaseView(object):
     def CutText(self, text, length):
         """ bytes to readable text """
         return CutText(text, length)
+
+
+    @property
+    def utilities(self):
+        """
+        You can easily make utility functions like renderers and format functions
+        accessible in templates by adding the functions to your view module
+        configuration. e.g. ::
+
+            def renderTime(value):
+                return value.strftime("%H:%M")
+
+            view_configuration = ViewModuleConf(
+                id = "views",
+                name = u"Views",
+                # utilities
+                utilities = Conf(renderTime=renderTime)
+                ...
+            )
+
+        You can call `renderTime` in your template by accessing the view class instance ::
+
+            view.utilities.renderTime(value)
+
+
+        :return: utilities mapping object
+        """
+        return self.configuration.get("utilities")
 
     # parameter handling ------------------------------------------------------------
 
