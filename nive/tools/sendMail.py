@@ -241,9 +241,17 @@ class DvSMTP(SMTP):
         """
         does not call quit after sending
         """
-        aM = self.FormatStdMail(fromMail, toMail, subject, body, fromName, toName, contentType, cc, bcc, sender, replyTo)
-        result = self.sendmail(fromMail, toMail, aM)
-        return result
+        mailstr = self.FormatStdMail(fromMail, toMail, subject, body, fromName, toName, contentType, cc, bcc, sender, replyTo)
+        charset = "utf-8"
+        if contentType and contentType.find("charset=")!=-1:
+            charset = contentType.split("charset=")[1]
+        if isinstance(mailstr, unicode):
+            mailstr = mailstr.encode(charset)
+        if isinstance(fromMail, unicode):
+            fromMail = fromMail.encode(charset)
+        if isinstance(toMail, unicode):
+            toMail = toMail.encode(charset)
+        return self.sendmail(fromMail, toMail, mailstr)
 
 
     def Send3(self, fromMail, toMail, subject, body, fromName=u"", contentType=u"text/plain", inTo=u"", cc=u"", bcc=u"", sender=u"", replyTo=u""):
@@ -252,12 +260,21 @@ class DvSMTP(SMTP):
         toMail = mail recv list
         inTo = mail header To str
         """
-        aM = self.FormatStdMail(fromMail, inTo, subject, body, fromName=fromName, contentType=contentType, cc=cc, bcc=bcc, sender=sender, replyTo=replyTo)
+        mailstr = self.FormatStdMail(fromMail, inTo, subject, body, fromName=fromName, contentType=contentType, cc=cc, bcc=bcc, sender=sender, replyTo=replyTo)
+        charset = "utf-8"
+        if contentType and contentType.find("charset=")!=-1:
+            charset = contentType.split("charset=")[1]
+        if isinstance(mailstr, unicode):
+            mailstr = mailstr.encode(charset)
         result = []
         for m in toMail:
             if isinstance(m, (list,tuple)):
                 m=m[0]
-            self.sendmail(fromMail, m, aM)
+            if isinstance(fromMail, unicode):
+                fromMail = fromMail.encode(charset)
+            if isinstance(m, unicode):
+                m = m.encode(charset)
+            self.sendmail(fromMail, m, mailstr)
             result.append(m + u" ok")
         return result
 
