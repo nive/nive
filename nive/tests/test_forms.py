@@ -53,7 +53,7 @@ class FormTest(unittest.TestCase):
     
 
     def test_form(self, **kw):
-        form = Form(loadFromType="type1", context=None, request=Request(), app=self.app, view=self.view)
+        form = HTMLForm(loadFromType="type1", context=None, request=Request(), app=self.app, view=self.view)
         form.Setup()
         self.assert_(form.GetFields())
         form._SetUpSchema()
@@ -64,9 +64,11 @@ class FormTest(unittest.TestCase):
         form.GetActions(False)
         form.GetFormValue("test", request=request, method=None)
         form.GetFormValues(request)
-        #form.StartForm()
-        #form.StartRequestGET()
-        #form.Cancel()
+        form.StartForm("action", defaultData={"a":1})
+        form.StartForm("action")
+        form.StartRequestGET("action")
+        form.StartRequestPOST("action")
+        form.Cancel("action")
 
 
     def test_empty(self, **kw):

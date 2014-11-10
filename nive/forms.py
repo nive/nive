@@ -868,12 +868,13 @@ class HTMLForm(Form):
             callKws.update(kw)
         else:
             callKws = kw
-        try:
-            result, html = method(action, **callKws)
-        except ValueError, e:
-            # handle value errors as client errors, not server errors. 
-            # return a 400 Invalid request exception.
-            raise HTTPBadRequest(str(e))
+        result, html = method(action, **callKws)
+        #try:
+        #    result, html = method(action, **callKws)
+        #except ValueError, e:
+        #    # handle value errors as client errors, not server errors.
+        #    # return a 400 Invalid request exception.
+        #    raise HTTPBadRequest(str(e))
         return result, html, action
 
 
@@ -937,6 +938,17 @@ class HTMLForm(Form):
         returns bool, html
         """
         data = self.GetFormValues(self.request, method="GET")
+        return True, self.Render(data)
+
+
+    def StartRequestPOST(self, action, **kw):
+        """
+        Default action. Initially loads data from request POST values.
+        Loads default data for initial from display on object creation.
+
+        returns bool, html
+        """
+        data = self.GetFormValues(self.request, method="POST")
         return True, self.Render(data)
 
 
