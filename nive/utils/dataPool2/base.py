@@ -269,7 +269,7 @@ class Base(object):
                 if key[0] == u"-":
                     table = u""
                     paramname = key[1:]
-                elif key in metaStructure:   # ?? or key == u"pool_stag":
+                elif key in metaStructure:
                     table = u"meta__."
                 elif dataTable != u"":
                     table = u"data__."
@@ -287,6 +287,12 @@ class Base(object):
                 elif operator == u"BETWEEN":
                     if value == u"":
                         continue
+                    if addCombi:
+                        where.append(u" %s " % aCombi)
+                    where.append(u"%s%s %s %s " % (table, paramname, operator, ph))
+                    plist.append(value)
+                elif operator == u"IN":
+                    operator = u"="
                     if addCombi:
                         where.append(u" %s " % aCombi)
                     where.append(u"%s%s %s %s " % (table, paramname, operator, ph))
