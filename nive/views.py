@@ -209,16 +209,19 @@ class BaseView(object):
         """
         Resolve a string to url for object or the current context.
 
-        'url' can be callable for dynamic url creation. The callback is
-        invoked with two parameters `(context, view_class_instance)`.
+        Url placeholders to be used as url
 
-        Possible string values:
-        
-        - page_url
-        - page_url_anchor
         - obj_url
         - obj_folder_url
         - parent_url
+        - page_url
+        - page_url_anchor
+
+        The url can also be a callable. It is called with two parameters
+        `context` and `view class instance`. E.g. ::
+
+            def makeUrl(context, view):
+                return view.GetUrl(context) + "?query=" + view.GetFormValue('query')
 
         returns url
         """

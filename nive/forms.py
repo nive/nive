@@ -42,7 +42,7 @@ dynamically included. In fact the example above works for *any* object type.
 Form action callback methods use the following footage: ::
 
     def Method(self, action, **kw):
-        ...
+        # ...
         return result, data
 
 These callback methods are automatically looked up and executed in Process(). Use action.method to
@@ -80,21 +80,73 @@ progress bar or skip the delay set the attribute `HTMLForm.uploadProgressBar` to
     form = HTMLForm(view=self)
     # disable the progress bar
     form.uploadProgressBar = 'none' 
- 
 
-In short forms are explained as follows:
-
-- fields are defined by field definitions as specified in :py:class:`nive.definitions.FieldConf`.
-- configured fields are stored as list in self.fields.
-- for display order and grouping self.subsets is used. Each subset is a list of field ids.
-- subsets can be any selection and reference fields by id
-- actions are mapped as buttons for the html form and callable for the result
-- fields can directly be loaded from type or set manually. if loadFromType is specified, fields are loaded from this type. 
-- create and edit can be used as default behavior for objects. 
-- custom messages can be defined for errors and success of forms
 
 **Please note:** These form classes are for autogenerating forms. If you need more control over validation
-or rendering use a form library directly. 
+or rendering it might be easier to use a form library directly.
+
+HTML form options
+-----------------
+The following list describes all available form attributes and settings.
+
+- *formid*: (string) default = `upload`. The html element id applied to the form tag.
+- *css_class*: (string) default = `form`. The html element css class applied to the form tag.
+- *actionPostfix*: (string) default = `$`. Actions are triggered through form parameters. To prevent overlapping with
+                field names action names are extended with a postfix e.g. `create$`
+- *method*: (string) default = POST. Either POST or GET. The HTTP method used for teh form.
+- *action*: (string) default = empty. The forms action url.
+- *anchor*: (string) default = empty. Adds an anchor to urls if set.
+- *uploadProgressBar*: (string) default = auto. Either auto, none or always. Defines when the progress bar is displayed.
+- *use_ajax*: (bool) default = False. Enable or disable ajax form submissions.
+- *renderSuccess*: (bool) default = True. If True the whole form will be rendered after successful submission. If False
+                   messages only will be returned.
+- *successResponseBody*: (string/callback) This option enables you to overwrite the complete response body on success. Use
+                          a callback to generate a dynamic response. The callback must take one parameter: the form instance
+                          and return a unicode string.
+- *redirectSuccess*: (string/callback) Redirect the browser to a new location on success. See below for a list of options.
+- *redirectCancel*: (string/callback) Redirect the browser to a new location on cancel. See below for a list of options.
+
+Url placeholders to be used with `redirectCancel` and `redirectSuccess`. The placeholders are automatically resolved
+to a valid url for the current context ::
+
+- obj_url
+- obj_folder_url
+- parent_url
+- page_url
+- page_url_anchor
+
+`redirectCancel` and `redirectSuccess` can also be a callable. It is called with two parameters
+`context` and `view class instance`. E.g. ::
+
+    def makeUrl(context, view):
+        return view.GetUrl(context) + "?query=" + view.GetFormValue('query')
+
+
+Form styling options
+====================
+By default 3 column form layouts are used. Each column can get a custom css class by setting e.g. ::
+
+    form.widget.settings["column1_css"] = "span4"
+    form.widget.settings["column2_css"] = "span8"
+    form.widget.settings["column3_css"] = "none"
+
+To switch to a one column layout use the following code: ::
+
+    form.widget.item_template = "field_onecolumn"
+    form.widget.action_template = "form_actions_onecolumn"
+
+Replacing default widgets or validators
+=======================================
+
+    FieldConf(id="ftext", datatype="text", size=1000, name="ftext",
+
+          # pass in a custom widget and settings as kw argument
+          widget="nive.components.reform.widget.FileToDataUploadWidget",
+          settings={"base64": True},
+
+          # pass in a custom validator
+          validator=myValidator
+    ),
 
 
 Control sets for Select and Radio fields
@@ -159,76 +211,6 @@ Internally the form uses a structure like in the following manually defined form
     # validating data
     result,data,errors = form.Validate(data)
     
-
-HTML form options
------------------
-Form setup: element id, css classes, url ::
-
-    formid = u"upload"
-    css_class = u"form"
-    actionPostfix = u"$"
-    method = u"POST"
-    action = u""
-    anchor = u""
-
-Display options ::
-
-    uploadProgressBar = u"auto" # other possible values: none or always
-
-Ajax forms ::
-
-    use_ajax = False
-
-Success options ::
-
-    renderSuccess = True
-    successResponseBody = None
-    redirectSuccess = u"obj_url"
-
-Cancel button ::
-
-    redirectCancel = u""
-
-Url placeholders to be used with `redirectCancel` and `redirectSuccess` ::
-
-- obj_url
-- obj_folder_url
-- parent_url
-- page_url
-- page_url_anchor
-
-
-Form styling options
-====================
-By default 3 column form layouts are used. Each column can get a custom css class by setting e.g. ::
-
-    form.widget.settings["column1_css"] = "span4"
-    form.widget.settings["column2_css"] = "span8"
-    form.widget.settings["column3_css"] = "none"
-
-To switch to a one column layout use the following code: ::
-
-    form.widget.item_template = "field_onecolumn"
-    form.widget.action_template = "form_actions_onecolumn"
-
-Replacing default widgets or validators
-=======================================
-
-    FieldConf(id="ftext", datatype="text", size=1000, name="ftext",
-
-              # pass in a custom widget and settings as kw argument
-              widget="nive.components.reform.widget.FileToDataUploadWidget",
-              settings={"base64": True},
-
-              # pass in a custom validator
-              validator=myValidator
-    ),
-
-
-
-
-
---------------------------------------------------------------------------
 """
 
 import copy, json
@@ -251,12 +233,7 @@ from nive.components.reform.reformed import SchemaFactory
 from nive.components.reform.reformed import zpt_renderer
 
 
-class ValidationError(Exception):
-    """
-    Used for validation failures
-    """
-
-""" 
+"""
 0.9.7 changed nive.Form:
 - renamed parameter `redirect_success` to `redirectSuccess` and pass as **kw argument to functions
 - form action method footage has changed: `def Method(self, action, **kw)`
@@ -452,10 +429,26 @@ class Form(Events, ReForm):
 
 
     def ApplyOptions(self, settings):
-        if "item_template" in settings:
-            self.widget.item_template = settings["item_template"]
-        if "action_template" in settings:
-            self.widget.action_template = settings["action_template"]
+        """
+        Applies a set of form settings to the current form. You can also pass in
+        widget settings py prefixing the key with `widget.` E.g. ::
+
+            settings = {}
+            settings["widget.item_template"] = "field_onecolumn"
+            settings["widget.action_template"] = "form_actions_onecolumn"
+
+        :param settings: dict with form settings
+        :return: nothing
+        """
+        for k,v in settings.items():
+            if k.startswith(u"widget."):
+                setattr(self.widget, k[len(u"widget."):], v)
+                del settings[k]
+            if k == u"useAjax":
+                # rename
+                del settings[k]
+                settings[u"use_ajax"] = v
+
         self.__dict__.update(settings)
 
 
@@ -782,13 +775,17 @@ class HTMLForm(Form):
     # ajax forms
     use_ajax = False
 
+    # from defaults
+    defaults = None
+    defaultAction = None
+
     # success options
     renderSuccess = True
-    successResponseBody = None
-    redirectSuccess = u""
+    successResponseBody = None   # either string or callback
+    redirectSuccess = u""        # either string or callback
 
     # redirect urls
-    redirectCancel = u""
+    redirectCancel = u""         # either string or callback
 
     actions = [
         Conf(id=u"default", method="StartForm",    name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
@@ -830,8 +827,8 @@ class HTMLForm(Form):
         if self.subset:
             defaultAction = self.subsets[self.subset].get("defaultAction")
         if not defaultAction:
-            defaultAction = kw.get("defaultAction", "default")
-        
+            defaultAction = kw.get("defaultAction") or self.defaultAction or "default"
+
         # find action
         action = None
         formValues = self.GetFormValues(self.request)
@@ -1277,8 +1274,8 @@ class ObjectForm(HTMLForm):
         """
         if self.startEmpty:
             data = {}
-        elif kw.get("defaults"):
-            data = kw.get("defaults")
+        elif self.defaults is not None:
+            data = self.defaults
             if callable(data):
                 data = data(self)
         else:
@@ -1772,3 +1769,66 @@ class JsonSequenceForm(HTMLForm):
         return result, self.Render(data, msgs=msgs, errors=errors)
         
         
+def MakeCustomizedViewForm(view, forContext, formSettingsOrSubset, typeconf=None, formClass=None,
+                           actions=None, defaultAction=None, defaultSettings=None, loadFromViewModuleConf=None):
+    """
+    Sets up from instances by looking up form sonfiguration settings in the various customization slots.
+
+    1) typeconf.form defintion (if formSettingsOrSubset is a string)
+    2) loadFromViewModuleConf.form
+    3) actions and defaultAction
+    4) defaultSettings
+    5) formSettingsOrSubset (if it is a dict or configuration)
+
+    :param view: view class instance.
+    :param forContext: the context the view/for is rendered for
+    :param formSettingsOrSubset: form setup configuration or a subset name as string. If a string the subset is loaded
+                                 from `typeconf.form.subset`.
+    :param typeconf: type configuration to load form fields referenced as string
+    :param formClass: on instantiated form class. defaults to `nive.forms.ObjectForm`
+    :param actions: list of possible actions to be used with the form. This has to be a list of action definitions.
+    :param defaultAction: the initial default action to be triggered if processed for the first time. Either a action
+                          definition or a string.
+    :param defaultSettings: a dict with default for the form. Can be oerriden by formSettings.
+    :param loadFromViewModuleConf: pass the view module configuration to load default form settings from
+                                   `ViewModuleConf.form`.
+    :return: instantiated form class, subset name if used or None
+    """
+    # form rendering settings
+    formClass = formClass or ObjectForm
+    form = formClass(view=view, context=forContext, loadFromType=typeconf)
+
+    # load view module configuration form settings
+    if loadFromViewModuleConf is not None:
+        formsettings = loadFromViewModuleConf.get("form")
+        if isinstance(formsettings, dict):
+            form.ApplyOptions(formsettings)
+
+    # set default actions
+    if actions is not None:
+        form.actions = actions
+    if defaultAction is not None:
+        form.defaultAction = defaultAction
+
+    # apply defaults
+    if defaultSettings is not None:
+        form.ApplyOptions(defaultSettings)
+
+    # load form settings
+    if isinstance(formSettingsOrSubset, basestring):
+        form.subset = formSettingsOrSubset
+        form.subsets = typeconf.forms
+        subset = formSettingsOrSubset
+    else:
+        # load the form without subset. add fields and action directly.
+        form.ApplyOptions(formSettingsOrSubset)
+        subset = None
+
+    return form, subset
+
+
+class ValidationError(Exception):
+    """
+    Used for validation failures
+    """
+

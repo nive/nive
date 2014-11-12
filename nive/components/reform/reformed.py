@@ -87,7 +87,13 @@ def SchemaFactory(form, fields, actions, force=False):
             widget = kw["widget"]
             if isinstance(widget, basestring):
                 widget = ResolveName(widget)
-            kw["widget"] = widget(**kwWidget)
+                kw["widget"] = widget(**kwWidget)
+            elif callable(widget):
+                kw["widget"] = widget(**kwWidget)
+            else:
+                widget.form = form
+                widget.configuration = field
+                kw["widget"] = widget
 
         # setup custom validator
         if "validator" in kw and kw["validator"]:
