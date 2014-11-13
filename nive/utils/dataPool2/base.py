@@ -34,7 +34,6 @@ class Base(object):
 
     All basic SQL is handled internally.
 
-
     Configuration Parameter
     -----------------------
     root:          string. filesystem root path
@@ -46,7 +45,6 @@ class Base(object):
     useTrashcan:   bool.     moves files to trashcan rather than delete physically
     debug:         number. turn debugging on. 0 = off, 1=on (no traceback), 2...20=on (traceback lines) 
     log:           string. log file path for debugging
-
 
     Standard Meta
     -------------
@@ -178,7 +176,7 @@ class Base(object):
         Create a select statement based on pool_structure and given parameters.
         
         Aggregate functions can be included in flds but must be marked with
-        the prefix '-' e.g. '-count(*)'
+        the prefix `-` e.g. `-count(*)`
         
         Tables in the generated statement get an alias prefix:
         meta__ for meta table
