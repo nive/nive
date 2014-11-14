@@ -23,7 +23,7 @@ requires = [
 
 setupkw = dict(
       name='nive',
-      version='0.9.12',
+      version='0.9.13',
       description='Nive base package',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[

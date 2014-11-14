@@ -89,22 +89,29 @@ HTML form options
 -----------------
 The following list describes all available form attributes and settings.
 
-- *formid*: (string) default = `upload`. The html element id applied to the form tag.
-- *css_class*: (string) default = `form`. The html element css class applied to the form tag.
-- *actionPostfix*: (string) default = `$`. Actions are triggered through form parameters. To prevent overlapping with
-                field names action names are extended with a postfix e.g. `create$`
-- *method*: (string) default = POST. Either POST or GET. The HTTP method used for teh form.
-- *action*: (string) default = empty. The forms action url.
-- *anchor*: (string) default = empty. Adds an anchor to urls if set.
-- *uploadProgressBar*: (string) default = auto. Either auto, none or always. Defines when the progress bar is displayed.
-- *use_ajax*: (bool) default = False. Enable or disable ajax form submissions.
-- *renderSuccess*: (bool) default = True. If True the whole form will be rendered after successful submission. If False
-                   messages only will be returned.
-- *successResponseBody*: (string/callback) This option enables you to overwrite the complete response body on success. Use
-                          a callback to generate a dynamic response. The callback must take one parameter: the form instance
-                          and return a unicode string.
-- *redirectSuccess*: (string/callback) Redirect the browser to a new location on success. See below for a list of options.
-- *redirectCancel*: (string/callback) Redirect the browser to a new location on cancel. See below for a list of options.
+==================== ========================================================================================
+Form attribute
+==================== ========================================================================================
+formid               (string) default = `upload`. The html element id applied to the form tag.
+css_class            (string) default = `form`. The html element css class applied to the form tag.
+actionPostfix        (string) default = `$`. Actions are triggered through form parameters. To prevent
+                     overlapping with field names action names are extended with a postfix e.g. `create$`
+method               (string) default = POST. Either POST or GET. The HTTP method used for teh form.
+action               (string) default = empty. The forms action url.
+anchor               (string) default = empty. Adds an anchor to urls if set.
+uploadProgressBar    (string) default = auto. Either auto, none or always. Defines when the progress bar is
+                     displayed.
+use_ajax             (bool) default = False. Enable or disable ajax form submissions.
+renderSuccess        (bool) default = True. If True the whole form will be rendered after successful
+                     submission. If False messages only will be returned.
+successResponseBody  (string/callback) This option enables you to overwrite the complete response body on
+                     success. Use a callback to generate a dynamic response. The callback must take one
+                     parameter: the form instance and return a unicode string.
+redirectSuccess      (string/callback) Redirect the browser to a new location on success. See below for a
+                     list of options.
+redirectCancel       (string/callback) Redirect the browser to a new location on cancel. See below for a list
+                     of options.
+==================== ========================================================================================
 
 Url placeholders to be used with `redirectCancel` and `redirectSuccess`. The placeholders are automatically resolved
 to a valid url for the current context ::
@@ -137,6 +144,7 @@ To switch to a one column layout use the following code: ::
 
 Replacing default widgets or validators
 =======================================
+::
 
     FieldConf(id="ftext", datatype="text", size=1000, name="ftext",
 

@@ -15,7 +15,7 @@ Parameters
 ===========  ===========================================================================
 fields       list of database fields (field ids) to include in result.
              prefix '-': special fields or aggregate functions can be inserted by adding 
-                         a '-' in front of the field. -count(*) or -MAX(field1)
+                         a '-' in front of the field. -COUNT(*) or -MAX(field1)
              prefix '+': special fields skipped in SQL query e.g. '+preview'
 parameter    dictionary with fieldname:value entries used for search conditions
 operators    dictionary with fieldname:operator entries used for search conditions
