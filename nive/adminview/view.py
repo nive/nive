@@ -149,15 +149,16 @@ from nive.components.reform.schema import Invalid
 
 def RootnameValidator(node, value):
     """
-    Validator which succeeds if the username does not exist.
-    Can be used for the name input field in a sign up form.
+    Makes sure the new name does not exist.
     """
     # lookup name in database
     app = node.widget.form.context.app
     for root in app.GetAllRootConfs():
         if root.id == value:
-            err = _(u"'${name}' already in use. Please choose a different name.", mapping={'name':value})
-            raise Invalid(node, err)
+            # check if its the context
+            if app.root(root.id)!=node.widget.form.context:
+                err = _(u"'${name}' already in use. Please choose a different name.", mapping={'name':value})
+                raise Invalid(node, err)
 
 class RootForm(HTMLForm):
 
