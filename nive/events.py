@@ -49,6 +49,9 @@ to the __init__ function: ::
 import inspect
 
 class Events(object):
+    """
+    Object event listener.
+    """
     
     def InitEvents(self):
         """
