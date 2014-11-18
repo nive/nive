@@ -149,6 +149,9 @@ class BaseTest(unittest.TestCase):
                           start=3,
                           max=20,
                           sort=u"title, pool_type")
+        base.FmtSQLSelect(flds,
+                          parameter={u"pool_type":(u"data1",u"")},
+                          operators={u"pool_type":u"LIKE:OR"})
         base.GetFulltextSQL(u"test",
                             flds,
                           parameter={u"pool_type":u"data1",u"id":[1,2,3,4,5,6,7,8,9,0]},
