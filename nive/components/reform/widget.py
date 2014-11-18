@@ -186,7 +186,7 @@ class FormWidget(Widget):
     template = 'form'
     item_template = 'field'
     action_template = 'form_actions'
-    error_class = None
+    error_class = 'error'
     category = 'structural'
     requirements = ( ('reform', None), )
 

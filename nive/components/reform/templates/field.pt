@@ -7,14 +7,14 @@
      class="row">
 <div title="${field.description}"
      id="item-${field.name}" 
-     class="${field.error and field.widget.error_class} control-group">
+     class="${field.error and (field.widget.form.widget.error_class or field.widget.error_class)} control-group">
 
   <tal:block tal:condition="field.widget.category!='full-width'">
   <!-- mapping_item 3 column -->
   <div class="${field.widget.form.widget.settings.get('column1_css', 'span2')}">
     <label tal:condition="field.widget.category != 'structural'"
            tal:content="field.title"
-           class="control-label ${'required' if field.required else ''}"
+           class="control-label ${'required' if field.required else ''} ${field.error and (field.widget.form.widget.error_class or field.widget.error_class)}"
            title="${field.description}"
            for="${field.oid}"></label>
   </div>
@@ -37,7 +37,7 @@
   <div class="span12">
     <label tal:condition="field.widget.category != 'structural'"
            tal:content="field.title"
-           class="control-label ${'required' if field.required else ''}"
+           class="control-label ${'required' if field.required else ''} ${field.error and (field.widget.form.widget.error_class or field.widget.error_class)}"
            title="${field.description}"
            for="${field.oid}"></label>
   </div>

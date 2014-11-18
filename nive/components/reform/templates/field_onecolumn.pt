@@ -6,11 +6,11 @@
 <div tal:condition="not field.widget.hidden"
      title="${field.description}"
      id="item-${field.name}" 
-     class="${field.error and field.widget.error_class} control-group">
+     class="${field.error and (field.widget.form.widget.error_class or field.widget.error_class)} control-group">
 
     <label tal:condition="field.widget.category != 'structural'"
            tal:content="field.title"
-           class="control-label ${'required' if field.required else ''}"
+           class="control-label ${'required' if field.required else ''} ${field.error and (field.widget.form.widget.error_class or field.widget.error_class)}"
            title="${field.description}"
            for="${field.oid}"></label>
 
