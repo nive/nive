@@ -5,6 +5,7 @@
 __doc__ = "Data Pool 2 SQL Base Module"
 
 import weakref
+import logging
 from datetime import datetime
 
 from nive.utils.utils import ConvertToDateTime
@@ -314,6 +315,30 @@ class Base(object):
                     where.append(u"%s%s %s %s AND %s" % (table, paramname, operator, ph, ph))
                     plist.append(value[0])
                     plist.append(value[1])
+                elif operator.startswith(u"LIKE:"):
+                    if value == u"":
+                        continue
+                    if operator.endswith(u"OR"):
+                        logicalOp = u"OR"
+                    elif operator.endswith(u"NOT"):
+                        logicalOp = u"NOT"
+                    else:
+                        logicalOp = u"AND"
+                    where.append(u" (")
+                    statement = False
+                    for v in value:
+                        # handle multiple like values
+                        if statement:
+                            where.append(u" %s " % logicalOp)
+                        statement=True
+                        # exception empty value
+                        if not v:
+                            where.append(u"%s%s %s %s " % (table, paramname, u"=", ph))
+                        else:
+                            v = u"%%%s%%" % v.replace(u"*", u"%")
+                            where.append(u"%s%s %s %s " % (table, paramname, u"LIKE", ph))
+                        plist.append(v)
+                    where.append(u") ")
                 elif len(value)==1:
                     if operator == u"IN":
                         operator = u"="
@@ -523,10 +548,12 @@ class Base(object):
         except self._OperationalError, e:
             # map to nive.utils.dataPool2.base.OperationalError
             self.Undo()
+            logging.getLogger(self.name).error(str(e) + "  " + sql)
             raise OperationalError, e
         except self._ProgrammingError, e:
             # map to nive.utils.dataPool2.base.OperationalError
             self.Undo()
+            logging.getLogger(self.name).error(str(e) + "  " + sql)
             raise ProgrammingError, e
         if not getResult:
             if cc:
