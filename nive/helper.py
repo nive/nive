@@ -182,17 +182,20 @@ def ReplaceInListByID(conflist, newconf, id=None):
     return new
             
 
-def ReplaceRenderer(viewModule, viewname, renderer):
+def ReplaceRenderer(viewModule, viewname, renderer, attr=None):
     """
     Replace the renderer for a view in the given view module.
     :param viewModule:
     :param viewname:
     :param renderer:
+    :param attr:
     :return:
     """
     for v in viewModule.views:
         if v.name==viewname:
             v.renderer = renderer
+            if attr is not None:
+                v.attr=attr
 
 
 class JsonDataEncoder(json.JSONEncoder):
