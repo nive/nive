@@ -227,7 +227,7 @@ class Base(object):
                     f2 = field.split(u" as ")[0]
                 elif f2 in metaStructure:   # ?? or f2 == u"pool_stag":
                     table = u"meta__."
-                elif dataTable != u"":
+                elif table != u"":
                     if jointype.lower() != u"inner":
                         if field == mapJoinFld:
                             fields.append(u"IF(meta__.pool_datatbl='%s', %s, meta__.title)" % (dataTable, field))
