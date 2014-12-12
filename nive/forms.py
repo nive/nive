@@ -231,7 +231,7 @@ from nive.definitions import Conf, FieldConf, ConfigurationError
 from nive.definitions import ISort
 from nive.events import Events
 
-from nive.i18n import _
+from nive.i18n import _, translate
 from nive.components import reform
 from nive.components.reform.form import Form as ReForm
 from nive.components.reform.schema import null, Invalid
@@ -1180,8 +1180,8 @@ class HTMLForm(Form):
         if isinstance(msgs, basestring):
             msgs = [msgs]
         for m in msgs:
-            h.append(u"""<p>%s</p>""" % (m))
-        css = u"alert"
+            h.append(u"""<p>%s</p>""" % (translate(m, self.view.request)))
+        css = u"alert alert-success"
         if err:
             css = u"alert alert-warning"
         return u"""<div class="%s">%s</div>
@@ -1249,13 +1249,21 @@ class ObjectForm(HTMLForm):
 
     def StartForm(self, action, **kw):
         """
-        Default action. Called if no action in request or self.actions.default set.
-        Loads default data for initial from display on object creation.
-        
+        Default action. Use this function to initially render a form if:
+        - startEmpty is True
+        - defaultData is passed in kw
+        - load form default data
+
+        Event
+        - loadDefault(data) after data has been looked up
+
         returns bool, html
         """
         if self.startEmpty:
             data = {}
+        elif "defaultData" in kw:
+            data = kw["defaultData"]
+            self.Signal("loadDefault", data=data)
         else:
             data = self.LoadDefaultData()
         if isinstance(self.loadFromType, basestring):
