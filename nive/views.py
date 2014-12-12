@@ -35,6 +35,7 @@ from nive import helper
 from nive.utils.utils import ConvertToStr, ConvertListToStr, ConvertToDateTime
 from nive.utils.utils import FmtSeconds, FormatBytesForDisplay, CutText, GetMimeTypeExtension
 from nive import FileNotFound
+from nive.definitions import ViewConf
 from nive.definitions import IPage, IObject, IViewModuleConf
 from nive.definitions import ConfigurationError
 
@@ -971,6 +972,30 @@ class BaseView(object):
 
 
  
+# Configuration helper -------------------------------------------------
+def UpdateViewConf(viewModule, viewname, **viewconfig):
+    """
+    Update and replace the view configuration for the view `viewname` in the given view module.
+    You can pass a single or multiple values as `viewconfig` to overwrite the original views
+    configuration.
+
+    :param viewModule:
+    :param viewname:
+    :param **viewconfig:
+    :return: None
+    """
+    p = 0
+    for v in viewModule.views:
+        if v.name==viewname:
+            # create a copy fo the view and replace the original
+            vcopy = ViewConf(copyFrom=v, **viewconfig)
+            viewModule.views = list(viewModule.views)
+            viewModule.views[p] = vcopy
+            viewModule.views = tuple(viewModule.views)
+            return
+        p += 1
+
+
 
 # Response utilities -------------------------------------------------
 from zope.interface import implementer
@@ -990,7 +1015,6 @@ class ExceptionalResponse(HTTPFound):
 
     def __call__(self, environ, start_response):
         return Response.__call__(self, environ, start_response)
-
 
 
 def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None, headers=None):
@@ -1135,11 +1159,12 @@ class FieldRenderer(object):
                     pass
 
         elif fType == "text":
-            if settings.get("format")=="markdown":
+            fmt = settings.get("format")
+            if fmt=="newlineToBr":
+                data = data.replace(u"\r\n", u"\r\n<br>")
+            elif fmt=="markdown":
                 import markdown2
                 data = markdown2.markdown(data)
-            else:
-                data = data.replace(u"\r\n", u"\r\n<br>")
 
         elif fType == "date":
             if not isinstance(data, datetime):

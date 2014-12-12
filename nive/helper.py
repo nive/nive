@@ -19,9 +19,11 @@ from nive.definitions import (
     IViewConf, IToolConf, IPortalConf, IGroupConf, IModuleConf,
     IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf, IFileStorage
 )
+from nive.definitions import ViewConf
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
 from nive import File
+
 
 
 def ResolveName(name, base=None, raiseExcp=True):
@@ -96,11 +98,7 @@ def ResolveConfiguration(conf, base=None):
             conf = json.loads(s)
         # resolve attribute name
         elif conf:
-            c = ResolveName(conf, base=base)
-            if hasattr(c, "configuration"):
-                conf = c.configuration
-            else:
-                conf = c
+            conf = ResolveName(conf, base=base)
 
     # dict instance
     if isinstance(conf, dict):
@@ -154,10 +152,11 @@ def FormatConfTestFailure(report, fmt="text"):
     
     returns string
     """
+    import inspect
     v=[]
     for r in report:
         v+= u"-----------------------------------------------------------------------------------\r\n"
-        v+= str(r[0]) + " " + r[1] + "\r\n"
+        v+= unicode(r[0]) + " " + r[1] + "\r\n"
         v+= u"-----------------------------------------------------------------------------------\r\n"
         for d in r[2].__dict__.items():
             a = d[1]
@@ -166,7 +165,7 @@ def FormatConfTestFailure(report, fmt="text"):
                     a = r[2].parent.get(d[0])
                 except:
                     pass
-            v+= str(d[0])+u":  "+str(a)+u"\r\n"
+            v+= unicode(d[0])+u":  "+unicode(a)+u"\r\n"
         v+= u"\r\n"
     return "".join(v)
 
@@ -181,21 +180,6 @@ def ReplaceInListByID(conflist, newconf, id=None):
             new.append(conf)
     return new
             
-
-def ReplaceRenderer(viewModule, viewname, renderer, attr=None):
-    """
-    Replace the renderer for a view in the given view module.
-    :param viewModule:
-    :param viewname:
-    :param renderer:
-    :param attr:
-    :return:
-    """
-    for v in viewModule.views:
-        if v.name==viewname:
-            v.renderer = renderer
-            if attr is not None:
-                v.attr=attr
 
 
 class JsonDataEncoder(json.JSONEncoder):
@@ -459,10 +443,15 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             return GetUsers(app)
         elif dyn == "groups":
             portal = app.portal
-            if portal==None:
+            if portal is None:
                 portal = app
             return portal.GetGroups(sort="name", visibleOnly=True)
-        elif dyn == "localgroups":
+        elif dyn == "groups+auth":
+            portal = app.portal
+            if portal is None:
+                portal = app
+            return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="name", visibleOnly=True)
+        elif dyn == "local-groups":
             return app.GetGroups(sort="name", visibleOnly=True)
         elif dyn == "types":
             return app.GetAllObjectConfs()
