@@ -408,7 +408,7 @@ class DateInputWidget(Widget):
     """
     template = 'dateinput'
     size = None
-    requirements = ( ('jqueryui', None), )
+    requirements = ( )
     dateFormat = ("%Y-%m-%d","%Y/%m/%d","%m/%d/%y","%m/%d/%Y")
 
     def serialize(self, field, cstruct):
@@ -782,7 +782,7 @@ class CheckboxWidget(Widget):
     """
     true_val = 'true'
     false_val = 'false'
-
+    title = ''
     template = 'checkbox'
 
     def serialize(self, field, cstruct):
