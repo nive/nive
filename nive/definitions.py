@@ -273,17 +273,19 @@ class baseConf(object):
     def get(self, key, default=None):
         if key in self.__dict__:
             return self.__dict__[key]
-        if self._parent:
-            if key in self._parent.__dict__:
-                return self._parent.__dict__[key]
+        if self._parent is not None:
+            return self._parent.get(key, default)
+            #if key in self._parent.__dict__:
+            #    return self._parent.__dict__[key]
         return default
 
     def __getattr__(self, key):
         if key in self.__dict__:
             return self.__dict__[key]
-        if self._parent:
-            if key in self._parent.__dict__:
-                return self._parent.__dict__[key]
+        if self._parent is not None:
+            return self._parent.get(key, default)
+            #if key in self._parent.__dict__:
+            #    return self._parent.__dict__[key]
         raise AttributeError, key
 
     def __setattr__(self, key, value):
@@ -569,6 +571,7 @@ class AppConf(baseConf):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " AppConf.modules error: "+m, self, m))
+                m = o
             if hasattr(m, "test"):
                 report += m.test()
         # check meta
@@ -578,6 +581,30 @@ class AppConf(baseConf):
             for m in self.meta:
                 if hasattr(m, "test"):
                     report += m.test()
+        # groups
+        if self.groups:
+            if not isinstance(self.groups, (list, tuple)):
+                report.append((TypeError, " AppConf.groups: Not a list/tuple", self))
+            else:
+                for g in self.groups:
+                    if IGroupConf.providedBy(g):
+                        report += g.test()
+                        continue
+                    if not getattr(g, "id") or not getattr(g, "name"):
+                        report.append((ValueError, " AppConf.groups: Invalid group definition", self))
+        # check acls
+        if self.acl:
+            if not isinstance(self.acl, (list, tuple)):
+                report.append((TypeError, " AppConf.acl: Not a list/tuple", self))
+            else:
+                from nive.security import Allow, Deny
+                for a in self.acl:
+                    if not 2<len(a)<5:
+                        report.append((ValueError, " AppConf.acl: Invalid acl definition", self))
+                        continue
+                    if not a[0] in (Allow, Deny) or not a[1] or not a[2]:
+                        report.append((ValueError, " AppConf.acl: Invalid acl definition", self))
+
         return report
         
 
@@ -641,7 +668,7 @@ class DatabaseConf(baseConf):
         report = []
         # check context
         c = self.context
-        if c in ("Sqlite3", "Mysql", "MySql"):
+        if c.lower() in ("sqlite", "sqlite3", "mysql", "postgres","postgresql"):
             return report
         o = TryResolveName(c)
         if not o:
@@ -749,6 +776,18 @@ class ObjectConf(baseConf):
                 o = TryResolveName(e)
                 if not o:
                     report.append((ImportError, " for ObjectConf.extensions", e))
+        # check acls
+        if self.acl:
+            if not isinstance(self.acl, (list, tuple)):
+                report.append((TypeError, " ObjectConf.acl: Not a list/tuple", self))
+            else:
+                from nive.security import Allow, Deny
+                for a in self.acl:
+                    if not 2<len(a)<5:
+                        report.append((ValueError, " ObjectConf.acl: Invalid acl definition", self))
+                        continue
+                    if not a[0] in (Allow, Deny) or not a[1] or not a[2]:
+                        report.append((ValueError, " ObjectConf.acl: Invalid acl definition", self))
         # check views
         if not isinstance(self.views, (list, tuple)):
             report.append((TypeError, " ObjectConf.views error: Not a list", self))
@@ -939,7 +978,7 @@ class ViewModuleConf(baseConf):
 
 
     def __str__(self):
-        return "%(id)s %(name)s" % self
+        return "%(id)s" % self
 
     def test(self):
         report = []
@@ -956,6 +995,18 @@ class ViewModuleConf(baseConf):
             o = TryResolveName(self.view)
             if not o:
                 report.append((ImportError, " for ViewModuleConf.view", self))
+        # check acls
+        if self.acl:
+            if not isinstance(self.acl, (list, tuple)):
+                report.append((TypeError, " ViewModuleConf.acl: Not a list/tuple", self))
+            else:
+                from nive.security import Allow, Deny
+                for a in self.acl:
+                    if not 2<len(a)<5:
+                        report.append((ValueError, " ViewModuleConf.acl: Invalid acl definition", self))
+                        continue
+                    if not a[0] in (Allow, Deny) or not a[1] or not a[2]:
+                        report.append((ValueError, " ViewModuleConf.acl: Invalid acl definition", self))
         # check widgets
         if self.widgets:
             for w in self.widgets:
@@ -1076,6 +1127,7 @@ class PortalConf(baseConf):
         logoutUrl        : logout function
         logoutSuccessUrl : redirect on succesfull logout
         accountUrl       : user account page
+        groups           : list of Definitions.GroupConf with groups used in this portal.
         favicon          : favicon asset path
         robots           : robots.txt contents
         
@@ -1093,6 +1145,7 @@ class PortalConf(baseConf):
         self.logoutUrl = "/userdb/udb/logout"
         self.logoutSuccessUrl = "/userdb/udb/login"
         self.accountUrl = "/userdb/udb/update"
+        self.groups = ()
         self.favicon = ""
         self.robots = u"""
 User-agent: *
@@ -1109,7 +1162,17 @@ Disallow: /update
     
     def test(self):
         report = []
-        #check id
+        # groups
+        if self.groups:
+            if not isinstance(self.groups, (list, tuple)):
+                report.append((TypeError, " PortalConf.groups: Not a list/tuple", self))
+            else:
+                for g in self.groups:
+                    if IGroupConf.providedBy(g):
+                        report += g.test()
+                        continue
+                    if not getattr(g, "id") or not getattr(g, "name"):
+                        report.append((ValueError, " PortalConf.groups: Invalid group definition", self))
         return report
         
 
@@ -1231,7 +1294,7 @@ class ModuleConf(baseConf):
 
     
     def __str__(self):
-        return "%(id)s (%(name)s)" % self
+        return "%(id)s" % self
 
     def test(self):
         report = []
@@ -1255,7 +1318,7 @@ class ModuleConf(baseConf):
             if isinstance(m, basestring):
                 o = TryResolveName(m)
                 if not o:
-                    report.append((ImportError, " AppConf.modules error: "+m, self, m))
+                    report.append((ImportError, " AppConf.modules import: "+m, self))
             if hasattr(m, "test"):
                 report += m.test()
         # check extensions
@@ -1356,6 +1419,14 @@ class GroupConf(baseConf):
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
 
+    def test(self):
+        report = []
+        # check id
+        if not self.id:
+            report.append((ConfigurationError, " GroupConf.id is empty", self))
+        if not self.name:
+            report.append((ConfigurationError, " GroupConf.name is empty", self))
+        return report
 
 
 
