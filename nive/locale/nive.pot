@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2014-08-26 11:30+0200\n"
+"POT-Creation-Date: 2014-12-08 16:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,255 +15,260 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: \n"
 
-#: ./nive/views.py:604
+#: ./nive/views.py:664
 msgid "<em>Unknown field</em>"
 msgstr ""
 
-#: ./nive/views.py:977
+#: ./nive/views.py:1122
 msgid "Yes"
 msgstr ""
 
-#: ./nive/views.py:979
+#: ./nive/views.py:1124
 msgid "No"
 msgstr ""
 
-#: ./nive/portal.py:70
-msgid "Authenticated"
-msgstr ""
-
-#: ./nive/forms.py:1594 ./nive/forms.py:1167 ./nive/forms.py:1205
-#: ./nive/forms.py:1467 ./nive/adminview/view.py:134
+#: ./nive/forms.py:1781 ./nive/forms.py:1349 ./nive/forms.py:1393
+#: ./nive/forms.py:1653 ./nive/adminview/view.py:205
+#: ./nive/adminview/view.py:134
 msgid "OK. Data saved."
 msgstr ""
 
-#: ./nive/forms.py:1573
+#: ./nive/forms.py:1760
 msgid "Item exists!"
 msgstr ""
 
-#: ./nive/forms.py:1541
+#: ./nive/forms.py:1727
 msgid "Item deleted!"
 msgstr ""
 
-#: ./nive/definitions.py:1416
+#: ./nive/definitions.py:1403
 msgid "String"
 msgstr ""
 
-#: ./nive/definitions.py:1417
+#: ./nive/definitions.py:1404
 msgid "Number"
 msgstr ""
 
-#: ./nive/definitions.py:1418
+#: ./nive/definitions.py:1405
 msgid "Float"
 msgstr ""
 
-#: ./nive/definitions.py:1419
+#: ./nive/definitions.py:1406
 msgid "Bool"
 msgstr ""
 
-#: ./nive/definitions.py:1420
+#: ./nive/definitions.py:1407
 msgid "File"
 msgstr ""
 
-#: ./nive/definitions.py:1421 ./nive/definitions.py:1508
+#: ./nive/definitions.py:1408 ./nive/definitions.py:1499
 #: ./nive/tools/sendMail.py:49
 msgid "Text"
 msgstr ""
 
-#: ./nive/definitions.py:1422
+#: ./nive/definitions.py:1409
 msgid "Date"
 msgstr ""
 
-#: ./nive/definitions.py:1423
+#: ./nive/definitions.py:1410
 msgid "Datetime"
 msgstr ""
 
-#: ./nive/definitions.py:1425
+#: ./nive/definitions.py:1411
+msgid "Time"
+msgstr ""
+
+#: ./nive/definitions.py:1413
 msgid "HTML Text"
 msgstr ""
 
-#: ./nive/definitions.py:1426
+#: ./nive/definitions.py:1414
 msgid "Code (Html, Javascript, Css)"
 msgstr ""
 
-#: ./nive/definitions.py:1427
+#: ./nive/definitions.py:1415
 msgid "Json"
 msgstr ""
 
-#: ./nive/definitions.py:1428
+#: ./nive/definitions.py:1416
 msgid "Lines"
 msgstr ""
 
-#: ./nive/definitions.py:1429
+#: ./nive/definitions.py:1417
 msgid "List"
 msgstr ""
 
-#: ./nive/definitions.py:1430
+#: ./nive/definitions.py:1418
 msgid "Radio Selection"
 msgstr ""
 
-#: ./nive/definitions.py:1431
+#: ./nive/definitions.py:1419 ./nive/definitions.py:1432
 msgid "Multiple Selection"
 msgstr ""
 
-#: ./nive/definitions.py:1432
+#: ./nive/definitions.py:1420 ./nive/definitions.py:1433
 msgid "Multiple Checkboxes"
 msgstr ""
 
-#: ./nive/definitions.py:1433
+#: ./nive/definitions.py:1421
 msgid "Email"
 msgstr ""
 
-#: ./nive/definitions.py:1434
-#: ./nive/components/reform/templates/checked_password.pt:3
+#: ./nive/definitions.py:1422
+#: ./nive/components/reform/templates/password_confirm.pt:3
 msgid "Password"
 msgstr ""
 
-#: ./nive/definitions.py:1435
+#: ./nive/definitions.py:1423
 msgid "URL"
 msgstr ""
 
-#: ./nive/definitions.py:1436
+#: ./nive/definitions.py:1424
 msgid "URL List"
 msgstr ""
 
-#: ./nive/definitions.py:1437
+#: ./nive/definitions.py:1425
 msgid "ID Reference"
 msgstr ""
 
-#: ./nive/definitions.py:1438
+#: ./nive/definitions.py:1426
 msgid "ID Reference List"
 msgstr ""
 
-#: ./nive/definitions.py:1439 ./nive/definitions.py:1515
+#: ./nive/definitions.py:1427 ./nive/definitions.py:1506
 msgid "Timestamp"
 msgstr ""
 
-#: ./nive/definitions.py:1441
+#: ./nive/definitions.py:1429
 msgid "Binary"
 msgstr ""
 
-#: ./nive/definitions.py:1442
+#: ./nive/definitions.py:1430
 msgid "List of numbers"
 msgstr ""
 
-#: ./nive/definitions.py:1451 ./nive/tools/dbStructureUpdater.py:182
+#: ./nive/definitions.py:1442 ./nive/tools/dbStructureUpdater.py:182
 msgid "ID"
 msgstr ""
 
-#: ./nive/definitions.py:1452 ./nive/tools/dbStructureUpdater.py:183
+#: ./nive/definitions.py:1443 ./nive/tools/dbStructureUpdater.py:183
 msgid "Type"
 msgstr ""
 
-#: ./nive/definitions.py:1453
+#: ./nive/definitions.py:1444
 msgid "Container"
 msgstr ""
 
-#: ./nive/definitions.py:1454 ./nive/definitions.py:1499
+#: ./nive/definitions.py:1445 ./nive/definitions.py:1490
 msgid "Filename"
 msgstr ""
 
-#: ./nive/definitions.py:1455
+#: ./nive/definitions.py:1446
 msgid "State"
 msgstr ""
 
-#: ./nive/definitions.py:1456
+#: ./nive/definitions.py:1447
 msgid "Select Number"
 msgstr ""
 
-#: ./nive/definitions.py:1457
+#: ./nive/definitions.py:1448
 msgid "Data Table Reference"
 msgstr ""
 
-#: ./nive/definitions.py:1458
+#: ./nive/definitions.py:1449
 msgid "Data Table Name"
 msgstr ""
 
-#: ./nive/definitions.py:1462
+#: ./nive/definitions.py:1453
 msgid "Created"
 msgstr ""
 
-#: ./nive/definitions.py:1463
+#: ./nive/definitions.py:1454
 msgid "Changed"
 msgstr ""
 
-#: ./nive/definitions.py:1464
+#: ./nive/definitions.py:1455
 msgid "Created by"
 msgstr ""
 
-#: ./nive/definitions.py:1465
+#: ./nive/definitions.py:1456
 msgid "Changed by"
 msgstr ""
 
-#: ./nive/definitions.py:1469 ./nive/tools/sendMail.py:48
+#: ./nive/definitions.py:1460 ./nive/tools/sendMail.py:48
 msgid "Title"
 msgstr ""
 
-#: ./nive/definitions.py:1470
+#: ./nive/definitions.py:1461
 msgid "Sort"
 msgstr ""
 
-#: ./nive/definitions.py:1471
+#: ./nive/definitions.py:1462
 msgid "Category"
 msgstr ""
 
-#: ./nive/definitions.py:1475
+#: ./nive/definitions.py:1466
 msgid "Workflow Process"
 msgstr ""
 
-#: ./nive/definitions.py:1476
+#: ./nive/definitions.py:1467
 msgid "Workflow Activity"
 msgstr ""
 
-#: ./nive/definitions.py:1496
+#: ./nive/definitions.py:1487
 msgid "Unique ID"
 msgstr ""
 
-#: ./nive/definitions.py:1497 ./nive/definitions.py:1507
-#: ./nive/definitions.py:1519
+#: ./nive/definitions.py:1488 ./nive/definitions.py:1498
+#: ./nive/definitions.py:1510
 msgid "Object ID"
 msgstr ""
 
-#: ./nive/definitions.py:1498
+#: ./nive/definitions.py:1489
 msgid "File key"
 msgstr ""
 
-#: ./nive/definitions.py:1500
+#: ./nive/definitions.py:1491
 msgid "Internal file path"
 msgstr ""
 
-#: ./nive/definitions.py:1501
+#: ./nive/definitions.py:1492
 msgid "File size"
 msgstr ""
 
-#: ./nive/definitions.py:1502
+#: ./nive/definitions.py:1493
 msgid "File extension"
 msgstr ""
 
-#: ./nive/definitions.py:1503
+#: ./nive/definitions.py:1494
 msgid "Version"
 msgstr ""
 
-#: ./nive/definitions.py:1509
+#: ./nive/definitions.py:1500
 msgid "Files"
 msgstr ""
 
-#: ./nive/definitions.py:1513
+#: ./nive/definitions.py:1504
 msgid "Key"
 msgstr ""
 
-#: ./nive/definitions.py:1514 ./nive/components/reform/widget.py:963
+#: ./nive/definitions.py:1505 ./nive/components/reform/widget.py:980
 msgid "Value"
 msgstr ""
 
-#: ./nive/definitions.py:1520
+#: ./nive/definitions.py:1511
 msgid "User name"
 msgstr ""
 
-#: ./nive/definitions.py:1521
+#: ./nive/definitions.py:1512
 msgid "Group assignment"
 msgstr ""
 
-#: ./nive/tests/index.pt:18 ./nive/adminview/view.py:229
+#: ./nive/helper.py:465
+msgid "Authenticated"
+msgstr ""
+
+#: ./nive/tests/index.pt:18 ./nive/adminview/view.py:297
 #: ./nive/adminview/index.pt:18
 msgid "administration"
 msgstr ""
@@ -322,7 +327,7 @@ msgstr ""
 msgid "Meta fields"
 msgstr ""
 
-#: ./nive/adminview/modules.pt:28 ./nive/adminview/view.py:56
+#: ./nive/adminview/modules.pt:28 ./nive/adminview/view.py:57
 msgid "Tools"
 msgstr ""
 
@@ -342,7 +347,7 @@ msgstr ""
 msgid "Database Administration"
 msgstr ""
 
-#: ./nive/adminview/view.py:53
+#: ./nive/adminview/view.py:54
 msgid "Basics"
 msgstr ""
 
@@ -362,6 +367,15 @@ msgstr ""
 msgid "Read only listing of all registered views grouped by view modules."
 msgstr ""
 
+#: ./nive/adminview/view.py:160
+#, python-format
+msgid "'${name}' already in use. Please choose a different name."
+msgstr ""
+
+#: ./nive/adminview/view.py:326
+msgid "The default root does not support persistent data storage."
+msgstr ""
+
 #: ./nive/adminview/view.py:85
 msgid "Database"
 msgstr ""
@@ -370,101 +384,121 @@ msgstr ""
 msgid "No persistent storage for configurations activated. Nothing saved."
 msgstr ""
 
-#: ./nive/adminview/view.py:241
+#: ./nive/adminview/view.py:309
 msgid "Application title"
 msgstr ""
 
-#: ./nive/adminview/view.py:242
+#: ./nive/adminview/view.py:310
 msgid "Application description"
 msgstr ""
 
-#: ./nive/adminview/view.py:243
+#: ./nive/adminview/view.py:311
 msgid "Enable workflow engine"
 msgstr ""
 
-#: ./nive/adminview/view.py:244
+#: ./nive/adminview/view.py:312
 msgid "Enable fulltext index"
 msgstr ""
 
-#: ./nive/adminview/view.py:245
+#: ./nive/adminview/view.py:313
 msgid "Codepage used in html frontend"
 msgstr ""
 
-#: ./nive/adminview/view.py:258
+#: ./nive/adminview/view.py:328
+msgid "Root url name"
+msgstr ""
+
+#: ./nive/adminview/view.py:330
+msgid "Root title"
+msgstr ""
+
+#: ./nive/adminview/view.py:331
+msgid "Root description"
+msgstr ""
+
+#: ./nive/adminview/view.py:332
+msgid "Permission"
+msgstr ""
+
+#: ./nive/adminview/view.py:333
+msgid "Only displayed to users in the selected group"
+msgstr ""
+
+#: ./nive/adminview/view.py:346
 msgid "Database type to be used"
 msgstr ""
 
-#: ./nive/adminview/view.py:259
+#: ./nive/adminview/view.py:347
 msgid ""
 "Supports 'Sqlite3' and 'MySql' by default. MySql requires python-mysqldb "
 "installed."
 msgstr ""
 
-#: ./nive/adminview/view.py:260
+#: ./nive/adminview/view.py:348
 msgid "Relative or absolute root directory for files"
 msgstr ""
 
-#: ./nive/adminview/view.py:261
+#: ./nive/adminview/view.py:349
 msgid "Database file path or name"
 msgstr ""
 
-#: ./nive/adminview/view.py:262
+#: ./nive/adminview/view.py:350
 msgid "Sqlite3=database file path, MySql=database name"
 msgstr ""
 
-#: ./nive/adminview/view.py:263
+#: ./nive/adminview/view.py:351
 msgid "Database server host"
 msgstr ""
 
-#: ./nive/adminview/view.py:264
+#: ./nive/adminview/view.py:352
 msgid "Database server port"
 msgstr ""
 
-#: ./nive/adminview/view.py:265
+#: ./nive/adminview/view.py:353
 msgid "Database server user"
 msgstr ""
 
-#: ./nive/adminview/view.py:266
+#: ./nive/adminview/view.py:354
 msgid "Database server password"
 msgstr ""
 
-#: ./nive/adminview/view.py:278
+#: ./nive/adminview/view.py:366
 msgid "Redirect for portal root (/) requests"
 msgstr ""
 
-#: ./nive/adminview/view.py:279
+#: ./nive/adminview/view.py:367
 msgid "Favicon asset path"
 msgstr ""
 
-#: ./nive/adminview/view.py:280
+#: ./nive/adminview/view.py:368
 msgid "robots.txt contents"
 msgstr ""
 
-#: ./nive/adminview/view.py:281
+#: ./nive/adminview/view.py:369
 msgid "Login form url"
 msgstr ""
 
-#: ./nive/adminview/view.py:282
+#: ./nive/adminview/view.py:370
 msgid "Redirect for unauthorized requests"
 msgstr ""
 
-#: ./nive/adminview/view.py:283
+#: ./nive/adminview/view.py:371
 msgid "Redirect on logout"
 msgstr ""
 
-#: ./nive/adminview/view.py:284
+#: ./nive/adminview/view.py:372
 msgid "User account page url"
 msgstr ""
 
-#: ./nive/adminview/view.py:232
+#: ./nive/adminview/view.py:300
 msgid "user management"
 msgstr ""
 
-#: ./nive/adminview/view.py:225
+#: ./nive/adminview/view.py:293
 msgid "editor"
 msgstr ""
 
-#: ./nive/adminview/view.py:227
+#: ./nive/adminview/view.py:295
 msgid "public"
 msgstr ""
 
@@ -473,6 +507,10 @@ msgid "Switch location or Logout"
 msgstr ""
 
 #: ./nive/adminview/index.pt:44
+msgid "Portal default"
+msgstr ""
+
+#: ./nive/adminview/index.pt:49
 msgid "Logout"
 msgstr ""
 
@@ -556,30 +594,30 @@ msgstr ""
 msgid "\"${val}\" is not a date object"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1253
+#: ./nive/components/reform/schema.py:1256
 #, python-format
 msgid "\"${val}\" is not a time object"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1731
-#: ./nive/components/reform/schema.py:1984
+#: ./nive/components/reform/schema.py:1741
+#: ./nive/components/reform/schema.py:1994
 #, python-format
 msgid "${value} is not a dictionary"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1775
-#: ./nive/components/reform/schema.py:1810
-#: ./nive/components/reform/schema.py:1908
+#: ./nive/components/reform/schema.py:1785
+#: ./nive/components/reform/schema.py:1820
+#: ./nive/components/reform/schema.py:1918
 #, python-format
 msgid "${value} is not iterable"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1779
-#: ./nive/components/reform/schema.py:1814
-#: ./nive/components/reform/schema.py:1912
-#: ./nive/components/reform/schema.py:1464
-#: ./nive/components/reform/schema.py:1466
-#: ./nive/components/reform/schema.py:1860
+#: ./nive/components/reform/schema.py:1789
+#: ./nive/components/reform/schema.py:1824
+#: ./nive/components/reform/schema.py:1922
+#: ./nive/components/reform/schema.py:1470
+#: ./nive/components/reform/schema.py:1472
+#: ./nive/components/reform/schema.py:1870
 msgid "Required"
 msgstr ""
 
@@ -631,60 +669,60 @@ msgstr ""
 msgid "The dotted name \"${name}\" cannot be imported"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1738
-#: ./nive/components/reform/schema.py:1991
+#: ./nive/components/reform/schema.py:1748
+#: ./nive/components/reform/schema.py:2001
 #, python-format
 msgid "${value} has no ${key} key"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1849
+#: ./nive/components/reform/schema.py:1859
 #, python-format
 msgid "${value} is not a string"
 msgstr ""
 
-#: ./nive/components/reform/schema.py:1858
-#: ./nive/components/reform/schema.py:1819
+#: ./nive/components/reform/schema.py:1868
+#: ./nive/components/reform/schema.py:1829
 #, python-format
 msgid "${value} not in reference list"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:962
+#: ./nive/components/reform/widget.py:979
 msgid "Fields did not match"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:964
+#: ./nive/components/reform/widget.py:981
 msgid "Confirm Value"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:1014
+#: ./nive/components/reform/widget.py:1031
 msgid "Password did not match confirm"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:582
+#: ./nive/components/reform/widget.py:599
 msgid "Header 1"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:583
+#: ./nive/components/reform/widget.py:600
 msgid "Header 2"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:584
+#: ./nive/components/reform/widget.py:601
 msgid "Header 3"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:585
+#: ./nive/components/reform/widget.py:602
 msgid "Header 4"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:586
+#: ./nive/components/reform/widget.py:603
 msgid "Text (p)"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:587
+#: ./nive/components/reform/widget.py:604
 msgid "Formatted (pre)"
 msgstr ""
 
-#: ./nive/components/reform/widget.py:1247
+#: ./nive/components/reform/widget.py:1317
 msgid "Incomplete date"
 msgstr ""
 
@@ -700,11 +738,11 @@ msgstr ""
 msgid "--disabled!--"
 msgstr ""
 
-#: ./nive/components/reform/templates/form.pt:14
+#: ./nive/components/reform/templates/form.pt:13
 msgid "There was a problem with your submission"
 msgstr ""
 
-#: ./nive/components/reform/templates/form.pt:17
+#: ./nive/components/reform/templates/form.pt:16
 msgid "Errors have been highlighted below"
 msgstr ""
 
@@ -720,15 +758,15 @@ msgstr ""
 msgid "Day"
 msgstr ""
 
-#: ./nive/components/reform/templates/checked_password.pt:6
+#: ./nive/components/reform/templates/password_confirm.pt:7
 msgid "Confirm Password"
 msgstr ""
 
-#: ./nive/tools/sendMailTester.py:25
+#: ./nive/tools/sendMailTester.py:21
 msgid "Fake Mailer"
 msgstr ""
 
-#: ./nive/tools/sendMailTester.py:84 ./nive/tools/sendMail.py:116
+#: ./nive/tools/sendMailTester.py:80 ./nive/tools/sendMail.py:116
 msgid "No receiver for the e-mail! Aborting."
 msgstr ""
 
@@ -865,7 +903,7 @@ msgstr ""
 
 #: ./nive/tools/exportJson.py:60 ./nive/tools/exportJson.py:64
 #: ./nive/tools/dbSqlDump.py:48 ./nive/tools/dbSqlDump.py:52
-#: ./nive/tools/dbJsonDump.py:48 ./nive/tools/dbJsonDump.py:52
+#: ./nive/tools/dbJsonDump.py:50 ./nive/tools/dbJsonDump.py:54
 #, python-format
 msgid "Database connection error (${name})\n"
 msgstr ""
@@ -897,7 +935,7 @@ msgid ""
 "statements are not included."
 msgstr ""
 
-#: ./nive/tools/dbSqlDump.py:24 ./nive/tools/dbJsonDump.py:24
+#: ./nive/tools/dbSqlDump.py:24 ./nive/tools/dbJsonDump.py:26
 msgid "Exclude system columns"
 msgstr ""
 
@@ -1019,11 +1057,11 @@ msgstr ""
 msgid "This function dumps a list of all objects found in memory."
 msgstr ""
 
-#: ./nive/tools/dbJsonDump.py:15
+#: ./nive/tools/dbJsonDump.py:17
 msgid "Database json dump"
 msgstr ""
 
-#: ./nive/tools/dbJsonDump.py:16
+#: ./nive/tools/dbJsonDump.py:18
 msgid ""
 "This function dumps table contents the way records are stored in json format."
 msgstr ""
