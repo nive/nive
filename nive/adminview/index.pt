@@ -28,6 +28,8 @@
   <ul class="dropdown-menu">
     <li tal:repeat="link view.AdministrationLinks()"><a href="${link.href}">${link.title}</a></li>
     <li class="divider"></li>
+    <li><a href="/" i18n:translate="">Portal default</a></li>
+    <li class="divider"></li>
     <li><a href="/logout" i18n:translate="">Logout</a></li>
   </ul>
 </div>
