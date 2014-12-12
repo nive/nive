@@ -65,10 +65,12 @@ class Portal(Events, object):
         - init(configuration)
         """
         self.components = []
-        self.groups = [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)]
+        self.groups = []
         self.__acl__ = [(Allow, "group:admin", ALL_PERMISSIONS)]
         
         self.configuration = configuration or PortalConf()
+        if self.configuration.groups:
+            self.groups = self.configuration.groups
         
         self.Signal("init", configuration=self.configuration)
 
@@ -132,7 +134,6 @@ class Portal(Events, object):
         comp.__parent__ = self
         comp.__name__ = name
         self.components.append(name)
-        #self.RegisterGroups(comp)
 
 
     def Startup(self, pyramidConfig, debug=False, **kw):
@@ -235,18 +236,10 @@ class Portal(Events, object):
         """
         returns all groups registered by components as list
         """
-        if visibleOnly:
-            #opt
-            g = []
-            for a in self.groups:
-                if not a.get("hidden"):
-                    g.append(a)
-        else:
-            g = self.groups
-        if not sort:
-            return g
-        l = copy.deepcopy(g)
-        return SortConfigurationList(l, sort)
+        if not visibleOnly:
+            return SortConfigurationList(self.groups, sort)
+        c = filter(lambda a: not a.get("hidden"), self.groups)
+        return SortConfigurationList(c, sort)
 
 
     @property
@@ -256,21 +249,22 @@ class Portal(Events, object):
 
     def RegisterGroups(self, component):
         """
-        Collects groups from the component
+        Callback to collect groups from all registered component. `RegisterGroups` is called at the
+        end of `StartRegistration` by each component.
         """
         try:
             gr = component.configuration.groups
-            for g in gr:
-                add = 1
-                for g2 in self.groups:
-                    if g["id"] == g2["id"]:
-                        add = 0
-                        break
-                if add:
-                    self.groups.append(g)
-        except:
-            pass
-                
+        except AttributeError:
+            return
+        for g in gr:
+            add = 1
+            for g2 in self.groups:
+                if g["id"] == g2["id"]:
+                    add = 0
+                    break
+            if add:
+                self.groups.append(g)
+
 
     def SetupPortalViews(self, config):
         # redirects
