@@ -93,7 +93,7 @@ class Application(object):
         - init(configuration)
         """
         self.registry = Components()
-        self.configuration = None
+        self.configuration = configuration
         self.dbConfiguration = None
         # set id for logging
         if configuration:
@@ -124,9 +124,7 @@ class Application(object):
         self.Signal("init", configuration=configuration)
 
         self.starttime = 0
-        if configuration:
-            self.Register(configuration)
-        
+
     def __del__(self):
         self.Close()
         
@@ -162,8 +160,9 @@ class Application(object):
         self.starttime = time()
         self.log.debug("Startup with debug=%s", str(debug))
         self.debug = debug
+        self.Register(self.configuration)
         self.Signal("startup", app=self)
-        self.SetupRegistry()
+        self.SetupApplication()
         
 
     def StartRegistration(self, pyramidConfig):
@@ -176,6 +175,8 @@ class Application(object):
         - startRegistration(app, pyramidConfig)
         """
         self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
+        # register modules `configuration.modules`
+        self.Register(self.configuration)
         # register pyramid views and translations
         if pyramidConfig:
             self._RegisterViewModules(pyramidConfig)
@@ -530,7 +531,7 @@ class Registration(object):
         raise TypeError, "Unknown configuration interface type (%s)" % (str(conf))
         
         
-    def SetupRegistry(self):
+    def SetupApplication(self):
         """
         Loads self.configuration, includes modules and updates meta fields.
         """
@@ -548,7 +549,7 @@ class Registration(object):
                 self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
             else:
                 self.dbConfiguration = c.dbConfiguration
-        
+
         
     def _RegisterConfViews(self, conf):
         """
@@ -705,6 +706,10 @@ class Registration(object):
     AppViewPredicate.__text__ = "nive.AppViewPredicate"
         
         
+    #bw 0.9.13 outdated
+    def SetupRegistry(self):
+        return self.SetupApplication()
+
 
 
 class Configuration:

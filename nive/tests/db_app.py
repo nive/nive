@@ -134,7 +134,7 @@ def app_db(modules=None):
             a.Register(m)
     p = Portal()
     p.Register(a, "nive")
-    a.SetupRegistry()
+    a.SetupApplication()
     dbfile = DvPath(a.dbConfiguration.dbName)
     if not dbfile.IsFile():
         dbfile.CreateDirectories()
@@ -167,7 +167,7 @@ def app_nodb():
     a.Register(DatabaseConf())
     p = Portal()
     p.Register(a, "nive")
-    a.SetupRegistry()
+    a.SetupApplication()
     try:
         a.Startup(None)
     except OperationalError:

@@ -104,7 +104,7 @@ class modTest(unittest.TestCase):
         self.app.Close()
 
     def test_startupErr(self):
-        self.assertRaises(ConfigurationError, self.app.Startup, (None))
+        self.assertRaises(TypeError, self.app.Startup, (None))
 
     def test_startup1(self):
         self.app.Register(mApp)
