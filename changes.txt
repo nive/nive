@@ -1,6 +1,11 @@
 
-0.9.12b
+1.0rc1
 ------
+- maintenance and bugfixes
+- many improvements
+
+0.9.12b
+-------
 - refactored previous package nive -> nive, nive_cms, nive_userdb
   see packages.txt for changed imports
 
