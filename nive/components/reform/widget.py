@@ -414,6 +414,13 @@ class DateInputWidget(Widget):
     def serialize(self, field, cstruct):
         if cstruct in (null, None):
             cstruct = ''
+        else:
+            try:
+                dt = datetime.datetime.strptime(cstruct,"%Y-%m-%d")
+                cstruct =  dt.strftime(self.dateFormat[0])
+            except ValueError:
+                # keep the date string as it is
+                pass
         template = self.template
         return field.renderer(template, field=field, cstruct=cstruct)
 
