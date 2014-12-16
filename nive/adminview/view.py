@@ -10,7 +10,7 @@ from pyramid.renderers import get_renderer, render_to_response, render
 
 from nive.i18n import _
 from nive.definitions import ViewConf, ViewModuleConf, FieldConf, WidgetConf, Conf
-from nive.definitions import IApplication, IUser, IAdminWidgetConf, IUserDatabase, IPersistent, IModuleConf
+from nive.definitions import IApplication, IUser, IAdminWidgetConf, IUserDatabase, IPersistent, IModuleConf, IViewModuleConf
 from nive.definitions import IWebsiteRoot, ICMSRoot
 
 from nive.views import BaseView
@@ -30,6 +30,7 @@ configuration = ViewModuleConf(
     templates = "nive.adminview:",
     template = "index.pt",
     permission = "administration",
+    adminlink = "app_folder_url.admin",
     static = "nive.adminview:static",
     assets = [
         ('bootstrap.min.css', 'nive.adminview:static/mods/bootstrap/css/bootstrap.min.css'),
@@ -254,7 +255,7 @@ class AdminBasics(BaseView):
             if d[0]=="_parent" and not d[1]:
                 continue
             value = d[1]
-            if value==None:
+            if value is None:
                 try:
                     value = conf.parent.get(d[0])
                 except:
@@ -287,17 +288,24 @@ class AdminBasics(BaseView):
         for app in apps:
             if not hasattr(app, "registry"):
                 continue
-            # search for cms editor
+
+            # search all view modules for admin links
+            for vm in app.QueryConf(IViewModuleConf):
+                if not vm.get("adminlink"):
+                    continue
+                if not self.Allowed(vm.permission, app):
+                    continue
+                url = self.ResolveUrl(vm.get("adminLink"), app)
+                links.append({"href":url, "title":app.configuration.title + u": " + vm.name})
+
+            # bw.0.9.13
+            # search for cms editor and public view by root
             for root in app.GetRoots():
                 if ICMSRoot.providedBy(root):
                     links.append({"href":self.Url(root), "title":app.configuration.title + u": " + _(u"editor")})
                 elif IWebsiteRoot.providedBy(root):
                     links.append({"href":self.Url(root), "title":app.configuration.title + u": " + _(u"public")})
-            # administration
-            links.append({"href":self.FolderUrl(app)+u"admin", "title":app.configuration.title + u": " + _(u"administration")})
-            # user management
-            if IUserDatabase.providedBy(app):
-                links.append({"href":self.FolderUrl(app)+u"usermanagement", "title":app.configuration.title + u": " + _(u"user management")})
+
         return links
                 
     

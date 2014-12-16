@@ -4,9 +4,9 @@
 <head>
 <title>${view.context.app.configuration.title} administration</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<tal:block tal:replace="structure view.Assets()"></tal:block>
-<tal:block metal:define-slot="head"></tal:block>
-<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<tal:block tal:replace="structure view.Assets()"> </tal:block>
+<tal:block metal:define-slot="head"> </tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head"> </tal:block>
 </head>
 
 <body>
