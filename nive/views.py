@@ -214,6 +214,10 @@ class BaseView(object):
 
         - obj_url
         - obj_folder_url
+        - root_url
+        - root_folder_url
+        - app_url
+        - app_folder_url
         - parent_url
         - page_url
         - page_url_anchor
@@ -242,6 +246,14 @@ class BaseView(object):
             url = url.replace("obj_folder_url", self.FolderUrl(object))
         elif url == "parent_url":
             url = self.Url(object.parent)
+        elif url == "root_url":
+            url = self.Url(object.root())
+        elif url == "root_folder_url":
+            url = self.FolderUrl(object.root())
+        elif url == "app_url":
+            url = self.Url(object.app)
+        elif url == "app_folder_url":
+            url = self.FolderUrl(object.app)
         return url
     
     
