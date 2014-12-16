@@ -513,9 +513,9 @@ class ObjectEdit:
         Commit changes made to data, meta and files attributes without calling wf 
         
         Event: 
-        - commit()
+        - commit(user)
         """
-        self.Signal("commit")
+        self.Signal("commit", user=user)
         self.dbEntry.Commit(user=user)
 
 
