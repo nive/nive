@@ -22,41 +22,42 @@ from nive.definitions import ToolConf, FieldConf
 from nive.tool import Tool
 from nive.i18n import _
 
-configuration = ToolConf()
-configuration.id = "sendMail"
-configuration.context = "nive.tools.sendMail.sendMail"
-configuration.name = _(u"Send mails to registered users")
-configuration.description = __doc__
-configuration.apply = None
-configuration.data = [
-    FieldConf(id="host",    name=_(u"SMTP host"),       datatype="string",       required=1,     readonly=1, default=u"",    description=u""),
-    FieldConf(id="port",    name=_(u"SMTP port"),       datatype="number",       required=1,     readonly=1, default=21,     description=u""),
-    FieldConf(id="sender",  name=_(u"SMTP sender mail"),datatype="email",        required=1,     readonly=1, default=u"",    description=u""),
-    FieldConf(id="user",    name=_(u"SMTP user"),       datatype="string",       required=0,     readonly=1, default=u"",    description=u""),
-    FieldConf(id="pass_",   name=_(u"SMTP password"),   datatype="password",     required=0,     readonly=1, default=u"",    description=u""),
+configuration = ToolConf(
+    id = "sendMail",
+    context = "nive.tools.sendMail.sendMail",
+    name = _(u"Send mails to registered users"),
+    description = __doc__,
+    apply = None,
+    data = (
+        FieldConf(id="host",    name=_(u"SMTP host"),       datatype="string",       required=1,     readonly=1, default=u"",    description=u""),
+        FieldConf(id="port",    name=_(u"SMTP port"),       datatype="number",       required=1,     readonly=1, default=21,     description=u""),
+        FieldConf(id="sender",  name=_(u"SMTP sender mail"),datatype="email",        required=1,     readonly=1, default=u"",    description=u""),
+        FieldConf(id="user",    name=_(u"SMTP user"),       datatype="string",       required=0,     readonly=1, default=u"",    description=u""),
+        FieldConf(id="pass_",   name=_(u"SMTP password"),   datatype="password",     required=0,     readonly=1, default=u"",    description=u""),
 
-    FieldConf(id="sendername",name=_(u"Sender name"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="fromMail",  name=_(u"Sender mail"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="replyTo",   name=_(u"Reply to"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="recvrole",  name=_(u"Receiver role"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="recvids",   name=_(u"Receiver User IDs"),datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="recvmails", name=_(u"Receiver Mail"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="force",     name=_(u"Ignore notify settings"),datatype="bool", required=0,     readonly=0, default=0,      description=u""),
-    FieldConf(id="cc",        name=_(u"CC"),            datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="bcc",       name=_(u"BCC"),           datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="sendername",name=_(u"Sender name"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="fromMail",  name=_(u"Sender mail"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="replyTo",   name=_(u"Reply to"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="recvrole",  name=_(u"Receiver role"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="recvids",   name=_(u"Receiver User IDs"),datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="recvmails", name=_(u"Receiver Mail"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="force",     name=_(u"Ignore notify settings"),datatype="bool", required=0,     readonly=0, default=0,      description=u""),
+        FieldConf(id="cc",        name=_(u"CC"),            datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="bcc",       name=_(u"BCC"),           datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
 
-    FieldConf(id="title", name=_(u"Title"),             datatype="string",       required=1,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="body",  name=_(u"Text"),              datatype="htext",        required=0,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="html",  name=_(u"Html format"),       datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
-    FieldConf(id="utf8",  name=_(u"UTF-8 encoding"),    datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
-    FieldConf(id="ssl",   name=_(u"Use SSL"),           datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
-    FieldConf(id="maillog",  name=_(u"Log mails"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-    FieldConf(id="showToListInHeader",name=_(u"Show all receivers in header"), datatype="bool", required=0, readonly=0, default=0,    description=u""),
+        FieldConf(id="title", name=_(u"Title"),             datatype="string",       required=1,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="body",  name=_(u"Text"),              datatype="htext",        required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="html",  name=_(u"Html format"),       datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
+        FieldConf(id="utf8",  name=_(u"UTF-8 encoding"),    datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
+        FieldConf(id="ssl",   name=_(u"Use SSL"),           datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
+        FieldConf(id="maillog",  name=_(u"Log mails"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="showToListInHeader",name=_(u"Show all receivers in header"), datatype="bool", required=0, readonly=0, default=0,    description=u""),
 
-    FieldConf(id="debug", name=_(u"Debug mode"),        datatype="bool",         required=0,     readonly=0, default=False, description=_(u"All mails are sent to 'Receiver role' or 'Receiver User IDs' field default value. No external mail address is used.")), 
-]
-configuration.mimetype = "text/html"
-
+        FieldConf(id="debug", name=_(u"Debug mode"),        datatype="bool",         required=0,     readonly=0, default=False, description=_(u"All mails are sent to 'Receiver role' or 'Receiver User IDs' field default value. No external mail address is used.")),
+    ),
+    mimetype = "text/html"
+    #modules = WidgetConf(name=_(u"Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
+)
 
 
 class sendMail(Tool):
