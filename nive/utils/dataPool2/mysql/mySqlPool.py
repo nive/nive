@@ -271,8 +271,9 @@ class MySql(FileManager, Base):
 
 
     def _FmtListForQuery(self, values):
-        FmtParam = self.connection.FmtParam
-        return u",".join([FmtParam(v) for v in values])
+        return values
+        #FmtParam = self.connection.FmtParam
+        #return u",".join([FmtParam(v) for v in values])
 
 
 class MySqlEntry(FileEntry, Entry):

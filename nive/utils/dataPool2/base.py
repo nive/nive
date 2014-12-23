@@ -349,7 +349,7 @@ class Base(object):
                 else:
                     v = self._FmtListForQuery(value)
                     if isinstance(v, basestring):
-                        # sqlite error: cannot use placeholder
+                        # sqlite error: cannot use placeholder with lists
                         where.append(u"%s%s %s (%s) " % (table, paramname, operator, v))
                     else:
                         where.append(u"%s%s %s %s " % (table, paramname, operator, ph))
@@ -442,8 +442,8 @@ class Base(object):
         return sql, plist
 
 
-    def _FmtListForQuery(self, value):
-        return tuple(value)
+    def _FmtListForQuery(self, values):
+        return values
 
     def _FmtWhereClause(self, where, singleTable):
         if len(where):
@@ -746,7 +746,7 @@ class Base(object):
         Used for text read from the database. 
         Converts the text to unicode based on self.dbCodePage.
         """
-        if text==None:
+        if text is None:
             return text
         if isinstance(text, bytes):
             return unicode(text, self.dbCodePage, "replace")
@@ -758,7 +758,7 @@ class Base(object):
         Used for text stored in database.
         Convert the text to unicode based on self.codePage.
         """
-        if text==None:
+        if text is None:
             return text
         if isinstance(text, bytes):
             return unicode(text, self.codePage, "replace")

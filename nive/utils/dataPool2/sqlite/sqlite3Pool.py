@@ -212,19 +212,19 @@ class Sqlite3(FileManager, Base):
 
             # sql insert empty rec in data table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s (id) VALUES(null)" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
+                STACKF(0,u"INSERT INTO %s (id) VALUES(null)" % (dataTbl)+"\r\n", self._debug, self._log, name=self.name)
             aC.execute(u"INSERT INTO %s (id) VALUES(null)" % (dataTbl))
             # sql get id of created rec
             if self._debug:
-                STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
+                STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log, name=self.name)
             aC.execute(u"SELECT last_insert_rowid()")
             dataref = aC.fetchone()[0]
             # sql insert empty rec in meta table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log,name=self.name)
+                STACKF(0,u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log, name=self.name)
             aC.execute(u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
             if self._debug:
-                STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
+                STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log, name=self.name)
             aC.execute(u"SELECT last_insert_rowid()")
             aID = aC.fetchone()[0]
             aC.close()
