@@ -206,7 +206,7 @@ class BaseView(object):
             return self.request.url
         return self.request.url.split(u"?")[0]
 
-    def ResolveUrl(self, url, object=None):
+    def ResolveUrl(self, url, context=None):
         """
         Resolve a string to url for object or the current context.
 
@@ -228,32 +228,42 @@ class BaseView(object):
             def makeUrl(context, view):
                 return view.GetUrl(context) + "?query=" + view.GetFormValue('query')
 
+        The placeholder can be used as the root and be followed by a path e.g. ``obj_folder_url/edit``.
+        The remaining path after the slash will be preserved.
+
         returns url
         """
         if url is None:
             return u""
-        if not object or not IObject.providedBy(object):
-            object = self.context
+        if not context:
+            context = self.context
+
         if callable(url):
-            url = url(object, self)
-        if url == "page_url":
-            url = self.PageUrl(object)
-        elif url == "page_url_anchor":
-            url = self.PageUrl(object, addAnchor=True)
-        elif url == "obj_url":
-            url = self.Url(object)
-        elif url.find("obj_folder_url")!=-1:
-            url = url.replace("obj_folder_url", self.FolderUrl(object))
-        elif url == "parent_url":
-            url = self.Url(object.parent)
-        elif url == "root_url":
-            url = self.Url(object.root())
-        elif url == "root_folder_url":
-            url = self.FolderUrl(object.root())
-        elif url == "app_url":
-            url = self.Url(object.app)
-        elif url == "app_folder_url":
-            url = self.FolderUrl(object.app)
+            return url(context, self)
+
+        parts = url.split(u"/")
+        url = parts[0]
+        if url == u"page_url":
+            url = self.PageUrl(context)
+        elif url == u"page_url_anchor":
+            url = self.PageUrl(context, addAnchor=True)
+        elif url == u"obj_url":
+            url = self.Url(context)
+        elif url == u"obj_folder_url":
+            url = self.FolderUrl(context)
+        elif url == u"parent_url":
+            url = self.Url(context.parent)
+        elif url == u"root_url":
+            url = self.Url(context.root())
+        elif url == u"root_folder_url":
+            url = self.FolderUrl(context.root())
+        elif url == u"app_url":
+            url = self.Url(context.app)
+        elif url == u"app_folder_url":
+            url = self.FolderUrl(context.app)
+        if len(parts)>1:
+            parts[0] = url[:-1]
+            return u"/".join(parts)
         return url
     
     
