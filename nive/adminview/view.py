@@ -30,7 +30,7 @@ configuration = ViewModuleConf(
     templates = "nive.adminview:",
     template = "index.pt",
     permission = "administration",
-    adminlink = "app_folder_url.admin",
+    adminLink = u"app_folder_url/admin",
     static = "nive.adminview:static",
     assets = [
         ('bootstrap.min.css', 'nive.adminview:static/mods/bootstrap/css/bootstrap.min.css'),
@@ -291,7 +291,7 @@ class AdminBasics(BaseView):
 
             # search all view modules for admin links
             for vm in app.QueryConf(IViewModuleConf):
-                if not vm.get("adminlink"):
+                if not vm.get("adminLink"):
                     continue
                 if not self.Allowed(vm.permission, app):
                     continue
