@@ -492,6 +492,9 @@ class Registration(object):
                         self.registry.registerAdapter(conf, (i,), IToolConf, name=conf.id)
             else:
                 self.registry.registerAdapter(conf, (_IGlobal,), IToolConf, name=conf.id)
+            if conf.modules:
+                for m in conf.modules:
+                    self.Register(m, **kw)
             return True
 
         elif iface == IAppConf:

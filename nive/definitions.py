@@ -1192,9 +1192,9 @@ class ToolConf(baseConf):
         mimetype : Mimetype of tool return stream
         hidden   : Hide in user interface.
         name     : Display name
-        events   : Register for one or multiple Application events. 
+        events   : Register for one or multiple Application events.
                    Register each event as e.g. Conf(event="run", callback=function).
-        translations : A single or multiple directories containing translation files. 
+        modules  : Additional module configurations to be included.
         description : Description
     
     Call ToolConf().test() to verify configuration values.
@@ -1211,9 +1211,9 @@ class ToolConf(baseConf):
         self.data = []
         self.values = {}
         self.views = []
+        self.modules = []
         self.mimetype = ""
         self.hidden = False
-        self.translations = None
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
 
@@ -1248,6 +1248,14 @@ class ToolConf(baseConf):
             for m in self.views:
                 if hasattr(m, "test"):
                     report += m.test()
+        # check modules
+        for m in self.modules:
+            if isinstance(m, basestring):
+                o = TryResolveName(m)
+                if not o:
+                    report.append((ImportError, " ToolConf.modules import: "+m, self))
+            if hasattr(m, "test"):
+                report += m.test()
         #check apply
         return report
         
@@ -1268,7 +1276,7 @@ class ModuleConf(baseConf):
         extensions:List of dotted python names or class references to extend context with
                    additional functionality. Used in object factory.
         translations : A single or multiple directories containing translation files. 
-        modules : Additional module configuration to be included.
+        modules : Additional module configurations to be included.
         description : Description.
 
     Call ``ModuleConf().test()`` to verify configuration values.
@@ -1318,7 +1326,7 @@ class ModuleConf(baseConf):
             if isinstance(m, basestring):
                 o = TryResolveName(m)
                 if not o:
-                    report.append((ImportError, " AppConf.modules import: "+m, self))
+                    report.append((ImportError, " ModuleConf.modules import: "+m, self))
             if hasattr(m, "test"):
                 report += m.test()
         # check extensions
