@@ -391,7 +391,7 @@ class AdminView(AdminBasics):
         app = self.context.app
         head = data = u""
         
-        selected = self.GetFormValue('t')
+        selected = self.GetFormValue('tag')
         if selected:
             tool = app.GetTool(selected, contextObject=app)
             data = self.RenderView(tool)
