@@ -70,8 +70,8 @@ class PostgresManager(DatabaseManager):
         xml -> TEXT NOT NULL DEFAULT default
         unit -> INT NOT NULL DEFAULT default
         unitlist -> VARCHAR(2048) NOT NULL DEFAULT default
-        date -> TIMESTAMP NULL DEFAULT default
-        datetime -> TIMESTAMP NULL DEFAULT default
+        date -> DATE NULL DEFAULT default
+        datetime -> DATE NULL DEFAULT default
         time -> TIME NULL DEFAULT default
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
@@ -85,7 +85,7 @@ class PostgresManager(DatabaseManager):
         aStr = u""
 
         # convert datatype list
-        if(datatype == "list"):
+        if datatype == "list":
             if isinstance(conf["default"], basestring):
                 datatype = "listt"
             else:
@@ -151,9 +151,9 @@ class PostgresManager(DatabaseManager):
             if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == "":
-                aStr = u"TIMESTAMP NULL"
+                aStr = u"DATE NULL"
             else:
-                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+                aStr = u"DATE NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "datetime":
             aD = conf["default"]
@@ -164,9 +164,9 @@ class PostgresManager(DatabaseManager):
             if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == "":
-                aStr = u"TIMESTAMP NULL"
+                aStr = u"DATE NULL"
             else:
-                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+                aStr = u"DATE NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "time":
             aD = conf["default"]
@@ -177,9 +177,9 @@ class PostgresManager(DatabaseManager):
             if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == "":
-                aStr = u"TIMESTAMP NULL"
+                aStr = u"TIME NULL"
             else:
-                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+                aStr = u"TIME NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "timestamp":
             aStr = u"TIMESTAMP DEFAULT NOW()"

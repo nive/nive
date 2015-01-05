@@ -395,13 +395,8 @@ class PoolStructure(object):
                 value = unicode(value)
         
         elif fieldtype == "time":
-            # add a date to support database timestamp formats
             if isinstance(value, (float,int,long)):
-                value = unicode(datetime.fromtimestamp(value).strftime(u"2015-01-01 %H:%M:%S.%f"))
-            elif isinstance(value, datetime_time):
-                value = value.strftime(u"2015-01-01 %H:%M:%S.%f")
-            elif isinstance(value, basestring):
-                value = u"2015-01-01 "+value
+                value = unicode(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
             elif value is None:
                 pass
             elif not isinstance(value, unicode):
@@ -483,13 +478,11 @@ class PoolStructure(object):
                     
         elif fieldtype == "time":
             # -> to datetime.time
-            # misuse datetime parser
             if isinstance(value, basestring):
-                value2 = ConvertToDateTime(value)
-                if value2 is None:
-                    value2 = ConvertToDateTime(u"2015-01-01 "+value)
-                value = value2
-                value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
+                # misuse datetime parser
+                value2 = ConvertToDateTime(u"2015-01-01 "+value)
+                if value2:
+                    value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
             elif isinstance(value, (float,int,long)):
                 value = datetime.fromtimestamp(value)
                 value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
