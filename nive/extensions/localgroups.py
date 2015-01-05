@@ -51,7 +51,7 @@ class LocalGroups(object):
         [username, group, id]. This function does not include parent level
         settings.
         """
-        return self.db.GetGroups(self.securityID)
+        return self.db.GetGroups(self._secid)
 
 
     def AddOwner(self, user, **kw):
@@ -70,10 +70,10 @@ class LocalGroups(object):
         groups = self._LocalGroups(username)
         if group in groups:
             return 
-        if username is None:
+        if username==None:
             return
         self._AddLocalGroupsCache(username, group)
-        self.db.AddGroup(self.securityID, userid=username, group=group)
+        self.db.AddGroup(self._secid, userid=username, group=group)
 
         
     def RemoveLocalGroups(self, username, group=None):
@@ -82,21 +82,21 @@ class LocalGroups(object):
         will be removed.
         """
         self._DelLocalGroupsCache(username, group)
-        self.db.RemoveGroups(self.securityID, userid=username, group=group)
+        self.db.RemoveGroups(self._secid, userid=username, group=group)
 
 
     def RemoveGroups(self, **kw):
         """
         Remove all group assignments before deleting the object. 
         """
-        self.db.RemoveGroups(self.securityID)
+        self.db.RemoveGroups(self._secid)
         self._localRoles = {}
         
 
     def _LocalGroups(self, username):
         if username in self._localRoles:
             return list(self._localRoles[username])
-        g = [r[1] for r in self.db.GetGroups(self.securityID, userid=username)]
+        g = [r[1] for r in self.db.GetGroups(self._secid, userid=username)]
         self._localRoles[username] = tuple(g)
         return g
     
