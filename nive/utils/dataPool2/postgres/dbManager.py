@@ -72,7 +72,7 @@ class PostgresManager(DatabaseManager):
         unitlist -> VARCHAR(2048) NOT NULL DEFAULT default
         date -> TIMESTAMP NULL DEFAULT default
         datetime -> TIMESTAMP NULL DEFAULT default
-        time -> TIMESTAMP NULL DEFAULT default
+        time -> TIME NULL DEFAULT default
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
