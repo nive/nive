@@ -556,9 +556,12 @@ class BaseView(object):
         if user:
             response.last_modified = formatdate(timeval=None, localtime=True, usegmt=True)
         else:
-            if self.context.meta.get("pool_change"):
-                t = ConvertToDateTime(self.context.meta.get("pool_change")).timetuple()
+            t = self.context.meta.get("pool_change")
+            if t and isinstance(t, basestring):
+                t = ConvertToDateTime(t).timetuple()
                 t = time.mktime(t)
+            elif t:
+                t = time.mktime(t.timetuple())
             else:
                 t = None
             response.last_modified = formatdate(timeval=t, localtime=True, usegmt=True)
