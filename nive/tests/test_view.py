@@ -94,9 +94,9 @@ class viewTest_db:
 
         urls = ["page_url", "obj_url", "obj_folder_url", "parent_url"]
         for url in urls:
-            self.assert_(view.ResolveUrl(url, object=None))
-            self.assert_(view.ResolveUrl(url, object=self.context2))
-        self.assertFalse(view.ResolveUrl("", object=None))
+            self.assert_(view.ResolveUrl(url, context=None))
+            self.assert_(view.ResolveUrl(url, context=self.context2))
+        self.assertFalse(view.ResolveUrl("", context=None))
         
         self.assert_(view.ResolveLink(str(self.context.id))!=str(self.context.id))
         self.assert_(view.ResolveLink("none")=="none")

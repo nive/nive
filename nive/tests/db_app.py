@@ -3,7 +3,6 @@
 import time
 import unittest
 
-from nive.definitions import OperationalError
 from nive.utils.path import DvPath
 
 from nive.definitions import *
@@ -11,7 +10,7 @@ from nive.portal import Portal
 from nive.security import User, Allow, Everyone
 
 from nive.components.objects.base import ApplicationBase
-
+from nive.utils.dataPool2.files import File
 
 root = RootConf(
     id = u"root",
@@ -246,5 +245,5 @@ def createObj2file(c):
     return o
 
 def maxobj(r):
-    id = a.GetMaxID()
+    id = r.GetMaxID()
     return r.LookupObj(id)

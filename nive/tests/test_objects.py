@@ -73,7 +73,7 @@ class objTest_db:
         self.assert_(oo.GetFieldConf("ftext").name=="ftext")
         self.assert_(oo.GetTitle()==u"")
         self.assert_(oo.GetPath()==str(oo.id))
-        self.assert_(str(o1.GetFld(u"ftime"))==str(datetime_time(16,55)), str(datetime_time(16,55)))
+        self.assert_(str(o1.GetFld(u"ftime"))==str(datetime_time(16,55)), str(o1.GetFld(u"ftime")))
 
         id = o1.GetID()
         o1.Update(data1_2, user)
@@ -273,6 +273,10 @@ class objTest_db_mysql(objTest_db, __local.MySqlTestCase):
     see tests.__local
     """
         
+class objTest_db_pg(objTest_db, __local.PostgreSqlTestCase):
+    """
+    see tests.__local
+    """
 
 
 class groupsTest_db:

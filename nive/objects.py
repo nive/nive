@@ -105,13 +105,11 @@ class Object(object):
                 if f["datatype"] == "file":
                     return self.GetFile(fldname)
                 return self.data.get(fldname)
-                #disabled conversion return ConvertToType(self.data.get(fldname), f["datatype"])
-                
+
         # meta
         f = self.app.GetMetaFld(fldname)
         if f:
             return self.meta.get(fldname)
-            #disabled conversion return ConvertToType(self.meta.get(fldname), f["datatype"])
         return None
 
 
