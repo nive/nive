@@ -431,7 +431,11 @@ class DateInputWidget(Widget):
         for fmt in self.dateFormat:
             try:
                 dt = datetime.datetime.strptime(pstruct,fmt)
-                pstruct = dt.strftime("%Y-%m-%d")
+                # use the current year if not given. supports formats like '%d.%m'
+                if dt.year==1900 and not "1900" in pstruct:
+                    pstruct = str(datetime.datetime.now().year) + dt.strftime("-%m-%d")
+                else:
+                    pstruct = dt.strftime("%Y-%m-%d")
                 break
             except ValueError:
                 pass

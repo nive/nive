@@ -1,5 +1,5 @@
 <tal:block i18n:domain="nive">
-<input type="date"
+<input type="text"
        name="${field.name}"
        value="${cstruct}" 
        tal:attributes="size field.widget.size;
