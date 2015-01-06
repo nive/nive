@@ -275,17 +275,14 @@ class baseConf(object):
             return self.__dict__[key]
         if self._parent is not None:
             return self._parent.get(key, default)
-            #if key in self._parent.__dict__:
-            #    return self._parent.__dict__[key]
         return default
 
     def __getattr__(self, key):
         if key in self.__dict__:
             return self.__dict__[key]
         if self._parent is not None:
-            return self._parent.get(key, default)
-            #if key in self._parent.__dict__:
-            #    return self._parent.__dict__[key]
+            if key in self._parent.__dict__:
+                return self._parent.__dict__[key]
         raise AttributeError, key
 
     def __setattr__(self, key, value):
