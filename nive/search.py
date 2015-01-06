@@ -269,7 +269,7 @@ class Search:
         return result
 
 
-    def SearchType(self, pool_type, parameter, fields=None, operators=None, **kw):
+    def SearchType(self, pool_type, parameter=None, fields=None, operators=None, **kw):
         """
         Extended meta and data layer search function. Supports all keyword options and search result. 
         
@@ -709,7 +709,8 @@ class Search:
         default_join = 0
         if not kws.has_key("jointype") or kws.get("jointype")==u"inner":
             default_join = 1
-            parameter["pool_type"] = pool_type
+            if not kws.get("skiptype"):
+                parameter["pool_type"] = pool_type
         #operators
         if not operators:
             operators = {}
