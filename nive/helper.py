@@ -101,7 +101,7 @@ def ResolveConfiguration(conf, base=None):
             conf = ResolveName(conf, base=base)
 
     # dict instance
-    if isinstance(conf, dict):
+    elif isinstance(conf, dict):
         # load by interface
         if not "type" in conf:
             raise TypeError, "Configuration type not defined"
@@ -110,7 +110,7 @@ def ResolveConfiguration(conf, base=None):
         conf = c(**conf)
 
     # module and not configuration
-    if not IConf.providedBy(conf):
+    if not isinstance(conf, baseConf):
         if hasattr(conf, "configuration"):
             conf = conf.configuration
         
@@ -308,7 +308,7 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, s
     - configuration.context
     - configuration.extensions [optional]
     
-    If reloadClass = False the class is cached as configuration._v_class.
+    If reloadClass = False the class is cached as configuration._c_class.
     
     storeConfAsStaticClassVar: experimental option. If true stores the configuration as part of the 
     class.
@@ -316,8 +316,8 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, s
     """
     if not reloadClass:
         try:
-            return configuration._v_class
-        except:
+            return configuration._c_class
+        except AttributeError:
             pass
     tag = configuration.context
     if "extensions" in configuration:
@@ -333,7 +333,7 @@ def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, s
         lock = configuration.locked
         if lock:
             configuration.unlock()
-        configuration._v_class = cls
+        configuration._c_class = cls
         if lock:
             configuration.lock()
     

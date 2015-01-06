@@ -450,7 +450,7 @@ class Registration(object):
             
         # reset cached class value. makes testing easier
         try:
-            del conf._v_class
+            del conf._c_class
         except:
             pass
             
