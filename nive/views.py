@@ -374,7 +374,30 @@ class BaseView(object):
         response = render_to_response(tmpl, values, request=self.request)
         self.CacheHeader(response, user=self.User())
         return response
-            
+
+    def _LookupTemplate(self, tmplfile):
+        conf = self.viewModule
+        if not tmplfile:
+            raise TypeError, "'tmplfile' is None. Need a template name to lookup the path."
+        if not conf or u":" in tmplfile:
+            return tmplfile
+        path = conf.templates
+        if not path.endswith((u":",u"/")):
+            path += u"/"
+        fn = path + tmplfile
+        try:
+            if get_renderer(fn):
+                return fn
+        except ValueError:
+            pass
+        if not conf.parent:
+            return tmplfile
+        path = conf.parent.templates
+        if not path.endswith((u":",u"/")):
+            path += u"/"
+        fn = path + tmplfile
+        return fn
+
 
     def RenderView(self, obj, name="", secure=True, raiseUnauthorized=False, codepage="utf-8"):
         """
@@ -461,16 +484,6 @@ class BaseView(object):
         return (u"\r\n").join(js_tags + css_tags)
         
 
-    def IsPage(self, object=None):
-        """
-        Check if object is a page.
-        
-        returns bool
-        """
-        if not object:
-            return IPage.providedBy(self.context)
-        return IPage.providedBy(object)
-    
     def tmpl(self):
         """
         Default function for template rendering.
@@ -533,7 +546,7 @@ class BaseView(object):
         
         returns response
         """
-        if user:
+        if user is not None:
             return self.NoCache(response)
         return self.Modified(response, user)
 
@@ -714,74 +727,6 @@ class BaseView(object):
         localizer = get_localizer(self.request)
         return localizer.translate(text)
         
-    
-    def FmtTextAsHTML(self, text):
-        """
-        Converts newlines to <br>.
-        
-        returns string
-        """
-        if not text:
-            return u""
-        if text.find(u"\r\n")!=-1:
-            text = text.replace(u"\r\n",u"<br>\r\n")
-        else:
-            text = text.replace(u"\n",u"<br>\n")
-        return text
-
-    def FmtDateText(self, date, language=None):
-        """
-        Formats dates as readable text in conventional format.
-        
-        returns string
-        """
-        if not date:
-            return u""
-        if not isinstance(date, datetime):
-            date = ConvertToDateTime(date)
-        return date.strftime(u"%c")
-
-    def FmtDateNumbers(self, date, language=None):
-        """
-        Formats dates as numbers e.g 13.12.2011.
-        
-        returns string
-        """
-        if not date:
-            return u""
-        if not isinstance(date, datetime):
-            date = ConvertToDateTime(date)
-        return date.strftime(u"%x")
-    
-    def FmtSeconds(self, secs):
-        """ seconds to readable text """
-        return FmtSeconds(secs)
-
-    def FmtBytes(self, size):
-        """ bytes to readable text """
-        return FormatBytesForDisplay(size)
-
-    def FmtTag(self, tag, closeTag="tag", **attributes):
-        """ 
-        Write a html tag with attributes. 
-        closeTag: 'tag', 'inline', 'no', 'only'
-        """
-        if closeTag=="only":
-            return u"</%s>" % (tag)
-        attrs = u""
-        if attributes:
-            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in attributes.items()]
-            attrs = u" " + u" ".join(attrs)
-        if closeTag=="inline":
-            return u"<%s%s/>" % (tag, attrs)
-        elif closeTag in (None,'no'):
-            return u"<%s%s>" % (tag, attrs)
-        return u"<%s%s></%s>" % (tag, attrs, tag)
-
-    def CutText(self, text, length):
-        """ bytes to readable text """
-        return CutText(text, length)
-
 
     @property
     def utilities(self):
@@ -821,8 +766,8 @@ class BaseView(object):
         """
         if not request:
             request = self.request
-        if method is None and hasattr(self.request, "method"):
-            method = self.request.method
+        if method is None and hasattr(request, "method"):
+            method = request.method
         try:
             if method == "POST":
                 if request.content_type=="application/json":
@@ -857,16 +802,16 @@ class BaseView(object):
                     value = request.GET.get(key)
             if isinstance(value, bytes):
                 value = unicode(value, self.context.app.configuration.frontendCodepage)
-            if value==None:
+            if value is None:
                 return default
             return value
         if not len(value):
             return default
         elif len(value)==1:
-            if value==None:
+            if value is None:
                 return default
             return value[0]
-        if value==None:
+        if value is None:
             return default
         return value            
 
@@ -880,8 +825,8 @@ class BaseView(object):
         """
         if not request:
             request = self.request
-        if method is None and hasattr(self.request, "method"):
-            method = self.request.method
+        if method is None and hasattr(request, "method"):
+            method = request.method
         try:
             if method == "POST":
                 if request.content_type=="application/json":
@@ -918,6 +863,7 @@ class BaseView(object):
             return {}
         return values
     
+
     def FmtURLParam(self, **kw):
         """
         Format all kw items as url parameter. 
@@ -948,28 +894,72 @@ class BaseView(object):
         return "".join(form)
 
 
-    def _LookupTemplate(self, tmplfile):
-        conf = self.viewModule
-        if not tmplfile:
-            raise TypeError, "'tmplfile' is None. Need a template name to lookup the path."
-        if not conf or u":" in tmplfile:
-            return tmplfile
-        path = conf.templates
-        if not path.endswith((u":",u"/")):
-            path += u"/"
-        fn = path + tmplfile
-        try:
-            if get_renderer(fn):
-                return fn
-        except ValueError:
-            pass
-        if not conf.parent:
-            return tmplfile
-        path = conf.parent.templates
-        if not path.endswith((u":",u"/")):
-            path += u"/"
-        fn = path + tmplfile
-        return fn
+    def FmtTextAsHTML(self, text):
+        """
+        Converts newlines to <br>.
+
+        returns string
+        """
+        if not text:
+            return u""
+        if text.find(u"\r\n")!=-1:
+            text = text.replace(u"\r\n",u"<br>\r\n")
+        else:
+            text = text.replace(u"\n",u"<br>\n")
+        return text
+
+    def FmtDateText(self, date, language=None):
+        """
+        Formats dates as readable text in conventional format.
+
+        returns string
+        """
+        if not date:
+            return u""
+        if not isinstance(date, datetime):
+            date = ConvertToDateTime(date)
+        return date.strftime(u"%c")
+
+    def FmtDateNumbers(self, date, language=None):
+        """
+        Formats dates as numbers e.g 13.12.2011.
+
+        returns string
+        """
+        if not date:
+            return u""
+        if not isinstance(date, datetime):
+            date = ConvertToDateTime(date)
+        return date.strftime(u"%x")
+
+    def FmtSeconds(self, secs):
+        """ seconds to readable text """
+        return FmtSeconds(secs)
+
+    def FmtBytes(self, size):
+        """ bytes to readable text """
+        return FormatBytesForDisplay(size)
+
+    def FmtTag(self, tag, closeTag="tag", **attributes):
+        """
+        Write a html tag with attributes.
+        closeTag: 'tag', 'inline', 'no', 'only'
+        """
+        if closeTag=="only":
+            return u"</%s>" % (tag)
+        attrs = u""
+        if attributes:
+            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in attributes.items()]
+            attrs = u" " + u" ".join(attrs)
+        if closeTag=="inline":
+            return u"<%s%s/>" % (tag, attrs)
+        elif closeTag in (None,'no'):
+            return u"<%s%s>" % (tag, attrs)
+        return u"<%s%s></%s>" % (tag, attrs, tag)
+
+    def CutText(self, text, length):
+        """ bytes to readable text """
+        return CutText(text, length)
 
 
     def mark(self):
@@ -983,6 +973,12 @@ class BaseView(object):
 
 
     # to be removed in the future
+    def IsPage(self, object=None):
+        # to be removed
+        if not object:
+            return IPage.providedBy(self.context)
+        return IPage.providedBy(object)
+
 
     @property
     def viewModule(self):
@@ -1040,6 +1036,7 @@ class ExceptionalResponse(HTTPFound):
 
     def __call__(self, environ, start_response):
         return Response.__call__(self, environ, start_response)
+
 
 
 def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None, headers=None):
@@ -1117,6 +1114,88 @@ def AddHeader(request, name, value):
         headers += list(request.response.headerlist)
     request.response.headerlist = headers    
 
+
+def PreflightRequest(request,
+                     allowOrigins="*",
+                     allowMethods="POST, GET, DELETE, OPTIONS",
+                     allowHeaders="",
+                     allowCredentials=True,
+                     maxAge=3600,
+                     response=None):
+    """
+    Handles Access-Control preflight requests.
+
+    :param request: The current request.
+    :param allowOrigins: Either '*' (all allowed) or a list of hosts e.g ('http://mydomain.com')
+    :param allowMethods: 'POST, GET, DELETE, OPTIONS'. Allowed http methods as string.
+    :param allowHeaders: Custom headers passed in a request as string.
+    :param allowCredentials: True/False. Credentials are made accessible in the client application.
+    :param response: The response to be returned. if None `request.response` is used.
+    :return: response
+    """
+    response = response or request.response
+    origin = request.headers.get("Origin")
+    if origin is None:
+        # not a access-control preflight?
+        return response
+    if allowOrigins!="*":
+        # check request origin, might also be checked against host
+        if not origin in allowOrigins and not "*" in allowOrigins:
+            # not allowed
+            # set status to 405
+            response.status="405 Not Allowed"
+            return response
+    headers = [
+        ("Access-Control-Allow-Origin", origin),
+        ("Access-Control-Allow-Methods", allowMethods),
+        ("Access-Control-Allow-Credentials", str(allowCredentials).lower()),
+        ("Access-Control-Max-Age", maxAge),
+        ("Access-Control-Allow-Headers", allowHeaders),
+        ("Vary", "Accept-Encoding, Origin")
+    ]
+    if hasattr(response, "headerlist"):
+        headers += list(response.headerlist)
+    response.headerlist = headers
+    return response
+
+
+def OriginResponse(request,
+                   allowOrigins="*",
+                   allowCredentials=True,
+                   exposeHeaders="",
+                   response=None):
+    """
+    Handles Access-Control responses to Origin header containing requests. This function
+    adds required headers only and does not change the reponse.
+
+    Returns None if the Origin does not match or the header is not present in the request.
+
+    :param request: The current request.
+    :param exposeHeaders: A list of custom headers to be made accessible in the client application as string.
+    :param allowCredentials: True/False. Credentials are made accessible in the client application.
+    :param response: The response to be returned. if None `request.response` is used.
+    :return: response or None
+    """
+    response = response or request.response
+    origin = request.headers.get("Origin")
+    if origin is None:
+        # not a access-control aware request?
+        return response
+    if allowOrigins!="*":
+        # check request origin, might also be checked against host
+        if not origin in allowOrigins and not "*" in allowOrigins:
+            # not allowed
+            return None
+    headers = [
+        ("Access-Control-Allow-Origin", origin),
+        ("Access-Control-Allow-Credentials", str(allowCredentials).lower()),
+        ("Access-Control-Expose-Headers", exposeHeaders),
+        ("Vary", "Accept-Encoding, Origin")
+    ]
+    if hasattr(response, "headerlist"):
+        headers += list(response.headerlist)
+    response.headerlist = headers
+    return response
 
 
 class FieldRenderer(object):
