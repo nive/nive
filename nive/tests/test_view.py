@@ -27,6 +27,146 @@ class viewModule(object):
     static = u"nive.tests:"
     assets = (("jquery.js", "nive.adminview:static/mods/jquery.min.js"), ("another.css", "nive.adminview:static/adminview.css"))
 
+
+class viewTest(unittest.TestCase):
+
+    def test_preflight_noorigin(self):
+        request = testing.DummyRequest()
+        response = PreflightRequest(request,
+                     allowOrigins="*",
+                     allowMethods="POST, GET, DELETE, OPTIONS",
+                     allowHeaders="",
+                     allowCredentials=True,
+                     maxAge=3600,
+                     response=None)
+        self.assert_(response.status_int==200)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") is None)
+
+    def test_preflight_origin(self):
+        request = testing.DummyRequest(headers={"Origin": "http://nive.io"})
+        response = PreflightRequest(request,
+                     allowOrigins="*",
+                     allowMethods="POST, GET, DELETE, OPTIONS",
+                     allowHeaders="",
+                     allowCredentials=True,
+                     maxAge=3600,
+                     response=None)
+        self.assert_(response.status_int==200)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://nive.io")
+
+        request = testing.DummyRequest(headers={"Origin": "http://nive.io"})
+        response = PreflightRequest(request,
+                     allowOrigins=("http://nive.io"),
+                     allowMethods="POST, GET, DELETE, OPTIONS",
+                     allowHeaders="",
+                     allowCredentials=True,
+                     maxAge=3600,
+                     response=None)
+        self.assert_(response.status_int==200)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://nive.io")
+
+    def test_preflight_originfailure(self):
+        request = testing.DummyRequest(headers={"Origin": "http://mydomain.com"})
+        response = PreflightRequest(request,
+                     allowOrigins=("http://nive.io"),
+                     allowMethods="POST, GET, DELETE, OPTIONS",
+                     allowHeaders="",
+                     allowCredentials=True,
+                     maxAge=3600,
+                     response=None)
+        self.assert_(response.status_int==405)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") is None)
+
+    def test_preflight_options(self):
+        request = testing.DummyRequest(headers={"Origin": "http://nive.io"})
+        response = PreflightRequest(request,
+                     allowOrigins="*",
+                     allowMethods="POST, GET, OPTIONS",
+                     allowHeaders="X-MyHeader",
+                     allowCredentials=False,
+                     maxAge=0,
+                     response=None)
+        self.assert_(response.status_int==200)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://nive.io")
+        self.assert_(response.headers.get("Access-Control-Allow-Methods") == "POST, GET, OPTIONS")
+        self.assert_(response.headers.get("Access-Control-Allow-Headers") == "X-MyHeader")
+        self.assert_(response.headers.get("Access-Control-Allow-Credentials") == "false")
+        self.assert_(response.headers.get("Vary") == "Accept-Encoding, Origin")
+
+        request = testing.DummyRequest(headers={"Origin": "http://mydomain.com"})
+        response = PreflightRequest(request,
+                     allowOrigins=("http://nive.io", "*"),
+                     allowMethods="POST, GET, OPTIONS",
+                     allowHeaders="X-MyHeader, X-Something",
+                     allowCredentials=True,
+                     maxAge=0,
+                     response=None)
+        self.assert_(response.status_int==200)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://mydomain.com")
+        self.assert_(response.headers.get("Access-Control-Allow-Methods") == "POST, GET, OPTIONS")
+        self.assert_(response.headers.get("Access-Control-Allow-Headers") == "X-MyHeader, X-Something")
+        self.assert_(response.headers.get("Access-Control-Allow-Credentials") == "true")
+
+
+    def test_origin_noorigin(self):
+        request = testing.DummyRequest()
+
+        response = OriginResponse(request,
+                       allowOrigins="*",
+                       allowCredentials=True,
+                       exposeHeaders="",
+                       response=None)
+        self.assert_(response)
+
+    def test_origin_origin(self):
+        request = testing.DummyRequest(headers={"Origin": "http://nive.io"})
+        response = OriginResponse(request,
+                       allowOrigins="*",
+                       allowCredentials=True,
+                       exposeHeaders="",
+                       response=None)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://nive.io")
+
+        request = testing.DummyRequest(headers={"Origin": "http://nive.io"})
+        response = OriginResponse(request,
+                       allowOrigins=("http://nive.io"),
+                       allowCredentials=True,
+                       exposeHeaders="",
+                       response=None)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://nive.io")
+
+    def test_origin_originfailure(self):
+        request = testing.DummyRequest(headers={"Origin": "http://mydomain.com"})
+        response = OriginResponse(request,
+                       allowOrigins=("http://nive.io"),
+                       allowCredentials=True,
+                       exposeHeaders="",
+                       response=None)
+        self.assert_(response is None)
+
+    def test_origin_options(self):
+        request = testing.DummyRequest(headers={"Origin": "http://nive.io"})
+        response = OriginResponse(request,
+                       allowOrigins=("http://nive.io"),
+                       allowCredentials=False,
+                       exposeHeaders="X-MyHeader",
+                       response=None)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://nive.io")
+        self.assert_(response.headers.get("Access-Control-Expose-Headers") == "X-MyHeader")
+        self.assert_(response.headers.get("Access-Control-Allow-Credentials") == "false")
+        self.assert_(response.headers.get("Vary") == "Accept-Encoding, Origin")
+
+        request = testing.DummyRequest(headers={"Origin": "http://mydomain.com"})
+        response = OriginResponse(request,
+                       allowOrigins=("http://nive.io","*"),
+                       allowCredentials=True,
+                       exposeHeaders="X-MyHeader, X-Something",
+                       response=None)
+        self.assert_(response.headers.get("Access-Control-Allow-Origin") == "http://mydomain.com")
+        self.assert_(response.headers.get("Access-Control-Expose-Headers") == "X-MyHeader, X-Something")
+        self.assert_(response.headers.get("Access-Control-Allow-Credentials") == "true")
+
+
 class viewTest_db:
 
     def setUp(self):
