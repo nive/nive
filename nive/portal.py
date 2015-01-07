@@ -268,7 +268,7 @@ class Portal(Events, object):
 
     def SetupPortalViews(self, config):
         # redirects
-        config.add_view(error_view, context=HTTPError)
+        #config.add_view(error_view, context=HTTPError)
         config.add_view(forbidden_view, context=Forbidden)
         config.add_view(portal_view, name="", context="nive.portal.Portal")
         config.add_view(robots_view, name="robots.txt", context="nive.portal.Portal")
