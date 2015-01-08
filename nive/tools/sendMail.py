@@ -223,15 +223,15 @@ class sendMail(Tool):
         except:
             pass
         message["Content-Type"] = contentType
+        try:
+            del message["Content-Transfer-Encoding"]
+        except:
+            pass
         message["Content-Transfer-Encoding"] = "8bit"
 
         fromName = kw.get("fromName")
         fromMail = kw.get("fromMail")
-        if fromName:
-            message["From"] = fromMail
-        else:
-            #message["From"] = Header(self._GetMailStr((fromMail, fromName)), charset)
-            message["From"] = self._GetMailStr((fromMail, fromName))
+        message["From"] = self._GetMailStr((fromMail, fromName))
 
         to = kw.get("to")
         if isinstance(to, (list,tuple)):
