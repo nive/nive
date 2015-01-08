@@ -35,7 +35,7 @@ class sendMailTester(sendMail):
         user = values.get("user")
         pass_ = values.get("pass_")
 
-        sendername = values.get("sendername")
+        fromName = values.get("fromName")
         fromMail = values.get("fromMail")
         replyTo = values.get("replyTo")
 

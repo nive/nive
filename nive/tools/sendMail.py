@@ -39,7 +39,7 @@ configuration = ToolConf(
         FieldConf(id="user",    name=_(u"SMTP user"),       datatype="string",       required=0,     readonly=1, default=u"",    description=u""),
         FieldConf(id="pass_",   name=_(u"SMTP password"),   datatype="password",     required=0,     readonly=1, default=u"",    description=u""),
 
-        FieldConf(id="senderName",name=_(u"Sender name"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="fromName",  name=_(u"Sender name"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
         FieldConf(id="fromMail",  name=_(u"Sender mail"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
         FieldConf(id="replyTo",   name=_(u"Reply to"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
         FieldConf(id="recvrole",  name=_(u"Receiver role"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
@@ -75,7 +75,7 @@ class sendMail(Tool):
         user = values.get("user")
         pass_ = values.get("pass_")
 
-        senderName = values.get("senderName")
+        fromName = values.get("fromName")
         fromMail = values.get("fromMail")
         replyTo = values.get("replyTo")
 
@@ -138,7 +138,7 @@ class sendMail(Tool):
         else:
             contentType = u"text/plain"
         if utf8:
-            contentType += u"; charset=\"utf-8\""
+            contentType += u"; charset=utf-8"
 
         if debug:
             mails_original = u"\r\n<br>".join([self._GetMailStr(r) for r in recvs])
@@ -151,7 +151,7 @@ class sendMail(Tool):
             recvs=recvs,
             title=title,
             body=body,
-            fromName=senderName,
+            fromName=fromName,
             to=to,
             cc=cc,
             bcc=bcc,
@@ -223,6 +223,7 @@ class sendMail(Tool):
         except:
             pass
         message["Content-Type"] = contentType
+        message["Content-Transfer-Encoding"] = "8bit"
 
         fromName = kw.get("fromName")
         fromMail = kw.get("fromMail")
