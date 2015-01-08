@@ -3,4 +3,4 @@
        id="${field.oid}"
        tal:attributes="checked cstruct==field.widget.true_val;
                        class field.widget.css_class">
-<label tal:condition="field.widget.title" for="${field.oid}">${field.widget.title}</label>
+<label tal:condition="field.widget.title" for="${field.oid}" tal:content="structure field.widget.title"></label>
