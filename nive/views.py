@@ -1178,7 +1178,7 @@ def OriginResponse(request,
     """
     response = response or request.response
     origin = request.headers.get("Origin")
-    if origin is None:
+    if origin is None or allowOrigins is None:
         # not a access-control aware request?
         return response
     if allowOrigins!="*":
