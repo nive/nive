@@ -256,14 +256,25 @@ class Email(Regex):
             u'(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', msg=msg)
 
 class Literal(Regex):
-    """ Literal string validator. Only `a-z, A-Z, 0-9, .- _` charachters are allowed.
+    """ Literal string validator. Only `a-z, A-Z, 0-9, .-_` charachters are allowed.
         If ``msg`` is supplied, it will be
         the error message to be used when raising :exc:`schema.Invalid`;
         otherwise, defaults to 'Invalid email address'.
     """
     def __init__(self, msg=None):
         if msg is None:
-            msg = _("Invalid characters in string: Only 'a-zA-Z0-9.-_ ' allowed.")
+            msg = _("Invalid characters in string: Only 'a-zA-Z0-9.-_' allowed.")
+        super(Literal, self).__init__(u'^[a-zA-Z0-9\._\-]*$', msg=msg)
+
+class LiteralWS(Regex):
+    """ Literal string validator. Only `a-z, A-Z, 0-9, .- _` charachters including whitespace are allowed.
+        If ``msg`` is supplied, it will be
+        the error message to be used when raising :exc:`schema.Invalid`;
+        otherwise, defaults to 'Invalid email address'.
+    """
+    def __init__(self, msg=None):
+        if msg is None:
+            msg = _("Invalid characters in string: Only 'a-zA-Z0-9.- _' allowed.")
         super(Literal, self).__init__(u'^[a-zA-Z0-9\._\- ]*$', msg=msg)
 
 class Range(object):
