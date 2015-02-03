@@ -235,7 +235,7 @@ class Base(object):
                             fields.append(u"IF(meta__.pool_datatbl='%s', %s, '')" % (dataTable, field))
                         continue
                     table = u"data__."
-            if(len(fields) > 0):
+            if len(fields) > 0:
                 fields.append(u", ")
             fields.append(table + field)
         fields = u"".join(fields)
@@ -250,7 +250,7 @@ class Base(object):
         addCombi = False
         
         where = []
-        if parameter==None:
+        if parameter is None:
             parameter={}
         for key in parameter.keys():
             value = parameter[key]
@@ -380,7 +380,7 @@ class Base(object):
 
         # map sort fields
         sort = kw.get("sort", u"")
-        if sort==None:
+        if sort is None:
             sort = u""
         if sort != u"" and not singleTable:
             table = u"meta__."
