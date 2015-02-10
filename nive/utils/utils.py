@@ -141,7 +141,7 @@ def FmtSeconds(seconds):
 def GetMimeTypeExtension(extension):
     if extension.find(".") != -1:
         extension = DvPath(extension).GetExtension()
-    # custom and uncommeon
+    # custom and uncommon
     if extension == u"fla":          return u"application/flash"
     # standard
     elif extension == u"html":       return u"text/html"
