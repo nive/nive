@@ -281,7 +281,7 @@ class Form(Events, ReForm):
         self.view = view
         self.context = context or view.context if view else None
         self.request = request or view.request if view else None
-        self.app = app or self.context.app
+        self.app = app or self.context.app if self.context else None
         
         if loadFromType:
             self.loadFromType = loadFromType
