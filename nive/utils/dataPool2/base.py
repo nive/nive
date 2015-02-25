@@ -1939,7 +1939,7 @@ class Entry(object):
         date = self.pool.GetDBDate()
         aMeta[u"pool_create"] = date
         aMeta[u"pool_change"] = date
-        if user==None:
+        if user is None:
             user=""
         else:
             user=str(user)
