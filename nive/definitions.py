@@ -300,6 +300,12 @@ class baseConf(object):
         self._empty=False
         setattr(self, key, value)
         
+    def __delitem__(self, key):
+        if self.locked:
+            raise ConfigurationError, "Configuration locked."
+        if key in self.__dict__:
+            del self.__dict__[key]
+
     def __iter__(self):
         return iter(self.keys())
 
