@@ -61,7 +61,7 @@ class Events(object):
             self._eventdispatch = {"close": "_Cleanup"}
         for cls in self.__class__.__mro__:
             f = cls.__dict__.get("Init")
-            if f != None:
+            if f is not None:
                 f(self)
                 
 
