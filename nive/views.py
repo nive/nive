@@ -328,11 +328,11 @@ class BaseView(object):
         ResetFlashMessages(self.request, slot)
         
     
-    def AddHeader(self, name, value):
+    def AddHeader(self, name, value, append=False):
         """
         Add a additional response header value.
         """
-        AddHeader(self.request, name, value)
+        AddHeader(self.request, name, value, append)
 
     
     # render other elements and objects ---------------------------------------------
@@ -1105,14 +1105,17 @@ def ResetFlashMessages(request, slot=""):
         continue
         
     
-def AddHeader(request, name, value):
+def AddHeader(request, name, value, append=False):
     """
     See views.BaseView class function for docs
     """
-    headers = [(name, value)]
-    if hasattr(request.response, "headerlist"):
-        headers += list(request.response.headerlist)
-    request.response.headerlist = headers    
+    if append:
+        headers = [(name, value)]
+        if hasattr(request.response, "headerlist"):
+            headers += list(request.response.headerlist)
+        request.response.headerlist = headers
+    else:
+        request.response.headers[name] = value
 
 
 def PreflightRequest(request,

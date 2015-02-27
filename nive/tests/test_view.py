@@ -262,7 +262,45 @@ class viewTest_db:
         self.assert_(view.Relocate("nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=False)!=u"")
         view.ResetFlashMessages(slot="")
         view.ResetFlashMessages(slot="test")
-        view.AddHeader("name", "value")
+
+
+    def test_header(self):
+        view = BaseView(self.context2, self.request)
+        view.AddHeader("x-name", "a value", append=False)
+        headers = view.request.response.headerlist
+        found = []
+        for h in headers:
+            if h[0]=="x-name":
+                found.append(h)
+        self.assert_(len(found)==1)
+        self.assert_(found[0][1]=="a value")
+        view.AddHeader("x-name", "another value", append=False)
+        headers = view.request.response.headerlist
+        found = []
+        for h in headers:
+            if h[0]=="x-name":
+                found.append(h)
+        self.assert_(len(found)==1)
+        self.assert_(found[0][1]=="another value")
+
+        view.request.response.headerlist = []
+        view.AddHeader("x-name", "a value", append=True)
+        headers = view.request.response.headerlist
+        found = []
+        for h in headers:
+            if h[0]=="x-name":
+                found.append(h)
+        self.assert_(len(found)==1)
+        self.assert_(found[0][1]=="a value")
+        view.AddHeader("x-name", "another value", append=True)
+        headers = view.request.response.headerlist
+        found = []
+        for h in headers:
+            if h[0]=="x-name":
+                found.append(h)
+        self.assert_(len(found)==2)
+        self.assert_(found[0][0]=="x-name")
+        self.assert_(found[1][0]=="x-name")
 
 
     def test_send(self):
