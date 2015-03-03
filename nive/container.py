@@ -301,22 +301,17 @@ class ContainerEdit:
 
         self.Signal("beforeAdd", data=data, type=type, user=user, **kw)
         db = app.db
-        dbEntry = None
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
             obj = self._GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            if typedef.events:
+                obj.SetupEventsFromConfiguration(typedef.events)
             obj.CreateSelf(data, user=user, **kw)
             self.WfAction("add", user=user)
             obj.Signal("create", user=user, **kw)
             if not kw.get("no-commit") and app.configuration.autocommit:
                 obj.CommitInternal(user=user)
         except Exception, e:
-            #try:
-            #    if dbEntry:
-            #        id = dbEntry.GetID()
-            #        db.DeleteEntry(id)
-            #except:
-            #    pass
             db.Undo()
             raise 
         self.Signal("afterAdd", obj=obj, user=user, **kw)

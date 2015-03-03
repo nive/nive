@@ -88,3 +88,29 @@ class EventTest(unittest.TestCase):
 
         self.obj.RemoveListener("callme")
 
+
+    def test_eventfromconf(self):
+
+        def event_fnc_test1(context=None, data=None):
+            self.assert_(context==self.obj)
+            return data
+        def event_fnc_test2(context=None, data=None):
+            self.assert_(context==self.obj)
+            return data
+
+        events = [Conf(event="callme1",callback=event_fnc_test1),
+                  Conf(event="callme2",callback=event_fnc_test2)]
+
+        self.called = 0
+        self.obj.SetupEventsFromConfiguration(events)
+
+        result = self.obj.Signal("callme1", data=1)
+        self.assert_(len(result)==1)
+        self.assert_(result[0][0]==1, result)
+
+        result = self.obj.Signal("callme2", data=2)
+        self.assert_(len(result)==1, result)
+        self.assert_(result[0][0]==2)
+
+        self.obj.RemoveListener("callme1")
+        self.obj.RemoveListener("callme2")

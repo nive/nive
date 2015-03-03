@@ -74,6 +74,19 @@ class containerTest_db:
         self.assertEqual(ccc, a.db.GetCountEntries())
         
 
+    def test_createobjs_kws(self):
+        #print "Testing new object creation, values and delete"
+        a=self.app
+        r=root(a)
+        # create
+        user = User(u"test")
+        type = u"type3"
+        data = {}
+        user = User(u"test")
+        o = r.Create(type, data=data, user=user, custom=123)
+        self.assert_(o.__kws_test__.get("custom")==123)
+
+
     def test_createobjs(self):
         #print "Testing new object creation, values and delete"
         a=self.app

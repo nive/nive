@@ -63,6 +63,17 @@ class Events(object):
             f = cls.__dict__.get("Init")
             if f is not None:
                 f(self)
+
+
+    def SetupEventsFromConfiguration(self, events):
+        """
+        Calls ListenEvent for each event registered in a configuration.events slot.
+
+        :param events: list of events to listen to
+        :return: nothing
+        """
+        for e in events:
+            self.ListenEvent(e.event, e.callback)
                 
 
     def ListenEvent(self, signal, function):
@@ -121,9 +132,9 @@ class Events(object):
                 if isinstance(fnc, basestring):
                     for cls in self.__class__.__mro__:
                         f = cls.__dict__.get(fnc)
-                        if f != None:
+                        if f is not None:
                             r = f(self, **kw)
-                            if r!=None:
+                            if r is not None:
                                 # store result if not None as tuple
                                 # (result, str(fnc), str(cls))
                                 result.append((r, str(fnc), str(cls)))
@@ -132,7 +143,7 @@ class Events(object):
                         r = fnc(context=self, **kw)
                     else:
                         r = fnc(**kw)
-                    if r!=None:
+                    if r is not None:
                         # store result if not None as tuple
                         # (result)
                         result.append((r, str(fnc)))

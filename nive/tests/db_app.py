@@ -57,13 +57,18 @@ data2.append(FieldConf(**{"id":u"file1", "datatype": "file", "size": 5*1024*1024
 data2.append(FieldConf(**{"id":u"file2", "datatype": "file", "size": 500*1024, "name": u"file2"}))
 type2.data = data2
 
+def create_callback(context, **kw):
+    context.__kws_test__ = kw
+    pass
+
 type3 = ObjectConf(
     id = u"type3",
     name = u"Type 3 Object",
     hidden = True,
     dbparam = u"data3",
     context = "nive.components.objects.base.ObjectContainerBase",
-    subtypes = [INonContainer]
+    subtypes = [INonContainer],
+    events = (Conf(event="create", callback=create_callback),)
 )
 data3 = []
 data3.append(FieldConf(**{"id":u"fstr", "datatype": "string", "size": 100, "name": u"fstr", "fulltext": 1}))
