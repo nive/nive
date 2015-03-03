@@ -1837,7 +1837,7 @@ class List(object):
         if self.allowed:
             for v in value:
                 if not v in self.allowed:
-                    raise Invalid(node, _('${value} not in reference list', mapping={'value':v}))
+                    raise Invalid(node, _("'${value}' not in reference list", mapping={'value':v}))
 
         return value
         
@@ -1876,7 +1876,7 @@ class CodeList(object):
         
         if not value in self.allowed:
             if value:
-                raise Invalid(node, _('${value} not in reference list', mapping={'value':value}))
+                raise Invalid(node, _("'${value}' not in reference list", mapping={'value':value}))
             if not value and not self.allow_empty:
                 raise Invalid(node, _('Required'))
         

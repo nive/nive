@@ -1991,7 +1991,7 @@ class TestList(unittest.TestCase):
         node = DummySchemaNode2()
         typ = self._makeOne(allowed=["a","b"])
         e = invalid_exc(typ.deserialize, node, ('c',))
-        self.assertEqual(e.msg, '${value} not in reference list')
+        self.assertEqual(e.msg, "'${value}' not in reference list")
         
     def test_deserialize_valid(self):
         node = DummySchemaNode2()
@@ -2039,7 +2039,7 @@ class TestCodeList(unittest.TestCase):
         node = DummySchemaNode2()
         typ = self._makeOne(allowed=("aaa","bbb"))
         e = invalid_exc(typ.deserialize, node, 123)
-        self.assertEqual(e.msg, '${value} not in reference list')
+        self.assertEqual(e.msg, "'${value}' not in reference list")
 
     def test_deserialize_null(self):
         from nive.components.reform.schema import null
