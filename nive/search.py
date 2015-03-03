@@ -114,7 +114,7 @@ class Search:
         operators = operators or {}
         fields = fields or ["id"]
         db = self.db
-        if pool_type==None:
+        if pool_type is None:
             dataTable=kw.get("dataTable") or u"pool_meta"
             sql, values = db.FmtSQLSelect(fields, 
                                           parameter, 
@@ -773,6 +773,7 @@ class Search:
                         user = GetUser(i[r])
                         cache[ref] = user
                     i[r] = user
+            # todo load obj by id
         return items
 
     def _PrepareResult(self, items, parameter, cnt, total, start, max, t, sql):

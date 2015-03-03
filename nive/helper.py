@@ -215,7 +215,7 @@ class ConfDecoder(object):
             if isinstance(obj, dict):
                 try:
                     confclass = obj["ccc"]
-                except:
+                except KeyError:
                     return obj
                    
                 if not confclass:
