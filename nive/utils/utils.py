@@ -154,6 +154,7 @@ def GetMimeTypeExtension(extension):
     elif extension == u"psd":        return u"image/psd"
     elif extension == u"pdf":        return u"application/pdf"
     elif extension == u"md":         return u"text/markdown"
+    elif extension == u"js":         return u"application/javascript"
     elif extension == u"json":       return u"application/json"
     elif extension == u"yaml":       return u"text/yaml"
     elif extension == u"rst":        return u"text/restructured-text"
@@ -178,6 +179,8 @@ def GetMimeTypeExtension(extension):
     return u""
 
 def GetExtensionMimeType(mime):
+    if ";" in mime:
+        mime = mime.split(";")[0]
     # custom and uncommeon
     if mime == u"application/flash":  return u"fla"
     # standard
@@ -192,6 +195,9 @@ def GetExtensionMimeType(mime):
     elif mime == u"text/markdown":                    return u"md"
     elif mime == u"text/restructured-text":           return u"rst"
     elif mime == u"text/rtf":                         return u"rtf"
+    elif mime == u"text/yaml":                        return u"yaml"
+    elif mime == u"application/javascript":           return u"js"
+    elif mime == u"application/json":                 return u"json"
     elif mime == u"application/pdf":                  return u"pdf"
     elif mime == u"application/x-shockwave-flash":    return u"swf"
     elif mime == u"application/x-director":           return u"dcr"
