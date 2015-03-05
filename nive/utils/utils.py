@@ -154,6 +154,8 @@ def GetMimeTypeExtension(extension):
     elif extension == u"psd":        return u"image/psd"
     elif extension == u"pdf":        return u"application/pdf"
     elif extension == u"md":         return u"text/markdown"
+    elif extension == u"json":       return u"application/json"
+    elif extension == u"yaml":       return u"text/yaml"
     elif extension == u"rst":        return u"text/restructured-text"
     elif extension == u"rtf":        return u"text/rtf"
     elif extension == u"swf":        return u"application/x-shockwave-flash"
