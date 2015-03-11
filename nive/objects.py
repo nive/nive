@@ -170,12 +170,20 @@ class Object(object):
         """
         Get the FieldConf for the field with id = fldId. Looks up data, file and meta 
         fields.
-        
+
+        If `fldId` is a Field Configuration (``nive.definitions.FieldConf``) the functions
+        checks if the field id is defined for the object.
+
         returns FieldConf or None
         """
-        for f in self.configuration["data"]:
-            if f["id"] == fldId:
-                return f
+        if IFieldConf.providedBy(fldId):
+            f = filter(lambda d: d["id"]==fldId.id, self.configuration.data)
+            if f:
+                return fldId
+        else:
+            f = filter(lambda d: d["id"]==fldId, self.configuration.data)
+            if f:
+                return f[0]
         return self.app.GetMetaFld(fldId)
 
     def GetTitle(self):

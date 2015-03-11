@@ -28,7 +28,7 @@ from nive.utils.dataPool2.structure import PoolStructure
 
 from nive.definitions import AppConf, DatabaseConf, MetaTbl, ReadonlySystemFlds
 from nive.definitions import IViewModuleConf, IViewConf, IRootConf, IObjectConf, IToolConf 
-from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf
+from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf, IFieldConf
 from nive.definitions import ConfigurationError
 
 from nive.helper import ResolveName, ResolveConfiguration, FormatConfTestFailure, GetClassRef, ClassFactory
@@ -850,7 +850,7 @@ class Configuration:
 
         returns configuration or None
         """
-        if typeID:
+        if typeID is not None:
             f = self.GetObjectFld(fldID, typeID)
             if f:
                 return f
@@ -881,10 +881,15 @@ class Configuration:
         fields = self.GetAllObjectFlds(typeID)
         if not fields:
             return None
-        o = filter(lambda d: d["id"]==fldID, fields)
-        if not o:
-            return None
-        return o[0]
+        if IFieldConf.providedBy(fldID):
+            f = filter(lambda d: d["id"]==fldID.id, fields)
+            if f:
+                return fldID
+        else:
+            f = filter(lambda d: d["id"]==fldID, fields)
+            if f:
+                return f[0]
+        return None
 
 
     def GetAllObjectFlds(self, typeID):
@@ -907,10 +912,15 @@ class Configuration:
         
         returns configuration or None
         """
-        m = filter(lambda d: d["id"]==fldID, self.configuration.meta)
-        if not m:
-            return None
-        return m[0]
+        if IFieldConf.providedBy(fldID):
+            f = filter(lambda d: d["id"]==fldID.id, self.configuration.meta)
+            if f:
+                return fldID
+        else:
+            f = filter(lambda d: d["id"]==fldID, self.configuration.meta)
+            if f:
+                return f[0]
+        return None
 
 
     def GetAllMetaFlds(self, ignoreSystem = True):

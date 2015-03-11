@@ -305,7 +305,20 @@ class appTest(unittest.TestCase):
         self.assert_(self.app.GetMetaFldName("pool_type")=="Type")
         self.assert_(self.app.GetMetaFldName("no_field")=="")
         
-    def test_structure(self):    
+    def test_flds_conf(self):
+        self.assert_(self.app.GetFld(FieldConf(id="pool_type"), typeID = None))
+        self.assert_(self.app.GetFld(FieldConf(id="aaaaa"), typeID = None)==None)
+        self.assert_(self.app.GetFld(FieldConf(id="pool_stag"), typeID = "object"))
+        self.assert_(self.app.GetFld(FieldConf(id="a1"), typeID = "object"))
+        self.assert_(self.app.GetFld(FieldConf(id="a1"), typeID = None)==None)
+        self.assert_(self.app.GetFld(FieldConf(id="a2"), typeID = "object"))
+        self.assert_(self.app.GetFld(FieldConf(id="a2"), typeID = "ooooo")==None)
+        self.assert_(self.app.GetFld(FieldConf(id="ooooo"), typeID = "object")==None)
+
+        self.assert_(self.app.GetObjectFld(FieldConf(id="a1"), "object"))
+        self.assert_(self.app.GetMetaFld(FieldConf(id="pool_type")))
+
+    def test_structure(self):
         self.app._LoadStructure(forceReload = False)
         self.assert_(self.app._structure)
         self.app._LoadStructure(forceReload = True)
