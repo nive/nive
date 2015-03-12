@@ -24,7 +24,8 @@ See :py:mod:`nive.components.objects.base` for subclassing base classes
 
 import weakref
 
-from nive.definitions import StagContainer, ReadonlySystemFlds, ICache, IContainer
+from nive.definitions import StagContainer, ReadonlySystemFlds
+from nive.definitions import IFieldConf, ICache, IContainer
 from nive.definitions import ConfigurationError
 from nive.workflow import WorkflowNotAllowed
 from nive.security import SetupRuntimeAcls
