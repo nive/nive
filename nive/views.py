@@ -1023,20 +1023,21 @@ from zope.interface import implementer
 from pyramid.interfaces import IExceptionResponse
 
 @implementer(IExceptionResponse)
-class ExceptionalResponse(HTTPFound):
+class ExceptionalResponse(HTTPOk):
     def __init__(self, headers=None, **kw):
-        self.detail = self.message = kw.get("status","Response")
-        Response.__init__(self, **kw)
-        Exception.__init__(self, self.detail)
-        if headers:
-            self.headers.extend(headers)
+        # HTTPException: map status int to self.code
+        if "status" in kw:
+            status = kw["status"]
+            if status is not None:
+                self.code = int(kw["status"].split()[0])
+            del kw["status"]
+        super(HTTPOk,self).__init__(headers=headers, detail=kw.get("detail","HTTP OK Response"), **kw)
 
     def __str__(self):
         return self.detail
 
     def __call__(self, environ, start_response):
         return Response.__call__(self, environ, start_response)
-
 
 
 def SendResponse(data, mime="text/html", filename=None, raiseException=True, status=None, headers=None):
@@ -1093,7 +1094,7 @@ def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=
                 continue
             headers.append(h)
     if raiseException:
-        raise ExceptionalResponse(headers=headers, body=body, content_type="application/json; charset=utf-8", status="200 OK")
+        raise ExceptionalResponse(headers=headers, body=body, content_type="application/json; charset=utf-8")
     return body
 
 

@@ -308,6 +308,28 @@ class viewTest_db:
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename=None))
         self.assert_(view.SendResponse("the response", mime="text/html", raiseException=False, filename="file.html", headers=[("X-Result", "true")]))
         self.assertRaises(ExceptionalResponse, view.SendResponse, "the response", mime="text/html", raiseException=True, filename="file.html", headers=[("X-Result", "true")])
+        try:
+            view.SendResponse("the response body", mime="text/html", raiseException=True, headers=[("X-Result", "true")])
+        except ExceptionalResponse, e:
+            self.assert_(e.body=="the response body")
+            self.assert_(e.status_int==200)
+            self.assert_(e.status=="200 OK")
+            self.assert_(e.headers["X-Result"]=="true")
+            self.assert_(e.headers["Content-Type"].startswith("text/html"))
+        try:
+            view.SendResponse("the response body")
+        except ExceptionalResponse, e:
+            self.assert_(e.body=="the response body")
+            self.assert_(e.status_int==200)
+            self.assert_(e.status=="200 OK")
+            self.assert_(e.headers["Content-Type"].startswith("text/html"))
+        try:
+            view.SendResponse("the response body", status="203 whysoever")
+        except ExceptionalResponse, e:
+            self.assert_(e.body=="the response body")
+            self.assert_(e.status_int==203)
+            self.assert_(e.status.startswith("203"))
+            self.assert_(e.headers["Content-Type"].startswith("text/html"))
 
 
     def test_files(self):
