@@ -5,7 +5,7 @@
 import re, htmlentitydefs
 import iso8601
 import os, tempfile, json
-from datetime import datetime
+import datetime
 from mimetypes import guess_type, guess_extension
 from operator import itemgetter, attrgetter
 
@@ -49,10 +49,12 @@ def ConvertHTMLToText(html, removeReST=True, url=""):
 
 
 def ConvertToDateTime(date):
-    if isinstance(date, datetime):
+    if isinstance(date, datetime.datetime):
         return date
+    elif isinstance(date, datetime.date):
+        return  datetime.datetime(year=date.year, month=date.month, day=date.day)
     elif isinstance(date, float):
-        return datetime.fromtimestamp(date)
+        return datetime.datetime.fromtimestamp(date)
     elif not date:
         return None
     try:
@@ -61,19 +63,19 @@ def ConvertToDateTime(date):
         pass
     # try other string format versions
     try: # 2011-12-23
-        return datetime.strptime(date, "%Y-%m-%d")
+        return datetime.datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
         pass
     try: # 2011/12/23
-        return datetime.strptime(date, "%Y/%m/%d")
+        return datetime.datetime.strptime(date, "%Y/%m/%d")
     except ValueError:
         pass
     try: # 2011/12/23 13:22
-        return datetime.strptime(date, "%Y/%m/%d %H:%M")
+        return datetime.datetime.strptime(date, "%Y/%m/%d %H:%M")
     except ValueError:
         pass
     try: # 2011/12/23 13:22:11
-        return datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
+        return datetime.datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
     except ValueError:
         pass
 
@@ -477,7 +479,7 @@ def ConvertDictToStr(values, sep = u"\n"):
 
 def DUMP(data, path = "dump.txt", addTime=False):
     if addTime:
-        date = datetime.now()
+        date = datetime.datetime.now()
         value = "\r\n\r\n" + date.strftime("%Y-%m-%d %H:%M:%S") + "\r\n" + str(data)
     else:
         value = "\r\n\r\n" + str(data)
@@ -489,7 +491,7 @@ def STACKF(t=0, label = "", limit = 15, path = "_stackf.txt", name=""):
     import time
     import traceback
     n = time.time() - t
-    date = datetime.now()
+    date = datetime.datetime.now()
     h = "%s: %f (%s)" % (date.strftime("%Y-%m-%d %H:%M:%S"),n,name)
     if limit<2:
         DUMP("%s\r\n%s\r\n" % (h, label), path)
