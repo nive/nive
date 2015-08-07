@@ -2,6 +2,7 @@
 # Released under GPL3. See license.txt
 #
 import string, time
+import logging
 
 from nive.utils.dataPool2.dbManager import DatabaseManager
 from nive.definitions import ConfigurationError
@@ -24,28 +25,33 @@ class PostgresManager(DatabaseManager):
         # might not be imported on startup
         import psycopg2
         self.db = None
+        self.dbname = ""
         self.dbConn = None
         self.engine = ""
         self.useUtf8 = True
+        self.log = logging.getLogger("dbManager")
 
     # Database Options ---------------------------------------------------------------------
 
-    def Connect(self, databaseName = "", inIP = "", inUser = "", inPW = ""):
-        self.dbConn = psycopg2.connect(database = databaseName, host = inIP, user = inUser, passwd = inPW)
+    def Connect(self, databaseName = "", ip = "", user = "", pw = ""):
+        self.dbname = databaseName
+        self.dbConn = psycopg2.connect(database = databaseName, host = ip, user = user, passwd = pw)
         self.db = self.dbConn.cursor()
-        return self.db != None
+        return self.db is not None
 
     # Options ----------------------------------------------------------------
 
-    def ModifyColumn(self, tableName, columnName, inNewColumnName, columnOptions):
+    def ModifyColumn(self, tableName, columnName, newColumnName, columnOptions):
         if not self.IsDB():
             return False
-        #print("alter table %s change %s %s %s" % (tableName, columnName, inNewColumnName, columnOptions))
-        if columnOptions == u"" or columnName == u"" or tableName == u"":
+        #print("alter table %s change %s %s %s" % (tableName, columnName, newColumnName, columnOptions))
+        if not columnOptions or not columnName or not tableName:
             return False
-        if inNewColumnName:
-            self.db.execute(u"alter table %s rename column %s to %s" % (tableName, columnName, inNewColumnName))
+        if newColumnName:
+            self.log.debug(u"alter table %s rename column %s to %s" % (tableName, columnName, newColumnName))
+            self.db.execute(u"alter table %s rename column %s to %s" % (tableName, columnName, newColumnName))
         opt = columnOptions.split(u" ")
+        self.log.debug(u"alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
         self.db.execute(u"alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
         return True
 
@@ -71,7 +77,7 @@ class PostgresManager(DatabaseManager):
         unit -> INT NOT NULL DEFAULT default
         unitlist -> VARCHAR(2048) NOT NULL DEFAULT default
         date -> DATE NULL DEFAULT default
-        datetime -> DATE NULL DEFAULT default
+        datetime -> TIMESTAMP NULL DEFAULT default
         time -> TIME NULL DEFAULT default
         timestamp -> TIMESTAMP
         listt -> VARCHAR(30) NOT NULL DEFAULT default
@@ -82,7 +88,7 @@ class PostgresManager(DatabaseManager):
         url -> TEXT NOT NULL DEFAULT default
         """
         datatype = conf["datatype"]
-        aStr = u""
+        col = u""
 
         # convert datatype list
         if datatype == "list":
@@ -92,126 +98,127 @@ class PostgresManager(DatabaseManager):
                 datatype = "listn"
 
         if datatype in ("string", "email", "password"):
-            if conf.get("size", conf.get("maxLen",0)) <= 3:
-                aStr = u"CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            if conf.get("size", 150) <= 3:
+                col = u"CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
             else:
-                aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("number", "long", "int"):
-            aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
-                aN = 0
-            if isinstance(aN, basestring):
-                aN = long(aN)
-            if conf.get("size", conf.get("maxLen",0)) == 4:
-                aStr = u"SMALLINT NOT NULL DEFAULT %d" % (aN)
-            elif conf.get("size", conf.get("maxLen",0)) in (11,12):
-                aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+            cval = conf["default"]
+            if cval in ("", " ", None):
+                cval = 0
+            if isinstance(cval, basestring):
+                cval = long(cval)
+            size = conf.get("size", 4)
+            if size == 2:
+                col = u"SMALLINT NOT NULL DEFAULT %d" % (cval)
+            elif size == 8:
+                col = u"BIGINT NOT NULL DEFAULT %d" % (cval)
             else:
-                aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+                col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "float":
-            aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
-                aN = 0
-            if isinstance(aN, basestring):
-                aN = float(aN)
-            aStr = u"FLOAT NOT NULL DEFAULT %d" % (aN)
+            cval = conf["default"]
+            if cval in ("", " ", None):
+                cval = 0
+            if isinstance(cval, basestring):
+                cval = float(cval)
+            col = u"FLOAT NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "bool":
-            aN = conf["default"]
-            if aN == "" or aN == " " or aN == None or aN == "False":
-                aN = 0
-            if aN == "True":
-                aN = 1
-            if isinstance(aN, basestring):
-                aN = int(aN)
-            aStr = u"SMALLINT NOT NULL DEFAULT %d" % (aN)
+            cval = conf["default"]
+            if cval in ("", " ", None, "False", "0"):
+                cval = 0
+            if cval in ("True", "1"):
+                cval = 1
+            if isinstance(cval, basestring):
+                cval = int(cval)
+            col = u"SMALLINT NOT NULL DEFAULT %d" % (cval)
 
         elif datatype in ("text", "htext", "url", "urllist", "json", "code", "lines"):
-            aStr = u"TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
+            col = u"TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
 
         elif datatype == "unit":
-            aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
-                aN = 0
-            if isinstance(aN, basestring):
-                aN = long(aN)
-            aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+            cval = conf["default"]
+            if cval in ("", " ", None):
+                cval = 0
+            if isinstance(cval, basestring):
+                cval = long(cval)
+            col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "unitlist":
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "date":
-            aD = conf["default"]
-            if aD == () or aD == "()":
-                aD = "NULL"
-            if aD in ("now", "nowdate", "nowtime"):
-                aD = ""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
-                aD = self.ConvertDate(aD)
-            if aD == "":
-                aStr = u"DATE NULL"
+            cval = conf["default"]
+            if cval == () or cval == "()":
+                cval = "NULL"
+            if cval in ("now", "nowdate", "nowtime"):
+                cval = ""
+            if isinstance(cval, basestring) and not cval in ("NOW","NULL"):
+                cval = self.ConvertDate(cval)
+            if not cval:
+                col = u"DATE NULL"
             else:
-                aStr = u"DATE NULL DEFAULT '%s'" % (aD)
+                col = u"DATE NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "datetime":
-            aD = conf["default"]
-            if aD == () or aD == "()":
-                aD = "NULL"
-            if aD in ("now", "nowdate", "nowtime"):
-                aD = ""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
-                aD = self.ConvertDate(aD)
-            if aD == "":
-                aStr = u"DATE NULL"
+            cval = conf["default"]
+            if cval == () or cval == "()":
+                cval = "NULL"
+            if cval in ("now", "nowdate", "nowtime"):
+                cval = ""
+            if isinstance(cval, basestring) and not cval in ("NOW","NULL"):
+                cval = self.ConvertDate(cval)
+            if not cval:
+                col = u"TIMESTAMP NULL"
             else:
-                aStr = u"DATE NULL DEFAULT '%s'" % (aD)
+                col = u"TIMESTAMP NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "time":
-            aD = conf["default"]
-            if aD == () or aD == "()":
-                aD = "NULL"
-            if aD in ("now", "nowtime"):
-                aD = ""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
-                aD = self.ConvertDate(aD)
-            if aD == "":
-                aStr = u"TIME NULL"
+            cval = conf["default"]
+            if cval == () or cval == "()":
+                cval = "NULL"
+            if cval in ("now", "nowtime"):
+                cval = ""
+            if isinstance(cval, basestring) and not cval in ("NOW","NULL"):
+                cval = self.ConvertDate(cval)
+            if cval == "":
+                col = u"TIME NULL"
             else:
-                aStr = u"TIME NULL DEFAULT '%s'" % (aD)
+                col = u"TIME NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "timestamp":
-            aStr = u"TIMESTAMP DEFAULT NOW()"
+            col = u"TIMESTAMP DEFAULT NOW()"
 
         elif datatype == "listt":
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("listn", "codelist"):
-            aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
-                aN = 0
-            if isinstance(aN, basestring):
-                aN = int(aN)
-            aStr = "SMALLINT NOT NULL DEFAULT %d" % (aN)
+            cval = conf["default"]
+            if cval in ("", " ", None):
+                cval = 0
+            if isinstance(cval, basestring):
+                cval = int(cval)
+            col = "SMALLINT NOT NULL DEFAULT %d" % (cval)
 
         elif datatype in ("multilist", "checkbox", "mselection", "mcheckboxes", "radio"):
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("binary", "file"):
-            aStr = u"BYTEA"
+            col = u"BYTEA"
 
         elif datatype == "bytesize":
-            aN = conf["default"]
-            if aN == "" or aN == " " or aN == None:
-                aN = 0
-            if isinstance(aN, basestring):
-                aN = long(aN)
-            aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+            cval = conf["default"]
+            if cval in ("", " ", None):
+                cval = 0
+            if isinstance(cval, basestring):
+                cval = long(cval)
+            col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 
         if conf.get("unique"):
-            aStr += " UNIQUE"
-        return aStr
+            col += " UNIQUE"
+        return col
 
 
 
@@ -253,8 +260,7 @@ class PostgresManager(DatabaseManager):
                 size = " (%s)"%str(c[5])
             else:
                 size = ""
-            table[c[0]] = {"db": {"id": c[0], "type": c[1]+size, "identity": c[4], "default": default, "null": c[3]}, 
-                           "conf": None} 
+            table[c[0]] = {"db": {"id": c[0], "type": c[1]+size, "identity": c[4], "default": default, "null": c[3]}, "conf": None} 
         if structure:
             for conf in structure:
                 if conf.id in table:
@@ -271,8 +277,8 @@ class PostgresManager(DatabaseManager):
     """
 
     def IsTable(self, tableName):
-        for aD in self.GetTables():
-            if string.lower(aD[0]) == string.lower(tableName):
+        for cval in self.GetTables():
+            if string.lower(cval[0]) == string.lower(tableName):
                 return True
         return False
 
@@ -284,31 +290,29 @@ class PostgresManager(DatabaseManager):
             return False
         assert(tableName != "user")
         if createIdentity:
-            aSql = u"CREATE TABLE %s(%s SERIAL PRIMARY KEY" % (tableName, primaryKeyName)
+            sql = u"CREATE TABLE %s(%s SERIAL PRIMARY KEY" % (tableName, primaryKeyName)
             if columns:
                 for c in columns:
                     if c.id == primaryKeyName:
                         continue
-                    aSql += ","
-                    aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
+                    sql += ","
+                    sql += c.id + u" " + self.ConvertConfToColumnOptions(c)
+            sql += u")"
         else:
-            aSql = u"CREATE TABLE %s" % (tableName)
+            sql = u"CREATE TABLE %s" % (tableName)
             if not columns:
                 raise ConfigurationError, "No database fields defined."
             aCnt = 0
-            aSql += u"("
+            sql += u"("
             for c in columns:
                 if aCnt:
-                    aSql += u","
+                    sql += u","
                 aCnt = 1
-                aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
-        try:
-            self.db.execute(aSql)
-        except:
-            breakpoint=1
-            raise
+                sql += c.id + u" " + self.ConvertConfToColumnOptions(c)
+            sql += u")"
+        self.log.debug(sql)
+        self.db.execute(sql)
+
         # delay until table is created
         time.sleep(0.3)
         aCnt = 1
@@ -322,6 +326,7 @@ class PostgresManager(DatabaseManager):
     def RenameTable(self, inTableName, inNewTableName):
         if not self.IsDB():
             return False
+        self.log.debug(u"alter table %s rename to %s" % (inTableName, inNewTableName))
         self.db.execute(u"alter table %s rename to %s" % (inTableName, inNewTableName))
         return True
 
@@ -346,10 +351,11 @@ class PostgresManager(DatabaseManager):
     def CreateColumn(self, tableName, columnName, columnOptions=u""):
         if not self.IsDB():
             return False
-        if columnName == u"" or tableName == u"":
+        if not columnName or not tableName:
             return False
         if columnOptions == u"identity":
-            return self.CreateIdentityColumn(tableName, columnName)
+            columnOptions = u"SERIAL PRIMARY KEY"
+        self.log.debug(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True
 
