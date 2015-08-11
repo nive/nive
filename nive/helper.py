@@ -19,7 +19,7 @@ from nive.definitions import (
     IViewConf, IToolConf, IPortalConf, IGroupConf, IModuleConf,
     IWidgetConf, IWfProcessConf, IWfStateConf, IWfTransitionConf, IConf, IFileStorage
 )
-from nive.definitions import ViewConf
+from nive.definitions import Conf
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
 from nive import File
