@@ -38,16 +38,15 @@ class DatabaseManager(object):
 
 
     def Close(self):
-        try:
-            self.dbConn.close()
+        if self.db:
             self.db.close()
-        except:
-            pass
+        if self.dbConn:
+            self.dbConn.close()
         self.db = None
 
 
     def IsDB(self):
-        return self.db != None
+        return self.db is not None
 
 
     # Options ----------------------------------------------------------------
