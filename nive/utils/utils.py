@@ -103,6 +103,8 @@ def FormatBytesForDisplay(size):
     for factor, suffix in ((1<<30L, u"GB"),(1<<20L, u"MB"),(1<<10L, u"kB"),(1, u"bytes")):
         if size >= factor:
             break
+    if factor != 1:
+        return u"%0.1f %s" % (float(size) / factor, suffix)
     return u"%d %s" % (size / factor, suffix)
 
 def FmtSeconds(seconds):
