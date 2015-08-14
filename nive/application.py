@@ -696,7 +696,8 @@ class Registration(object):
         
         self._structure.Init(structure, fieldtypes, m, self.configuration.frontendCodepage)
         # reset cached db
-        self.Close()
+        if self._dbpool:
+            self._dbpool.Close()
         return structure
 
 

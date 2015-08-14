@@ -58,7 +58,7 @@ class Events(object):
         Call Init() for every super class
         """
         if not hasattr(self, "_eventdispatch"):
-            self._eventdispatch = {"close": "_Cleanup"}
+            self._eventdispatch = {}
         for cls in self.__class__.__mro__:
             f = cls.__dict__.get("Init")
             if f is not None:
@@ -124,7 +124,7 @@ class Events(object):
         if signal==u"init":
             self.InitEvents()
             #return
-        if not self._eventdispatch.has_key(signal):
+        if not self._eventdispatch or not signal in self._eventdispatch:
             return None
         result = []
         for fnc in self._eventdispatch[signal]:
@@ -150,10 +150,15 @@ class Events(object):
             except:
                 if raiseExcp:
                     raise
+        # cleanup event table
+        if signal=="close":
+            self._Cleanup()
         return result
 
 
     def _Cleanup(self):
+        if self._eventdispatch is None:
+            return
         for e in self._eventdispatch:
             self._eventdispatch[e] = None
         self._eventdispatch = None
