@@ -1382,6 +1382,15 @@ class FieldRenderer(object):
         elif fType == "password":
             data = u"*****"
 
+        elif fType == "lines":
+            if data:
+                tmpl = u"%s<br>"
+                if settings and u"tmpl" in settings:
+                    tmpl = settings[u"tmpl"]
+                if isinstance(data, basestring):
+                    data = data.split("\n")
+                data = u"".join([tmpl%ll for ll in data])
+
         return data
     
 
