@@ -628,23 +628,8 @@ class BaseView(object):
         
         returns the *Authenticated User Object* or None
         """
-        # cached session user object
-        if not sessionuser:
-            ident = authenticated_userid(self.request)
-            if not ident:
-                return None
-            return self.context.app.portal.userdb.root().LookupUser(ident=ident)
-        try:
-            user = self.request.environ["authenticated_user"]
-            if user:
-                return user
-        except KeyError:
-            pass
-        ident = authenticated_userid(self.request)
-        if not ident:
-            return None
-        return self.context.app.portal.userdb.root().GetUser(ident)
-    
+        return User(self.context, self.request, sessionuser)
+
     def UserName(self):
         """
         returns the *Authenticated User Name* or None
@@ -1200,6 +1185,31 @@ def OriginResponse(request,
         headers += list(response.headerlist)
     response.headerlist = headers
     return response
+
+
+def User(context, request, sessionuser=True):
+    """
+    Get the currently signed in user. If sessionuser=False the function will return
+    the uncached write enabled user from database.
+
+    returns the *Authenticated User Object* or None
+    """
+    # cached session user object
+    if not sessionuser:
+        ident = authenticated_userid(request)
+        if not ident:
+            return None
+        return context.app.portal.userdb.root().LookupUser(ident=ident)
+    try:
+        user = request.environ["authenticated_user"]
+        if user:
+            return user
+    except KeyError:
+        pass
+    ident = authenticated_userid(request)
+    if not ident:
+        return None
+    return context.app.portal.userdb.root().GetUser(ident)
 
 
 class FieldRenderer(object):
