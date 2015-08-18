@@ -23,6 +23,7 @@ from nive.definitions import Conf
 from nive.definitions import baseConf
 from nive.definitions import implements, ConfigurationError
 from nive import File
+from nive.i18n import _
 
 
 
@@ -160,7 +161,7 @@ def FormatConfTestFailure(report, fmt="text"):
         v+= u"-----------------------------------------------------------------------------------\r\n"
         for d in r[2].__dict__.items():
             a = d[1]
-            if a==None:
+            if a is None:
                 try:
                     a = r[2].parent.get(d[0])
                 except:
