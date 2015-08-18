@@ -333,10 +333,12 @@ class baseConf(object):
     
     def lock(self):
         self.__dict__["locked"] = 1
+        return self
 
     def unlock(self):
         self.__dict__["locked"] = 0
-    
+        return self
+
 
 class Conf(baseConf):
     """
