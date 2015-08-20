@@ -60,6 +60,9 @@ A custom HTMLForm example: ::
         FieldConf(id="id",   name=u"Group id",   datatype="string", size="20", required=True),
         FieldConf(id="name", name=u"Group name", datatype="string", size="40", required=True)
     ]
+    def onsuccess(data):
+        data["id"] = "prefix:"+data["id"]
+    form.ListenEvent("success", onsuccess)
     form.Setup()
     data, html, action = form.Process()
 
@@ -976,7 +979,7 @@ class HTMLForm(Form):
             if kw.get("success_message"):
                 msgs.append(kw.get("success_message"))
             # disabled default message. msgs.append(_(u"OK."))
-            errors=None
+            errors = None
             result = data
             self.Signal("success", data=data)
         return result, self.Render(data, msgs=msgs, errors=errors)
@@ -998,7 +1001,7 @@ class HTMLForm(Form):
             if kw.get("success_message"):
                 msgs.append(kw.get("success_message"))
             # disabled default message. msgs.append(_(u"OK."))
-            errors=None
+            errors = None
             result = data
             self.Signal("success", data=data)
         return self._FinishFormProcessing(result, data, msgs, errors, **kw)

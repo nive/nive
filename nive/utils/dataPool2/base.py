@@ -172,7 +172,7 @@ class Base(object):
 
     # SQL queries ---------------------------------------------------------------------
 
-    def FmtSQLSelect(self, flds, parameter=None, dataTable = u"", start = 0, max = 0, **kw):
+    def FmtSQLSelect(self, flds, parameter=None, dataTable=u"", start=0, max=0, **kw):
         """
         Create a select statement based on pool_structure and given parameters.
         
