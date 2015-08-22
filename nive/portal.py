@@ -50,7 +50,7 @@ from nive.utils.utils import SortConfigurationList
 
 
 
-class Portal(Events, object):
+class Portal(Events):
     """ """
     implements(IPortal)
 
@@ -149,6 +149,9 @@ class Portal(Events, object):
         system components. 
         
         *debug* signals whether running in debug mode or not.
+
+        Event:
+        - run(event, app=self)
         """
         log = logging.getLogger("portal")
         log.debug("Startup with debug=%s for config %s", str(debug), str(pyramidConfig))
@@ -188,6 +191,7 @@ class Portal(Events, object):
             component = getattr(self, c)
             if IApplication.providedBy(component):
                 component.Run()
+        self.Signal("run", app=self)
 
 
     def GetApps(self, interface=None):
