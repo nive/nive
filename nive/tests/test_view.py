@@ -1,12 +1,11 @@
 
 import time
 import unittest
-from types import DictType
 
-from nive.definitions import *
-from nive.security import *
+from nive.definitions import Conf
+from nive.security import User, Unauthorized
 from nive.tests import db_app
-from nive.views import *
+from nive.views import BaseView, PreflightRequest, OriginResponse, ExceptionalResponse, HTTPFound
 from nive.helper import DecorateViewClassWithViewModuleConf
 from nive.tests import __local
 
