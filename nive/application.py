@@ -251,6 +251,16 @@ class Application(object):
         if self._dbpool:
             self._dbpool.Close()
 
+    def Shutdown(self):
+        """
+        Free registry and cached database structure.
+        """
+        self.registry = None
+        self._structure = None
+        self.configuration = None
+        self.dbConfiguration = None
+        self.__parent__ = None
+
 
     # Properties -----------------------------------------------------------
 
@@ -696,7 +706,7 @@ class Registration(object):
         
         self._structure.Init(structure, fieldtypes, m, self.configuration.frontendCodepage)
         # reset cached db
-        if self._dbpool:
+        if self._dbpool is not None:
             self._dbpool.Close()
         return structure
 
@@ -716,7 +726,7 @@ class Registration(object):
 
 
 
-class Configuration:
+class Configuration(object):
     """
     Read access functions for root, type, type field, meta field and category configurations.
 
@@ -1105,7 +1115,7 @@ class Configuration:
         db.Commit()
 
 
-class AppFactory:
+class AppFactory(object):
     """
     Internal class for dynamic object creation and caching.
 
@@ -1130,7 +1140,7 @@ class AppFactory:
             poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
 
         # if a database connection other than the default is configured
-        if cachedDbConnection:
+        if cachedDbConnection is not None:
             connObj = cachedDbConnection
         elif self.dbConfiguration.connection:
             connObj = GetClassRef(self.dbConfiguration.connection, self.reloadExtensions, True, None)
@@ -1233,6 +1243,8 @@ class AppFactory:
         close root objects. if name = none, all are closed.
         """
         if not name:
+            if self.registry is None:
+                return
             n = self.GetRootIds()
         else:
             n = (name,)
