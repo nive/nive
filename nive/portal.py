@@ -36,7 +36,6 @@ import time
 import logging
 import ConfigParser
 
-from nive.i18n import _
 from nive.definitions import PortalConf, Conf, baseConf
 from nive.definitions import implements
 from nive.definitions import ConfigurationError
