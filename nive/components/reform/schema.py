@@ -759,6 +759,9 @@ class String(SchemaType):
     def deserialize(self, node, cstruct, formstruct=None):
         if cstruct in (null,None):
             return null
+        # handle empty strings as null if set to required in configuration
+        if not cstruct and node.configuration.get("required"):
+            return null
 
         try:
             result = cstruct

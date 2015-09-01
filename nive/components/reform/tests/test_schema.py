@@ -1804,6 +1804,7 @@ class DummySchemaNode(object):
         self.required = default is None
         self.default = default
         self.children = []
+        self.configuration = {}
 
     def deserialize(self, val, formstruct=None):
         from nive.components.reform.schema import Invalid
