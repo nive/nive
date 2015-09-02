@@ -241,6 +241,9 @@ class Regex(object):
             self.msg = msg
 
     def __call__(self, node, value):
+        # handle empty strings
+        if not value and node is not None and not node.configuration.get("required"):
+            return
         if self.match_object.match(value) is None:
             raise Invalid(node, self.msg)
 
@@ -760,7 +763,7 @@ class String(SchemaType):
         if cstruct in (null,None):
             return null
         # handle empty strings as null if set to required in configuration
-        if not cstruct and node.configuration.get("required"):
+        if not cstruct and node is not None and node.configuration.get("required"):
             return null
 
         try:
