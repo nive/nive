@@ -245,7 +245,7 @@ class ConnectionRequest(Connection):
             if not connect:
                 return db
             return db or self.connect()
-        except (AttributeError, KeyError), e:
+        except (AttributeError, TypeError, KeyError), e:
             if not connect:
                 return None
             return self.connect()
