@@ -64,7 +64,6 @@ class PostgresConnection(Connection):
             raise OperationalError, "Cannot connect to database '%s.%s'" % (conf.host, conf.dbName)
         self._set(db)
         return db
-        
 
     def IsConnected(self):
         """ Check if database is connected """
@@ -77,7 +76,6 @@ class PostgresConnection(Connection):
         manager = PostgresManager()
         manager.SetDB(self.PrivateConnection())
         return manager
-
 
     def PrivateConnection(self):
         """ This function will return a new and raw connection. It is up to the caller to close this connection. """
@@ -93,7 +91,6 @@ class PostgresConnection(Connection):
             kargs['user'] = conf.user
 
         return psycopg2.connect(**kargs)
-
 
     def FmtParam(self, param):
         """ 

@@ -1,13 +1,7 @@
 #-*- coding: utf-8 -*-
 
-import time
 import unittest
-from datetime import time as datetime_time
-
-from nive.application import *
-from nive.definitions import *
 from nive.helper import *
-from nive.portal import Portal
 
 from nive.tests.db_app import *
 from nive.tests import __local
@@ -290,6 +284,7 @@ class groupsTest_db:
         root = self.app.root()
         for r in self.remove:
             root.Delete(r, u)
+        self.app.Close()
 
     def test_objectgroups(self):
         a=self.app

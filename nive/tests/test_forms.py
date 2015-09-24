@@ -281,8 +281,7 @@ class FormTest_db:
             root.Delete(r, u)
         self.app.Close()
         testing.tearDown()
-        pass
-    
+
     def test_obj(self, **kw):
         root = self.app.GetRoot()
         v = Viewy()

@@ -2,7 +2,6 @@
 import time
 import unittest
 
-from nive.definitions import *
 from nive.tools.dbJsonDump import *
 
 from nive.tests import db_app, __local

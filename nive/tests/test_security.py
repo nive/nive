@@ -1,7 +1,5 @@
 
-import time
 import unittest
-from types import DictType
 
 from nive.definitions import implements, Conf
 from nive.security import User, AdminUser, GetUsers, Unauthorized, UserFound, IAdminUser

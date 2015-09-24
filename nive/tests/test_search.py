@@ -1,9 +1,7 @@
 
-import time
 import unittest
 
 from nive.security import User
-from nive.definitions import *
 
 from nive.tests import db_app
 from nive.tests import __local

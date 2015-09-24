@@ -35,7 +35,7 @@ class Wrapper(object):
         return ["_temp_", "_content_", "_entry_"]
     
     def __setitem__(self, key, value):
-        if key in (u"id",u"pool_datatbl", u"pool_dataref"):
+        if key in (u"id", u"pool_datatbl", u"pool_dataref"):
             return
         self._temp_[key] = self._entry_().DeserializeValue(key, value, self.meta)
 
@@ -123,7 +123,7 @@ class Wrapper(object):
 
 
 
-    def IsEmpty(self):                return self._content_ == None
+    def IsEmpty(self):                return self._content_ is None
     def GetTemp(self):                return self._temp_
     def HasTemp(self):                return self._temp_ != {}
     def GetTempKey(self, key):        return self._temp_.get(key)
@@ -480,7 +480,7 @@ class PoolStructure(object):
             # -> to datetime.time
             if isinstance(value, basestring):
                 # misuse datetime parser
-                value2 = ConvertToDateTime(u"2015-01-01 "+value)
+                value2 = ConvertToDateTime(u"2015-01-01 "+unicode(value))
                 if value2:
                     value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
             elif isinstance(value, (float,int,long)):

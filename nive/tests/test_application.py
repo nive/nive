@@ -345,6 +345,7 @@ class appTest_db:
         user = User(u"test")
         if self.oid:
             self.app.root().Delete(self.oid, user=user)
+        self.app.Close()
 
 
     def test_db(self):

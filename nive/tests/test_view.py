@@ -191,9 +191,9 @@ class viewTest_db:
         r = self.app.root()
         r.Delete(self.context.id, user=user)
         r.Delete(self.context2.id, user=user)
+        self.app.Close()
         testing.tearDown()
-        pass
-    
+
 
     def test_conf(self):
         view = BaseView(self.context2, self.request)
