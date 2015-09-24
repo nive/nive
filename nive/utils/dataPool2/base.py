@@ -1788,7 +1788,7 @@ class Entry(object):
             raise
     
     
-    def _SQLSelect(self, flds, cursor = None, table=None):
+    def _SQLSelect(self, flds, cursor=None, table=None):
         """
         select one entry and convert to dictionary
         """
@@ -1799,9 +1799,8 @@ class Entry(object):
         else:
             param = {u"id": self.GetDataRef()}
         sql, values = pool.FmtSQLSelect(flds, param, dataTable = table, version=self.version, singleTable=1)
-
         c = 0
-        if not cursor:
+        if cursor is None:
             c = 1
             cursor = pool.connection.cursor()
         if pool._debug:
@@ -1819,7 +1818,7 @@ class Entry(object):
         return pool.ConvertRecToDict(r, flds)
 
 
-    def _SQLSelectAll(self, metaFlds, dataFlds, cursor = None):
+    def _SQLSelectAll(self, metaFlds, dataFlds, cursor=None):
         """
         select meta and data of one entry and convert to dictionary
         """
@@ -1829,7 +1828,7 @@ class Entry(object):
         sql, values = pool.FmtSQLSelect(flds2, param, dataTable = self.GetDataTbl(), version=self.version)
 
         c = 0
-        if not cursor:
+        if cursor is None:
             c = 1
             cursor = pool.connection.cursor()
         if self.pool._debug:
@@ -1850,19 +1849,17 @@ class Entry(object):
         return meta, data
 
 
-    def _PreloadAll(self):
+    def _PreloadAll(self, cursor=None):
         if self.virtual:
             return True
         if not self.dataTbl or not self.dataRef:
-            if not self._PreloadMeta():
+            if not self._PreloadMeta(cursor):
                 return False
-            self._PreloadData()
+            self._PreloadData(cursor)
             return True
         dataTbl = self.GetDataTbl()
-        c = self.pool.connection.cursor()
         meta, data = self._SQLSelectAll(self.pool.structure.get(self.pool.MetaTable, version=self.version),
-                                        self.pool.structure.get(dataTbl, version=self.version), c)
-        c.close()
+                                        self.pool.structure.get(dataTbl, version=self.version), cursor=cursor)
         if not meta:
             return False
         meta = self.pool.structure.deserialize(self.pool.MetaTable, None, meta)
@@ -1871,12 +1868,10 @@ class Entry(object):
         return True
 
 
-    def _PreloadMeta(self):
+    def _PreloadMeta(self, cursor=None):
         if self.virtual:
             return True
-        c = self.pool.connection.cursor()
-        meta = self._SQLSelect(self.pool.structure.get(self.pool.MetaTable, self.version), c)
-        c.close()
+        meta = self._SQLSelect(self.pool.structure.get(self.pool.MetaTable, self.version), cursor=cursor)
         if not meta:
             return False
         meta = self.pool.structure.deserialize(self.pool.MetaTable, None, meta)
@@ -1884,14 +1879,11 @@ class Entry(object):
         return True
 
 
-    def _PreloadData(self):
+    def _PreloadData(self, cursor=None):
         if self.virtual:
             return True
-        c = self.pool.connection.cursor()
         dataTbl = self.GetDataTbl()
-        data = self._SQLSelect(self.pool.structure.get(dataTbl, version=self.version), c, dataTbl)
-        # load local roles, security
-        c.close()
+        data = self._SQLSelect(self.pool.structure.get(dataTbl, version=self.version), cursor=cursor, table=dataTbl)
         if not data:
             return False
         data = self.pool.structure.deserialize(dataTbl, None, data)
@@ -1899,12 +1891,10 @@ class Entry(object):
         return True
 
 
-    def _PreloadStdMeta(self):
+    def _PreloadStdMeta(self, cursor=None):
         if self.virtual:
             return True
-        c = self.pool.connection.cursor()
-        meta = self._SQLSelect(self.pool.structure.stdMeta, c)
-        c.close()
+        meta = self._SQLSelect(self.pool.structure.stdMeta, cursor=cursor)
         if not meta:
             return False
         meta = self.pool.structure.deserialize(self.pool.MetaTable, None, meta)
@@ -1912,13 +1902,11 @@ class Entry(object):
         return True
 
 
-    def _PreloadStdMetaData(self):
+    def _PreloadStdMetaData(self, cursor=None):
         if self.virtual:
             return True
         dataTbl = self.GetDataTbl()
-        c = self.pool.connection.cursor()
-        meta, data = self._SQLSelectAll(self.pool.structure.stdMeta, self.pool.structure.get(dataTbl, version=self.version), c)
-        c.close()
+        meta, data = self._SQLSelectAll(self.pool.structure.stdMeta, self.pool.structure.get(dataTbl, version=self.version), cursor=cursor)
         if not meta:
             return False
         meta = self.pool.structure.deserialize(self.pool.MetaTable, None, meta)
