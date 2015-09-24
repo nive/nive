@@ -51,7 +51,7 @@ class Connection(object):
         return db.cursor()
     
     def begin(self):
-        """ Calls commit on the current transaction, if supported """
+        """ Starts a new transaction, if supported """
         return
 
     def rollback(self):
@@ -73,6 +73,8 @@ class Connection(object):
         """ Close database connection """
         db = self._get(connect=False)
         if db:
+            # rollback uncommited values by default
+            db.rollback()
             db.close()
             self._set(None)
     
@@ -197,6 +199,8 @@ class ConnectionCache(object):
     
     def close(self):
         for key, conn in self.connections.iteritems():
+            # rollback uncommited values by default
+            conn.rollback()
             conn.close()
 
 class ConnectionRequest(Connection):
