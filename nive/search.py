@@ -100,7 +100,7 @@ class Search:
         If *pool_type* is set you can use meta and data *fields*. The query is restricted to a single 
         type.
         
-        Supported keywords: ``groupby, logicalOperator, condition, dontAddType, dataTable``
+        Supported keywords: ``groupby, logicalOperator, condition, dontAddType, dataTable, db``
         
         The following example selects all children of the current object ::
             
@@ -113,7 +113,7 @@ class Search:
         parameter = parameter or {}
         operators = operators or {}
         fields = fields or ["id"]
-        db = self.db
+        db = kw.get("db") or self.db
         if pool_type is None:
             dataTable=kw.get("dataTable") or u"pool_meta"
             sql, values = db.FmtSQLSelect(fields, 
