@@ -149,7 +149,12 @@ class File(object):
     
     @property
     def mtime(self):
-        return self._mtime or os.path.getmtime(self.abspath())
+        if self._mtime:
+            return self._mtime
+        path = self.abspath()
+        if path:
+            return os.path.getmtime(path)
+        return None
 
 
     def commitTemp(self, fileentry):
