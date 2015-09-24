@@ -309,7 +309,7 @@ class ContainerEdit:
             obj.CreateSelf(data, user=user, **kw)
             self.WfAction("add", user=user)
             obj.Signal("create", user=user, **kw)
-            if not kw.get("no-commit") and app.configuration.autocommit:
+            if not kw.get("nocommit") and app.configuration.autocommit:
                 obj.CommitInternal(user=user)
         except Exception, e:
             db.Undo()
