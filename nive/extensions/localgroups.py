@@ -70,7 +70,7 @@ class LocalGroups(object):
         groups = self._LocalGroups(username)
         if group in groups:
             return 
-        if username==None:
+        if username is None:
             return
         self._AddLocalGroupsCache(username, group)
         self.db.AddGroup(self._secid, userid=username, group=group)
@@ -132,7 +132,7 @@ def SetupLocalGroups(app, pyramidConfig):
             e = c.extensions
             if e and extension in e:
                 continue
-            if e == None:
+            if e is None:
                 e = []
             if isinstance(e, tuple):
                 e = list(e)
