@@ -1324,7 +1324,7 @@ class ObjectForm(HTMLForm):
         returns bool, html
         """
         data = self.LoadObjData(kw.get("obj"))
-        return data!=None, self.Render(data)
+        return data is not None, self.Render(data)
 
 
     def UpdateObj(self, action, **kw):
