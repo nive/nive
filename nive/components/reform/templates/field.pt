@@ -52,8 +52,8 @@
   <div class="span12">
     <div tal:content="structure field.description" class="help-block"></div>
   </div>
-  </tal:block>
   <!-- /mapping_item -->
+  </tal:block>
 
 </div>
 </div>

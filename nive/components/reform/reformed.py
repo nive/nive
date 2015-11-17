@@ -9,7 +9,6 @@ to schema nodes.
 from pkg_resources import resource_filename
 from nive.components.reform.template import ZPTRendererFactory
 
-from nive.i18n import _
 from nive.i18n import translate
 from nive.definitions import ModuleConf, ViewModuleConf
 from nive.helper import LoadListItems, ResolveName
@@ -106,14 +105,16 @@ def SchemaFactory(form, fields, actions, force=False):
         if not field.required:
             kw["missing"] = null # or "" ?
         if field.default != None:
-            kw["default"] = field.default 
+            kw["default"] = field.default
+
+        if field.get("schema"):
+            n = SchemaNode(field.get("schema"), **kw)
             
-        ftype = field.datatype
-        if field.hidden:
+        elif field.hidden:
             n = hidden_node(field, kw, kwWidget, form)
 
         else:
-            n = apply(nodeMapping[ftype], (field, kw, kwWidget, form))
+            n = apply(nodeMapping[field.datatype], (field, kw, kwWidget, form))
             
         # add node to form
         if not n:

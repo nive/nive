@@ -1,8 +1,9 @@
 import time
 import unittest
 
-from nive.definitions import *
-from nive.forms import *
+from nive.definitions import FieldConf, Conf, ConfigurationError
+from nive.forms import Form, HTMLForm, ToolForm, JsonMappingForm, ObjectForm
+from nive.components.reform import schema
 from nive.events import Events
 from nive.views import BaseView
 from nive.security import User as UserO
@@ -109,6 +110,20 @@ class FormTest(unittest.TestCase):
 
         form = Form(loadFromType="type1", app=self.app, view=self.view)
         subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unit"})]}}
+        form.subsets = subsets
+        form.Setup(subset=u"test")
+        v,d,e = form.Validate(data1_2)
+        self.assert_(v, e)
+
+        result, data = form.Extract(data1_1)
+        self.assert_(data)
+        result, data = form.Extract(data1_2)
+        self.assert_(data)
+
+
+    def test_values3(self, **kw):
+        form = Form(loadFromType="type1", app=self.app, view=self.view)
+        subsets = {u"test": {"fields": [u"ftext", FieldConf(id="section1", name="Section 1", datatype="string", schema=schema.String())]}}
         form.subsets = subsets
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
