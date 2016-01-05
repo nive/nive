@@ -104,7 +104,7 @@ def SchemaFactory(form, fields, actions, force=False):
         # setup missing and default value
         if not field.required:
             kw["missing"] = null # or "" ?
-        if field.default != None:
+        if field.default is not None:
             kw["default"] = field.default
 
         if field.get("schema"):
