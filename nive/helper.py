@@ -447,13 +447,13 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             if portal is None:
                 portal = app
             return portal.GetGroups(sort="name", visibleOnly=True)
+        elif dyn == "localgroups":
+            return app.GetGroups(sort="name", visibleOnly=True)
         elif dyn == "groups+auth":
             portal = app.portal
             if portal is None:
                 portal = app
             return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="name", visibleOnly=True)
-        elif dyn == "local-groups":
-            return app.GetGroups(sort="name", visibleOnly=True)
         elif dyn == "types":
             return app.GetAllObjectConfs()
         elif dyn == "categories":
