@@ -23,10 +23,11 @@ empty["special_chars"] = u""
 
 noArticle = "keine Zuordnung"
 languages = ("ger", "eng", "ita", "spa", "fra", "por", "lat", "dan", "dut", "pol", "swe", "cze", "tur", "epo",
-             "rus", "fin", "gre", "grc", "hrv", "rum", "afr", "ara", "alb", "amh", "arm", "aze", "bel", "ben",
-             "tib", "bos", "bul", "cat", "zho", "hrv", "esp", "est", "fil", "fin", "kat", "ell", "hau",
-             "heb", "hin", "hun", "isi", "ind", "jpn", "kor", "lav", "lit", "mon", "nep", "nor", "per", "pol",
+             "rus", "fin", "gre", "rum", "afr", "ara", "alb", "amh", "arm", "aze", "bel", "ben",
+             "tib", "bos", "bul", "cat", "zho", "hrv", "esp", "est", "fil", "kat", "ell", "hau", "heb",
+             "hin", "hun", "isi", "ind", "jpn", "kor", "lav", "lit", "mon", "nep", "nor", "per", "pol",
              "ron", "san", "srp", "slk", "swa", "tha", "ukr", "vie")
+# disabled : "grc"
 
 # ger ---------------------------------------------------
 ger = deepcopy(empty)
@@ -62,7 +63,7 @@ ita["articles"] = {"m": "il", "f": "la"}
 ita["article_abbr"] = "l'"
 ita["verb_prefix"] = ""
 ita["plural"] = ""
-ita["codepage"] = "iso-8859-3"
+ita["codepage"] = "iso-8859-15"
 ita["special_chars"] = u"ÀÈÉÌÒÙàèéìòù"
 
 # spa ---------------------------------------------------
@@ -75,7 +76,7 @@ spa["articles"] = {"m": "el", "f": "la"}
 spa["article_abbr"] = ""
 spa["verb_prefix"] = ""
 spa["plural"] = "s"
-spa["codepage"] = "iso-8859-3"
+spa["codepage"] = "iso-8859-15"
 spa["special_chars"] = u"ÁÉÍÑÓÚÜáéíñóúü"
 
 
@@ -89,7 +90,7 @@ fra["articles"] = {"m": "le", "f": "la"}
 fra["article_abbr"] = "l’"
 fra["verb_prefix"] = ""
 fra["plural"] = ""
-fra["codepage"] = "iso-8859-3"
+fra["codepage"] = "iso-8859-15"
 fra["special_chars"] = u"ÀÂÇÈÉÊËÎÏÔŒÙÛÜŸàâçèéêëîïôœùûüÿ"
 
 
@@ -103,7 +104,7 @@ por["articles"] = {"m": "o", "f": "a"}
 por["article_abbr"] = ""
 por["verb_prefix"] = ""
 por["plural"] = ""
-por["codepage"] = "iso-8859-3"
+por["codepage"] = "iso-8859-15"
 por["special_chars"] = u"ÀÁÂÃÇÉÊÍÓÔÕÚÜàáâãçéêíóôõúü"
 
 
@@ -117,7 +118,7 @@ lat["articles"] = {}
 lat["article_abbr"] = ""
 lat["verb_prefix"] = ""
 lat["plural"] = ""
-lat["codepage"] = "iso-8859-3"
+lat["codepage"] = "iso-8859-15"
 lat["special_chars"] = u"ÆŒæœ"
 
 # dan ---------------------------------------------------
@@ -143,8 +144,8 @@ dut["articles"] = {"m": "de",  "f": "de", "n": "het"}
 dut["article_abbr"] = ""
 dut["verb_prefix"] = ""
 dut["plural"] = ""
-dut["codepage"] = "iso-8859-10"
-dut["special_chars"] = u"ÄÈÉËÏĲÖÜäèéëïĳöü"
+dut["codepage"] = "iso-8859-15"
+dut["special_chars"] = u"ÄÈÉÊÖÜäèéêöü"
 
 # pol ---------------------------------------------------
 pol = deepcopy(empty)
@@ -183,7 +184,7 @@ cze["article_abbr"] = ""
 cze["verb_prefix"] = ""
 cze["plural"] = ""
 cze["codepage"] = "iso-8859-2"
-cze["special_chars"] = u"ÁČĎÉĚÍŇÓŘŠŤÚŮÝŽáčďéĕíňóřšťúŭýž"
+cze["special_chars"] = u"áéíóúýčďěňřšťžů"
 
 # tur ---------------------------------------------------
 tur = deepcopy(empty)
@@ -209,7 +210,7 @@ epo["article_abbr"] = ""
 epo["verb_prefix"] = ""
 epo["plural"] = ""
 epo["codepage"] = "iso-8859-3"
-epo["special_chars"] = u"ĈĜĤĴŜŬĉĝĥĵŝǔ"
+epo["special_chars"] = u"ĉĝĥĵŝŭ"
 
 # fin ---------------------------------------------------
 fin = deepcopy(empty)
@@ -228,14 +229,14 @@ fin["special_chars"] = u"ÄÅÖŠŽäåöšž"
 rus = deepcopy(empty)
 rus["code"] = u"rus"
 rus["code2"] = u"ru"
-rus["name"] = u"Ру́сский"
+rus["name"] = u"Россия"
 rus["articles_used"] = 4
 rus["articles"] = {"mb": "maskulin belebt", "mu": "maskulin unbelebt", "f": "feminin", "n": "neutrum"}
 rus["article_abbr"] = ""
 rus["verb_prefix"] = ""
 rus["plural"] = ""
 rus["codepage"] = "iso-8859-5"
-rus["special_chars"] = u"АаБбВвЃѓДдЂђЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтЌќЋћУуЎўФфЦцЧчШшЬьѢѣ"
+rus["special_chars"] = u"АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
 # gre ---------------------------------------------------
 gre = deepcopy(empty)
@@ -286,7 +287,7 @@ rum["articles"] = {"m": "m", "f": "f"}
 rum["article_abbr"] = "l'"
 rum["verb_prefix"] = ""
 rum["plural"] = ""
-rum["codepage"] = "iso-8859-3"
+rum["codepage"] = "iso-8859-16"
 rum["special_chars"] = u"ÂĂÎȘȚâăîșț"
 
 # afr ---------------------------------------------------
@@ -294,7 +295,7 @@ afr = deepcopy(empty)
 afr["code"] = u"afr"
 afr["code2"] = u"af"
 afr["name"] = u"Afrikaans"
-afr["codepage"] = "iso-8859-10"
+afr["codepage"] = "iso-8859-15"
 afr["special_chars"] = u"ÈèÉéÊêËëÎîÏïÔôÛû"
 
 # ara ---------------------------------------------------
@@ -302,15 +303,15 @@ ara = deepcopy(empty)
 ara["code"] = u"ara"
 ara["code2"] = u"ar"
 ara["name"] = u"للغة العربية‎"
-ara["codepage"] = "iso-8859-6"
-ara["special_chars"] = u""
+ara["codepage"] = "utf-8"
+ara["special_chars"] = ara["name"]
 
 # alb ---------------------------------------------------
 alb = deepcopy(empty)
 alb["code"] = u"alb"
 alb["code2"] = u"sq"
 alb["name"] = u"Gjuha Shqipe"
-alb["codepage"] = "iso-8859-3"
+alb["codepage"] = "iso-8859-16"
 alb["special_chars"] = u"ËëÇç"
 
 # amh ---------------------------------------------------
@@ -318,7 +319,7 @@ amh = deepcopy(empty)
 amh["code"] = u"amh"
 amh["code2"] = u"am"
 amh["name"] = u"Amarəñña"
-amh["codepage"] = ""
+amh["codepage"] = "utf-8"
 amh["special_chars"] = u""
 
 # arm -------------------------------------------------
@@ -326,16 +327,16 @@ arm = deepcopy(empty)
 arm["code"] = u"arm"
 arm["code2"] = u"hy"
 arm["name"] = u"Hajeren lesu"
-arm["codepage"] = ""
+arm["codepage"] = "utf-8"
 arm["special_chars"] = u""
 
 # aze ---------------------------------------------------
 aze = deepcopy(empty)
-aze["code"] = u" aze "
+aze["code"] = u"aze"
 aze["code2"] = u"tr"
 aze["name"] = u"Azərbaycan dili"
 aze["codepage"] = "iso-8859-9"
-aze["special_chars"] = u"ƏəÂÇĞİÖŞÜâçğıöşü"
+aze["special_chars"] = u""
 
 # bel ---------------------------------------------------
 bel = deepcopy(empty)
@@ -348,22 +349,22 @@ bel["article_abbr"] = ""
 bel["verb_prefix"] = ""
 bel["plural"] = ""
 bel["codepage"] = "iso-8859-5"
-bel["special_chars"] = u"АаБбВвЃѓДдЂђЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтЌќЋћУуЎўФфЦцЧчШшЬьѢѣ"
+bel["special_chars"] = u"АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
 # ben---------------------------------------------------
 ben = deepcopy(empty)
 ben["code"] = u"ben"
 ben["code2"] = u"bn"
 ben["name"] = u"Bangla bhasha"
-ben["codepage"] = ""
+ben["codepage"] = "utf-8"
 ben["special_chars"] = u""
 
 # tib------------------------------------------------
 tib = deepcopy(empty)
-tib["code"] = u" tib "
+tib["code"] = u"tib"
 tib["code2"] = u"bo"
 tib["name"] = u"Bod yig"
-tib["codepage"] = ""
+tib["codepage"] = "utf-8"
 tib["special_chars"] = u""
 
 # bos---------------------------------------------------
@@ -385,7 +386,7 @@ bul["article_abbr"] = ""
 bul["verb_prefix"] = ""
 bul["plural"] = ""
 bul["codepage"] = "iso-8859-5"
-bul["special_chars"] = u"АаБбВвЃѓДдЂђЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтЌќЋћУуЎўФфЦцЧчШшЬьѢѣ"
+bul["special_chars"] = u"АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
 # cat ---------------------------------------------------
 cat = deepcopy(empty)
@@ -397,7 +398,7 @@ cat["articles"] = {"m": "el", "f": "la"}
 cat["article_abbr"] = ""
 cat["verb_prefix"] = ""
 cat["plural"] = "s"
-cat["codepage"] = "iso-8859-3"
+cat["codepage"] = "iso-8859-15"
 cat["special_chars"] = u"ÁÉÍÑÓÚÜáéíñóúü"
 
 # zho ------------------------------------------------
@@ -405,30 +406,23 @@ zho = deepcopy(empty)
 zho["code"] = u"zho"
 zho["code2"] = u"zh"
 zho["name"] = u"中文"
-zho["codepage"] = ""
-zho["special_chars"] = u""
+zho["codepage"] = "utf-8"
+zho["special_chars"] = u"地球" # test
 
-# hrv ---------------------------------------------------
-hrv = deepcopy(empty)
-hrv["code"] = u"hrv"
-hrv["code2"] = u"sh"
-hrv["name"] = u"Hrvatski jezik"
-hrv["codepage"] = "iso-8859-2"
-hrv["special_chars"] = u"čćžšž"
 
 # esp ---------------------------------------------------
 esp = deepcopy(empty)
 esp["code"] = u"esp"
 esp["code2"] = u"ep"
 esp["name"] = u"Esperanto"
-esp["codepage"] = "iso-8859-3"
+esp["codepage"] = "iso-8859-15"
 
 # est ---------------------------------------------------
 est = deepcopy(empty)
 est["code"] = u"est"
 est["code2"] = u"et"
 est["name"] = u"Eesti keel"
-est["codepage"] = "iso-8859-1"
+est["codepage"] = "iso-8859-15"
 
 # fil ---------------------------------------------------
 fil = deepcopy(empty)
@@ -437,20 +431,12 @@ fil["code2"] = u"fl"
 fil["name"] = u"Filipino"
 fil["codepage"] = "iso-8859-1"
 
-# fin ---------------------------------------------------
-fin = deepcopy(empty)
-fin["code"] = u"fin"
-fin["code2"] = u"fi"
-fin["name"] = u"Suomi"
-fin["codepage"] = "iso-8859-1"
-fin["special_chars"] = u"öÖäÄåÅ"
-
 # kat ---------------------------------------------------
 kat = deepcopy(empty)
 kat["code"] = u"kat"
 kat["code2"] = u"ka"
 kat["name"] = u"Kartuli Ena"
-kat["codepage"] = ""
+kat["codepage"] = "utf-8"
 
 # ell ---------------------------------------------------
 ell = deepcopy(empty)
@@ -478,7 +464,7 @@ hin = deepcopy(empty)
 hin["code"] = u"hin"
 hin["code2"] = u"hi"
 hin["name"] = u"Hindi"
-hin["codepage"] = ""
+hin["codepage"] = "utf-8"
 
 # hun ---------------------------------------------------
 hun = deepcopy(empty)
@@ -506,14 +492,14 @@ jpn = deepcopy(empty)
 jpn["code"] = u"jpn"
 jpn["code2"] = u"ja"
 jpn["name"] = u"日本語"
-jpn["codepage"] = ""
+jpn["codepage"] = "utf-8"
 
 # kor ---------------------------------------------------
 kor = deepcopy(empty)
 kor["code"] = u"kor"
 kor["code2"] = u"ko"
 kor["name"] = u"韓國語"
-kor["codepage"] = ""
+kor["codepage"] = "utf-8"
 
 # lav ---------------------------------------------------
 lav = deepcopy(empty)
@@ -541,7 +527,7 @@ nep = deepcopy(empty)
 nep["code"] = u"nep"
 nep["code2"] = u"ne"
 nep["name"] = u"Nepali"
-nep["codepage"] = ""
+nep["codepage"] = "utf-8"
 
 # nor ---------------------------------------------------
 nor = deepcopy(empty)
@@ -576,7 +562,7 @@ san = deepcopy(empty)
 san["code"] = u"san"
 san["code2"] = u"sa"
 san["name"] = u"Sanskrit"
-san["codepage"] = ""
+san["codepage"] = "utf-8"
 
 # srp ---------------------------------------------------
 srp = deepcopy(empty)
@@ -624,10 +610,11 @@ vie["codepage"] = "iso-8859-1"
 
 #[s] functions -------------------------------------------
 
-global _cl
 _cl = []
 for l in languages:
     lang = globals().get(l)
+    if not lang["code"]:
+        continue
     _cl.append({"id": lang["code"], "name": lang["name"]})
 
 def GetConf(langcode):
@@ -648,6 +635,7 @@ def GetLanguages():
     """
     load codelist of languages and cache
     """
+    global _cl
     return _cl
     #cl = []
     #for l in languages:
