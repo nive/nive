@@ -85,6 +85,7 @@ appconf = AppConf(
     id = u"unittest",
     context="nive.components.objects.base.ApplicationBase",
     title = u"nive application python unittest",
+    timezone = "UTC",
     modules = [root, type1, type2, type3],
     categories = [cat1, cat2],
     groups = [group1, group2],

@@ -36,6 +36,21 @@ class objTest_db:
         r.Delete(id, user=user)
 
 
+    def test_obj_timezone(self):
+        a=self.app
+        r=root(a)
+        user = User(u"test")
+        o = createObj1(r)
+        id = o.id
+        self.assert_(o.meta.pool_create)
+        self.assert_(o.meta.pool_create.hour==datetime.utcnow().hour)
+        o.Update(data1_2, user)
+        self.assert_(o.meta.pool_change)
+        self.assert_(o.meta.pool_change.hour==datetime.utcnow().hour)
+
+        r.Delete(id, user=user)
+
+
     def test_objectacl(self):
         #print "Testing object update and commit"
         a=self.app

@@ -6,6 +6,7 @@ __doc__ = "Data Pool 2 SQL Base Module"
 
 import weakref
 import logging
+
 from datetime import datetime
 
 from nive.utils.utils import ConvertToDateTime
@@ -71,13 +72,15 @@ class Base(object):
     def __init__(self, connection = None, structure = None, root = "",
                  useTrashcan = False, useBackups = False, 
                  codePage = "utf-8", dbCodePage = "utf-8",
-                 connParam = None, 
-                 debug = 0, log = "sql.log", **kw):
+                 connParam = None,
+                 debug = 0, log = "sql.log",
+                 timezone = None, **kw):
 
         self.codePage = codePage
         self.dbCodePage = dbCodePage
         self.useBackups = useBackups
         self.useTrashcan = useTrashcan
+        self.pytimezone = timezone
 
         self._debug = debug
         self._log = log
@@ -156,7 +159,7 @@ class Base(object):
 
     def GetDBDate(self, date=None):
         if not date:
-            date = datetime.now()
+            date = datetime.now(tz=self.pytimezone)
         elif not isinstance(date, datetime):
             date = ConvertToDateTime(date)
         return date.strftime(u"%Y-%m-%d %H:%M:%S")

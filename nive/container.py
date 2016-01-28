@@ -825,9 +825,9 @@ class Root(object):
                          pool_state=1, 
                          pool_filename=path, 
                          pool_wfa=u"",
-                         pool_change=datetime.now(),
+                         pool_change=datetime.now(tz=app.pytimezone),
                          pool_changedby=u"",
-                         pool_create=datetime.now(),
+                         pool_create=datetime.now(tz=app.pytimezone),
                          pool_createdby=u"")
         self.data = Conf()
         self.files = Conf()

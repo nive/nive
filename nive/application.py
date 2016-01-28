@@ -17,6 +17,7 @@ from nive import __version__
 
 import logging
 import uuid
+import pytz
 
 from time import time
 from types import DictType
@@ -95,6 +96,7 @@ class Application(object):
         self.registry = Components()
         self.configuration = configuration
         self.dbConfiguration = None
+        self.pytimezone = None
         # set id for logging
         if configuration:
             self.id = configuration.id
@@ -161,6 +163,8 @@ class Application(object):
         self.log.debug("Startup with debug=%s", str(debug))
         self.debug = debug
         self.Register(self.configuration)
+        if self.configuration.timezone:
+            self.pytimezone = pytz.timezone(self.configuration.timezone)
         self.Signal("startup", app=self)
         self.SetupApplication()
         
@@ -1156,6 +1160,7 @@ class AppFactory(object):
                       root=conn.fileRoot, 
                       useTrashcan=conn.useTrashcan, 
                       dbCodePage=conn.dbCodePage,
+                      timezone=self.pytimezone,
                       debug=conn.querylog[0],
                       log=conn.querylog[1])
         return dbObj

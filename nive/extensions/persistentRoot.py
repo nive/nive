@@ -70,7 +70,7 @@ class Persistent(object):
             values.update(self.files)
         values.update(self.data)
         values.update(self.meta)
-        values[u"pool_change"] = datetime.now()
+        values[u"pool_change"] = datetime.now(self.app.pytimezone)
         values[u"pool_changedby"] = str(user)
         vstr = DumpJSONConf(values)
         self.app.StoreSysValue(self.storagekey, vstr)

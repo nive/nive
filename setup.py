@@ -16,14 +16,15 @@ except:
 requires = [
     'pyramid', 
     'pyramid_chameleon',
-    'iso8601', 
+    'iso8601',
+    'pytz',
     'translationstring',
     'html2text'
 ]
 
 setupkw = dict(
       name='nive',
-      version='1.0rc1',
+      version='1.0rc2',
       description='Nive base package',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
