@@ -507,8 +507,10 @@ class BaseView(object):
         file = self.context.GetFileByName(self.request.subpath[0])
         if not file:
             raise NotFound
-        return self.SendFile(file)
-
+        try:
+            return self.SendFile(file)
+        except FileNotFound:
+            raise NotFound
 
     def SendFile(self, file):
         """
