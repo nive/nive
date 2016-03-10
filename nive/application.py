@@ -164,8 +164,6 @@ class Application(object):
         self.debug = debug
         # removed obsolete Register(). Called in StartRegistration().
         #self.Register(self.configuration)
-        if self.configuration.timezone:
-            self.pytimezone = pytz.timezone(self.configuration.timezone)
         self.Signal("startup", app=self)
         self.SetupApplication()
         
@@ -568,6 +566,9 @@ class Registration(object):
                 self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
             else:
                 self.dbConfiguration = c.dbConfiguration
+        tz = self.configuration.get("timezone")
+        if tz is not None:
+            self.pytimezone = pytz.timezone(tz)
 
         
     def _RegisterConfViews(self, conf):
