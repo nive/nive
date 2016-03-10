@@ -1024,7 +1024,7 @@ class HTMLForm(Form):
         """
         self.Signal("success")
         if self.view and self.redirectCancel:
-            redirectCancel = self.view.ResolveUrl(self.redirectCancel)
+            redirectCancel = self.view.ResolveUrl(url=self.redirectCancel)
             return self.view.Redirect(redirectCancel, raiseException=True, refresh=True)
         return True, ""
 
@@ -1158,7 +1158,7 @@ class HTMLForm(Form):
                 return self.view.SendResponse(data=self.Render(data, msgs=msgs, errors=errors), headers=[("X-Result", "false")])
             return result, self.Render(data, msgs=msgs, errors=errors)
     
-        redirectSuccess = self.view.ResolveUrl(self.redirectSuccess, result)
+        redirectSuccess = self.view.ResolveUrl(url=self.redirectSuccess)
         if redirectSuccess:
             # raises HTTPFound
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
