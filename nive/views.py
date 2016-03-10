@@ -164,7 +164,7 @@ class BaseView(object):
             return u""
         return u"%sfile/%s" % (self.Url(resource), file.filename)
 
-    def PageUrl(self, resource=None, usePageLink=0, addAnchor=False):
+    def PageUrl(self, resource=None, usePageLink=0, addAnchor=True):
         """
         Generates the default page url for the resource with extension. If resource is a page element
         the page containing this element is used for the url. 
@@ -176,10 +176,10 @@ class BaseView(object):
         
         returns url
         """
-        resource=resource or self.context
+        resource = resource or self.context
         try:
             page = resource.GetPage()
-        except:
+        except AttributeError:
             page = self.context
         link = page.data.get("pagelink")
         if usePageLink and link:
@@ -193,6 +193,7 @@ class BaseView(object):
 
         if not addAnchor or resource == page:
             return url
+        # add anchor if resource is a element
         return "%s#nive-element%d"%(url, resource.id)
 
     def CurrentUrl(self, retainUrlParams=False):
