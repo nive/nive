@@ -162,7 +162,8 @@ class Application(object):
         self.starttime = time()
         self.log.debug("Startup with debug=%s", str(debug))
         self.debug = debug
-        self.Register(self.configuration)
+        # removed obsolete Register(). Called in StartRegistration().
+        #self.Register(self.configuration)
         if self.configuration.timezone:
             self.pytimezone = pytz.timezone(self.configuration.timezone)
         self.Signal("startup", app=self)
@@ -178,9 +179,10 @@ class Application(object):
 
         - startRegistration(app, pyramidConfig)
         """
-        self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
         # register modules `configuration.modules`
         self.Register(self.configuration)
+        # signal before committing views
+        self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
         # register pyramid views and translations
         if pyramidConfig:
             self._RegisterViewModules(pyramidConfig)
