@@ -26,10 +26,12 @@ class Persistent(object):
     Requires: Events
     """
     implements(IPersistentRoot)
-    storagekey = u"root storage"
+    defaultKey = u".root.storage"
+    storagekey = u""
     notifyAllRoots = True
 
     def Init(self):
+        self.storagekey = self.configuration.id+self.defaultKey
         self.LoadStoredValues()
 
     
