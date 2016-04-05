@@ -83,9 +83,9 @@ class Container(object):
         Events
         - loadObj(obj)
         """
-        if parameter==None:
+        if parameter is None:
             parameter = {}
-        if operators==None:
+        if operators is None:
             operators = {}
         parameter[u"pool_unitref"] = self.id
         sort = kw.get("sort", self.GetSort())
