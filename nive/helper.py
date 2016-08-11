@@ -446,14 +446,14 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             portal = app.portal
             if portal is None:
                 portal = app
-            return portal.GetGroups(sort="name", visibleOnly=True)
+            return portal.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "localgroups":
-            return app.GetGroups(sort="name", visibleOnly=True)
+            return app.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "groups+auth":
             portal = app.portal
             if portal is None:
                 portal = app
-            return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="name", visibleOnly=True)
+            return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "types":
             return app.GetAllObjectConfs()
         elif dyn == "categories":
@@ -482,7 +482,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             portal = app.portal
             if portal:
                 loader = portal
-        values = loader.GetGroups(sort="name", visibleOnly=True)
+        values = loader.GetGroups(sort="id", visibleOnly=True)
 
     elif fld == "pool_language":
         values = app.GetLanguages()
