@@ -40,7 +40,8 @@ class dbStructureUpdater(Tool):
         showSystem = values.get("showSystem")
         modify = values.get("modify")
         request = values["original"]
-        
+        ignoreTables = self.app.configuration.get("skipUpdateTables", ())
+
         try:
             localizer = get_localizer(get_current_request())
         except:
@@ -85,14 +86,16 @@ By default this tool will only create new tables and columns and never delete an
             self.stream.write(localizer.translate(_(u"<div class='alert alert-success'>Database created: '${name}'</div>", mapping={"name": conf.dbName})))
             db.dbConn.commit()
         db.UseDatabase(conf.get("dbName"))
-        
-        
+
         # check types for data tables -------------------------------------------------------------
         aTypes = app.GetAllObjectConfs()
         
         for aT in aTypes:
             fmt = aT["data"]
             if(fmt == []):
+                continue
+
+            if aT["dbparam"] in ignoreTables:
                 continue
 
             m = None
@@ -110,31 +113,35 @@ By default this tool will only create new tables and columns and never delete an
             self.printStructure(db.GetColumns(aT["dbparam"], fmt), aT["dbparam"], fmt, db, localizer)
 
         # check meta table exists and update ---------------------------------------------------------------
-        meta = app.GetAllMetaFlds(ignoreSystem=False)
-        tableName = MetaTbl
+        if not MetaTbl in ignoreTables:
+            meta = app.GetAllMetaFlds(ignoreSystem=False)
+            tableName = MetaTbl
 
-        if not db.IsTable(tableName):
-            if not db.CreateTable(tableName, columns=meta):
-                self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table creation failed (pool_meta)</div>")))
-                return 0
+            if not db.IsTable(tableName):
+                if not db.CreateTable(tableName, columns=meta):
+                    self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table creation failed (pool_meta)</div>")))
+                    return 0
+                db.dbConn.commit()
+
+            # create and check modified fields
+            m = None
+            if modify:
+                m = request.get(tableName)
+                if isinstance(m, basestring):
+                    m = [m]
+            if not db.UpdateStructure(tableName, meta, m):
+                self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table update failed (pool_meta)</div>")))
+                result = 0
             db.dbConn.commit()
 
-        # create and check modified fields
-        m = None
-        if modify:
-            m = request.get(tableName)
-            if isinstance(m, basestring):
-                m = [m]
-        if not db.UpdateStructure(tableName, meta, m):
-            self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table update failed (pool_meta)</div>")))
-            result = 0
-        db.dbConn.commit()
-        
-        self.printStructure(db.GetColumns(tableName, meta), tableName, meta, db, localizer)
+            self.printStructure(db.GetColumns(tableName, meta), tableName, meta, db, localizer)
 
 
         # check structure tables exist and update ------------------------------------------------------------
         for table in Structure.items():
+            if table[0] in ignoreTables:
+                continue
+
             tableName = table[0]
             fields = table[1]["fields"]
             identity = table[1]["identity"]

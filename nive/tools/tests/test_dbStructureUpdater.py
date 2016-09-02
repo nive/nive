@@ -58,3 +58,14 @@ class DBStructureTest2(__local.DefaultTestCase):
         self.assert_(r)
 
 
+    def test_toolrun3(self):
+        tc = self.app.configuration.copy()
+        tc["skipUpdateTables"] = ("pool_meta","pool_sys")
+        self.app.configuration = tc
+        t = self.app.GetTool("nive.tools.dbStructureUpdater")
+        self.assert_(t)
+        t.importWf = 1
+        t.importSecurity = 1
+        r,v = t()
+        self.assert_(r)
+
