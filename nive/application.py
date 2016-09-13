@@ -238,7 +238,7 @@ class Application(object):
         """
         # start
         self.Signal("run", app=self)
-        self.log.info('Application running.Startup time: %.05f.', time()-self.starttime)
+        self.log.info('Application %s running. Startup time: %.05f.', self.__class__.__name__, time()-self.starttime)
         self.id = self.configuration.id
         self.log=logging.getLogger(self.id)
     
