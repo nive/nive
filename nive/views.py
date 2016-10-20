@@ -196,7 +196,7 @@ class BaseView(object):
         # add anchor if resource is a element
         return "%s#nive-element%d"%(url, resource.id)
 
-    def CurrentUrl(self, retainUrlParams=False):
+    def CurrentUrl(self, retainUrlParams=False, preserveHost=1):
         """
         Returns the current url that triggered this request. Url parameter are removed by
         default.
@@ -204,8 +204,13 @@ class BaseView(object):
         returns url
         """
         if retainUrlParams:
-            return self.request.url
-        return self.request.url.split(u"?")[0]
+            url = self.request.url
+        else:
+            url = self.request.url.split(u"?")[0]
+        if preserveHost:
+            return url
+        return "/"+"/".join(url.split("/")[3:])
+
 
     def ResolveUrl(self, url, context=None):
         """
