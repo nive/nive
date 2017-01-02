@@ -25,6 +25,9 @@
          <div tal:replace="structure rndr(tmpl,field=f,cstruct=cstruct.get(f.name, null))"></div>
     </tal:block>
   
+    <div tal:condition="field.footer"
+         tal:content="structure field.footer" class="form-footer"></div>
+
     <div tal:condition="field.uploadProgressBar" style="display:none" class="progress">
       <div class="bar bar-success" style="width:0%;"></div>
     </div>
@@ -107,6 +110,5 @@ reform.addCallback(
 );
 ${'reform_loaded=false; reform.load();' if True else ''}
 </script>
-
 </form>
 </tal:block>

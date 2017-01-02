@@ -91,6 +91,7 @@ class Form(Field):
     css_class = 'reform'
     view = None
     anchor = ''
+    footer = ''
     uploadProgressBar = ''
 
     
