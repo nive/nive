@@ -573,7 +573,7 @@ class ObjectWorkflow:
         returns bool
         """
         wf = self.GetWf()
-        if not wf:
+        if wf is None:
             return True
         self.Signal("wfAllow", name=action)
         return wf.Allow(action, self, user=user, transition=transition)
@@ -590,7 +590,7 @@ class ObjectWorkflow:
         raises WorkflowNotAllowed 
         """
         wf = self.GetWf()
-        if not wf:
+        if wf is None:
             return 
         wf.Action(action, self, user=user, transition=transition)
         self.Signal("wfAction", name=action)
@@ -627,7 +627,7 @@ class ObjectWorkflow:
         # load workflow
         wf = app.GetWorkflow(wfTag, contextObject=self)
         # enable strict workflow checking
-        if not wf:
+        if wf is None:
             raise ConfigurationError, "Workflow process not found (%s)" %(wfTag)
         self.Signal("wfLoad", workflow=wf)
         return wf
@@ -652,7 +652,7 @@ class ObjectWorkflow:
             wf = app.GetWorkflowConf(wfID)
             return wf
         wf = app.GetAllWorkflowConfs(contextObject=self)
-        if not wf:
+        if wf is None:
             return None
         if len(wf)>1:
             raise ConfigurationError, "Workflow: More than one process for type found (%s)" % (self.configuration.id)
@@ -664,7 +664,7 @@ class ObjectWorkflow:
         returns the current workflow state as dictionary
         """
         wf = self.GetWf()
-        if not wf:
+        if wf is None:
             return {}
         return wf.GetObjInfo(self, user)
 
