@@ -510,7 +510,11 @@ class BaseView(object):
         """
         if not len(self.request.subpath):
             raise NotFound
-        file = self.context.GetFileByName(self.request.subpath[0])
+        path = self.request.subpath[0]
+        if self.context.files.has_key(path):
+            file = self.context.GetFile(path)
+        else:
+            file = self.context.GetFileByName(path)
         if not file:
             raise NotFound
         try:
