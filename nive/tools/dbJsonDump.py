@@ -26,7 +26,7 @@ configuration = ToolConf(
                   name=_(u"Exclude system columns"))
     ],
     views = [
-        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
+        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
     ]
 )
 

@@ -35,7 +35,7 @@ configuration = ToolConf(
                   description=_(u"Include binary file data in json export (encoded as base64)"))
     ],
     views = [
-        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.exportJson.exportJson"),
+        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.exportJson.exportJson"),
     ]
 )
 

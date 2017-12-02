@@ -24,7 +24,7 @@ configuration.data = [
               name=_(u"Exclude system columns"))
 ]
 configuration.views = [
-    ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.dbSqlDump.dbSqlDump")
+    ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbSqlDump.dbSqlDump")
 ]
 
 
@@ -80,7 +80,7 @@ class dbSqlDump(Tool):
                 for col in rec:
                     data.append(conn.FmtParam(col))
                 data = (",").join(data)
-                value = u"INSERT INTO %s (%s) VALUES (%s);\n"%(tablename, columns, data)
+                value = u"INSERT INTO %s (%s) VALUES (%s);\n"%(tablename, columns, unicode(data,codepage))
                 value = value.encode(codepage)
                 self.stream.write(value)        
         
