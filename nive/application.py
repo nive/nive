@@ -941,7 +941,7 @@ class Configuration(object):
         return None
 
 
-    def GetAllMetaFlds(self, ignoreSystem = True):
+    def GetAllMetaFlds(self, ignoreSystem=True):
         """
         Get all meta field configurations.
         
@@ -949,7 +949,7 @@ class Configuration(object):
         """
         if not ignoreSystem:
             return self.configuration.meta
-        return filter(lambda m: m["id"] in ReadonlySystemFlds, self.configuration.meta)
+        return filter(lambda m: m["id"] not in ReadonlySystemFlds, self.configuration.meta)
 
 
     def GetMetaFldName(self, fldID):
