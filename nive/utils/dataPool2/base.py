@@ -369,6 +369,16 @@ class Base(object):
                 plist.append(value)
                 addCombi = True
 
+            # fmt datetime values
+            elif isinstance(value, datetime):
+                if addCombi:
+                    where.append(u" %s " % aCombi)
+                if operator == u"LIKE":
+                    operator = u"="
+                where.append(u"%s%s %s %s" % (table, paramname, operator, ph))
+                plist.append(value)
+                addCombi = True
+
         condition = kw.get("condition")
         if condition != None and condition != u"":
             if len(where):

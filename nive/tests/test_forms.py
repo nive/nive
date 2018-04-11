@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from nive.definitions import FieldConf, Conf, ConfigurationError
+from nive.definitions import FieldConf, Conf, ConfigurationError, ReadonlySystemFlds, UserFlds
 from nive.forms import Form, HTMLForm, ToolForm, JsonMappingForm, ObjectForm
 from nive.components.reform import schema
 from nive.events import Events
@@ -272,9 +272,9 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         f = form.GetFields(removeReadonly=True)
-        self.assert_(len(f)==9)
+        self.assert_(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds)-len(UserFlds))
         f = form.GetFields(removeReadonly=False)
-        self.assert_(len(f)==14)
+        self.assert_(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds))
 
         
 

@@ -341,7 +341,7 @@ class PoolStructure(object):
 
     def deserialize(self, table, field, value):
         # if field==None and value is a dictionary multiple values are deserialized
-        if field==None and isinstance(value, dict):
+        if field is None and isinstance(value, dict):
             newdict = {}
             for field, v in value.items():
                 try:        t = self.fieldtypes[table][field]
@@ -497,14 +497,17 @@ class PoolStructure(object):
             if not value:
                 value = u""
             elif isinstance(value, basestring):
-                try:
-                    value = tuple(json.loads(value))
-                except ValueError:
-                    # bw 0.9.12 convert line based values
-                    if "\r\n" in value:
-                        value = value.split("\r\n")
-                    else:
-                        value = (value,)
+                if value.startswith(u"_json_"):
+                    value = json.loads(value[len(u"_json_"):])
+                else:
+                    try:
+                        value = tuple(json.loads(value))
+                    except ValueError:
+                        # bw 0.9.12 convert line based values
+                        if "\r\n" in value:
+                            value = value.split("\r\n")
+                        else:
+                            value = (value,)
             elif isinstance(value, list):
                 value = tuple(value)
             if fieldtype == "unitlist":
