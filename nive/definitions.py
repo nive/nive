@@ -77,7 +77,7 @@ Configurations
 
 import copy
 
-from zope.interface import Interface, implements
+from zope.interface import Interface, implements, alsoProvides
 from pyramid.path import DottedNameResolver
 
 from nive.i18n import _
