@@ -4,6 +4,7 @@
 
 __version__ = "0.0.1"
 
+# todo [3] basestring / unicode
 
 """
 Use `nive.definitions` to import Interfaces or Configuration classes

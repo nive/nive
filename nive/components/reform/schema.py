@@ -1597,6 +1597,7 @@ class _SchemaMeta(type):
 class Schema(object):
     schema_type = Mapping
     node_type = SchemaNode
+    # todo [3] metaclass?
     __metaclass__ = _SchemaMeta
 
     def __new__(cls, *args, **kw):
