@@ -30,7 +30,7 @@ class Sqlite3ConnMultithreading(dbTest):
     
     
     def connect(self):
-        #print "Connect DB on", conn["host"],
+        #print("Connect DB on", conn["host"],)
         self.pool.CreateConnection(conn)
         self.pool.connection.IsConnected()
         try:
@@ -47,11 +47,11 @@ import threading
 class ThreadClass(threading.Thread):
 
     def run(self):
-        print "starting thread %s"%self.name
+        print("starting thread %s"%self.name)
         testcnt = 5
         for i in range(testcnt):
             self.runapp()
-        print "terminating thread %s"%self.name
+        print("terminating thread %s"%self.name)
 
     def runapp(self):    
         self.app.test_create_empty()
@@ -86,7 +86,7 @@ def __test():
         t.start()
     for t in ts:
         t.join()
-    print "OK"
+    print("OK")
 
 
 

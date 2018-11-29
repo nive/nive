@@ -23,7 +23,7 @@ def print_(*kw):
     else:
         v = kw
     if v == "":
-        print ".",
+        print(".",)
         printed.append("")
     else:
         printed[-1] += v
@@ -475,11 +475,11 @@ def report(modes, printed):
         for m in modes:
             rep.append(printed[p*c+n])
             p+=1
-    print 
+    print
     print
     i=0
     for p in rep:
-        print p
+        print(p)
         i+=1
         if i==len(modes):
             print
@@ -493,7 +493,7 @@ def run(modes):
     for m in modes:
         mode = m
         print
-        print mode,
+        print(mode,)
         empty()
         connects(n)
         cursors(n)

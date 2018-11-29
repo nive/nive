@@ -2,7 +2,7 @@
 # Released under GPL3. See license.txt
 #
 
-__version__ = "1.0rc1"
+__version__ = "0.0.1"
 
 
 """

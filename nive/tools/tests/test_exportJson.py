@@ -18,7 +18,7 @@ class DBExportTest1(unittest.TestCase):
         r=configuration.test()
         if not r:
             return
-        print FormatConfTestFailure(r)
+        print(FormatConfTestFailure(r))
         self.assert_(False, "Configuration Error")
 
     def test_tool(self):

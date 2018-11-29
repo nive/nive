@@ -18,7 +18,7 @@ def create_mysql(n):
     pool.GetPoolStructureObj().SetStructure(test_MySql.struct)
     pool.CreateConnection(test_MySql.conn)
 
-    print "Create", n, "entries (data+meta+file): ",
+    print("Create", n, "entries (data+meta+file): ",)
     t = time.time()
     for i in range(0,n):
         e=pool.CreateEntry(u"data1")
@@ -30,7 +30,7 @@ def create_mysql(n):
     t2 = time.time()
 
     pool.Close()
-    print n, " entries in ", t2-t, "secs. ", (t2-t)/n, " per entry"
+    print(n, " entries in ", t2-t, "secs. ", (t2-t)/n, " per entry")
     print
     return id
 
@@ -41,7 +41,7 @@ def create_sqlite3(n):
     pool.GetPoolStructureObj().SetStructure(test_db.struct)
     pool.CreateConnection(test_db.conn)
 
-    print "Create", n, "entries (data+meta+file): ",
+    print("Create", n, "entries (data+meta+file): ",)
     t = time.time()
     for i in range(0,n):
         e=pool.CreateEntry(u"data1")
@@ -53,7 +53,7 @@ def create_sqlite3(n):
     t2 = time.time()
 
     pool.Close()
-    print n, " entries in ", t2-t, "secs. ", (t2-t)/n, " per entry"
+    print(n, " entries in ", t2-t, "secs. ", (t2-t)/n, " per entry")
     print
     return id
 
