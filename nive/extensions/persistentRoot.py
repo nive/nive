@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from nive.definitions import Conf, IConf 
-from nive.definitions import Interface, implements
+from nive.definitions import Interface, implementer
 from nive.helper import DumpJSONConf, LoadJSONConf
 
         
@@ -10,6 +10,7 @@ class IPersistentRoot(Interface):
     """
     """
     
+@implementer(IPersistentRoot)
 class Persistent(object):
     """
     Extension for nive root objects to store values
@@ -25,7 +26,6 @@ class Persistent(object):
     
     Requires: Events
     """
-    implements(IPersistentRoot)
     defaultKey = u".root.storage"
     storagekey = u""
     notifyAllRoots = True

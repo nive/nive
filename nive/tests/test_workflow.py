@@ -141,8 +141,9 @@ class Tmeta(object):
     pool_wfa=""
     pool_wfp = "wf1"
     
+@implementer(IObject)
 class TestO(object):
-    implements(IObject)
+
     def __init__(self):
         self.meta=Tmeta()
         self.id=123

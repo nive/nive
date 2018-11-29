@@ -4,7 +4,7 @@ import unittest
 
 from nive.definitions import *
 from zope.interface.registry import * 
-from zope.interface import Interface, Attribute, implements, alsoProvides, Provides
+from zope.interface import Interface, implementer, alsoProvides, Provides
 
 
 
@@ -21,8 +21,9 @@ class Test(object):
     def __call__(self, context):
         return self, context
 
+@implementer(ITest)
 class Test2(object):
-    implements(ITest)
+    pass
 
 # -----------------------------------------------------------------
 testconf = ObjectConf(

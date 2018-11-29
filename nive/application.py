@@ -26,7 +26,7 @@ from zope.interface import providedBy
 
 from nive.utils.dataPool2.structure import PoolStructure
 
-from nive.definitions import AppConf, DatabaseConf, MetaTbl, ReadonlySystemFlds
+from nive.definitions import MetaTbl, ReadonlySystemFlds
 from nive.definitions import IViewModuleConf, IViewConf, IRootConf, IObjectConf, IToolConf 
 from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf, IFieldConf
 from nive.definitions import ConfigurationError

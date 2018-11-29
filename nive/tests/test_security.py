@@ -1,7 +1,7 @@
 
 import unittest
 
-from nive.definitions import implements, Conf
+from nive.definitions import implementer, Conf
 from nive.security import User, AdminUser, GetUsers, Unauthorized, UserFound, IAdminUser
 from nive.security import effective_principals
 from nive.security import SetupRuntimeAcls
@@ -14,8 +14,9 @@ class securityTest(unittest.TestCase):
         f = UserFound("user")
 
     def test_iface(self):
+        @implementer(IAdminUser)
         class aaaaa(object):
-            implements(IAdminUser)
+            pass
         a = aaaaa()
 
     def test_user(self):

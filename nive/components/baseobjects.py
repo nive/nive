@@ -13,12 +13,13 @@ from nive.container import Root, Container, ContainerEdit, ContainerSecurity, Co
 from nive.objects import Object, ObjectEdit, ObjectWorkflow
 from nive.events import Events
 from nive.search import Search
-from nive.definitions import implements
+from nive.definitions import implementer
 from nive.definitions import IApplication, IContainer, IRoot, IReadonly, INonContainer, IObject
 # bw 0.9.12: might be used by other files
 from nive.definitions import IPage, IPageContainer, IPageElement, IFile, IPageElementContainer, IFolder
 
 
+@implementer(IApplication)
 class ApplicationBase(Application, AppFactory, Configuration, Registration, Events):
     """
     *Nive cms application* 
@@ -26,56 +27,55 @@ class ApplicationBase(Application, AppFactory, Configuration, Registration, Even
     The application manages module registration, module configuration, root dispatching
     and basic application events.
     """
-    implements(IApplication)
 
 
+@implementer(IContainer, IRoot)
 class RootBase(Root, Container, Search, ContainerEdit, ContainerSecurity, Events, ContainerFactory, RootWorkflow):
     """
     *Root Edit*
     
     Default root class with add and delete support for subobjects. 
     """
-    implements(IContainer, IRoot)
-    
+
+@implementer(IRoot, IContainer, IReadonly)
 class RootReadOnlyBase(Root, Container, Search, Events, ContainerFactory, RootWorkflow):
     """
     *Root with readonly access and cache*
     
     Root class without add and delete support for subobjects. Objects are cached in memory.
     """
-    implements(IRoot, IContainer, IReadonly)
 
     
-    
+@implementer(INonContainer, IObject)
 class ObjectBase(Object, ObjectEdit, Events, ObjectWorkflow):
     """
     *Default non-container object with write access*
     
     This one does not support subobjects. 
     """
-    implements(INonContainer, IObject)
     
+@implementer(INonContainer, IObject, IReadonly)
 class ObjectReadOnlyBase(Object, Events, ObjectWorkflow):
     """
     *Non-container object with read only access*
     
     This one does not support subobjects. 
     """
-    implements(INonContainer, IObject, IReadonly)
 
+@implementer(IContainer, IObject)
 class ObjectContainerBase(Object, ObjectEdit, ObjectWorkflow, Container, ContainerEdit,ContainerSecurity,  Events, ContainerFactory):
     """
     *Default container object with write access*
     
     This one supports subobjects. 
     """
-    implements(IContainer, IObject)
-    
+
+@implementer(IObject, IContainer, IReadonly)
 class ObjectContainerReadOnlyBase(Object, ObjectWorkflow, Container, Events, ContainerFactory):
     """
     *Container object with read only access and cache*
     
     This one supports subobjects and caches them in memory. 
     """
-    implements(IObject, IContainer, IReadonly)
+
 

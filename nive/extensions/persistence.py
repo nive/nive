@@ -16,18 +16,17 @@ import json
 import time
 import logging 
 
-from nive.definitions import implements, IPersistent, ModuleConf, Conf, IModuleConf
+from nive.definitions import implementer, IPersistent, ModuleConf, Conf, IModuleConf
 from nive.definitions import OperationalError, ProgrammingError
 
 
 
 
-
+@implementer(IPersistent)
 class PersistentConf(object):
     """
     configuration persistence base class ---------------------------------------
     """
-    implements(IPersistent)
     
     def __init__(self, app, configuration):
         self.app = app

@@ -21,7 +21,7 @@ from nive.definitions import (
 )
 from nive.definitions import Conf
 from nive.definitions import baseConf
-from nive.definitions import implements, ConfigurationError
+from nive.definitions import ConfigurationError
 from nive import File
 from nive.i18n import _
 

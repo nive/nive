@@ -11,14 +11,15 @@ and id attribute (number). Uses idhash for root objects.
 """
 
 from nive.definitions import ModuleConf, Conf
-from nive.definitions import implements, ILocalGroups
+from nive.definitions import implementer, ILocalGroups
 
+
+@implementer(ILocalGroups)
 class LocalGroups(object):
     """
     """
     _owner = u"group:owner"
     _secid = None
-    implements(ILocalGroups)
 
     def Init(self):
         self._localRoles = {}

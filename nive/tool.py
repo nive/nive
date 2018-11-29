@@ -37,17 +37,17 @@ Subclass and overwrite ``def _Run()`` function. Use self.stream to write result 
 
 from io import StringIO
 
-from nive.definitions import Interface, ITool, implements
+from nive.definitions import Interface, ITool, implementer
 from nive.definitions import ConfigurationError
 from nive.views import BaseView
 from nive.forms import ToolForm
 
 
+@implementer(ITool)
 class Tool(object):
     """
 
     """
-    implements(ITool)
 
     def __init__(self, configuration, app):
         self.configuration = configuration
@@ -178,12 +178,13 @@ class _IGlobal(Interface):
     used for global tool registration as tool.apply
     """
 
+
+@implementer(_IGlobal)
 class _GlobalObject(object):
     """
     used for global tool lookup
     """
-    implements(_IGlobal)
-    
+
     
     
 class ToolView(BaseView):    

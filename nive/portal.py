@@ -38,7 +38,7 @@ import logging
 import configparser
 
 from nive.definitions import PortalConf, Conf, baseConf
-from nive.definitions import implements
+from nive.definitions import implementer
 from nive.definitions import ConfigurationError
 from nive.definitions import IModuleConf, IAppConf
 from nive.definitions import IPortal, IApplication
@@ -49,10 +49,9 @@ from nive.events import Events
 from nive.utils.utils import SortConfigurationList
 
 
-
+@implementer(IPortal)
 class Portal(Events):
     """ """
-    implements(IPortal)
 
     __name__ = u""
     __parent__ = None

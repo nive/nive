@@ -7,13 +7,12 @@ import os
 import uuid
 from io import StringIO
 
-from zope.interface import implements
-
 from nive.utils.path import DvPath
-from nive.definitions import IFileStorage
+from nive.definitions import IFileStorage, implementer
 
 # FileManager Constants ---------------------------------------------------------------------------
 
+@implementer(IFileStorage)
 class File(object):
     """
     File mapping object. The file attribute can be stored as data or readable stream object.
@@ -25,7 +24,7 @@ class File(object):
     
     Pass a dictionry to set all attributes as filemeta
     """
-    implements(IFileStorage)
+
 
     def __init__(self, 
                  filekey="", 

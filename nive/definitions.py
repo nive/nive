@@ -79,7 +79,7 @@ Configurations
 
 import copy
 
-from zope.interface import Interface, implements, alsoProvides
+from zope.interface import Interface, implementer
 from pyramid.path import DottedNameResolver
 
 from nive.i18n import _
@@ -229,7 +229,6 @@ class baseConf(object):
     def __init__(self, copyFrom=None, **values):
         self._empty = True
         self._parent = None
-        #alsoProvides(self, IConf)
         if copyFrom:
             self._empty=False
             from . import helper
@@ -342,16 +341,16 @@ class baseConf(object):
         return self
 
 
+@implementer(IConf)
 class Conf(baseConf):
     """
     Configuration class with no predefined fields
 
     Interface: IConf
     """
-    implements(IConf)
 
 
-
+@implementer(IFieldConf)
 class FieldConf(baseConf):
     """
     Definition of a field used for object.data, object.meta, form.field and tool.data
@@ -421,8 +420,7 @@ class FieldConf(baseConf):
     Interface: IFieldConf
 
     """
-    implements(IFieldConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.datatype = ""
@@ -465,6 +463,7 @@ class FieldConf(baseConf):
         return report
 
 
+@implementer(IAppConf)
 class AppConf(baseConf):
     """
     Application configuration class. Contains all configurable options for the cms 
@@ -514,8 +513,7 @@ class AppConf(baseConf):
     
     Interface: IAppConf
     """
-    implements(IAppConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = "app"
         self.context = "nive.components.objects.base.ApplicationBase"
@@ -617,6 +615,7 @@ class AppConf(baseConf):
         return report
         
 
+@implementer(IDatabaseConf)
 class DatabaseConf(baseConf):
     """
     Database configuration ::
@@ -646,8 +645,7 @@ class DatabaseConf(baseConf):
     
     Call ``DatabaseConf().test()`` to verify configuration values.
     """
-    implements(IDatabaseConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.context = "Sqlite3"
         self.fileRoot = ""
@@ -687,7 +685,7 @@ class DatabaseConf(baseConf):
         return report
 
 
-
+@implementer(IObjectConf)
 class ObjectConf(baseConf):
     """
     Configuration of a object type definition
@@ -734,8 +732,7 @@ class ObjectConf(baseConf):
     
     Interface: IObjectConf
     """
-    implements(IObjectConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
@@ -827,7 +824,7 @@ class ObjectConf(baseConf):
         return report
 
 
-
+@implementer(IRootConf)
 class RootConf(baseConf):
     """
     Configuration of a root object
@@ -864,8 +861,7 @@ class RootConf(baseConf):
     
     Interface: IRootConf
     """
-    implements(IRootConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
@@ -913,6 +909,7 @@ class RootConf(baseConf):
         return report        
 
 
+@implementer(IViewModuleConf)
 class ViewModuleConf(baseConf):
     """
     View module configuration
@@ -957,8 +954,7 @@ class ViewModuleConf(baseConf):
         
     Interface: IViewModuleConf
     """
-    implements(IViewModuleConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
@@ -1035,6 +1031,7 @@ class ViewModuleConf(baseConf):
         return report
 
 
+@implementer(IViewConf)
 class ViewConf(baseConf):
     """
     Configuration for a view definition
@@ -1063,8 +1060,7 @@ class ViewConf(baseConf):
     
     Interface: IViewConf
     """
-    implements(IViewConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.attr = None
@@ -1121,7 +1117,7 @@ class ViewConf(baseConf):
         return report
 
 
-
+@implementer(IPortalConf)
 class PortalConf(baseConf):
     """
     Portal configuration class. Contains all configurable options for the portal 
@@ -1144,8 +1140,7 @@ class PortalConf(baseConf):
     
     Interface: IPortalConf
     """
-    implements(IPortalConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.portalDefaultUrl = "/website/"
         self.loginUrl = "/userdb/udb/login"
@@ -1185,7 +1180,7 @@ Disallow: /update
         return report
         
 
-
+@implementer(IToolConf)
 class ToolConf(baseConf):
     """
     Tool configuration 
@@ -1210,8 +1205,7 @@ class ToolConf(baseConf):
     
     Interface: IToolConf
     """
-    implements(IToolConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
@@ -1269,7 +1263,7 @@ class ToolConf(baseConf):
         return report
         
 
-
+@implementer(IModuleConf)
 class ModuleConf(baseConf):
     """
     Generic module definition for application extension
@@ -1292,8 +1286,7 @@ class ModuleConf(baseConf):
     
     Interface: IModuleConf
     """
-    implements(IModuleConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
@@ -1347,6 +1340,7 @@ class ModuleConf(baseConf):
         return report                
         
 
+@implementer(IWidgetConf)
 class WidgetConf(baseConf):
     """
     Configuration for a widget link
@@ -1372,8 +1366,7 @@ class WidgetConf(baseConf):
     
     Interface: IWidgetConf
     """
-    implements(IWidgetConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.apply = None
         self.viewmapper = None
@@ -1414,6 +1407,7 @@ class WidgetConf(baseConf):
         return report
 
 
+@implementer(IGroupConf)
 class GroupConf(baseConf):
     """
     Configuration of a group or principal definition 
@@ -1427,8 +1421,7 @@ class GroupConf(baseConf):
 
     Interface: IGroupConf
     """
-    implements(IGroupConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""

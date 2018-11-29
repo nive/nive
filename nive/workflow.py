@@ -42,7 +42,7 @@ from nive.definitions import baseConf, ConfigurationError, TryResolveName
 from nive.definitions import IWfProcessConf, IWfStateConf, IWfTransitionConf, IProcess, ILocalGroups
 from nive.helper import ResolveName, ResolveConfiguration, GetClassRef
 from nive.security import effective_principals 
-from zope.interface import implements
+from zope.interface import implementer
 
 
 
@@ -51,6 +51,7 @@ WfAllActions = "*"
 wfAllStates = "*"
 WfEntryActions = ("create", "duplicate")
 
+@implementer(IWfProcessConf)
 class WfProcessConf(baseConf):
     """
     Workflow process configuration class. The workflow process configuration defines
@@ -73,7 +74,7 @@ class WfProcessConf(baseConf):
     
     Interface: IWfProcessConf
     """
-    implements(IWfProcessConf)
+
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
@@ -119,7 +120,7 @@ class WfProcessConf(baseConf):
         return report
 
 
-
+@implementer(IWfStateConf)
 class WfStateConf(baseConf):
     """
     Workflow state configuration class. A workflow state defines the current elements 
@@ -144,7 +145,7 @@ class WfStateConf(baseConf):
     
     Interface: IWfStateConf
     """
-    implements(IWfStateConf)
+
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
@@ -171,6 +172,7 @@ class WfStateConf(baseConf):
         return report
 
 
+@implementer(IWfTransitionConf)
 class WfTransitionConf(baseConf):
     """
     Workflow transition configuration class. Use transitions to define possible
@@ -209,7 +211,7 @@ class WfTransitionConf(baseConf):
     
     Interface: IWfTransitionConf
     """
-    implements(IWfTransitionConf)
+
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
@@ -263,14 +265,14 @@ class WfTransitionConf(baseConf):
 class WorkflowNotAllowed(Exception):
     """
     """
-    
 
+
+@implementer(IProcess)
 class Process(object):
     """
     Workflow process implementation
 
     """
-    implements(IProcess)
 
     def __init__(self, configuration, app):
         self.configuration = configuration

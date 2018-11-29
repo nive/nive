@@ -18,7 +18,7 @@ from pyramid import threadlocal
 from pyramid.interfaces import IAuthenticationPolicy, IAuthorizationPolicy
 
 from nive.definitions import Conf
-from nive.definitions import Interface, implements
+from nive.definitions import Interface, implementer
 
 
 def GetUsers(app):
@@ -93,12 +93,12 @@ class IAdminUser(Interface):
     """
 
 
+@implementer(IAdminUser)
 class AdminUser(object):
     """
     Admin User object with groups and login possibility. 
     """
-    implements(IAdminUser)
-    
+
     def __init__(self, values, ident):
         self.id = 0
         self.data = Conf(**values)
