@@ -229,7 +229,6 @@ Internally the form uses a structure like in the following manually defined form
 """
 
 import copy, json
-from types import StringType
 
 from pyramid.url import static_url
 from pyramid.httpexceptions import HTTPBadRequest
@@ -698,7 +697,7 @@ class Form(Events, ReForm):
                 value = request.POST.getall(key)
                 if not value:
                     value = request.GET.getall(key)
-            if type(value)==StringType: # todo [3] unicode ?
+            if not isinstance(value, str): # todo [3] unicode ?
                 value = str(value, self.app.configuration.frontendCodepage)
         except (AttributeError,KeyError):
             if method == "POST":
@@ -709,7 +708,7 @@ class Form(Events, ReForm):
                 value = request.POST.get(key)
                 if not value:
                     value = request.GET.get(key)
-            if type(value)==StringType: # todo [3] unicode ?
+            if not isinstance(value, str): # todo [3] unicode ?
                 value = str(value, self.app.configuration.frontendCodepage)
             return value
         if not len(value):
@@ -754,7 +753,7 @@ class Form(Events, ReForm):
         # should be unicode ?
         #cp=self.app.configuration.frontendCodepage
         #for k in values.items():
-        #    if type(k[1]) == StringType:
+        #    if not isinstance(k[1], str):
         #        values[k[0]] = str(values[k[0]], cp)
         return values
 
