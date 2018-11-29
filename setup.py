@@ -14,7 +14,8 @@ except:
     CHANGES = ''
 
 requires = [
-    'pyramid', 
+    'zope.interface==4.6',
+    'pyramid==1.10',
     'pyramid_chameleon',
     'iso8601',
     'pytz',
