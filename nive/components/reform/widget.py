@@ -363,7 +363,7 @@ class AutocompleteInputWidget(Widget):
         if not self.delay:
             # set default delay if None
             options['delay'] = (isinstance(self.values,
-                                          basestring) and 400) or 10
+                                          str) and 400) or 10
         options['minLength'] = self.min_length
         options = json.dumps(options)
         values = json.dumps(self.values)
@@ -935,7 +935,7 @@ class CheckboxChoiceWidget(Widget):
     def deserialize(self, field, pstruct, formstruct=None):
         if pstruct is null:
             return self.null_value
-        if isinstance(pstruct, basestring):
+        if isinstance(pstruct, str):
             return (pstruct,)
         return tuple(pstruct)
 

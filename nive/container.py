@@ -584,7 +584,7 @@ class ContainerSecurity:
                 continue
             # loop subtypes
             for iface in subtypes:
-                if isinstance(iface, basestring):
+                if isinstance(iface, str):
                     iface = ResolveName(iface, raiseExcp=False)
                     if not iface:
                         continue
@@ -620,7 +620,7 @@ class ContainerSecurity:
         if not subtypes:
             return False
 
-        if isinstance(type, basestring):
+        if isinstance(type, str):
             if type in subtypes:
                 return True
             # dotted python to obj configuration
@@ -644,7 +644,7 @@ class ContainerSecurity:
             return False
         # loop subtypes
         for iface in subtypes:
-            if isinstance(iface, basestring):
+            if isinstance(iface, str):
                 iface = ResolveName(iface, raiseExcp=False)
                 if not iface:
                     continue

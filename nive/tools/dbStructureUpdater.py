@@ -101,7 +101,7 @@ By default this tool will only create new tables and columns and never delete an
             m = None
             if modify:
                 m = request.get(aT["dbparam"])
-                if isinstance(m, basestring):
+                if isinstance(m, str):
                     m = [m]
             if not db.UpdateStructure(aT["dbparam"], fmt, m):
                 self.stream.write(u"")
@@ -127,7 +127,7 @@ By default this tool will only create new tables and columns and never delete an
             m = None
             if modify:
                 m = request.get(tableName)
-                if isinstance(m, basestring):
+                if isinstance(m, str):
                     m = [m]
             if not db.UpdateStructure(tableName, meta, m):
                 self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table update failed (pool_meta)</div>")))
@@ -155,7 +155,7 @@ By default this tool will only create new tables and columns and never delete an
             m = None
             if modify:
                 m = request.get(tableName)
-                if isinstance(m, basestring):
+                if isinstance(m, str):
                     m = [m]
             if not db.UpdateStructure(tableName, fields, m, createIdentity = bool(identity)):
                 self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table creation failed (${name})</div>",mapping={"name":tableName})))

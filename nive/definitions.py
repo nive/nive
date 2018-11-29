@@ -552,7 +552,7 @@ class AppConf(baseConf):
                         
         # bw 0.9.3 
         # database connection parameter
-        if hasattr(self, "dbConfiguration") and isinstance(self.dbConfiguration, basestring):
+        if hasattr(self, "dbConfiguration") and isinstance(self.dbConfiguration, str):
             from . import helper
             self.dbConfiguration = helper.LoadConfiguration(self.dbConfiguration)
         
@@ -576,7 +576,7 @@ class AppConf(baseConf):
             report.append((ImportError, " for AppConf.context", self))
         # check modules
         for m in self.modules:
-            if isinstance(m, basestring):
+            if isinstance(m, str):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " AppConf.modules error: "+m, self, m))
@@ -1259,7 +1259,7 @@ class ToolConf(baseConf):
                     report += m.test()
         # check modules
         for m in self.modules:
-            if isinstance(m, basestring):
+            if isinstance(m, str):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " ToolConf.modules import: "+m, self))
@@ -1332,7 +1332,7 @@ class ModuleConf(baseConf):
                     report += m.test()
         # check modules
         for m in self.modules:
-            if isinstance(m, basestring):
+            if isinstance(m, str):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " ModuleConf.modules import: "+m, self))
@@ -1468,7 +1468,7 @@ class Warning(Exception):
 def TryResolveName(name, base=None):
     if not name:
         return None
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         return name
     d = DottedNameResolver(base)
     try:

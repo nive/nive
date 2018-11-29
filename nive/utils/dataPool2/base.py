@@ -277,7 +277,7 @@ class Base(object):
                     table = u"data__."
             
             # fmt string values
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 if operator == u"LIKE":
                     if value == u"":
                         continue
@@ -351,7 +351,7 @@ class Base(object):
                     plist.append(value[0])
                 else:
                     v = self._FmtListForQuery(value)
-                    if isinstance(v, basestring):
+                    if isinstance(v, str):
                         # sqlite error: cannot use placeholder with lists
                         where.append(u"%s%s %s (%s) " % (table, paramname, operator, v))
                     else:

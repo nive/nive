@@ -160,7 +160,7 @@ class MySQLManager(DatabaseManager):
 
         # convert datatype list
         if datatype == "list":
-            if isinstance(conf["default"], basestring):
+            if isinstance(conf["default"], str):
                 datatype = "listt"
             else:
                 datatype = "listn"
@@ -175,7 +175,7 @@ class MySQLManager(DatabaseManager):
             aN = conf["default"]
             if aN in (u"", u" ", None):
                 aN = 0
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = int(aN)
             if conf.get("size", conf.get("maxLen",0)) == 4:
                 aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
@@ -188,7 +188,7 @@ class MySQLManager(DatabaseManager):
             aN = conf["default"]
             if aN in (u"", u" ", None):
                 aN = 0
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = float(aN)
             aStr = u"FLOAT NOT NULL DEFAULT %d" % (aN)
 
@@ -198,7 +198,7 @@ class MySQLManager(DatabaseManager):
                 aN = 0
             elif aN == u"True":
                 aN = 1
-            elif isinstance(aN, basestring):
+            elif isinstance(aN, str):
                 aN = int(aN)
             aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
 
@@ -209,7 +209,7 @@ class MySQLManager(DatabaseManager):
             aN = conf["default"]
             if aN == "" or aN == " " or aN == None:
                 aN = 0
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = int(aN)
             aStr = u"INT UNSIGNED NOT NULL DEFAULT %d" % (aN)
 
@@ -222,7 +222,7 @@ class MySQLManager(DatabaseManager):
                 aD = u"NULL"
             elif aD in ("now", "nowdate", "nowtime"):
                 aD = u""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+            if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == u"":
                 aStr = u"DATE NULL"
@@ -235,7 +235,7 @@ class MySQLManager(DatabaseManager):
                 aD = u"NULL"
             elif aD in ("now", "nowdate", "nowtime"):
                 aD = u""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+            if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == u"":
                 aStr = u"DATETIME NULL"
@@ -248,7 +248,7 @@ class MySQLManager(DatabaseManager):
                 aD = u"NULL"
             elif aD in ("now", "nowtime"):
                 aD = u""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+            if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == u"":
                 aStr = u"TIME NULL"
@@ -265,7 +265,7 @@ class MySQLManager(DatabaseManager):
             aN = conf["default"]
             if aN in (u"", u" ", None):
                 aN = 0
-            elif isinstance(aN, basestring):
+            elif isinstance(aN, str):
                 aN = int(aN)
             aStr = u"SMALLINT(6) NOT NULL DEFAULT %d" % (aN)
 
@@ -279,7 +279,7 @@ class MySQLManager(DatabaseManager):
             aN = conf["default"]
             if aN in (u"", u" ", None):
                 aN = 0
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = int(aN)
             aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
 

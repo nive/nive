@@ -85,7 +85,7 @@ def SchemaFactory(form, fields, actions, force=False):
         # setup custom widgets
         if "widget" in kw and kw["widget"]:
             widget = kw["widget"]
-            if isinstance(widget, basestring):
+            if isinstance(widget, str):
                 widget = ResolveName(widget)
                 kw["widget"] = widget(**kwWidget)
             elif isinstance(widget, collections.Callable):
@@ -98,7 +98,7 @@ def SchemaFactory(form, fields, actions, force=False):
         # setup custom validator
         if "validator" in kw and kw["validator"]:
             validator = kw["validator"]
-            if isinstance(validator, basestring):
+            if isinstance(validator, str):
                 validator = ResolveName(validator)
             kw["validator"] = validator
 

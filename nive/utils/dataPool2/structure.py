@@ -377,13 +377,13 @@ class PoolStructure(object):
             return self.serializeCallbacks[fieldtype](value, field)
             
         if fieldtype == "number":
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = int(value)
             elif isinstance(value, float):
                 value = int(value)
         
         elif fieldtype == "float":
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = float(value)
 
         elif fieldtype in ("date", "datetime"):
@@ -405,7 +405,7 @@ class PoolStructure(object):
         elif fieldtype == "timestamp":
             if value is None:
                 pass
-            elif not isinstance(value, basestring):
+            elif not isinstance(value, str):
                 value = unicode(value)
         
         elif fieldtype in ("list","radio"):
@@ -420,7 +420,7 @@ class PoolStructure(object):
             # to json formatted list
             if not value:
                 value = u""
-            elif isinstance(value, basestring):
+            elif isinstance(value, str):
                 value = [value]
             if isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
@@ -429,7 +429,7 @@ class PoolStructure(object):
                 value = json.dumps(value)
 
         elif fieldtype in ("bool"):
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 if value.lower()==u"true":
                     value = 1
                 elif value.lower()==u"false":
@@ -443,7 +443,7 @@ class PoolStructure(object):
         elif fieldtype == "json":
             if not value:
                 value = u""
-            elif not isinstance(value, basestring):
+            elif not isinstance(value, str):
                 value = json.dumps(value)
             
         # assure unicode except filedata
@@ -456,7 +456,7 @@ class PoolStructure(object):
     def _de(self, value, fieldtype, field):
         if not fieldtype:
             # no datatype information set
-            if isinstance(value, basestring) and value.startswith(u"_json_"):
+            if isinstance(value, str) and value.startswith(u"_json_"):
                 value = json.loads(value[len(u"_json_"):])
             if isinstance(value, bytes):
                 value = unicode(value, self.codepage)
@@ -471,14 +471,14 @@ class PoolStructure(object):
 
         if fieldtype in ("date", "datetime"):
             # -> to datetime
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = ConvertToDateTime(value)
             elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
                     
         elif fieldtype == "time":
             # -> to datetime.time
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 # misuse datetime parser
                 value2 = ConvertToDateTime(u"2015-01-01 "+unicode(value))
                 if value2:
@@ -488,7 +488,7 @@ class PoolStructure(object):
                 value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
 
         elif fieldtype == "timestamp":
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = float(value)
                     
         elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
@@ -496,7 +496,7 @@ class PoolStructure(object):
             # unitlist -> to number tuple
             if not value:
                 value = u""
-            elif isinstance(value, basestring):
+            elif isinstance(value, str):
                 if value.startswith(u"_json_"):
                     value = json.loads(value[len(u"_json_"):])
                 else:
@@ -517,7 +517,7 @@ class PoolStructure(object):
             # -> to python type
             if not value:
                 value = None
-            elif isinstance(value, basestring):
+            elif isinstance(value, str):
                 value = json.loads(value)
             
         return value

@@ -214,7 +214,7 @@ class ToolView(BaseView):
         form = ToolForm(view=self, loadFromType=self.context.configuration)
         form.Setup()
         result, data, action = form.Process()
-        if not isinstance(data, basestring):
+        if not isinstance(data, str):
             try:
                 data = data.getvalue()
             except:
@@ -239,7 +239,7 @@ class ToolView(BaseView):
         values["request"] = self.request
         result = tool.Run(**values)
         data = tool.stream
-        if not isinstance(data, basestring):
+        if not isinstance(data, str):
             try:
                 data = data.getvalue()
             except:

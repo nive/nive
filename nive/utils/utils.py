@@ -22,7 +22,7 @@ def MakeListItems(items):
     """
     li = []
     for i in items:
-        if isinstance(i,basestring):
+        if isinstance(i,str):
             li.append({u"id":i, u"name":i})
         elif isinstance(i,(list,tuple)):
             li.append({u"id":i[0], u"name":i[1]})
@@ -343,7 +343,7 @@ def ConvertToBool(data, raiseExcp = False):
     try:
         return int(data)
     except:
-        if isinstance(data, basestring):
+        if isinstance(data, str):
             if data.lower() in (u"true", u"yes", u"checked", u"ja", u"qui", u"si"):
                 return True
             if data.lower() in (u"false", u"no", u"nein", u"non"):
@@ -446,7 +446,7 @@ def ConvertListToStr(values, sep = u", ", textMarker = u"", keepType = False):
     """
     if not values:
         return u""
-    if isinstance(values, basestring):
+    if isinstance(values, str):
         return u"%s%s%s" % (textMarker, values, textMarker)
     s = []
     for v in values:

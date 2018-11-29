@@ -92,7 +92,7 @@ class PostgresManager(DatabaseManager):
 
         # convert datatype list
         if datatype == "list":
-            if isinstance(conf["default"], basestring):
+            if isinstance(conf["default"], str):
                 datatype = "listt"
             else:
                 datatype = "listn"
@@ -107,7 +107,7 @@ class PostgresManager(DatabaseManager):
             cval = conf["default"]
             if cval in ("", " ", None):
                 cval = 0
-            if isinstance(cval, basestring):
+            if isinstance(cval, str):
                 cval = int(cval)
             size = conf.get("size", 4)
             if size == 2:
@@ -121,7 +121,7 @@ class PostgresManager(DatabaseManager):
             cval = conf["default"]
             if cval in ("", " ", None):
                 cval = 0
-            if isinstance(cval, basestring):
+            if isinstance(cval, str):
                 cval = float(cval)
             col = u"FLOAT NOT NULL DEFAULT %d" % (cval)
 
@@ -131,7 +131,7 @@ class PostgresManager(DatabaseManager):
                 cval = 0
             if cval in ("True", "1"):
                 cval = 1
-            if isinstance(cval, basestring):
+            if isinstance(cval, str):
                 cval = int(cval)
             col = u"SMALLINT NOT NULL DEFAULT %d" % (cval)
 
@@ -142,7 +142,7 @@ class PostgresManager(DatabaseManager):
             cval = conf["default"]
             if cval in ("", " ", None):
                 cval = 0
-            if isinstance(cval, basestring):
+            if isinstance(cval, str):
                 cval = int(cval)
             col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 
@@ -155,7 +155,7 @@ class PostgresManager(DatabaseManager):
                 cval = "NULL"
             if cval in ("now", "nowdate", "nowtime"):
                 cval = ""
-            if isinstance(cval, basestring) and not cval in ("NOW","NULL"):
+            if isinstance(cval, str) and not cval in ("NOW","NULL"):
                 cval = self.ConvertDate(cval)
             if not cval:
                 col = u"DATE NULL"
@@ -168,7 +168,7 @@ class PostgresManager(DatabaseManager):
                 cval = "NULL"
             if cval in ("now", "nowdate", "nowtime"):
                 cval = ""
-            if isinstance(cval, basestring) and not cval in ("NOW","NULL"):
+            if isinstance(cval, str) and not cval in ("NOW","NULL"):
                 cval = self.ConvertDate(cval)
             if not cval:
                 col = u"TIMESTAMP NULL"
@@ -181,7 +181,7 @@ class PostgresManager(DatabaseManager):
                 cval = "NULL"
             if cval in ("now", "nowtime"):
                 cval = ""
-            if isinstance(cval, basestring) and not cval in ("NOW","NULL"):
+            if isinstance(cval, str) and not cval in ("NOW","NULL"):
                 cval = self.ConvertDate(cval)
             if cval == "":
                 col = u"TIME NULL"
@@ -198,7 +198,7 @@ class PostgresManager(DatabaseManager):
             cval = conf["default"]
             if cval in ("", " ", None):
                 cval = 0
-            if isinstance(cval, basestring):
+            if isinstance(cval, str):
                 cval = int(cval)
             col = "SMALLINT NOT NULL DEFAULT %d" % (cval)
 
@@ -212,7 +212,7 @@ class PostgresManager(DatabaseManager):
             cval = conf["default"]
             if cval in ("", " ", None):
                 cval = 0
-            if isinstance(cval, basestring):
+            if isinstance(cval, str):
                 cval = int(cval)
             col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 

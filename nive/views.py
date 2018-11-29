@@ -583,7 +583,7 @@ class BaseView(object):
             response.last_modified = formatdate(timeval=None, localtime=True, usegmt=True)
         else:
             t = self.context.meta.get("pool_change")
-            if t and isinstance(t, basestring):
+            if t and isinstance(t, str):
                 t = ConvertToDateTime(t).timetuple()
                 t = time.mktime(t)
             elif t:
@@ -695,7 +695,7 @@ class BaseView(object):
         """
         if context is None:
             context = self.context
-        if isinstance(fld, basestring):
+        if isinstance(fld, str):
             fld = context.GetFieldConf(fld)
         if not fld:
             return _(u"<em>Unknown field</em>")
@@ -1058,7 +1058,7 @@ def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=
         # ajax call -> use relocate to handle this case
         return Relocate(url, request, messages, slot, raiseException, refresh)
     if messages:
-        if isinstance(messages, basestring):
+        if isinstance(messages, str):
             request.session.flash(messages, slot)
         else:
             for m in messages:
@@ -1076,7 +1076,7 @@ def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=
     See views.BaseView class function for docs
     """
     if messages:
-        if isinstance(messages, basestring):
+        if isinstance(messages, str):
             request.session.flash(messages, slot)
         else:
             for m in messages:
@@ -1353,7 +1353,7 @@ class FieldRenderer(object):
                 if hasattr(options, "__call__"):
                     options = options(fieldConf, self.context)
 
-            if isinstance(data, basestring):
+            if isinstance(data, str):
                 data = tuple(data.split(u"\n"))
             for ref in data:
                 if options:
@@ -1410,7 +1410,7 @@ class FieldRenderer(object):
                 tmpl = u"%s<br>"
                 if settings and u"tmpl" in settings:
                     tmpl = settings[u"tmpl"]
-                if isinstance(data, basestring):
+                if isinstance(data, str):
                     data = data.split("\n")
                 data = u"".join([tmpl%ll for ll in data])
 

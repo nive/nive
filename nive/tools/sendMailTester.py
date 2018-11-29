@@ -61,7 +61,7 @@ class sendMailTester(sendMail):
         # lookup receivers
         recvs = []
         if recvmails:
-            if isinstance(recvmails, basestring):
+            if isinstance(recvmails, str):
                 recvs.append((recvmails, u""))
             else:
                 recvs.extend(recvmails)
@@ -126,7 +126,7 @@ class sendMailTester(sendMail):
 
 
     def _GetMailStr(self, mail):
-        if isinstance(mail, basestring):
+        if isinstance(mail, str):
             return mail
         if isinstance(mail, (list,tuple)) and len(mail) > 1:
             return u'"%s" <%s>' % (mail[1], mail[0])

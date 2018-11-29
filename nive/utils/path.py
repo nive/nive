@@ -23,7 +23,7 @@ class DvPath(object):
         """
         self._path = ""
         if path:
-            if isinstance(path, basestring):
+            if isinstance(path, str):
                 self.SetStr(path)
             else:
                 self.SetStr(str(path))

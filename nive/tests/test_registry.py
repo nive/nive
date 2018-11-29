@@ -1,7 +1,6 @@
 
 import time
 import unittest
-from types import DictType
 
 from nive.definitions import *
 from zope.interface.registry import * 

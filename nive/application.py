@@ -20,7 +20,6 @@ import uuid
 import pytz
 
 from time import time
-from types import DictType
 
 from zope.interface.registry import Components
 from zope.interface import providedBy
@@ -561,11 +560,7 @@ class Registration(object):
         if c.get("acl"):
             self.__acl__ = tuple(c.acl)
         if c.get("dbConfiguration"):
-            # bw 0.9.3
-            if type(c.dbConfiguration) == DictType:
-                self.dbConfiguration = DatabaseConf(**c.dbConfiguration)
-            else:
-                self.dbConfiguration = c.dbConfiguration
+            self.dbConfiguration = c.dbConfiguration
         tz = self.configuration.get("timezone")
         if tz is not None:
             self.pytimezone = pytz.timezone(tz)
@@ -585,7 +580,7 @@ class Registration(object):
             return
         for v in views:
 
-            if isinstance(v, basestring):
+            if isinstance(v, str):
                 iface, conf = ResolveConfiguration(v)
                 if not conf:
                     raise ConfigurationError(str(v))
@@ -660,7 +655,7 @@ class Registration(object):
             for modconf in mods:
                 path = modconf.translations
                 # translations
-                if isinstance(path, basestring):
+                if isinstance(path, str):
                     config.add_translation_dirs(path)
                 elif isinstance(path, (list, tuple)):
                     config.add_translation_dirs(*path)
@@ -745,7 +740,7 @@ class Configuration(object):
         """
         Returns a list of configurations or empty list
         """
-        if isinstance(queryFor, basestring):
+        if isinstance(queryFor, str):
             queryFor = ResolveName(queryFor, raiseExcp=False)
             if not queryFor:
                 return ()
@@ -757,7 +752,7 @@ class Configuration(object):
         """
         Returns configuration or None
         """
-        if isinstance(queryFor, basestring):
+        if isinstance(queryFor, str):
             queryFor = ResolveName(queryFor, raiseExcp=False)
             if not queryFor:
                 return None
@@ -1219,7 +1214,7 @@ class AppFactory(object):
         if not name:
             name = self.GetDefaultRootName()
         useCache = self.configuration.useCache
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             cachename = "_c_root"+name
             if useCache and hasattr(self, cachename) and getattr(self, cachename):
                 rootObj = getattr(self, cachename)
@@ -1270,7 +1265,7 @@ class AppFactory(object):
         """
         creates the tool object
         """
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             conf = self.GetToolConf(name, contextObject)
             if isinstance(conf, (list, tuple)):
                 conf = conf[0]
@@ -1293,7 +1288,7 @@ class AppFactory(object):
         creates the root object
         """
         wfConf = None
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             wfConf = self.GetWorkflowConf(name, contextObject)
             if isinstance(wfConf, (list, tuple)):
                 wfConf = wfConf[0]

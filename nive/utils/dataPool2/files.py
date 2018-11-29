@@ -58,7 +58,7 @@ class File(object):
             # update attributes from dictionary
             self.update(filedict)
 
-        if isinstance(self.file, basestring):
+        if isinstance(self.file, str):
             # file data is set as string -> create string io and mark as tempfile
             self.size = len(self.file)
             self.file = StringIO(self.file)
@@ -509,7 +509,7 @@ class FileEntry(object):
         # convert to File object
         if isinstance(file, dict):
             file = File(key, filedict=file, fileentry=self)
-        elif isinstance(file, basestring):
+        elif isinstance(file, str):
             # load from temp path
             f = File(key, fileentry=self)
             f.fromPath(file)
@@ -658,7 +658,7 @@ class FileIterator(object):
     chunk_size = 10*1024
 
     def __init__(self, file, start, stop):
-        if isinstance(file, basestring):
+        if isinstance(file, str):
             self.fileobj = open(file, 'rb')
         else:
             self.fileobj = file

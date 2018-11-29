@@ -332,7 +332,7 @@ class Form(Events, ReForm):
         # load form fields
         if self.loadFromType:
             typeOrConfiguration = self.loadFromType
-            if isinstance(typeOrConfiguration, basestring):
+            if isinstance(typeOrConfiguration, str):
                 config = self.app.GetObjectConf(typeOrConfiguration)
                 if not config:
                     raise ConfigurationError("Type not found (%s)" % (str(typeOrConfiguration)))
@@ -379,7 +379,7 @@ class Form(Events, ReForm):
         # lookup field configurations
         self._c_fields = []
         for f in temp:
-            if isinstance(f, basestring):
+            if isinstance(f, str):
                 fld = None
                 if self.fields:
                     for a in config.data:
@@ -428,7 +428,7 @@ class Form(Events, ReForm):
             # lookup action configurations
             self._c_actions = []
             for a in temp:
-                if isinstance(a, basestring):
+                if isinstance(a, str):
                     action = None
                     if self.actions:
                         for v in self.actions:
@@ -858,7 +858,7 @@ class HTMLForm(Form):
 
         if not action and defaultAction:
             # lookup default action 
-            if isinstance(defaultAction, basestring):
+            if isinstance(defaultAction, str):
                 for a in list(self.actions) + list(self.GetActions()):
                     if a["id"]==defaultAction:
                         action = a
@@ -871,7 +871,7 @@ class HTMLForm(Form):
             raise ConfigurationError("No action to process the form found")
 
         # call action
-        if isinstance(action["method"], basestring):
+        if isinstance(action["method"], str):
             method = getattr(self, action["method"])
         else:
             method = action["method"]
@@ -1187,7 +1187,7 @@ class HTMLForm(Form):
         if not msgs:
             return u""
         h = []
-        if isinstance(msgs, basestring):
+        if isinstance(msgs, str):
             msgs = [msgs]
         for m in msgs:
             h.append(u"""<p>%s</p>""" % (translate(m, self.view.request)))
@@ -1276,7 +1276,7 @@ class ObjectForm(HTMLForm):
             self.Signal("loadDefault", data=data)
         else:
             data = self.LoadDefaultData()
-        if isinstance(self.loadFromType, basestring):
+        if isinstance(self.loadFromType, str):
             data["pool_type"] = self.loadFromType
         else:
             data["pool_type"] = self.loadFromType.id
@@ -1308,7 +1308,7 @@ class ObjectForm(HTMLForm):
             data = self.LoadDefaultData()
             r, d = self.ExtractSchema(self.GetFormValues(method=u"ALL"), removeNull=True, removeEmpty=True)
             data.update(d)
-        if isinstance(self.loadFromType, basestring):
+        if isinstance(self.loadFromType, str):
             data["pool_type"] = self.loadFromType
         else:
             data["pool_type"] = self.loadFromType.id
@@ -1443,7 +1443,7 @@ class ToolForm(HTMLForm):
         # load form fields
         if self.loadFromType:
             typeOrConfiguration = self.loadFromType
-            if isinstance(typeOrConfiguration, basestring):
+            if isinstance(typeOrConfiguration, str):
                 config = self.app.GetToolConf(typeOrConfiguration)
                 if not config:
                     raise ConfigurationError("Tool not found (%s). Use configuration instance instead of a string." % (str(typeOrConfiguration)))
@@ -1479,7 +1479,7 @@ class ToolForm(HTMLForm):
         # lookup field configurations
         self._c_fields = []
         for f in temp:
-            if isinstance(f, basestring):
+            if isinstance(f, str):
                 fld = None
                 if self.fields:
                     for a in config.data:
@@ -1515,7 +1515,7 @@ class ToolForm(HTMLForm):
             # lookup action configurations
             self._c_actions = []
             for a in temp:
-                if isinstance(a, basestring):
+                if isinstance(a, str):
                     action = None
                     if self.actions:
                         for v in self.actions:
@@ -1841,7 +1841,7 @@ def MakeCustomizedViewForm(view, forContext, formSettingsOrSubset, typeconf=None
         form.ApplyOptions(defaultSettings)
 
     # load form settings
-    if isinstance(formSettingsOrSubset, basestring):
+    if isinstance(formSettingsOrSubset, str):
         form.subset = formSettingsOrSubset
         form.subsets = typeconf.forms
         subset = formSettingsOrSubset

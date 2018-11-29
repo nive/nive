@@ -24,7 +24,7 @@ try: # pragma: no cover (chameleon 1)
                      encoding='utf-8', translate=None):
             if search_path is None:
                 search_path = []
-            if isinstance(search_path, basestring):
+            if isinstance(search_path, str):
                 search_path = [search_path]
             self.search_path = search_path
             self.auto_reload = auto_reload

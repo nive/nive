@@ -101,7 +101,7 @@ class sendMail(Tool):
         # `recvs` is the raw list of mails in the form of `(mail, name)` tuples
         recvs = []
         if recvmails:
-            if isinstance(recvmails, basestring):
+            if isinstance(recvmails, str):
                 recvs.append((recvmails, u""))
             else:
                 recvs.extend(recvmails)
@@ -272,7 +272,7 @@ class sendMail(Tool):
 
 
     def _GetMailStr(self, mail):
-        if isinstance(mail, basestring):
+        if isinstance(mail, str):
             return mail
         if len(mail) > 1 and mail[1]:
             return u'"%s" <%s>' % (str(Header(mail[1], "utf-8")), mail[0])
@@ -290,7 +290,7 @@ class sendMail(Tool):
             recvids2 = userdb.GetUsersWithRole(recvrole, activeOnly=not force)
         # get users
         if recvids:
-            if isinstance(recvids, basestring):
+            if isinstance(recvids, str):
                 recvids = ConvertToList(recvids)
             for user in userdb.GetUserInfos(recvids+recvids2, ["name", "email", "title"], activeOnly=not force):
                 if user and user["email"] != u"":

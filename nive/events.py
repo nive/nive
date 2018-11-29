@@ -129,7 +129,7 @@ class Events(object):
         result = []
         for fnc in self._eventdispatch[signal]:
             try:
-                if isinstance(fnc, basestring):
+                if isinstance(fnc, str):
                     for cls in self.__class__.__mro__:
                         f = cls.__dict__.get(fnc)
                         if f is not None:

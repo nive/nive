@@ -260,7 +260,7 @@ class AdminBasics(BaseView):
                     value = conf.parent.get(d[0])
                 except:
                     pass
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 pass
             elif isinstance(value, (tuple, list)):
                 a=[u""]

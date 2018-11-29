@@ -211,7 +211,7 @@ class Function(object):
         result = self.function(value)
         if not result:
             raise Invalid(node, self.message)
-        if isinstance(result, basestring):
+        if isinstance(result, str):
             raise Invalid(node, result)
 
 class Regex(object):
@@ -231,7 +231,7 @@ class Regex(object):
         raised with the ``msg`` error message.
     """
     def __init__(self, regex, msg=None):
-        if isinstance(regex, basestring):
+        if isinstance(regex, str):
             self.match_object = re.compile(regex)
         else:
             self.match_object = regex
@@ -1006,7 +1006,7 @@ class GlobalObject(SchemaType):
         if not cstruct:
             return null
 
-        if not isinstance(cstruct, basestring):
+        if not isinstance(cstruct, str):
             raise Invalid(node,
                           _('"${val}" is not a string',
                             mapping={'val':cstruct}))
@@ -1075,7 +1075,7 @@ class DateTime(SchemaType):
         if appstruct in (null,None,""):
             return null
 
-        if isinstance(appstruct, basestring):
+        if isinstance(appstruct, str):
             try:
                 appstruct = iso8601.parse_date(
                     appstruct, default_timezone=self.default_tzinfo)
@@ -1163,7 +1163,7 @@ class Date(SchemaType):
         if appstruct in (null,None,""):
             return null
 
-        if isinstance(appstruct, basestring):
+        if isinstance(appstruct, str):
             try:
                 appstruct = iso8601.parse_date(appstruct)
             except (iso8601.ParseError, TypeError) as e:
@@ -1249,7 +1249,7 @@ class Time(SchemaType):
         if appstruct in (null, None, ""):
             return null
 
-        if isinstance(appstruct, basestring):
+        if isinstance(appstruct, str):
             try:
                 value = iso8601.parse_date(appstruct)
                 appstruct = value.time()
@@ -1830,7 +1830,7 @@ class List(object):
     def deserialize(self, node, value, formstruct=None):
         if value in (null, None):
             return null
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             value = [value]
         elif not isinstance(value, (list, tuple)):
             raise Invalid(
@@ -1878,7 +1878,7 @@ class CodeList(object):
                     )
             value = value[0]
         
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             value = unicode(value)
         
         if not value in self.allowed:
@@ -1921,7 +1921,7 @@ class Lines(object):
         if value == u"":
             value = []
 
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             value = value.split(self.lb)
             if self.remove_empty:
                 try:
@@ -2018,7 +2018,7 @@ class FileData2(object):
                     node,
                     _('${value} has no ${key} key', mapping=mapping)
                     )
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             # from path
             file = File()
             file.fromPath(value)

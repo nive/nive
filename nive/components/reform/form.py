@@ -102,7 +102,7 @@ class Form(Field):
         super(Form, self).__init__(schema, **kw)
         _buttons = []
         for button in buttons:
-            if isinstance(button, basestring):
+            if isinstance(button, str):
                 button = Button(button)
             _buttons.append(button)
         self.action = action

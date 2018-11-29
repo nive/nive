@@ -57,7 +57,7 @@ class User(object):
         """
         check if user has one of these groups
         """
-        if isinstance(groups, basestring):
+        if isinstance(groups, str):
             return groups in self.groups
         for g in groups:
             if g in self.groups:
@@ -130,7 +130,7 @@ class AdminUser(object):
         """
         check if user has one of these groups
         """
-        if isinstance(groups, basestring):
+        if isinstance(groups, str):
             return groups in self.groups
         for g in groups:
             if g in self.groups:

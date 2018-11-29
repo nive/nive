@@ -246,12 +246,12 @@ class WfTransitionConf(baseConf):
         if not self.tostate:
             report.append((ConfigurationError, u" WfTransitionConf.tostate is empty", self))
         for c in self.conditions:
-            if isinstance(c, basestring):
+            if isinstance(c, str):
                 o=TryResolveName(c)
                 if not o:
                     report.append((ConfigurationError, u" WfTransitionConf.conditions not found: "+c, self))
         for c in self.execute:
-            if isinstance(c, basestring):
+            if isinstance(c, str):
                 o=TryResolveName(c)
                 if not o:
                     report.append((ConfigurationError, u" WfTransitionConf.execute not found: "+c, self))
@@ -534,7 +534,7 @@ class Transition(object):
         # condition
         if self.conditions:
             for c in self.conditions:
-                if isinstance(c, basestring):
+                if isinstance(c, str):
                     c = ResolveName(c)
                 if not c(transition=self, context=context, user=user, values=self.values):
                     return False

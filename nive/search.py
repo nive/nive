@@ -678,7 +678,7 @@ class Search:
             if IFieldConf.providedBy(fld):
                 f.append(fld)
                 continue
-            if not isinstance(fld, basestring):
+            if not isinstance(fld, str):
                 continue
             if fld in ("__preview__",):
                 continue
@@ -758,7 +758,7 @@ class Search:
     def _HandleRelations(self, relations, items, kws):
         if not relations:
             return items
-        if isinstance(relations, basestring):
+        if isinstance(relations, str):
             relations = (relations,)
         cache = {}
         for r in relations:

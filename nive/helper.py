@@ -36,7 +36,7 @@ def ResolveName(name, base=None, raiseExcp=True):
     """
     if not name:
         return None
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         return name
     if not base:
         base = caller_package()
@@ -54,7 +54,7 @@ def ResolveAsset(name, base=None, raiseExcp=True):
     """
     if not name:
         return None
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         return name
     if not base:
         base = caller_package()
@@ -88,7 +88,7 @@ def ResolveConfiguration(conf, base=None):
     returns Interface, configuration
     """
     # string instance
-    if isinstance(conf, basestring):
+    if isinstance(conf, str):
         if not base:
             base = caller_package()
         # json file
@@ -278,7 +278,7 @@ def LoadJSONConf(jsondata, default=None):
     # load from json
     # default: the default configuration class to be used if the json values do not
     # specify the class as `ccc`
-    if isinstance(jsondata, basestring):
+    if isinstance(jsondata, str):
         try:
             jsondata = json.loads(jsondata)
         except:
@@ -368,7 +368,7 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
     """
     Resolve class reference from python dotted string.
     """
-    if isinstance(tag, basestring):
+    if isinstance(tag, str):
         if raiseError:
             classRef = ResolveName(tag, base=base)
         else:
@@ -387,7 +387,7 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
 
 def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
     ref = weakref.ref(viewModuleConf)
-    if isinstance(cls, basestring):
+    if isinstance(cls, str):
         cls = ResolveName(cls)
     cls = type("_factory_"+cls.__name__, (cls,), {})
     cls.__configuration__ = ref

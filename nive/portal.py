@@ -109,9 +109,9 @@ class Portal(Events):
         """
         log = logging.getLogger("portal")
         iface, conf = ResolveConfiguration(comp)
-        if not conf and isinstance(comp, basestring):
+        if not conf and isinstance(comp, str):
             raise ConfigurationError("Portal registration failure. No name given (%s)" % (str(comp)))
-        if isinstance(comp, basestring) or isinstance(comp, baseConf):
+        if isinstance(comp, str) or isinstance(comp, baseConf):
             # factory methods
             if IAppConf.providedBy(conf):
                 comp = ClassFactory(conf)(conf)
@@ -119,7 +119,7 @@ class Portal(Events):
                 comp = ClassFactory(conf)(conf)
             elif iface and iface.providedBy(comp):
                 comp = ResolveName(conf.context)(conf)
-            elif isinstance(comp, basestring):
+            elif isinstance(comp, str):
                 comp = ResolveName(conf.context)(conf)
 
         try:
@@ -198,7 +198,7 @@ class Portal(Events):
         """
         Returns registered components and apps as list.
         """
-        if isinstance(interface, basestring):
+        if isinstance(interface, str):
             interface = ResolveName(interface)
         apps=[]
         for name in self.components:
