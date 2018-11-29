@@ -82,7 +82,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
     def test_mailstr(self):
         t = self.app.GetTool("sendMail")
         self.assertTrue(t._GetMailStr("aaa@ddd.aa")=="aaa@ddd.aa")
-        self.assertTrue(t._GetMailStr(("aaa@ddd.aa","a a"))=='"=?utf-8?q?a_a?=" <aaa@ddd.aa>', t._GetMailStr(("aaa@ddd.aa","a a")))
+        self.assertEqual(t._GetMailStr(("aaa@ddd.aa","a a")), '"a a" <aaa@ddd.aa>') # todo [3] unicode '"=?utf-8?q?a_a?=" <aaa@ddd.aa>'
         self.assertTrue(t._GetMailStr(("aaa@ddd.aa",))=="aaa@ddd.aa")
 
 

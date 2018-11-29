@@ -46,6 +46,12 @@ class Wrapper(object):
             self._Load()
         return self._content_.get(key)
 
+    def __contains__(self, key):
+        if key in self._temp_:
+            return True
+        if not self._content_:
+            self._Load()
+        return key in self._content_
 
     def __getattr__(self, key):
         if key in list(self.__dict__.keys()):
@@ -312,6 +318,9 @@ class PoolStructure(object):
     
     def __getitem__(self, key, version=None):
         return self.structure[key]
+
+    def __contains__(self, key):
+        return key in self.structure
 
     def get(self, key, default=None, version=None):
         return self.structure.get(key, default)

@@ -709,7 +709,7 @@ class Form(Events, ReForm):
                 if not value:
                     value = request.GET.get(key)
             if not isinstance(value, str): # todo [3] unicode ?
-                value = str(value, self.app.configuration.frontendCodepage)
+                value = str(value) #, self.app.configuration.frontendCodepage)
             return value
         if not len(value):
             return None

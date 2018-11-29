@@ -310,7 +310,7 @@ class viewTest_db:
         try:
             view.SendResponse("the response body", mime="text/html", raiseException=True, headers=[("X-Result", "true")])
         except ExceptionalResponse as e:
-            self.assertTrue(e.body=="the response body")
+            self.assertEqual(e.body, b"the response body")
             self.assertTrue(e.status_int==200)
             self.assertTrue(e.status=="200 OK")
             self.assertTrue(e.headers["X-Result"]=="true")
@@ -318,14 +318,14 @@ class viewTest_db:
         try:
             view.SendResponse("the response body")
         except ExceptionalResponse as e:
-            self.assertTrue(e.body=="the response body")
+            self.assertEqual(e.body, b"the response body")
             self.assertTrue(e.status_int==200)
             self.assertTrue(e.status=="200 OK")
             self.assertTrue(e.headers["Content-Type"].startswith("text/html"))
         try:
             view.SendResponse("the response body", status="203 whysoever")
         except ExceptionalResponse as e:
-            self.assertTrue(e.body=="the response body")
+            self.assertEqual(e.body, b"the response body")
             self.assertTrue(e.status_int==203)
             self.assertTrue(e.status.startswith("203"))
             self.assertTrue(e.headers["Content-Type"].startswith("text/html"))

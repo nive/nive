@@ -480,7 +480,7 @@ class ContainerEdit:
             obj = id
         if not obj:
             obj = self.GetObj(id, queryRestraints=False, **kw)
-            if not obj:
+            if obj is None:
                 return False
         if obj.parent.id!=self.id:
             raise ContainmentError("Object is not a child (%s)" % (str(id)))

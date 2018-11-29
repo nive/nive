@@ -83,7 +83,7 @@ class dbSqlDump(Tool):
                 if not isinstance(data, str):
                     data = str(data, codepage)
                 value = u"INSERT INTO %s (%s) VALUES (%s);\n"%(tablename, columns, data)
-                value = value.encode(codepage)
+                #value = value.encode(codepage) # todo [3] unicode
                 self.stream.write(value)        
         
         return 1

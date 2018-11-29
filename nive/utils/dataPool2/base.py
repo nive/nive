@@ -507,7 +507,7 @@ class Base(object):
         Execute a query on the database. Returns the dbapi cursor. Use `cursor.fetchall()` or
         `cursor.fetchone()` to retrieve results. The cursor should be closed after usage.
         """
-        if not cursor:
+        if cursor is None:
             cursor = self.connection.cursor()
         if self._debug:
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
@@ -531,7 +531,7 @@ class Base(object):
         execute a query on the database. non unicode texts are converted according to codepage settings.
         """
         cc=True
-        if cursor:
+        if cursor is not None:
             c = cursor
             cc=False
         else:
@@ -604,7 +604,7 @@ class Base(object):
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
 
         cc = 0
-        if not cursor:
+        if cursor is None:
             cc = 1
             cursor = self.connection.cursor()
         result = ()
@@ -646,7 +646,7 @@ class Base(object):
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
 
         cc = 0
-        if not cursor:
+        if cursor is None:
             cc = 1
             cursor = self.connection.cursor()
         try:
@@ -676,7 +676,7 @@ class Base(object):
         If `autoinsert` is False the function returns the converted data.
         """
         cc = 0
-        if not cursor:
+        if cursor is None:
             cc = 1
             cursor = self.connection.cursor()
         ph = self.placeholder
@@ -740,7 +740,7 @@ class Base(object):
         if self._debug:
             STACKF(0,sql+"\r\n\r\n",self._debug, self._log,name=self.name)
         cc=False
-        if not cursor:
+        if cursor is None:
             cc=True
             cursor = self.connection.cursor()
         try:
@@ -1056,7 +1056,7 @@ class Base(object):
             add = 0
             current = tree
             for ref in rtree:
-                if data[ref] == None:
+                if data[ref] is None:
                     continue
                 if data[ref] == base:
                     add = 1
@@ -1180,7 +1180,7 @@ class Base(object):
         cnt = 10
         for i in range(1, cnt-1):
             title = aL[0][i*2+1]
-            if title == None:
+            if title is None:
                 break
             parents.insert(0, self.EncodeText(title))
         aC.close()
@@ -1255,7 +1255,7 @@ class Base(object):
         Remove a local group assignment for userid or all for the id/ref.
         """
         p = {}
-        if id!=None:
+        if id is not None:
             p["id"] = id
         else:
             raise TypeError("id must not be none")
@@ -1711,7 +1711,7 @@ class Entry(object):
         """
         Update or create fulltext for entry
         """
-        if text==None:
+        if text is None:
             text=""
         sql, values = self.pool.FmtSQLSelect(["id"], parameter={"id":self.id}, dataTable=self.pool.FulltextTable, singleTable=1)
         cursor = self.pool.connection.cursor()

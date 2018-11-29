@@ -192,7 +192,7 @@ class dbTest(object):
         e=self.pool.GetEntry(id)
         self.assertTrue(e)
 
-        self.assertItemsEqual(e.FileKeys(), [u"file1",u"file2"])
+        self.assertEqual(e.FileKeys(), [u"file1",u"file2"])
 
         self.assertTrue(e.GetFile(u"file1").filename==u"file1.txt")
         self.assertTrue(e.GetFile(u"file2").filename==u"file2.txt")

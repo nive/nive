@@ -439,7 +439,8 @@ class BaseView(object):
             self.request.response = orgresp
             self.request.view_name = orgname
 
-        return str(value, codepage)
+        #return str(value, codepage) # todo [3] unicode
+        return value
 
     
     def Assets(self, assets=None, ignore=None, viewModuleConfID=None, types=None):  
@@ -473,12 +474,12 @@ class BaseView(object):
             if not conf:
                 return u""
             assets = conf.assets
-        if assets==None and self.viewModule:
+        if assets is None and self.viewModule:
             assets = self.viewModule.assets
         if not assets:
             return u""
         
-        if ignore==None:
+        if ignore is None:
             ignore = []
         
         js_tags = css_tags = []
@@ -1046,8 +1047,8 @@ def SendResponse(data, mime="text/html", filename=None, raiseException=True, sta
     if filename:
         cd = 'attachment; filename=%s'%(filename)
     if raiseException:
-        raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status, headers=headers)
-    return Response(content_type=mime, body=data, content_disposition=cd, status=status, headerlist=headers)
+        raise ExceptionalResponse(content_type=mime, body=data, content_disposition=cd, status=status, headers=headers, charset="utf-8") # todo [3] unicode
+    return Response(content_type=mime, body=data, content_disposition=cd, status=status, headerlist=headers, charset="utf-8") # todo [3] unicode
 
 
 def Redirect(url, request, messages=None, slot="", raiseException=True, refresh=True, force=False):
@@ -1081,8 +1082,8 @@ def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=
         else:
             for m in messages:
                 request.session.flash(m, slot)
-    if isinstance(url, str): # todo [3] unicode ?
-        url = url.encode("utf-8")
+    #if isinstance(url, str): # todo [3] unicode ?
+    #    url = url.encode("utf-8")
     body = json.dumps({u"location": url, u"messages": messages, "refresh": refresh})
     headers = [('X-Relocate', url)]
     if hasattr(request.response, "headerlist"):

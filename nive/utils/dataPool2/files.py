@@ -201,7 +201,7 @@ class File(object):
                 size += len(data)
                 if maxFileSize and size > maxFileSize:
                     raise ValueError("File too big")
-                out.write(data)
+                out.write(bytes(data, encoding="utf-8")) # todo [3] unicode ?
                 data = self.read(10000)
             out.close()
             #file.close()

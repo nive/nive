@@ -310,18 +310,18 @@ class groupsTest_db:
         id = o.id
         
         userid = u"test"
-        self.assertItemsEqual(o.GetLocalGroups(userid), [u"group:owner"])
+        self.assertEqual(o.GetLocalGroups(userid), [u"group:owner"])
         r.RemoveLocalGroups(userid, None)
         o.RemoveLocalGroups(userid, None)
         self.assertFalse(o.GetLocalGroups(userid))
         o.AddLocalGroup(userid, u"group:local")
-        self.assertItemsEqual(o.GetLocalGroups(userid), [u"group:local"])
+        self.assertEqual(o.GetLocalGroups(userid), [u"group:local"])
         o.RemoveLocalGroups(u"nouser", u"nogroup")
-        self.assertItemsEqual(o.GetLocalGroups(userid), [u"group:local"])
+        self.assertEqual(o.GetLocalGroups(userid), [u"group:local"])
         o.RemoveLocalGroups(userid, u"nogroup")
-        self.assertItemsEqual(o.GetLocalGroups(userid), [u"group:local"])
+        self.assertEqual(o.GetLocalGroups(userid), [u"group:local"])
         o.RemoveLocalGroups(u"nouser", u"group:local")
-        self.assertItemsEqual(o.GetLocalGroups(userid), [u"group:local"])
+        self.assertEqual(o.GetLocalGroups(userid), [u"group:local"])
         o.RemoveLocalGroups(userid, u"group:local")
         self.assertFalse(o.GetLocalGroups(userid))
         o.AddLocalGroup(userid, u"group:local")
