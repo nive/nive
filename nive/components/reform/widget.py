@@ -1112,7 +1112,7 @@ class FileUploadWidget(Widget):
 
     def random_id(self):
         return ''.join(
-            [random.choice(string.uppercase+string.digits) for i in range(10)])
+            [random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for i in range(10)])
 
     def serialize(self, field, cstruct, readonly=False):
         if cstruct in (null, None):
@@ -1264,7 +1264,7 @@ class FileToDataUploadWidget(Widget):
             return null
         file = pstruct.file.read()
         if self.base64:
-            file = base64.b64encode(file)
+            file = base64.b64encode(bytes(file,encoding="utf-8")) # todo [3] unicode
         return file
 
 

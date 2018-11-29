@@ -769,10 +769,10 @@ class String(SchemaType):
         try:
             result = cstruct
             if not isinstance(result, str):
-                if self.encoding: # todo [3] unicode ?
-                    result = str(str(cstruct), self.encoding)
-                else:
-                    result = str(cstruct)
+                #if self.encoding: # todo [3] unicode ?
+                #    result = str(str(cstruct), self.encoding)
+                #else:
+                result = str(cstruct)
         except Exception as e:
             raise Invalid(node,
                           _('${val} is not a string: %{err}',
@@ -1068,7 +1068,7 @@ class DateTime(SchemaType):
 
     def __init__(self, default_tzinfo=_marker):
         if default_tzinfo is _marker:
-            default_tzinfo = iso8601.iso8601.Utc()
+            default_tzinfo = iso8601.iso8601.UTC
         self.default_tzinfo = default_tzinfo
 
     def serialize(self, node, appstruct):
@@ -1594,11 +1594,11 @@ class _SchemaMeta(type):
         extended.sort()
         cls.nodes = [x[1] for x in extended]
 
-class Schema(object):
+class Schema(metaclass=_SchemaMeta):
     schema_type = Mapping
     node_type = SchemaNode
     # todo [3] metaclass?
-    __metaclass__ = _SchemaMeta
+    #__metaclass__ = _SchemaMeta
 
     def __new__(cls, *args, **kw):
         node = object.__new__(cls.node_type)

@@ -191,7 +191,7 @@ class DatabaseManager(object):
 
     def IsTable(self, tableName):
         for aD in self.GetTables():
-            if string.lower(aD[0]) == string.lower(tableName):
+            if aD[0].lower() == tableName.lower():
                 return True
         return False
 

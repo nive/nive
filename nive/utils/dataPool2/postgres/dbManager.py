@@ -278,7 +278,7 @@ class PostgresManager(DatabaseManager):
 
     def IsTable(self, tableName):
         for cval in self.GetTables():
-            if string.lower(cval[0]) == string.lower(tableName):
+            if cval[0].lower() == tableName.lower():
                 return True
         return False
 

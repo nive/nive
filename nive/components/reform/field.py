@@ -517,17 +517,16 @@ class Field(object):
             # fill in errors raised by widgets
             self.widget.handle_error(self, e)
             cstruct = e.value
+            raise exception.ValidationFailure(self, cstruct, e)
 
         try:
             appstruct = self.schema.deserialize(cstruct)
+            return appstruct
         except schema.Invalid as e:
             # fill in errors raised by schema nodes
             self.widget.handle_error(self, e)
-
-        if e:
             raise exception.ValidationFailure(self, cstruct, e)
 
-        return appstruct
 
     def __repr__(self):
         return '<%s.%s object at %d (schemanode %r)>' % (

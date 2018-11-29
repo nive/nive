@@ -370,10 +370,10 @@ class TestField(unittest.TestCase):
         field = self._makeOne(schema)
         field.widget = DummyWidget(exc=widget_invalid)
         e = validation_failure_exc(field.validate, fields)
-        self.assertEqual(field.widget.error, schema_invalid)
+        self.assertEqual(field.widget.error.msg, schema_invalid.msg)
         self.assertEqual(e.cstruct, dict(fields))
         self.assertEqual(e.field, field)
-        self.assertEqual(e.error, schema_invalid)
+        self.assertEqual(e.error.msg, schema_invalid.msg)
 
     def test_render(self):
         schema = DummySchema()

@@ -1278,7 +1278,7 @@ class TestFileToDataUploadWidget(unittest.TestCase):
         widget.base64 = True
         file = File(file=StringIO("contents"))
         result = widget.deserialize(field, file)
-        self.assertEqual(result, base64.b64encode("contents"))
+        self.assertEqual(result, base64.b64encode(b"contents"))
 
 class DummyRenderer(object):
     def __init__(self, result=''):

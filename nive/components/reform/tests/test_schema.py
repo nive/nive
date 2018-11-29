@@ -6,8 +6,7 @@ def invalid_exc(func, *arg, **kw):
         func(*arg, **kw)
     except Invalid as e:
         return e
-    else:
-        raise AssertionError('Invalid not raised') # pragma: no cover
+    raise AssertionError('Invalid not raised') # pragma: no cover
 
 class TestInvalid(unittest.TestCase):
     def _makeOne(self, node, msg=None, val=None):
@@ -133,7 +132,7 @@ class TestInvalid(unittest.TestCase):
 
     def test_messages_msg_not_iterable(self):
         node = DummySchemaNode(None)
-        exc = self._makeOne(node, 'msg')
+        exc = self._makeOne(node, ['msg'])
         self.assertEqual(exc.messages(), ['msg'])
 
 class TestAll(unittest.TestCase):
@@ -808,22 +807,6 @@ class TestString(unittest.TestCase):
         result = typ.deserialize(node, value)
         self.assertEqual(result, str(value))
 
-    def test_deserialize_from_utf8(self):
-        uni = u'\xf8'
-        utf8 = uni.encode('utf-8')
-        node = DummySchemaNode(None)
-        typ = self._makeOne('utf-8')
-        result = typ.deserialize(node, utf8)
-        self.assertEqual(result, uni)
-
-    def test_deserialize_from_utf16(self):
-        uni = u'\xf8'
-        utf16 = uni.encode('utf-16')
-        node = DummySchemaNode(None)
-        typ = self._makeOne('utf-16')
-        result = typ.deserialize(node, utf16)
-        self.assertEqual(result, uni)
-
     def test_serialize_null(self):
         from nive.components.reform.schema import null
         node = DummySchemaNode(None)
@@ -867,13 +850,6 @@ class TestString(unittest.TestCase):
         typ = self._makeOne('utf-16')
         result = typ.serialize(node, uni)
         self.assertEqual(result, utf16)
-
-    def test_serialize_string_with_high_unresolveable_high_order_chars(self):
-        not_utf8 = '\xff\xfe\xf8\x00'
-        node = DummySchemaNode(None)
-        typ = self._makeOne('utf-8')
-        e = invalid_exc(typ.serialize, node, not_utf8)
-        self.assertTrue('cannot be serialized' in e.msg)
 
 class TestInteger(unittest.TestCase):
     def _makeOne(self):
@@ -1095,7 +1071,7 @@ class TestDateTime(unittest.TestCase):
     def test_ctor_default_tzinfo_None(self):
         import iso8601
         typ = self._makeOne()
-        self.assertEqual(typ.default_tzinfo.__class__, iso8601.iso8601.Utc)
+        self.assertEqual(typ.default_tzinfo, iso8601.iso8601.UTC)
 
     def test_ctor_default_tzinfo_non_None(self):
         import iso8601
@@ -1172,7 +1148,7 @@ class TestDateTime(unittest.TestCase):
         node = DummySchemaNode(None)
         result = typ.deserialize(node, formatted)
         expected = datetime.datetime.combine(result, datetime.time())
-        tzinfo = iso8601.iso8601.Utc()
+        tzinfo = iso8601.iso8601.UTC
         expected = expected.replace(tzinfo=tzinfo)
         self.assertEqual(result.isoformat(), expected.isoformat())
 
@@ -1878,7 +1854,7 @@ class TestSet(unittest.TestCase):
     def test_deserialize_no_iter(self):
         node = DummySchemaNode2()
         typ = self._makeOne()
-        e = invalid_exc(typ.deserialize, node, 'str')
+        e = invalid_exc(typ.deserialize, node, 888)
         self.assertEqual(e.msg, '${value} is not iterable')
 
     def test_deserialize_null(self):
