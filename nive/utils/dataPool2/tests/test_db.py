@@ -3,7 +3,6 @@
 import copy
 from time import time
 import unittest
-from types import UnicodeType
 
 from nive.definitions import DatabaseConf
 from nive.utils.dataPool2.base import *
@@ -67,7 +66,7 @@ class dbTest(object):
         self.assertTrue(d.get(u"fmselect") == data1_1.get(u"fmselect") )
         self.assertTrue(d.get(u"funit")    == data1_1.get(u"funit")    )
         self.assertTrue(d.get(u"funitlist")== data1_1.get(u"funitlist"))
-        self.assertTrue(type(d.get(u"ftext"))==UnicodeType)
+        self.assertTrue(d.get(u"ftext"))
         #print "OK"
 
     def set2(self, id):
@@ -81,7 +80,7 @@ class dbTest(object):
         d=e.GetData()
         self.assertTrue(d.get(u"ftext")    == data2_1.get(u"ftext")    )
         self.assertTrue(d.get(u"fstr")     == data2_1.get(u"fstr")    )
-        self.assertTrue(type(d.get(u"ftext"))==UnicodeType    )
+        self.assertTrue(d.get(u"ftext"))
         #print "OK"
 
     def setfile1(self, id):
@@ -115,7 +114,7 @@ class dbTest(object):
         self.assertTrue(d.get(u"fmselect") == data1_1.get(u"fmselect") )
         self.assertTrue(d.get(u"funit")    == data1_1.get(u"funit")    )
         self.assertTrue(d.get(u"funitlist")== data1_1.get(u"funitlist"))
-        self.assertTrue(type(d.get(u"ftext"))==UnicodeType    )
+        self.assertTrue(d.get(u"ftext"))
         #print "OK"
 
     def data2(self, id):
@@ -124,7 +123,7 @@ class dbTest(object):
         d=e.GetData()
         self.assertTrue(d.get(u"ftext")    == data2_1.get(u"ftext")    )
         self.assertTrue(d.get(u"fstr")     == data2_1.get(u"fstr")    )
-        self.assertTrue(type(d.get(u"ftext"))==UnicodeType    )
+        self.assertTrue(d.get(u"ftext"))
         #print "OK"
 
     def file1(self, id):
@@ -197,8 +196,8 @@ class dbTest(object):
 
         self.assertTrue(e.GetFile(u"file1").filename==u"file1.txt")
         self.assertTrue(e.GetFile(u"file2").filename==u"file2.txt")
-        self.assertTrue(type(e.GetFile(u"file1").filename)==UnicodeType)
-        self.assertTrue(type(e.GetFile(u"file2").filename)==UnicodeType)
+        self.assertTrue(e.GetFile(u"file1").filename)
+        self.assertTrue(e.GetFile(u"file2").filename)
 
         self.assertTrue(e.GetFile(u"file1"))
         self.assertTrue(e.GetFile(u"file2"))
