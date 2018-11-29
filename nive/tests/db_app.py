@@ -9,14 +9,14 @@ from nive.definitions import *
 from nive.portal import Portal
 from nive.security import User, Allow, Everyone
 
-from nive.components.objects.base import ApplicationBase
+from nive.components.baseobjects import ApplicationBase
 from nive.utils.dataPool2.files import File
 
 root = RootConf(
     id = u"root",
     name = u"Data root",
     default = 1,
-    context = "nive.components.objects.base.RootBase",
+    context = "nive.components.baseobjects.RootBase",
     subtypes = [IObject],
     acl = ((Allow, Everyone, 'view'),)
 )
@@ -26,7 +26,7 @@ type1 = ObjectConf(
     name = u"Type 1 container",
     hidden = False,
     dbparam = u"data1",
-    context = "nive.components.objects.base.ObjectContainerBase",
+    context = "nive.components.baseobjects.ObjectContainerBase",
     subtypes = [IObject],
     acl = ((Allow, Everyone, 'view'),)
 )
@@ -47,7 +47,7 @@ type2 = ObjectConf(
     name = u"Type 2 Object",
     hidden = True,
     dbparam = u"data2",
-    context = "nive.components.objects.base.ObjectBase",
+    context = "nive.components.baseobjects.ObjectBase",
     subtypes = None
 )
 data2 = []
@@ -66,7 +66,7 @@ type3 = ObjectConf(
     name = u"Type 3 Object",
     hidden = True,
     dbparam = u"data3",
-    context = "nive.components.objects.base.ObjectContainerBase",
+    context = "nive.components.baseobjects.ObjectContainerBase",
     subtypes = [INonContainer],
     events = (Conf(event="create", callback=create_callback),)
 )
@@ -83,7 +83,7 @@ group2 = GroupConf(**{u"id":u"group2", u"name":u"Group 2"})
 # configuration
 appconf = AppConf(
     id = u"unittest",
-    context="nive.components.objects.base.ApplicationBase",
+    context="nive.components.baseobjects.ApplicationBase",
     title = u"nive application python unittest",
     timezone = "UTC",
     modules = [root, type1, type2, type3],

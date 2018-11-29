@@ -19,7 +19,7 @@ object.files values ::
     extension = file extension
     tempfile = True/False. If True file is not committed, yet.
 
-See :py:mod:`nive.components.objects.base` for subclassing base classes
+See :py:mod:`nive.components.baseobjects` for subclassing base classes
 """
 
 import weakref

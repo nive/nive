@@ -360,7 +360,7 @@ class appTest_db:
         conn=self.app.db.usedconnection
         self.assertTrue(conn)
         
-        from nive.components.objects.base import ApplicationBase
+        from nive.components.baseobjects import ApplicationBase
         from nive.tests.db_app import appconf
         a = ApplicationBase()
         a.Register(appconf)

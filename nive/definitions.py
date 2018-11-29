@@ -516,7 +516,7 @@ class AppConf(baseConf):
 
     def __init__(self, copyFrom=None, **values):
         self.id = "app"
-        self.context = "nive.components.objects.base.ApplicationBase"
+        self.context = "nive.components.baseobjects.ApplicationBase"
         
         self.title = u""
         self.description = u""
@@ -738,7 +738,7 @@ class ObjectConf(baseConf):
         self.name = u""
         self.dbparam = u""
         self.selectTag = 0
-        self.context = "nive.components.objects.base.ObjectContainerBase"
+        self.context = "nive.components.baseobjects.ObjectContainerBase"
         self.template = None
         self.extensions = None
         self.data = []
@@ -865,7 +865,7 @@ class RootConf(baseConf):
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
-        self.context = "nive.components.objects.base.RootBase"
+        self.context = "nive.components.baseobjects.RootBase"
         self.extensions = None
         self.template = None
         self.default = True
