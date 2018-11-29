@@ -140,7 +140,7 @@ class Application(object):
         o = self.root(name)
         if o and o.configuration.urlTraversal:
             return o
-        raise KeyError, name
+        raise KeyError(name)
 
 
     def Startup(self, pyramidConfig, debug=False, cachedDbConnection=None):
@@ -381,7 +381,7 @@ class Application(object):
             self.Query("select id from pool_meta where id =1")
             return True, "OK"
 
-        except Exception, err:
+        except Exception as err:
             return False, str(err)
 
 
@@ -545,7 +545,7 @@ class Registration(object):
                 self.registry.registerAdapter(conf, (_IGlobal,), IWfProcessConf, name=conf.id)
             return True
 
-        raise TypeError, "Unknown configuration interface type (%s)" % (str(conf))
+        raise TypeError("Unknown configuration interface type (%s)" % (str(conf)))
         
         
     def SetupApplication(self):
@@ -553,7 +553,7 @@ class Registration(object):
         Loads self.configuration, includes modules and updates meta fields.
         """
         if not self.configuration:
-            raise ConfigurationError, "Configuration is empty"
+            raise ConfigurationError("Configuration is empty")
         c = self.configuration
         # special values
         if c.get("id") and not self.__name__:
@@ -588,7 +588,7 @@ class Registration(object):
             if isinstance(v, basestring):
                 iface, conf = ResolveConfiguration(v)
                 if not conf:
-                    raise ConfigurationError, str(v)
+                    raise ConfigurationError(str(v))
                 v = conf
                 
             self.Register(v)
@@ -845,7 +845,7 @@ class Configuration(object):
         c = self.registry.getAllUtilitiesRegisteredFor(IObjectConf)
         if not visibleOnly:
             return c
-        return filter(lambda t: t.get("hidden") != True, c)
+        return [t for t in c if t.get("hidden") != True]
 
 
     def GetTypeName(self, typeID):
@@ -900,11 +900,11 @@ class Configuration(object):
         if not fields:
             return None
         if IFieldConf.providedBy(fldID):
-            f = filter(lambda d: d["id"]==fldID.id, fields)
+            f = [d for d in fields if d["id"]==fldID.id]
             if f:
                 return fldID
         else:
-            f = filter(lambda d: d["id"]==fldID, fields)
+            f = [d for d in fields if d["id"]==fldID]
             if f:
                 return f[0]
         return None
@@ -931,11 +931,11 @@ class Configuration(object):
         returns configuration or None
         """
         if IFieldConf.providedBy(fldID):
-            f = filter(lambda d: d["id"]==fldID.id, self.configuration.meta)
+            f = [d for d in self.configuration.meta if d["id"]==fldID.id]
             if f:
                 return fldID
         else:
-            f = filter(lambda d: d["id"]==fldID, self.configuration.meta)
+            f = [d for d in self.configuration.meta if d["id"]==fldID]
             if f:
                 return f[0]
         return None
@@ -949,7 +949,7 @@ class Configuration(object):
         """
         if not ignoreSystem:
             return self.configuration.meta
-        return filter(lambda m: m["id"] not in ReadonlySystemFlds, self.configuration.meta)
+        return [m for m in self.configuration.meta if m["id"] not in ReadonlySystemFlds]
 
 
     def GetMetaFldName(self, fldID):
@@ -958,7 +958,7 @@ class Configuration(object):
         
         returns string
         """
-        m = filter(lambda d: d["id"]==fldID, self.configuration.meta)
+        m = [d for d in self.configuration.meta if d["id"]==fldID]
         if not m:
             return u""
         return m[0]["name"]
@@ -1003,7 +1003,7 @@ class Configuration(object):
         
         returns configuration or None
         """
-        c = filter(lambda d: d["id"]==categoryID, self.configuration.categories)
+        c = [d for d in self.configuration.categories if d["id"]==categoryID]
         if not c:
             return None
         return c[0]
@@ -1017,7 +1017,7 @@ class Configuration(object):
         """
         if not visibleOnly:
             return SortConfigurationList(self.configuration.categories, sort)
-        c = filter(lambda a: not a.get("hidden"), self.configuration.categories)
+        c = [a for a in self.configuration.categories if not a.get("hidden")]
         return SortConfigurationList(c, sort)
 
 
@@ -1027,7 +1027,7 @@ class Configuration(object):
         
         returns string
         """
-        c = filter(lambda d: d["id"]==categoryID, self.configuration.categories)
+        c = [d for d in self.configuration.categories if d["id"]==categoryID]
         if not c:
             return u""
         return c[0]["name"]
@@ -1045,7 +1045,7 @@ class Configuration(object):
             return []
         if not visibleOnly:
             return SortConfigurationList(self.configuration.groups, sort)
-        c = filter(lambda a: not a.get("hidden"), self.configuration.groups)
+        c = [a for a in self.configuration.groups if not a.get("hidden")]
         return SortConfigurationList(c, sort)
 
 
@@ -1055,7 +1055,7 @@ class Configuration(object):
         
         returns string
         """
-        g = filter(lambda d: d["id"]==groupID, self.configuration.groups)
+        g = [d for d in self.configuration.groups if d["id"]==groupID]
         if not g:
             return u""
         return g[0]["name"]
@@ -1135,10 +1135,10 @@ class AppFactory(object):
         creates the database object
         """
         if not self.dbConfiguration:
-            raise ConfigurationError, "Database configuration empty. application.dbConfiguration is None."
+            raise ConfigurationError("Database configuration empty. application.dbConfiguration is None.")
         poolTag = self.dbConfiguration.context
         if not poolTag:
-            raise TypeError, "Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!"
+            raise TypeError("Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
         elif poolTag.lower() in ("sqlite","sqlite3"):
             poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
         elif poolTag.lower() == "mysql":
@@ -1188,10 +1188,10 @@ class AppFactory(object):
         if self._dbpool:
             return self._dbpool.CreateConnection(self.dbConfiguration)
         if not cTag and not poolTag:
-            raise TypeError, "Database connection type not set. application.dbConfiguration.connection and application.dbConfiguration.context is empty. Use Sqlite or Mysql!"
+            raise TypeError("Database connection type not set. application.dbConfiguration.connection and application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
         poolTag = self.dbConfiguration.context
         if not poolTag:
-            raise TypeError, "Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!"
+            raise TypeError("Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
         elif poolTag.lower() in ("sqlite","sqlite3"):
             poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
         elif poolTag.lower() == "mysql":
@@ -1279,7 +1279,7 @@ class AppFactory(object):
         if not conf:
             iface, conf = ResolveConfiguration(name)
             if not conf:
-                raise ImportError, "Tool not found. Please load the tool by referencing the tool id. (%s)" % (str(name))
+                raise ImportError("Tool not found. Please load the tool by referencing the tool id. (%s)" % (str(name)))
         tag = conf.context
         toolObj = GetClassRef(tag, self.reloadExtensions, True, None)
         toolObj = toolObj(conf, self)
@@ -1300,7 +1300,7 @@ class AppFactory(object):
         if not wfConf:
             iface, wfConf = ResolveConfiguration(name)
             if not wfConf:
-                raise ImportError, "Workflow process not found. Please load the workflow by referencing the process id. (%s)" % (str(name))
+                raise ImportError("Workflow process not found. Please load the workflow by referencing the process id. (%s)" % (str(name)))
 
         wfTag = wfConf.context
         wfObj = GetClassRef(wfTag, self.reloadExtensions, True, None)

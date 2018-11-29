@@ -23,7 +23,7 @@ except ImportError:
         Warning = None
         @staticmethod
         def connect(*args,**kw):
-            raise ImportError, "Python MySQLdb binding not available. Try 'pip install MySQL-python' to install the package."
+            raise ImportError("Python MySQLdb binding not available. Try 'pip install MySQL-python' to install the package.")
     
 from nive.utils.utils import STACKF
 
@@ -67,7 +67,7 @@ class MySqlConnection(Connection):
                              use_unicode=use_unicode, 
                              charset=charset)
         if not db:
-            raise OperationalError, "Cannot connect to database '%s.%s'" % (conf.host, conf.dbName)
+            raise OperationalError("Cannot connect to database '%s.%s'" % (conf.host, conf.dbName))
         self._set(db)
         #print "connect:", time() - t
         return db

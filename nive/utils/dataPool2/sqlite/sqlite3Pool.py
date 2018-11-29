@@ -60,10 +60,10 @@ class Sqlite3Connection(Connection):
         #t = time()
         conf = self.configuration
         if not conf.dbName:
-            raise OperationalError, "Connection failed. Database name is empty." 
+            raise OperationalError("Connection failed. Database name is empty.") 
         db = sqlite3.connect(conf.dbName, check_same_thread=self.check_same_thread)
         if not db:
-            raise OperationalError, "Cannot connect to database '%s'" % (conf.dbName)
+            raise OperationalError("Cannot connect to database '%s'" % (conf.dbName))
         c = db.cursor()
         c.execute("PRAGMA journal_mode = TRUNCATE")
         #c.execute("PRAGMA secure_delete = 0")
@@ -93,7 +93,7 @@ class Sqlite3Connection(Connection):
 
     def FmtParam(self, param):
         """ format a parameter for sql queries like literal for  db"""
-        if isinstance(param, (int, long, float)):
+        if isinstance(param, (int, float)):
             return unicode(param)
         d = unicode(param)
         if d.find(u'"')!=-1:
@@ -105,7 +105,7 @@ class Sqlite3Connection(Connection):
         """ This function will return a new and raw connection. It is up to the caller to close this connection. """
         conf = self.configuration
         if not conf.dbName:
-            raise OperationalError, "Connection failed. Database name is empty." 
+            raise OperationalError("Connection failed. Database name is empty.") 
         db = sqlite3.connect(conf.dbName, check_same_thread=self.check_same_thread)
         return db
 
@@ -245,11 +245,11 @@ class Sqlite3(FileManager, Base):
 
     def _CreateFixID(self, id, dataTbl):
         if self.IsIDUsed(id):
-            raise TypeError, "ID already in use"
+            raise TypeError("ID already in use")
         aC = self.connection.cursor()
         ph = self.placeholder
         if not dataTbl:
-            raise TypeError, "Missing data table."
+            raise TypeError("Missing data table.")
 
         # sql insert empty rec in data table
         if self._debug:

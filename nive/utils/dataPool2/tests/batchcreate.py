@@ -8,7 +8,7 @@ try:
 except:
     pass
 
-import test_db
+from . import test_db
 from nive.utils.dataPool2.sqlite.sqlite3Pool import *
 
 
@@ -31,7 +31,7 @@ def create_mysql(n):
 
     pool.Close()
     print(n, " entries in ", t2-t, "secs. ", (t2-t)/n, " per entry")
-    print
+    print()
     return id
 
 
@@ -54,7 +54,7 @@ def create_sqlite3(n):
 
     pool.Close()
     print(n, " entries in ", t2-t, "secs. ", (t2-t)/n, " per entry")
-    print
+    print()
     return id
 
 

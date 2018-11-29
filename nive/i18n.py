@@ -25,7 +25,7 @@ def translator(request=None):
         localizer = get_localizer(request or get_current_request())
     except:
         # for testing. just returns the term on translate().
-        import helper
+        from . import helper
         localizer = helper.FakeLocalizer()
     return localizer.translate
 
@@ -42,7 +42,7 @@ def translate(term, request=None):
         localizer = get_localizer(request or get_current_request())
     except:
         # for testing. just returns the term on translate().
-        import helper
+        from . import helper
         localizer = helper.FakeLocalizer()
     return localizer.translate(term) 
 

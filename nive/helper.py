@@ -105,7 +105,7 @@ def ResolveConfiguration(conf, base=None):
     elif isinstance(conf, dict):
         # load by interface
         if not "type" in conf:
-            raise TypeError, "Configuration type not defined"
+            raise TypeError("Configuration type not defined")
         c = ResolveName(conf["type"], base="nive")
         del conf["type"]
         conf = c(**conf)
@@ -159,7 +159,7 @@ def FormatConfTestFailure(report, fmt="text"):
         v+= u"-----------------------------------------------------------------------------------\r\n"
         v+= unicode(r[0]) + " " + r[1] + "\r\n"
         v+= u"-----------------------------------------------------------------------------------\r\n"
-        for d in r[2].__dict__.items():
+        for d in list(r[2].__dict__.items()):
             a = d[1]
             if a is None:
                 try:
@@ -220,7 +220,7 @@ class ConfDecoder(object):
                     return obj
                    
                 if not confclass:
-                    raise ConfigurationError, "Configuration class not found (ccc)"
+                    raise ConfigurationError("Configuration class not found (ccc)")
                 conf = ResolveName(confclass, base="nive")(**obj)
                 return conf
             return obj
@@ -285,13 +285,13 @@ def LoadJSONConf(jsondata, default=None):
             return jsondata
     if not isinstance(jsondata, dict):
         return jsondata
-    for k,v in jsondata.items():
+    for k,v in list(jsondata.items()):
         jsondata[k] = LoadJSONConf(v, default=default)
         
     confclass = jsondata.get("ccc")
     if not confclass:
         if not default:
-            raise ConfigurationError, "Configuration class not found (ccc)"
+            raise ConfigurationError("Configuration class not found (ccc)")
         return default(**jsondata)
     conf = ResolveName(confclass, base="nive")(**jsondata)
     return conf
@@ -374,7 +374,7 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
         else:
             try:
                 classRef = ResolveName(tag, base=base)
-            except ImportError, e:
+            except ImportError as e:
                 return None
         if not classRef:
             return None

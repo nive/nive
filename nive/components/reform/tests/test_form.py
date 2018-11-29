@@ -66,7 +66,7 @@ class TestIssues(unittest.TestCase):
                 ('password', '123')]
         try:
             reform.Form(loginform).validate(data)
-        except reform.ValidationFailure, e:
+        except reform.ValidationFailure as e:
             rendered = e.render()
             self.assertTrue(
                 'Username does not match password' in rendered
@@ -91,8 +91,8 @@ class TestButton(unittest.TestCase):
 
     def test_name_with_space(self):
         button = self._makeOne(name="log\tin as a user")
-        self.assertEquals(button.name, 'log_in_as_a_user')
-        self.assertEquals(button.value, 'log_in_as_a_user')
+        self.assertEqual(button.name, 'log_in_as_a_user')
+        self.assertEqual(button.value, 'log_in_as_a_user')
 
     def test_ctor(self):
         button = self._makeOne(name='name', title='title',

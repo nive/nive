@@ -345,7 +345,7 @@ class Process(object):
             if not transition and (action in state.actions):
                 return True
 
-            raise WorkflowNotAllowed, "Workflow: Not allowed (%s)"%(action)
+            raise WorkflowNotAllowed("Workflow: Not allowed (%s)"%(action))
 
         if len(ptrans) > 1:
             transition = ptrans[0]
@@ -482,7 +482,7 @@ class Process(object):
         for s in stateConfs:
             iface, conf = ResolveConfiguration(s)
             if iface != IWfStateConf:
-                raise ConfigurationError, "Not a state configuration"
+                raise ConfigurationError("Not a state configuration")
             self.states.append(self._GetObj(conf))
 
 
@@ -494,7 +494,7 @@ class Process(object):
         for s in transistionConfs:
             iface, conf = ResolveConfiguration(s)
             if iface != IWfTransitionConf:
-                raise ConfigurationError, "Not a transition configuration"
+                raise ConfigurationError("Not a transition configuration")
             self.transitions.append(self._GetObj(conf))
 
 
@@ -516,7 +516,7 @@ class Transition(object):
         self.id = name
         self.configuration = configuration
         self.process = process
-        for k in configuration.keys():
+        for k in list(configuration.keys()):
             setattr(self, k, configuration[k])
         
         

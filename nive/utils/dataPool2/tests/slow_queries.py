@@ -24,7 +24,7 @@ def sqlquery4(n):
 
     pool.Close()
     print(n, " queries in ", t2-t, "secs. ", (t2-t)/n, " per statement")
-    print
+    print()
 
 def sqlquery5(n):
     pool = MySql(test_MySql.conf)
@@ -40,7 +40,7 @@ def sqlquery5(n):
 
     pool.Close()
     print(n, " queries in ", t2-t, "secs. ", (t2-t)/n, " per statement")
-    print
+    print()
 
 def sqlquery6(n):
     pool = MySql(test_MySql.conf)
@@ -56,7 +56,7 @@ def sqlquery6(n):
 
     pool.Close()
     print(n, " queries in ", t2-t, "secs. ", (t2-t)/n, " per statement")
-    print
+    print()
 
 
 

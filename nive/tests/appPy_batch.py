@@ -218,8 +218,8 @@ def test4():
     for id in ids:
         try:
             r.Delete(id, user=user)
-        except Exception, e:
-            raise Exception, str(ids)+ " " + str(id)
+        except Exception as e:
+            raise Exception(str(ids)+ " " + str(id))
     print(time.time() - t2, "Deleting objects recursively")
 
     print("------------")

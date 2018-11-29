@@ -54,52 +54,52 @@ class dbTest(object):
     def set1(self, id):
         #print "Store data", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e)
+        self.assertTrue(e)
         e.data.update(data1_1)
         e.meta.update(meta1)
         e.Commit(user="unittest")
-        self.assert_(e.GetMeta())
+        self.assertTrue(e.GetMeta())
         d=e.GetData()
-        self.assert_(d.get(u"ftext")    == data1_1.get(u"ftext")    )
-        self.assert_(d.get(u"fnumber")    == data1_1.get(u"fnumber")    )
-        self.assert_(self.pool.GetDBDate(str(d.get(u"fdate"))) == self.pool.GetDBDate(str(data1_1.get(u"fdate"))))
-        self.assert_(d.get(u"flist")    == data1_1.get(u"flist")    )
-        self.assert_(d.get(u"fmselect") == data1_1.get(u"fmselect") )
-        self.assert_(d.get(u"funit")    == data1_1.get(u"funit")    )
-        self.assert_(d.get(u"funitlist")== data1_1.get(u"funitlist"))
-        self.assert_(type(d.get(u"ftext"))==UnicodeType)
+        self.assertTrue(d.get(u"ftext")    == data1_1.get(u"ftext")    )
+        self.assertTrue(d.get(u"fnumber")    == data1_1.get(u"fnumber")    )
+        self.assertTrue(self.pool.GetDBDate(str(d.get(u"fdate"))) == self.pool.GetDBDate(str(data1_1.get(u"fdate"))))
+        self.assertTrue(d.get(u"flist")    == data1_1.get(u"flist")    )
+        self.assertTrue(d.get(u"fmselect") == data1_1.get(u"fmselect") )
+        self.assertTrue(d.get(u"funit")    == data1_1.get(u"funit")    )
+        self.assertTrue(d.get(u"funitlist")== data1_1.get(u"funitlist"))
+        self.assertTrue(type(d.get(u"ftext"))==UnicodeType)
         #print "OK"
 
     def set2(self, id):
         #print "Store data", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e)
+        self.assertTrue(e)
         e.data.update(data2_1)
         e.meta.update(meta1)
         e.Commit(user="unittest")
-        self.assert_(e.GetMeta())
+        self.assertTrue(e.GetMeta())
         d=e.GetData()
-        self.assert_(d.get(u"ftext")    == data2_1.get(u"ftext")    )
-        self.assert_(d.get(u"fstr")     == data2_1.get(u"fstr")    )
-        self.assert_(type(d.get(u"ftext"))==UnicodeType    )
+        self.assertTrue(d.get(u"ftext")    == data2_1.get(u"ftext")    )
+        self.assertTrue(d.get(u"fstr")     == data2_1.get(u"fstr")    )
+        self.assertTrue(type(d.get(u"ftext"))==UnicodeType    )
         #print "OK"
 
     def setfile1(self, id):
         #print "Store file", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e)
-        self.assert_(e.CommitFile(u"file1", {"file":file1_1, "filename":"file1.txt"}))
+        self.assertTrue(e)
+        self.assertTrue(e.CommitFile(u"file1", {"file":file1_1, "filename":"file1.txt"}))
         e.Commit(user="unittest")
-        self.assert_(e.GetFile(u"file1").read() == file1_1)
+        self.assertTrue(e.GetFile(u"file1").read() == file1_1)
         #print "OK"
 
     def setfile2(self, id):
         #print "Store file", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e)
-        self.assert_(e.CommitFile(u"file2", {"file":file1_2, "filename":u"file2.txt"}))
+        self.assertTrue(e)
+        self.assertTrue(e.CommitFile(u"file2", {"file":file1_2, "filename":u"file2.txt"}))
         e.Commit(user="unittest")
-        self.assert_(e.GetFile(u"file2").read() == file1_2)
+        self.assertTrue(e.GetFile(u"file2").read() == file1_2)
         #print "OK"
 
 
@@ -108,41 +108,41 @@ class dbTest(object):
         #print "Check entry data", id,
         e=self.pool.GetEntry(id)
         d=e.GetData()
-        self.assert_(d.get(u"ftext")    == data1_1.get(u"ftext")    )
-        self.assert_(d.get(u"fnumber")    == data1_1.get(u"fnumber")    )
-        self.assert_(self.pool.GetDBDate(str(d.get(u"fdate"))) == self.pool.GetDBDate(str(data1_1.get(u"fdate"))))
-        self.assert_(d.get(u"flist")    == data1_1.get(u"flist")    )
-        self.assert_(d.get(u"fmselect") == data1_1.get(u"fmselect") )
-        self.assert_(d.get(u"funit")    == data1_1.get(u"funit")    )
-        self.assert_(d.get(u"funitlist")== data1_1.get(u"funitlist"))
-        self.assert_(type(d.get(u"ftext"))==UnicodeType    )
+        self.assertTrue(d.get(u"ftext")    == data1_1.get(u"ftext")    )
+        self.assertTrue(d.get(u"fnumber")    == data1_1.get(u"fnumber")    )
+        self.assertTrue(self.pool.GetDBDate(str(d.get(u"fdate"))) == self.pool.GetDBDate(str(data1_1.get(u"fdate"))))
+        self.assertTrue(d.get(u"flist")    == data1_1.get(u"flist")    )
+        self.assertTrue(d.get(u"fmselect") == data1_1.get(u"fmselect") )
+        self.assertTrue(d.get(u"funit")    == data1_1.get(u"funit")    )
+        self.assertTrue(d.get(u"funitlist")== data1_1.get(u"funitlist"))
+        self.assertTrue(type(d.get(u"ftext"))==UnicodeType    )
         #print "OK"
 
     def data2(self, id):
         #print "Check entry data", id,
         e=self.pool.GetEntry(id)
         d=e.GetData()
-        self.assert_(d.get(u"ftext")    == data2_1.get(u"ftext")    )
-        self.assert_(d.get(u"fstr")     == data2_1.get(u"fstr")    )
-        self.assert_(type(d.get(u"ftext"))==UnicodeType    )
+        self.assertTrue(d.get(u"ftext")    == data2_1.get(u"ftext")    )
+        self.assertTrue(d.get(u"fstr")     == data2_1.get(u"fstr")    )
+        self.assertTrue(type(d.get(u"ftext"))==UnicodeType    )
         #print "OK"
 
     def file1(self, id):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e.GetFile(u"file1").read() == file1_1)
+        self.assertTrue(e.GetFile(u"file1").read() == file1_1)
         #print "OK"
 
     def file2(self, id):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e.GetFile(u"file2").read() == file1_2)
+        self.assertTrue(e.GetFile(u"file2").read() == file1_2)
         #print "OK"
 
     def fileErr(self, id):
         #print "Load non existing file", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e.GetFile(u"file1") == None)
+        self.assertTrue(e.GetFile(u"file1") == None)
         #print "OK"
 
     # getstream --------------------------------------------------------------------------
@@ -152,7 +152,7 @@ class dbTest(object):
         s=e.GetFile(u"file1")
         d = s.read()
         s.close()
-        self.assert_(d == file1_1)
+        self.assertTrue(d == file1_1)
         #print "OK"
 
     def file2stream(self, id):
@@ -161,29 +161,29 @@ class dbTest(object):
         s=e.GetFile(u"file2")
         d=s.read()
         s.close()
-        self.assert_(d == file1_2)
+        self.assertTrue(d == file1_2)
         #print "OK"
 
     # functions ------------------------------------------------------------------------
     def stat(self, id):
         e=self.pool.GetEntry(id)
-        self.assert_(e.GetMetaField(u"pool_createdby")==u"unittest")
-        self.assert_(e.GetMetaField(u"pool_changedby")==u"unittest")
+        self.assertTrue(e.GetMetaField(u"pool_createdby")==u"unittest")
+        self.assertTrue(e.GetMetaField(u"pool_changedby")==u"unittest")
         #print "Create: %s by %s    Changed: %s by %s" % (e.GetMetaField("pool_create"), e.GetMetaField("pool_createdby"), e.GetMetaField("pool_change"), e.GetMetaField("pool_changedby"))
 
     def delete(self, id):
         #print "Delete", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e)
+        self.assertTrue(e)
         del e
-        self.assert_(self.pool.DeleteEntry(id))
+        self.assertTrue(self.pool.DeleteEntry(id))
         self.pool.Commit(user="unittest")
 
     def duplicate(self, id,file=True):
         #print "Duplicate", id,
         e=self.pool.GetEntry(id)
         n=e.Duplicate(file)
-        self.assert_(n)
+        self.assertTrue(n)
         n.Commit(user="unittest")
         #print "OK"
         return n.GetID()
@@ -191,27 +191,27 @@ class dbTest(object):
     def filetest(self, id):
         #print "File test", id,
         e=self.pool.GetEntry(id)
-        self.assert_(e)
+        self.assertTrue(e)
 
         self.assertItemsEqual(e.FileKeys(), [u"file1",u"file2"])
 
-        self.assert_(e.GetFile(u"file1").filename==u"file1.txt")
-        self.assert_(e.GetFile(u"file2").filename==u"file2.txt")
-        self.assert_(type(e.GetFile(u"file1").filename)==UnicodeType)
-        self.assert_(type(e.GetFile(u"file2").filename)==UnicodeType)
+        self.assertTrue(e.GetFile(u"file1").filename==u"file1.txt")
+        self.assertTrue(e.GetFile(u"file2").filename==u"file2.txt")
+        self.assertTrue(type(e.GetFile(u"file1").filename)==UnicodeType)
+        self.assertTrue(type(e.GetFile(u"file2").filename)==UnicodeType)
 
-        self.assert_(e.GetFile(u"file1"))
-        self.assert_(e.GetFile(u"file2"))
-        self.assert_(e.GetFile(u"file3")==None)
-        self.assert_(e.GetFile(u"")==None)
+        self.assertTrue(e.GetFile(u"file1"))
+        self.assertTrue(e.GetFile(u"file2"))
+        self.assertTrue(e.GetFile(u"file3")==None)
+        self.assertTrue(e.GetFile(u"")==None)
 
         l=e.Files({})
-        self.assert_(len(l)==2)
+        self.assertTrue(len(l)==2)
         l2=[]
         for f in l:
             l2.append(f[u"filekey"])
-        self.assert_(u"file1" in l2)
-        self.assert_(u"file2" in l2)
+        self.assertTrue(u"file1" in l2)
+        self.assertTrue(u"file2" in l2)
         #print "OK"
 
 
@@ -237,13 +237,13 @@ class dbTest(object):
 
         # cnt    ok
         c2 = self.statdb()
-        self.assert_(c+2==c2)
+        self.assertTrue(c+2==c2)
 
         # deleting
         self.delete(id1)
         self.delete(id2)
         c3 = self.statdb()
-        self.assert_(c==c3)
+        self.assertTrue(c==c3)
 
 
 
@@ -265,7 +265,7 @@ class dbTest(object):
 
         # cnt    ok
         c2 = self.statdb()
-        self.assert_(c+2==c2)
+        self.assertTrue(c+2==c2)
 
         #update data
         self.set1(id1)
@@ -283,7 +283,7 @@ class dbTest(object):
         self.delete(id1)
         self.delete(id2)
         c3 = self.statdb()
-        self.assert_(c==c3)
+        self.assertTrue(c==c3)
 
 
 
@@ -311,7 +311,7 @@ class dbTest(object):
         # deleting
         self.delete(id1)
         c3 = self.statdb()
-        self.assert_(c==c3)
+        self.assertTrue(c==c3)
 
 
     def test_preload(self):
@@ -323,42 +323,42 @@ class dbTest(object):
 
         #print "Preload Skip", id,
         e = self.pool.GetEntry(id, preload=u"skip")
-        self.assert_(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
         del e
         #print "OK"
 
         #print "Preload Meta", id,
         e = self.pool.GetEntry(id, preload=u"meta")
-        self.assert_(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
         del e
         #print "OK"
 
         #print "Preload All", id,
         e = self.pool.GetEntry(id, preload=u"all")
-        self.assert_(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
         del e
         #print "OK"
 
         #print "Preload MetaData", id,
         e = self.pool.GetEntry(id, preload=u"metadata")
-        self.assert_(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
         del e
         #print "OK"
 
         #print "Preload StdMeta", id,
         e = self.pool.GetEntry(id, preload=u"stdmeta")
-        self.assert_(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
         del e
         #print "OK"
 
         #print "Preload StdMetaData", id,
         e = self.pool.GetEntry(id, preload=u"stdmetadata")
-        self.assert_(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
         del e
         #print "OK"
 
         self.delete(id)
-        self.assert_(self.pool.IsIDUsed(id) == False)
+        self.assertTrue(self.pool.IsIDUsed(id) == False)
 
 
     def test_duplicate_base(self):
@@ -372,7 +372,7 @@ class dbTest(object):
 
         # cnt    ok
         c2 = self.statdb()
-        self.assert_(c+2==c2)
+        self.assertTrue(c+2==c2)
 
         #update data
         self.set1(id1)
@@ -406,7 +406,7 @@ class dbTest(object):
         self.delete(id4)
         self.delete(id5)
         c3 = self.statdb()
-        self.assert_(c==c3)
+        self.assertTrue(c==c3)
 
 
     def test_sql(self):
@@ -495,7 +495,7 @@ class dbTest(object):
         self.pool.Commit()
         sql, values = self.pool.FmtSQLSelect(["id"], {"pool_type": "notype", "title": "test entry"}, dataTable="pool_meta", singleTable=1) 
         id = self.pool.Query(sql, values)
-        self.assert_(id)
+        self.assertTrue(id)
         
         self.pool.UpdateFields("pool_meta", id[0][0], {"pool_type": "notype 123", "title": "test entry 123"}, cursor = None)
         self.pool.Commit()
@@ -504,7 +504,7 @@ class dbTest(object):
         self.assertFalse(id)
         sql, values = self.pool.FmtSQLSelect(["id"], {"pool_type": "notype 123", "title": "test entry 123"}, dataTable="pool_meta", singleTable=1) 
         id = self.pool.Query(sql, values)
-        self.assert_(id)
+        self.assertTrue(id)
         
         for i in id:
             self.pool.DeleteRecords("pool_meta", {"id":i[0]}, cursor=None)
@@ -524,9 +524,9 @@ class dbTest(object):
         self.assertFalse(self.pool.GetGroups(id))
         self.assertFalse(self.pool.GetGroups((id,id)))
         self.pool.AddGroup(id, userid, group)
-        self.assert_(self.pool.GetGroups(id, userid, group))
-        self.assert_(self.pool.GetGroups(id))
-        self.assert_(self.pool.GetGroups((id,id)))
+        self.assertTrue(self.pool.GetGroups(id, userid, group))
+        self.assertTrue(self.pool.GetGroups(id))
+        self.assertTrue(self.pool.GetGroups((id,id)))
 
         self.pool.RemoveGroups(userid=userid, group=group, id=id)
         self.assertFalse(self.pool.GetGroups(id, userid, group))
@@ -561,17 +561,17 @@ class dbTest(object):
         #print "SearchFilename",
         f1 = dbfile.SearchFilename(u"file1.txt")
         #print len(f1),
-        self.assert_(len(f1)>=3)
+        self.assertTrue(len(f1)>=3)
         f2 = dbfile.SearchFilename(u"file2.txt")
         #print len(f2),
-        self.assert_(len(f2)>=3)
+        self.assertTrue(len(f2)>=3)
         f3 = dbfile.SearchFilename(u"fileXXX.txt")
         #print len(f3),
-        self.assert_(len(f3)==0)
+        self.assertTrue(len(f3)==0)
         f4 = dbfile.SearchFilename(u"file%")
         #print len(f4),
         if self.countdb == 0:
-            self.assert_(len(f4)>=len(f1)+len(f2))
+            self.assertTrue(len(f4)>=len(f1)+len(f2))
         #print "OK"
 
         #print "SearchFiles",
@@ -580,13 +580,13 @@ class dbTest(object):
         f = dbfile.SearchFiles(parameter, operators=operators) #sort="filename",
         #print len(f),
         if self.countdb==0:
-            self.assert_(len(f)==6)
+            self.assertTrue(len(f)==6)
         parameter[u"filename"] = u"file2.txt"
         operators[u"filename"] = u"="
         f = dbfile.SearchFiles(parameter, operators=operators) #sort="size",
         #print len(f),
         if self.countdb==0:
-            self.assert_(len(f)==3)
+            self.assertTrue(len(f)==3)
         #print "OK"
 
         # deleting
@@ -594,7 +594,7 @@ class dbTest(object):
         self.delete(id2)
         self.delete(id3)
         c3 = self.statdb()
-        self.assert_(c==c3)
+        self.assertTrue(c==c3)
 
 
     def test_tree(self):

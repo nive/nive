@@ -1,6 +1,6 @@
 
 
-import copy, time, StringIO
+import copy, time, io
 import unittest
 from pkg_resources import resource_filename
 
@@ -48,44 +48,44 @@ class FileTest(unittest.TestCase):
                     filename="qqqq.png", 
                     file="0123456789"
                     )
-        self.assert_(file.filekey=="aaa")
-        self.assert_(file.filename=="qqqq.png")
-        self.assert_(file.size==10)
-        self.assert_(file.extension=="png")
+        self.assertTrue(file.filekey=="aaa")
+        self.assertTrue(file.filename=="qqqq.png")
+        self.assertTrue(file.size==10)
+        self.assertTrue(file.extension=="png")
 
         file = File(filekey="aaa",
                     filename="qqqq.png", 
                     file="0123456789",
                     fileentry=fileentrytest()
                     )
-        self.assert_(file.filekey=="aaa")
-        self.assert_(file.filename=="qqqq.png")
-        self.assert_(file.size==10)
-        self.assert_(file.extension=="png")
+        self.assertTrue(file.filekey=="aaa")
+        self.assertTrue(file.filename=="qqqq.png")
+        self.assertTrue(file.size==10)
+        self.assertTrue(file.extension=="png")
 
         file = File(filekey="aaa",
                     path="/tmp/qqqq.png" 
                     )
-        self.assert_(file.filekey=="aaa")
-        self.assert_(file.filename=="qqqq.png")
-        self.assert_(file.extension=="png")
+        self.assertTrue(file.filekey=="aaa")
+        self.assertTrue(file.filename=="qqqq.png")
+        self.assertTrue(file.extension=="png")
         
         file = File(filedict={"filekey":"aaa",
                               "filename":"qqqq.png", 
                               "file":"0123456789",
                               "fileentry":fileentrytest()}
                     )
-        self.assert_(file.filekey=="aaa")
-        self.assert_(file.filename=="qqqq.png")
-        self.assert_(file.size==10)
-        self.assert_(file.extension=="png")
+        self.assertTrue(file.filekey=="aaa")
+        self.assertTrue(file.filename=="qqqq.png")
+        self.assertTrue(file.size==10)
+        self.assertTrue(file.extension=="png")
 
 
     def test_read(self):
         file = File("aaa", filename="import.zip", tempfile=True)
-        self.assert_(file.isTempFile())
-        self.assert_(file.filename=="import.zip")
-        self.assert_(file.extension=="zip")
+        self.assertTrue(file.isTempFile())
+        self.assertTrue(file.filename=="import.zip")
+        self.assertTrue(file.extension=="zip")
         self.assertRaises(IOError, file.read)
 
         file = File(filekey="aaa",
@@ -93,19 +93,19 @@ class FileTest(unittest.TestCase):
                     file="0123456789",
                     fileentry=fileentrytest()
                     )
-        self.assert_(file.read()=="0123456789")
+        self.assertTrue(file.read()=="0123456789")
 
         file = File(filekey="aaa",
                     filename="qqqq.png", 
                     file="0123456789",
                     fileentry=fileentrytest()
                     )
-        self.assert_(file.read(5)=="01234")
-        self.assert_(file.read(5)=="56789")
-        self.assert_(file.read(5)=="")
-        self.assert_(file.tell()==10)
+        self.assertTrue(file.read(5)=="01234")
+        self.assertTrue(file.read(5)=="56789")
+        self.assertTrue(file.read(5)=="")
+        self.assertTrue(file.tell()==10)
         file.seek(0)
-        self.assert_(file.tell()==0)
+        self.assertTrue(file.tell()==0)
 
         file = File(filekey="aaa",
                     file=None,
@@ -120,8 +120,8 @@ class FileTest(unittest.TestCase):
         root = resource_filename('nive.utils.dataPool2', 'tests/')
         file = File("aaa")
         file.fromPath(root+"test_db.py")
-        self.assert_(file.filename=="test_db.py")
-        self.assert_(file.extension=="py")
+        self.assertTrue(file.filename=="test_db.py")
+        self.assertTrue(file.extension=="py")
         self.assertFalse(file.abspath())
 
         file = File(filekey="aaa",
@@ -129,12 +129,12 @@ class FileTest(unittest.TestCase):
                     )
         file.fileentry=fileentrytest
         file.path = root+"test_db.py"
-        self.assert_(file.abspath().startswith(root))
+        self.assertTrue(file.abspath().startswith(root))
         
         file = File("aaa", filename="qqqq.png", size=10)
         file.fromPath(root+"test_db.py")
-        self.assert_(file.filename=="qqqq.png")
-        self.assert_(file.extension=="png")
+        self.assertTrue(file.filename=="qqqq.png")
+        self.assertTrue(file.extension=="png")
         
         
     def test_dict(self):
@@ -143,19 +143,19 @@ class FileTest(unittest.TestCase):
                     file="0123456789",
                     fileentry=fileentrytest()
                     )
-        self.assert_(file.get("filekey")=="aaa")
-        self.assert_(file.get("filename")=="qqqq.png")
-        self.assert_(file.get("size")==10)
+        self.assertTrue(file.get("filekey")=="aaa")
+        self.assertTrue(file.get("filename")=="qqqq.png")
+        self.assertTrue(file.get("size")==10)
 
-        self.assert_(file["filekey"]=="aaa")
-        self.assert_(file["filename"]=="qqqq.png")
-        self.assert_(file["size"]==10)
+        self.assertTrue(file["filekey"]=="aaa")
+        self.assertTrue(file["filename"]=="qqqq.png")
+        self.assertTrue(file["size"]==10)
 
-        self.assert_(file.get("none",123)==123)
+        self.assertTrue(file.get("none",123)==123)
         
         file.update({"filekey":"bbb", "filename":"oooo.png"})
-        self.assert_(file.get("filekey")=="bbb")
-        self.assert_(file.get("filename")=="oooo.png")
+        self.assertTrue(file.get("filekey")=="bbb")
+        self.assertTrue(file.get("filename")=="oooo.png")
         
         for k in file:
-            self.assert_(k)
+            self.assertTrue(k)

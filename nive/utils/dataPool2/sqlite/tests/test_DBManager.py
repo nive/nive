@@ -46,10 +46,10 @@ class Sqlite3Test(unittest.TestCase):
 
     def test_Connect(self):
         db = Sqlite3Manager()
-        self.assert_(db.Connect(dbpath))
-        self.assert_(db.IsDB())
+        self.assertTrue(db.Connect(dbpath))
+        self.assertTrue(db.IsDB())
         db.Close()
-        self.assert_(not db.IsDB())
+        self.assertTrue(not db.IsDB())
         
 
     def test_CreateTable(self):
@@ -58,15 +58,15 @@ class Sqlite3Test(unittest.TestCase):
         except:
             pass
         self.assertFalse(self.db.IsTable(tablename))
-        self.assert_(self.db.CreateTable(tablename))
-        self.assert_(self.db.IsTable(tablename))
-        self.assert_(self.db.DeleteTable(tablename))
+        self.assertTrue(self.db.CreateTable(tablename))
+        self.assertTrue(self.db.IsTable(tablename))
+        self.assertTrue(self.db.DeleteTable(tablename))
         self.assertFalse(self.db.IsTable(tablename))
 
-        self.assert_(self.db.CreateTable(tablename))
-        self.assert_(self.db.IsTable(tablename))
-        self.assert_(self.db.RenameTable(tablename, tablename2))
-        self.assert_(self.db.DeleteTable(tablename2))
+        self.assertTrue(self.db.CreateTable(tablename))
+        self.assertTrue(self.db.IsTable(tablename))
+        self.assertTrue(self.db.RenameTable(tablename, tablename2))
+        self.assertTrue(self.db.DeleteTable(tablename2))
         self.assertFalse(self.db.IsTable(tablename))
         self.assertFalse(self.db.IsTable(tablename2))
 
@@ -83,17 +83,17 @@ class Sqlite3Test(unittest.TestCase):
         #self.db.Close()
         #self.db.Connect(dbpath)
         for col in columns:
-            self.assert_(self.db.IsColumn(tablename, col))
+            self.assertTrue(self.db.IsColumn(tablename, col))
         self._deltable()
 
 
     def test_CreateColumnsStructure(self):
         for f in SystemFlds:
-            self.assert_(self.db.ConvertConfToColumnOptions(f))
+            self.assertTrue(self.db.ConvertConfToColumnOptions(f))
         self._createtbl()
-        self.assert_(self.db.UpdateStructure(tablename, SystemFlds))
+        self.assertTrue(self.db.UpdateStructure(tablename, SystemFlds))
         for f in SystemFlds:
-            self.assert_(self.db.IsColumn(tablename, f["id"]))
+            self.assertTrue(self.db.IsColumn(tablename, f["id"]))
         self._deltable()
 
 
@@ -104,15 +104,15 @@ class Sqlite3Test(unittest.TestCase):
         except:
             pass
         self.assertFalse(self.db.IsTable(tablename))
-        self.assert_(self.db.CreateTable(tablename))
-        self.assert_(self.db.IsTable(tablename))
+        self.assertTrue(self.db.CreateTable(tablename))
+        self.assertTrue(self.db.IsTable(tablename))
 
         
     def _createcols(self):
         for col in columns:
-            self.assert_(not self.db.IsColumn(tablename, col))
-            self.assert_(self.db.CreateColumn(tablename, col))
-            self.assert_(self.db.IsColumn(tablename, col))
+            self.assertTrue(not self.db.IsColumn(tablename, col))
+            self.assertTrue(self.db.CreateColumn(tablename, col))
+            self.assertTrue(self.db.IsColumn(tablename, col))
         
         
     def _deltable(self):

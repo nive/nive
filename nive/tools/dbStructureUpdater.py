@@ -67,7 +67,7 @@ By default this tool will only create new tables and columns and never delete an
             if not connection:
                 self.stream.write(localizer.translate(_(u"""<div class="alert alert-error">No database connection configured</div>""")))
                 return 0
-        except OperationalError, e:
+        except OperationalError as e:
             self.stream.write(localizer.translate(_(u"""<div class="alert alert-error">No database connection configured</div>""")))
             return 0
 
@@ -138,7 +138,7 @@ By default this tool will only create new tables and columns and never delete an
 
 
         # check structure tables exist and update ------------------------------------------------------------
-        for table in Structure.items():
+        for table in list(Structure.items()):
             if table[0] in ignoreTables:
                 continue
 

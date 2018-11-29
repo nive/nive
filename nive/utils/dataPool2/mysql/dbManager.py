@@ -84,7 +84,7 @@ class MySQLManager(DatabaseManager):
                 time.sleep(0.5)
                 aCnt += 1
                 if aCnt == 10:
-                    raise OperationalError, "timeout create table"
+                    raise OperationalError("timeout create table")
             return True
 
         columns = self.GetColumns(tableName, structure)
@@ -176,7 +176,7 @@ class MySQLManager(DatabaseManager):
             if aN in (u"", u" ", None):
                 aN = 0
             if isinstance(aN, basestring):
-                aN = long(aN)
+                aN = int(aN)
             if conf.get("size", conf.get("maxLen",0)) == 4:
                 aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
             elif conf.get("size", conf.get("maxLen",0)) >16:
@@ -210,7 +210,7 @@ class MySQLManager(DatabaseManager):
             if aN == "" or aN == " " or aN == None:
                 aN = 0
             if isinstance(aN, basestring):
-                aN = long(aN)
+                aN = int(aN)
             aStr = u"INT UNSIGNED NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "unitlist":
@@ -280,7 +280,7 @@ class MySQLManager(DatabaseManager):
             if aN in (u"", u" ", None):
                 aN = 0
             if isinstance(aN, basestring):
-                aN = long(aN)
+                aN = int(aN)
             aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
 
         if conf.get("unique"):
@@ -350,7 +350,7 @@ class MySQLManager(DatabaseManager):
         else:
             aSql = u"CREATE TABLE %s" % (tableName)
             if not columns:
-                raise ConfigurationError, "No database fields defined."
+                raise ConfigurationError("No database fields defined.")
             aCnt = 0
             aSql += u"("
             for c in columns:

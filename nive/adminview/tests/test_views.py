@@ -36,24 +36,24 @@ class tViews(__local.DefaultTestCase):
 
     def test_basics(self):
         v = view.AdminBasics(context=self.app, request=self.request)
-        self.assert_(v.GetAdminWidgets())
-        self.assert_(v.RenderConf(view.configuration))
-        self.assert_(v.RenderConf(view.dbAdminConfiguration))
-        self.assert_(v.Format(view.configuration, view.configuration.id))
-        self.assert_(v.Format(view.dbAdminConfiguration, view.configuration.id))
-        self.assert_(v.AdministrationLinks(context=None))
-        self.assert_(v.AdministrationLinks(context=self.app))
+        self.assertTrue(v.GetAdminWidgets())
+        self.assertTrue(v.RenderConf(view.configuration))
+        self.assertTrue(v.RenderConf(view.dbAdminConfiguration))
+        self.assertTrue(v.Format(view.configuration, view.configuration.id))
+        self.assertTrue(v.Format(view.dbAdminConfiguration, view.configuration.id))
+        self.assertTrue(v.AdministrationLinks(context=None))
+        self.assertTrue(v.AdministrationLinks(context=self.app))
 
 
     def test_views(self):
         v = view.AdminView(context=self.app, request=self.request)
         v.__configuration__ = lambda: view.configuration
         v.view()
-        self.assert_(v.index_tmpl())
-        self.assert_(v.editbasics())
-        self.assert_(v.editdatabase())
-        self.assert_(v.editportal())
-        self.assert_(v.tools())
+        self.assertTrue(v.index_tmpl())
+        self.assertTrue(v.editbasics())
+        self.assertTrue(v.editdatabase())
+        self.assertTrue(v.editportal())
+        self.assertTrue(v.tools())
         v.doc()
 
 
@@ -71,8 +71,8 @@ class tViews(__local.DefaultTestCase):
         self.request.POST = {"name": "testuser", "email": "testuser@domain.net"}
         self.request.GET = {}
 
-        self.assert_(form.Start(None))
-        self.assert_(form.Update(None))
+        self.assertTrue(form.Start(None))
+        self.assertTrue(form.Update(None))
              
 
 

@@ -129,13 +129,13 @@ class Search:
                                           logicalOperator=kw.get("logicalOperator"), 
                                           condition=kw.get("condition"))
         else:
-            if not parameter.has_key("pool_type") and not kw.get("dontAddType"):
+            if "pool_type" not in parameter and not kw.get("dontAddType"):
                 parameter["pool_type"] = pool_type
-            if not operators.has_key("pool_type"):
+            if "pool_type" not in operators:
                 operators["pool_type"] = u"="
             typeInf = self.app.GetObjectConf(pool_type)
             if not typeInf:
-                raise ConfigurationError, pool_type + " type not found"
+                raise ConfigurationError(pool_type + " type not found")
             sql, values = db.FmtSQLSelect(fields, 
                                           parameter, 
                                           dataTable=typeInf["dbparam"], 
@@ -191,13 +191,13 @@ class Search:
             return recs
         # convert
         if len(fields) > len(recs[0]):
-            raise TypeError, "Too many fields"
+            raise TypeError("Too many fields")
         for i in range(len(fields)):
             name = fields[i]
             if name.find(u" as ")!=-1:
                 name = name.split(u" as ")[1]
                 fields[i] = name
-        return [dict(zip(fields, r)) for r in recs]
+        return [dict(list(zip(fields, r))) for r in recs]
 
 
     # Extended search functions ----------------------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ class Search:
 
         db = self.db
         if not db:
-            raise ConnectionError, "No database connection"
+            raise ConnectionError("No database connection")
         
         sql, values = db.FmtSQLSelect(fldList, 
                                       parameter=parameter, 
@@ -294,11 +294,11 @@ class Search:
 
         typeInf = self.app.GetObjectConf(pool_type)
         if not typeInf:
-            raise ConfigurationError, "Type not found (%s)" % (pool_type)
+            raise ConfigurationError("Type not found (%s)" % (pool_type))
 
         db = self.db
         if not db:
-            raise ConnectionError, "No database connection"
+            raise ConnectionError("No database connection")
 
         sql, values = db.FmtSQLSelect(fldList, 
                                       parameter=parameter,  
@@ -363,11 +363,11 @@ class Search:
 
         typeInf = self.app.GetObjectConf(pool_type)
         if not typeInf:
-            raise ConfigurationError, "Type not found (%s)" % (pool_type)
+            raise ConfigurationError("Type not found (%s)" % (pool_type))
 
         db = self.db
         if not db:
-            raise ConnectionError, "No database connection"
+            raise ConnectionError("No database connection")
 
         sql, values = db.FmtSQLSelect(fldList, 
                                       parameter=parameter,  
@@ -446,7 +446,7 @@ class Search:
 
         db = self.db
         if not db:
-            raise ConnectionError, "No database connection"
+            raise ConnectionError("No database connection")
 
         sql, values = db.GetFulltextSQL(phrase, 
                                         fldList, 
@@ -527,11 +527,11 @@ class Search:
 
         typeInf = self.app.GetObjectConf(pool_type)
         if not typeInf:
-            raise ConfigurationError, "Type not found (%s)" % (pool_type)
+            raise ConfigurationError("Type not found (%s)" % (pool_type))
 
         db = self.db
         if not db:
-            raise ConnectionError, "No database connection"
+            raise ConnectionError("No database connection")
 
         sql, values = db.GetFulltextSQL(phrase, 
                                         fldList, 
@@ -599,7 +599,7 @@ class Search:
 
         db = self.db
         if not db:
-            raise ConnectionError, "No database connection"
+            raise ConnectionError("No database connection")
         files = db.SearchFilename(filename)
 
         ids = []
@@ -607,7 +607,7 @@ class Search:
         for f in files:
             if not f["id"] in ids:
                 ids.append(f["id"])
-            if not filesMapped.has_key(str(f["id"])):
+            if str(f["id"]) not in filesMapped:
                 filesMapped[str(f["id"])] = []
             filesMapped[str(f["id"])].append(f)
         if len(ids)==0:
@@ -619,7 +619,7 @@ class Search:
 
         # merge result and files
         for rec in result["items"]:
-            if not filesMapped.has_key(str(rec["id"])):
+            if str(rec["id"]) not in filesMapped:
                 continue
             rec["result_files"] = filesMapped[rec["id"]]
             # copy first file in list
@@ -707,14 +707,14 @@ class Search:
     def _HandleTypeJoins(self, pool_type, parameter, operators, kws):
         # set join type
         default_join = 0
-        if not kws.has_key("jointype") or kws.get("jointype")==u"inner":
+        if "jointype" not in kws or kws.get("jointype")==u"inner":
             default_join = 1
             if not kws.get("skiptype"):
                 parameter["pool_type"] = pool_type
         #operators
         if not operators:
             operators = {}
-        if not operators.has_key("pool_type"):
+        if "pool_type" not in operators:
             operators["pool_type"] = u"="
         if not default_join:
             operators["jointype"] = kws.get("jointype")
@@ -752,7 +752,7 @@ class Search:
             for p in range(len(fields)):
                 value = db.structure._de(rec[p], fields[p][u"datatype"], fields[p])
                 rec2.append(converter.Render(fields[p], value, False, **kws))
-            items.append(dict(zip(fldList, rec2)))
+            items.append(dict(list(zip(fldList, rec2))))
         return items, len(items)
     
     def _HandleRelations(self, relations, items, kws):
@@ -858,7 +858,7 @@ class Search:
         parameter = parameter or {}
         if not sort:
             sort = name_field
-        if not parameter.has_key(u"pool_type"):
+        if u"pool_type" not in parameter:
             parameter[u"pool_type"] = pool_type
         recs = self.SelectDict(pool_type=pool_type, parameter=parameter, 
                                fields=[u"id", u"pool_unitref", name_field+u" as name"], 
@@ -899,7 +899,7 @@ class Search:
         parameter = parameter or {}
         if not sort:
             sort = name_field
-        if not parameter.has_key(u"pool_type"):
+        if u"pool_type" not in parameter:
             parameter[u"pool_type"] = pool_type
         recs = self.SelectDict(pool_type=pool_type, 
                                parameter=parameter, 

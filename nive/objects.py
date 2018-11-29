@@ -178,11 +178,11 @@ class Object(object):
         returns FieldConf or None
         """
         if IFieldConf.providedBy(fldId):
-            f = filter(lambda d: d["id"]==fldId.id, self.configuration.data)
+            f = [d for d in self.configuration.data if d["id"]==fldId.id]
             if f:
                 return fldId
         else:
-            f = filter(lambda d: d["id"]==fldId, self.configuration.data)
+            f = [d for d in self.configuration.data if d["id"]==fldId]
             if f:
                 return f[0]
         return self.app.GetMetaFld(fldId)
@@ -325,14 +325,14 @@ class ObjectEdit:
         files = {}
         for f in self.configuration["data"]:
             id = f["id"]
-            if sourceData.has_key(id):
+            if id in sourceData:
                 if f["datatype"]=="file":
                     files[id] = sourceData[id]
                 else:
                     data[id] = sourceData[id]
         for f in self.app.GetAllMetaFlds(False):
             id = f["id"]
-            if sourceData.has_key(id):
+            if id in sourceData:
                 meta[id] = sourceData[id]
         return data, meta, files
 
@@ -350,12 +350,12 @@ class ObjectEdit:
         app = self.app
         # check workflow
         if not self.WfAllow("edit", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (edit)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (edit)")
         self.CommitInternal(user=user)
         # call wf
         try:
             self.WfAction("edit", user=user)
-        except Exception, e:
+        except Exception as e:
             self.Undo()
             raise 
         return True
@@ -391,13 +391,13 @@ class ObjectEdit:
         app = self.app
         # check workflow
         if not self.WfAllow("edit", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (edit)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (edit)")
         self.Signal("update", data=data)
         self.UpdateInternal(data)
         # call wf
         try:
             self.WfAction("edit", user=user)
-        except Exception, e:
+        except Exception as e:
             self.Undo()
             raise 
 
@@ -424,13 +424,13 @@ class ObjectEdit:
         app = self.app
         # check workflow
         if not self.WfAllow("edit", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (edit)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (edit)")
         self.Signal("storeFile", file=file, fldname=fldname)
         self.dbEntry.CommitFile(fldname, file)
         # call wf
         try:
             self.WfAction("edit", user=user)
-        except Exception, e:
+        except Exception as e:
             self.Undo()
             raise 
 
@@ -457,7 +457,7 @@ class ObjectEdit:
         app = self.app
         # check workflow
         if not self.WfAllow("edit", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (edit)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (edit)")
         self.Signal("deleteFile", fldname=fldname)
         result = self.dbEntry.DeleteFile(fldname)
         if not result:
@@ -465,7 +465,7 @@ class ObjectEdit:
         # call wf
         try:
             self.WfAction("edit", user=user)
-        except Exception, e:
+        except Exception as e:
             self.Undo()
             raise 
 
@@ -547,7 +547,7 @@ class ObjectEdit:
         # call wf
         try:
             self.WfAction("create", user=user)
-        except Exception, e:
+        except Exception as e:
             self.Undo()
             raise 
 
@@ -606,7 +606,7 @@ class ObjectWorkflow:
             self.meta["pool_wfp"] = wfProc.id
             self.Signal("wfInit", processID=wfProc.id)
             if not self.WfAllow("create", user, transition=None):
-                raise WorkflowNotAllowed, "Workflow: Not allowed (create)"
+                raise WorkflowNotAllowed("Workflow: Not allowed (create)")
             
 
     def GetWf(self):
@@ -628,7 +628,7 @@ class ObjectWorkflow:
         wf = app.GetWorkflow(wfTag, contextObject=self)
         # enable strict workflow checking
         if wf is None:
-            raise ConfigurationError, "Workflow process not found (%s)" %(wfTag)
+            raise ConfigurationError("Workflow process not found (%s)" %(wfTag))
         self.Signal("wfLoad", workflow=wf)
         return wf
 
@@ -655,7 +655,7 @@ class ObjectWorkflow:
         if wf is None:
             return None
         if len(wf)>1:
-            raise ConfigurationError, "Workflow: More than one process for type found (%s)" % (self.configuration.id)
+            raise ConfigurationError("Workflow: More than one process for type found (%s)" % (self.configuration.id))
         return wf[0]
 
 

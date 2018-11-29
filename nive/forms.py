@@ -246,6 +246,7 @@ from nive.components.reform.exception import ValidationFailure
 
 from nive.components.reform.reformed import SchemaFactory
 from nive.components.reform.reformed import zpt_renderer
+import collections
 
 
 """
@@ -334,7 +335,7 @@ class Form(Events, ReForm):
             if isinstance(typeOrConfiguration, basestring):
                 config = self.app.GetObjectConf(typeOrConfiguration)
                 if not config:
-                    raise ConfigurationError, "Type not found (%s)" % (str(typeOrConfiguration))
+                    raise ConfigurationError("Type not found (%s)" % (str(typeOrConfiguration)))
             else:
                 config = typeOrConfiguration
             self.loadFromType = config
@@ -349,10 +350,10 @@ class Form(Events, ReForm):
         # unconfigured form
         if not subset and not self.subsets and not self.fields:
             if not config or (not config.forms and not config.data):
-                raise ConfigurationError, "No form fields defined"
+                raise ConfigurationError("No form fields defined")
         # unknown subset
         if subset and (not subsets or not subset in subsets):
-            raise ConfigurationError, "Unknown form subset"
+            raise ConfigurationError("Unknown form subset")
 
         # field lookup
         #(1) subsets[subset]["fields"]
@@ -374,7 +375,7 @@ class Form(Events, ReForm):
         elif config and self.app:
             temp = list(self.app.GetAllMetaFlds(ignoreSystem = True)) + list(config.data)
         if not temp:
-            raise ConfigurationError, "No form fields defined"
+            raise ConfigurationError("No form fields defined")
         # lookup field configurations
         self._c_fields = []
         for f in temp:
@@ -393,7 +394,7 @@ class Form(Events, ReForm):
                 if not fld:
                     fld = self.app.GetMetaFld(f)
                 if not fld:
-                    raise ConfigurationError, "Form field lookup failed: " + f
+                    raise ConfigurationError("Form field lookup failed: " + f)
                 f = fld
             self._c_fields.append(f)
             # add controlset fields
@@ -458,7 +459,7 @@ class Form(Events, ReForm):
         :param settings: dict with form settings
         :return: nothing
         """
-        for k,v in settings.items():
+        for k,v in list(settings.items()):
             if k.startswith(u"widget."):
                 setattr(self.widget, k[len(u"widget."):], v)
                 del settings[k]
@@ -507,10 +508,10 @@ class Form(Events, ReForm):
         try:
             self.Signal("validate", data=data)
             data = self.validate(data)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             return False, e.cstruct, e
         if removeNull:
-            data = dict(filter(lambda d: d[1] != null, data.items()))
+            data = dict([d for d in list(data.items()) if d[1] != null])
         self.Signal("process", data=data)
         return True, data, None
 
@@ -534,12 +535,12 @@ class Form(Events, ReForm):
         result = True
         try:
             data = self.schema.deserialize(data)
-        except Invalid, e:
+        except Invalid as e:
             errors = e.children
             result = False
         
         if removeNull:
-            data = dict(filter(lambda d: d[1] != null, data.items()))
+            data = dict([d for d in list(data.items()) if d[1] != null])
         return result, data, errors
 
         
@@ -554,16 +555,16 @@ class Form(Events, ReForm):
         result = True
         try:
             data = self.validate(data)
-        except ValidationFailure, e:
+        except ValidationFailure as e:
             result = False
             data = e.cstruct
         except ValueError:
             return self.ExtractDeserialized(data, removeNull)
 
         if removeNull:
-            data = dict(filter(lambda d: d[1] != null, data.items()))
+            data = dict([d for d in list(data.items()) if d[1] != null])
         if removeEmpty:
-            data = dict(filter(lambda d: d[1] not in (u"",[],()), data.items()))
+            data = dict([d for d in list(data.items()) if d[1] not in (u"",[],())])
         
         return result, data
     
@@ -580,13 +581,13 @@ class Form(Events, ReForm):
         result = True
         try:
             data = self.schema.deserialize(data)
-        except Invalid, e:
+        except Invalid as e:
             result = False
 
         if removeNull:
-            data = dict(filter(lambda d: d[1] != null, data.items()))
+            data = dict([d for d in list(data.items()) if d[1] != null])
         if removeEmpty:
-            data = dict(filter(lambda d: d[1] not in (u"",[],()), data.items()))
+            data = dict([d for d in list(data.items()) if d[1] not in (u"",[],())])
 
         return result, data
 
@@ -612,9 +613,9 @@ class Form(Events, ReForm):
             if f.datatype == "password":
                 data[f.id] = u""
             else:
-                if obj.data.has_key(f.id):
+                if f.id in obj.data:
                     data[f.id] = obj.data[f.id]
-                elif obj.meta.has_key(f.id):
+                elif f.id in obj.meta:
                     data[f.id] = obj.meta[f.id]
         self.Signal("loadDataObj", data=data, obj=obj)
         return data
@@ -629,8 +630,7 @@ class Form(Events, ReForm):
         
         returns dict
         """
-        data = dict(filter(lambda y: y[1]!=None, 
-                           map(lambda x: (x["id"],x["default"]), self.GetFields())))
+        data = dict([y for y in [(x["id"],x["default"]) for x in self.GetFields()] if y[1]!=None])
         self.Signal("loadDefault", data=data)
         return data
 
@@ -647,7 +647,7 @@ class Form(Events, ReForm):
             return ()
         elif not removeReadonly:
             return self._c_fields
-        return filter(lambda field: not (removeReadonly and field.readonly), self._c_fields)
+        return [field for field in self._c_fields if not (removeReadonly and field.readonly)]
 
 
     def GetActions(self, removeHidden=False):
@@ -660,7 +660,7 @@ class Form(Events, ReForm):
             return ()
         elif not removeHidden:
             return self._c_actions
-        return filter(lambda a: not (removeHidden and a.get("hidden",False)), self._c_actions)
+        return [a for a in self._c_actions if not (removeHidden and a.get("hidden",False))]
 
     
     def GetField(self, fieldid):
@@ -852,7 +852,7 @@ class HTMLForm(Form):
         formValues = self.GetFormValues(self.request)
         actions = self.GetActions()
         for a in actions:
-            if a["id"]+self.actionPostfix in formValues.keys():
+            if a["id"]+self.actionPostfix in list(formValues.keys()):
                 action = a
                 break
 
@@ -868,7 +868,7 @@ class HTMLForm(Form):
 
         # no action -> raise exception
         if not action:
-            raise ConfigurationError, "No action to process the form found"
+            raise ConfigurationError("No action to process the form found")
 
         # call action
         if isinstance(action["method"], basestring):
@@ -900,7 +900,7 @@ class HTMLForm(Form):
         returns bool
         """
         formValues = self.GetFormValues(self.request)
-        return action+self.actionPostfix in formValues.keys()
+        return action+self.actionPostfix in list(formValues.keys())
 
 
     def RemoveActionsFromRequest(self):
@@ -911,7 +911,7 @@ class HTMLForm(Form):
         actions = self.GetActions()
         formValues = self.GetFormValues(self.request)
         for a in actions:
-            if a["id"]+self.actionPostfix in formValues.keys():
+            if a["id"]+self.actionPostfix in list(formValues.keys()):
                 action = a
                 try:
                     del self.request.POST[a["id"]+self.actionPostfix]
@@ -1121,22 +1121,22 @@ class HTMLForm(Form):
         # use view.StaticUrl if self.view is set
         if self.view:
             if js_resources:
-                js_links = [self.view.StaticUrl(r) for r in filter(lambda v: v not in ignore, js_resources)]
+                js_links = [self.view.StaticUrl(r) for r in [v for v in js_resources if v not in ignore]]
             if css_resources:
-                css_links = [self.view.StaticUrl(r) for r in filter(lambda v: v not in ignore, css_resources)]
+                css_links = [self.view.StaticUrl(r) for r in [v for v in css_resources if v not in ignore]]
             # seq
             if resources:
-                js_links.extend([self.view.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
-                css_links.extend([self.view.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
+                js_links.extend([self.view.StaticUrl(r[1]) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".js")]])
+                css_links.extend([self.view.StaticUrl(r[1]) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".css")]])
         else:
             if js_resources:
-                js_links = [static_url(r, req) for r in filter(lambda v: v not in ignore, js_resources)]
+                js_links = [static_url(r, req) for r in [v for v in js_resources if v not in ignore]]
             if css_resources:
-                css_links = [static_url(r, req) for r in filter(lambda v: v not in ignore, css_resources)]
+                css_links = [static_url(r, req) for r in [v for v in css_resources if v not in ignore]]
             # seq
             if resources:
-                js_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), resources)])
-                css_links.extend([static_url(r[1], req) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), resources)])
+                js_links.extend([static_url(r[1], req) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".js")]])
+                css_links.extend([static_url(r[1], req) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".css")]])
         js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
         return (u"\r\n").join(css_tags + js_tags)
@@ -1164,7 +1164,7 @@ class HTMLForm(Form):
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
         if self.successResponseBody is not None:
-            if callable(self.successResponseBody):
+            if isinstance(self.successResponseBody, collections.Callable):
                 body = self.successResponseBody(self)
             else:
                 body = self.successResponseBody
@@ -1302,7 +1302,7 @@ class ObjectForm(HTMLForm):
             data = {}
         elif self.defaults is not None:
             data = self.defaults
-            if callable(data):
+            if isinstance(data, collections.Callable):
                 data = data(self)
         else:
             data = self.LoadDefaultData()
@@ -1446,17 +1446,17 @@ class ToolForm(HTMLForm):
             if isinstance(typeOrConfiguration, basestring):
                 config = self.app.GetToolConf(typeOrConfiguration)
                 if not config:
-                    raise ConfigurationError, "Tool not found (%s). Use configuration instance instead of a string." % (str(typeOrConfiguration))
+                    raise ConfigurationError("Tool not found (%s). Use configuration instance instead of a string." % (str(typeOrConfiguration)))
             else:
                 config = typeOrConfiguration
             self.loadFromType = config
         
         # unconfigured form
         if not subset and not subsets and not config and not self.fields:
-            raise ConfigurationError, "No form fields defined."
+            raise ConfigurationError("No form fields defined.")
         # unknown subset
         if subset and (not subsets or not subset in subsets):
-            raise ConfigurationError, "Unknown subset."
+            raise ConfigurationError("Unknown subset.")
 
         # field lookup
         #(1) subsets[subset]["fields"]
@@ -1492,7 +1492,7 @@ class ToolForm(HTMLForm):
                             fld = a
                             break
                 if not fld:
-                    raise ConfigurationError, "Form field lookup failed: " + f
+                    raise ConfigurationError("Form field lookup failed: " + f)
                 f = fld
             self._c_fields.append(f)
         
@@ -1523,7 +1523,7 @@ class ToolForm(HTMLForm):
                                 action = v
                                 break
                     if not action:
-                        raise ConfigurationError, "Form action lookup failed: " + a
+                        raise ConfigurationError("Form action lookup failed: " + a)
                     a = action
                 self._c_actions.append(a)
                 

@@ -109,14 +109,14 @@ class Persistent(object):
         if self.configuration.get("data"):
             for f in self.configuration.get("data"):
                 id = f["id"]
-                if sourceData.has_key(id):
+                if id in sourceData:
                     if f["datatype"]=="file":
                         files[id] = sourceData[id]
                     else:
                         data[id] = sourceData[id]
         for f in self.app.GetAllMetaFlds(False):
             id = f["id"]
-            if sourceData.has_key(id):
+            if id in sourceData:
                 meta[id] = sourceData[id]
         return data, meta, files
         

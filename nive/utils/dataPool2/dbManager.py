@@ -74,7 +74,7 @@ class DatabaseManager(object):
                 time.sleep(0.5)
                 aCnt += 1
                 if aCnt == 10:
-                    raise OperationalError, "timeout create table"
+                    raise OperationalError("timeout create table")
             return True
 
         columns = self.GetColumns(tableName, structure)
@@ -216,7 +216,7 @@ class DatabaseManager(object):
         else:
             aSql = u"CREATE TABLE %s" % (tableName)
             if not columns:
-                raise ConfigurationError, "No database fields defined."
+                raise ConfigurationError("No database fields defined.")
             aCnt = 0
             aSql += u"("
             for c in columns:

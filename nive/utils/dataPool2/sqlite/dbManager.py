@@ -90,7 +90,7 @@ class Sqlite3Manager(DatabaseManager):
             if aN == "" or aN == " " or aN == None:
                 aN = 0
             if isinstance(aN, basestring):
-                aN = long(aN)
+                aN = int(aN)
             if conf.get("size", conf.get("maxLen",0)) == 4:
                 aStr = u"TINYINT NOT NULL DEFAULT %d" % (aN)
             elif conf.get("size", conf.get("maxLen",0)) in (11,12):
@@ -124,7 +124,7 @@ class Sqlite3Manager(DatabaseManager):
             if aN == "" or aN == " " or aN == None:
                 aN = 0
             if isinstance(aN, basestring):
-                aN = long(aN)
+                aN = int(aN)
             aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "unitlist":
@@ -194,7 +194,7 @@ class Sqlite3Manager(DatabaseManager):
             if aN == "" or aN == " " or aN == None:
                 aN = 0
             if isinstance(aN, basestring):
-                aN = long(aN)
+                aN = int(aN)
             aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
 
         if conf.get("unique"):
@@ -275,7 +275,7 @@ class Sqlite3Manager(DatabaseManager):
         else:
             aSql = u"CREATE TABLE %s" % (tableName)
             if not columns:
-                raise ConfigurationError, "No database fields defined."
+                raise ConfigurationError("No database fields defined.")
             aCnt = 0
             aSql += u"("
             for c in columns:

@@ -40,7 +40,7 @@ class Wrapper(object):
         self._temp_[key] = self._entry_().DeserializeValue(key, value, self.meta)
 
     def __getitem__(self, key):
-        if self._temp_.has_key(key):
+        if key in self._temp_:
             return self._temp_[key]
         if not self._content_:
             self._Load()
@@ -48,9 +48,9 @@ class Wrapper(object):
 
 
     def __getattr__(self, key):
-        if key in self.__dict__.keys():
+        if key in list(self.__dict__.keys()):
             return self.__dict__[key]
-        if self._temp_.has_key(key):
+        if key in self._temp_:
             return self._temp_[key]
         if not self._content_:
             self._Load()
@@ -84,7 +84,7 @@ class Wrapper(object):
     def has_key(self, key):
         if self.HasTempKey(key):
             return True
-        return key in self.keys()
+        return key in list(self.keys())
 
 
     def get(self, key, default=None):
@@ -104,21 +104,21 @@ class Wrapper(object):
     def update(self, dict, force = False):
         dict = self._entry_().DeserializeValue(None, dict, self.meta)
         if force:
-            for k in dict.keys():
+            for k in list(dict.keys()):
                 data = dict[k]
                 if isinstance(data, bytes):
                     dict[k] = self._entry_().pool.DecodeText(data)
             self._temp_.update(dict)
             return
-        for k in dict.keys():
+        for k in list(dict.keys()):
             self[k] = dict[k]
 
 
     def keys(self):
         if not self._content_:
             self._Load()
-        t = self._content_.keys()
-        t += self._temp_.keys()
+        t = list(self._content_.keys())
+        t += list(self._temp_.keys())
         return t
 
 
@@ -127,7 +127,7 @@ class Wrapper(object):
     def GetTemp(self):                return self._temp_
     def HasTemp(self):                return self._temp_ != {}
     def GetTempKey(self, key):        return self._temp_.get(key)
-    def HasTempKey(self, key):        return self._temp_.has_key(key)
+    def HasTempKey(self, key):        return key in self._temp_
 
     def GetEntry(self):                return self._entry_()
 
@@ -215,7 +215,7 @@ class FileWrapper(Wrapper):
         self._content_ = {}
         for f in files:
             self._content_[f["filekey"]] = f
-        return self._content_.keys()
+        return list(self._content_.keys())
 
 
 #  Pool Structure ---------------------------------------------------------------------------
@@ -317,17 +317,17 @@ class PoolStructure(object):
         return self.structure.get(key, default)
 
     def has_key(self, key, version=None):
-        return self.structure.has_key(key)
+        return key in self.structure
 
     def keys(self, version=None):
-        return self.structure.keys()
+        return list(self.structure.keys())
     
     
     def serialize(self, table, field, value):
         # if field==None and value is a dictionary multiple values are serialized
         if field==None and isinstance(value, dict):
             newdict = {}
-            for field, v in value.items():
+            for field, v in list(value.items()):
                 try:        t = self.fieldtypes[table][field]
                 except:     t = None
                 newdict[field] = self._se(v, t, field)
@@ -343,7 +343,7 @@ class PoolStructure(object):
         # if field==None and value is a dictionary multiple values are deserialized
         if field is None and isinstance(value, dict):
             newdict = {}
-            for field, v in value.items():
+            for field, v in list(value.items()):
                 try:        t = self.fieldtypes[table][field]
                 except:     t = None
                 newdict[field] = self._de(v, t, field)
@@ -378,16 +378,16 @@ class PoolStructure(object):
             
         if fieldtype == "number":
             if isinstance(value, basestring):
-                value = long(value)
+                value = int(value)
             elif isinstance(value, float):
-                value = long(value)
+                value = int(value)
         
         elif fieldtype == "float":
             if isinstance(value, basestring):
                 value = float(value)
 
         elif fieldtype in ("date", "datetime"):
-            if isinstance(value, (float,int,long)):
+            if isinstance(value, (float,int)):
                 value = unicode(datetime.fromtimestamp(value))
             elif value is None:
                 pass
@@ -395,7 +395,7 @@ class PoolStructure(object):
                 value = unicode(value)
         
         elif fieldtype == "time":
-            if isinstance(value, (float,int,long)):
+            if isinstance(value, (float,int)):
                 value = unicode(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
             elif value is None:
                 pass
@@ -473,7 +473,7 @@ class PoolStructure(object):
             # -> to datetime
             if isinstance(value, basestring):
                 value = ConvertToDateTime(value)
-            elif isinstance(value, (float,int,long)):
+            elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
                     
         elif fieldtype == "time":
@@ -483,7 +483,7 @@ class PoolStructure(object):
                 value2 = ConvertToDateTime(u"2015-01-01 "+unicode(value))
                 if value2:
                     value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
-            elif isinstance(value, (float,int,long)):
+            elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
                 value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
 
@@ -511,7 +511,7 @@ class PoolStructure(object):
             elif isinstance(value, list):
                 value = tuple(value)
             if fieldtype == "unitlist":
-                value = tuple([long(v) for v in value])
+                value = tuple([int(v) for v in value])
             
         elif fieldtype == "json":
             # -> to python type

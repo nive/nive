@@ -4,7 +4,7 @@ def validation_failure_exc(func, *arg, **kw):
     from nive.components.reform.exception import ValidationFailure
     try:
         func(*arg, **kw)
-    except ValidationFailure, e:
+    except ValidationFailure as e:
         return e
     else:
         raise AssertionError('Form error not raised') # pragma: no cover
@@ -113,7 +113,7 @@ class TestField(unittest.TestCase):
         field = Field()
         try:
             cls.set_zpt_renderer(template_dir)
-            self.failUnless(cls.default_renderer('hidden', field=field,
+            self.assertTrue(cls.default_renderer('hidden', field=field,
                                                  cstruct=None))
         finally:
             cls.set_default_renderer(old)
@@ -261,7 +261,7 @@ class TestField(unittest.TestCase):
         field.children = [child]
         field.foo = 1
         result = field.clone()
-        self.failIf(result is field)
+        self.assertFalse(result is field)
         self.assertEqual(result.order, 1)
         self.assertEqual(result.oid, 'reformField1')
         self.assertEqual(result.renderer, 'abc')
@@ -409,14 +409,14 @@ class TestField(unittest.TestCase):
         schema = DummySchema()
         field = self._makeOne(schema)
         r = repr(field)
-        self.failUnless(r.startswith('<nive.components.reform.field.Field object at '), r)
-        self.failUnless(r.endswith("(schemanode 'name')>"))
+        self.assertTrue(r.startswith('<nive.components.reform.field.Field object at '), r)
+        self.assertTrue(r.endswith("(schemanode 'name')>"))
 
     def test_configuration(self):
         from nive.definitions import FieldConf
         schema = DummySchema()
         field = self._makeOne(schema, configuration=FieldConf())
-        self.assert_(field.configuration)
+        self.assertTrue(field.configuration)
         field = self._makeOne(schema)
         self.assertFalse(field.configuration)
 

@@ -46,18 +46,18 @@ class registryTest(unittest.TestCase):
 
         t2 = Test2()
         alsoProvides(t2, ITest2)
-        self.assert_(ITest2.providedBy(t2))
+        self.assertTrue(ITest2.providedBy(t2))
         ITest.providedBy(Test())
         registry.registerUtility(Test(), provided=ITest, name='testconf')
 
         ITest2.providedBy(Test())
         registry.registerUtility(Test2(), name='testconf2')
         
-        self.assert_(registry.queryUtility(ITestaaaa)==None)
-        self.assert_(registry.queryUtility(ITest, name=u'testconf'))
+        self.assertTrue(registry.queryUtility(ITestaaaa)==None)
+        self.assertTrue(registry.queryUtility(ITest, name=u'testconf'))
         for u in registry.getUtilitiesFor(ITest):
-            self.assert_(u)
-        self.assert_(registry.getAllUtilitiesRegisteredFor(ITest))
+            self.assertTrue(u)
+        self.assertTrue(registry.getAllUtilitiesRegisteredFor(ITest))
         
         
     def test_init2(self):
@@ -79,12 +79,12 @@ class registryTest(unittest.TestCase):
         registry.registerAdapter(Test(), (IConf,), ITest)
         c = Conf()
         
-        self.assert_(IConf.providedBy(c))
+        self.assertTrue(IConf.providedBy(c))
         #registry.getAdapter(c, ITest, name='testadapter')
-        self.assert_(registry.getAdapter(c, ITest))
+        self.assertTrue(registry.getAdapter(c, ITest))
         
         self.assertFalse(registry.queryAdapter(c, ITest, name='nix'))
-        self.assert_(registry.queryAdapter(c, ITest, name='testadapter'))
+        self.assertTrue(registry.queryAdapter(c, ITest, name='testadapter'))
         a = list(registry.getAdapters((c,), ITest))
-        self.assert_(len(a)==3,a)
+        self.assertTrue(len(a)==3,a)
         

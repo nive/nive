@@ -4,7 +4,7 @@ def invalid_exc(func, *arg, **kw):
     from nive.components.reform.schema import Invalid
     try:
         func(*arg, **kw)
-    except Invalid, e:
+    except Invalid as e:
         return e
     else:
         raise AssertionError('Invalid not raised') # pragma: no cover
@@ -26,7 +26,7 @@ class TestInvalid(unittest.TestCase):
         exc = self._makeOne(None, 'msg')
         other = Dummy()
         exc.add(other)
-        self.failIf(hasattr(other, 'positional'))
+        self.assertFalse(hasattr(other, 'positional'))
         self.assertEqual(exc.children, [other])
 
     def test_add_positional(self):
@@ -365,14 +365,14 @@ class TestMapping(unittest.TestCase):
             self._makeOne('ignore')
             self._makeOne('raise')
             self._makeOne('preserve')
-        except ValueError, e: # pragma: no cover
+        except ValueError as e: # pragma: no cover
             raise AssertionError(e)
 
     def test_deserialize_not_a_mapping(self):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, None)
-        self.failUnless(
+        self.assertTrue(
             e.msg.interpolate().startswith('"None" is not a mapping type'))
 
     def test_deserialize_null(self):
@@ -445,7 +445,7 @@ class TestMapping(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.serialize, node, None)
-        self.failUnless(
+        self.assertTrue(
             e.msg.interpolate().startswith('"None" is not a mapping type'))
 
     def test_serialize_no_subnodes(self):
@@ -792,7 +792,7 @@ class TestString(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_deserialize_unicode_from_None(self):
         uni = u'\xf8'
@@ -836,7 +836,7 @@ class TestString(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.serialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_serialize_nonunicode_to_None(self):
         value = object()
@@ -873,7 +873,7 @@ class TestString(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne('utf-8')
         e = invalid_exc(typ.serialize, node, not_utf8)
-        self.failUnless('cannot be serialized' in e.msg)
+        self.assertTrue('cannot be serialized' in e.msg)
 
 class TestInteger(unittest.TestCase):
     def _makeOne(self):
@@ -906,7 +906,7 @@ class TestInteger(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_deserialize_ok(self):
         val = '1'
@@ -920,7 +920,7 @@ class TestInteger(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.serialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_serialize_ok(self):
         val = 1
@@ -955,7 +955,7 @@ class TestFloat(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_deserialize_ok(self):
         val = '1.0'
@@ -969,7 +969,7 @@ class TestFloat(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.serialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_serialize_ok(self):
         val = 1.0
@@ -1004,7 +1004,7 @@ class TestDecimal(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_deserialize_ok(self):
         import decimal
@@ -1019,7 +1019,7 @@ class TestDecimal(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.serialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_serialize_ok(self):
         val = 1.0
@@ -1059,7 +1059,7 @@ class TestBoolean(unittest.TestCase):
         typ = self._makeOne()
         node = DummySchemaNode(None)
         e = invalid_exc(typ.deserialize, node, Uncooperative())
-        self.failUnless(e.msg.endswith('not a string'))
+        self.assertTrue(e.msg.endswith('not a string'))
 
     def test_deserialize_null(self):
         from nive.components import reform
@@ -1180,7 +1180,7 @@ class TestDateTime(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, 'garbage')
-        self.failUnless('Invalid' in e.msg)
+        self.assertTrue('Invalid' in e.msg)
 
     def test_deserialize_null(self):
         from nive.components import reform
@@ -1281,13 +1281,13 @@ class TestDate(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, 'garbage')
-        self.failUnless('Invalid' in e.msg)
+        self.assertTrue('Invalid' in e.msg)
 
     def test_deserialize_invalid_weird(self):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, '10-10-10-10')
-        self.failUnless('Invalid' in e.msg)
+        self.assertTrue('Invalid' in e.msg)
 
     def test_deserialize_null(self):
         from nive.components import reform
@@ -1373,7 +1373,7 @@ class TestTime(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, 'garbage')
-        self.failUnless('Invalid' in e.msg)
+        self.assertTrue('Invalid' in e.msg)
 
     def test_deserialize_three_digit_string(self):
         import datetime
@@ -1433,7 +1433,7 @@ class TestSchemaNode(unittest.TestCase):
 
     def test_new_sets_order(self):
         node = self._makeOne(None)
-        self.failUnless(hasattr(node, '_order'))
+        self.assertTrue(hasattr(node, '_order'))
 
     def test_ctor_no_title(self):
         node = self._makeOne(None, 0, validator=1, default=2, name='name_a',
@@ -1605,8 +1605,8 @@ class TestSchemaNode(unittest.TestCase):
     def test_repr(self):
         node = self._makeOne(None, name='flub')
         result = repr(node)
-        self.failUnless(result.startswith('<nive.components.reform.schema.SchemaNode object at '))
-        self.failUnless(result.endswith("(named flub)>"))
+        self.assertTrue(result.startswith('<nive.components.reform.schema.SchemaNode object at '))
+        self.assertTrue(result.endswith("(named flub)>"))
 
     def test___getitem__success(self):
         node = self._makeOne(None)
@@ -1652,8 +1652,8 @@ class TestSchemaNode(unittest.TestCase):
         node = self._makeOne(None)
         another = self._makeOne(None, name='another')
         node.add(another)
-        self.assertEquals('another' in node, True)
-        self.assertEquals('b' in node, False)
+        self.assertEqual('another' in node, True)
+        self.assertEqual('b' in node, False)
 
     def test_clone(self):
         inner_typ = DummyType()
@@ -1664,13 +1664,13 @@ class TestSchemaNode(unittest.TestCase):
         inner_node.foo = 2
         outer_node.children = [inner_node]
         outer_clone = outer_node.clone()
-        self.failIf(outer_clone is outer_node)
+        self.assertFalse(outer_clone is outer_node)
         self.assertEqual(outer_clone.typ, outer_typ)
         self.assertEqual(outer_clone.name, 'outer')
         self.assertEqual(outer_node.foo, 1)
         self.assertEqual(len(outer_clone.children), 1)
         inner_clone = outer_clone.children[0]
-        self.failIf(inner_clone is inner_node)
+        self.assertFalse(inner_clone is inner_node)
         self.assertEqual(inner_clone.typ, inner_typ)
         self.assertEqual(inner_clone.name, 'inner')
         self.assertEqual(inner_clone.foo, 2)
@@ -1680,8 +1680,8 @@ class TestSchemaNode(unittest.TestCase):
         inner_typ = DummyType()
         outer_typ = DummyType()
         def dv(node, kw):
-            self.failUnless(node.name in ['outer', 'inner'])
-            self.failUnless('a' in kw)
+            self.assertTrue(node.name in ['outer', 'inner'])
+            self.assertTrue('a' in kw)
             return '123'
         dv = deferred(dv)
         outer_node = self._makeOne(outer_typ, name='outer', missing=dv)
@@ -1689,10 +1689,10 @@ class TestSchemaNode(unittest.TestCase):
                                    missing=dv)
         outer_node.children = [inner_node]
         outer_clone = outer_node.bind(a=1)
-        self.failIf(outer_clone is outer_node)
+        self.assertFalse(outer_clone is outer_node)
         self.assertEqual(outer_clone.missing, '123')
         inner_clone = outer_clone.children[0]
-        self.failIf(inner_clone is inner_node)
+        self.assertFalse(inner_clone is inner_node)
         self.assertEqual(inner_clone.missing, '123')
         self.assertEqual(inner_clone.validator, '123')
 
@@ -1701,8 +1701,8 @@ class TestSchemaNode(unittest.TestCase):
         inner_typ = DummyType()
         outer_typ = DummyType()
         def dv(node, kw):
-            self.failUnless(node.name in ['outer', 'inner'])
-            self.failUnless('a' in kw)
+            self.assertTrue(node.name in ['outer', 'inner'])
+            self.assertTrue('a' in kw)
             return '123'
         dv = deferred(dv)
         def remove_inner(node, kw):
@@ -1714,7 +1714,7 @@ class TestSchemaNode(unittest.TestCase):
                                    missing=dv)
         outer_node.children = [inner_node]
         outer_clone = outer_node.bind(a=1)
-        self.failIf(outer_clone is outer_node)
+        self.assertFalse(outer_clone is outer_node)
         self.assertEqual(outer_clone.missing, '123')
         self.assertEqual(len(outer_clone.children), 0)
         self.assertEqual(len(outer_node.children), 1)
@@ -1752,7 +1752,7 @@ class TestSchema(unittest.TestCase):
             thing_a = reform.schema.SchemaNode(reform.schema.String())
             thing2 = reform.schema.SchemaNode(reform.schema.String(), title='bar')
         node = MySchema(default='abc')
-        self.failUnless(hasattr(node, '_order'))
+        self.assertTrue(hasattr(node, '_order'))
         self.assertEqual(node.default, 'abc')
         self.assertEqual(node.__class__, reform.schema.SchemaNode)
         self.assertEqual(node.typ.__class__, reform.schema.Mapping)
@@ -1782,7 +1782,7 @@ class TestSchema(unittest.TestCase):
 class Test_null(unittest.TestCase):
     def test___nonzero__(self):
         from nive.components.reform.schema import null
-        self.failIf(null)
+        self.assertFalse(null)
 
     def test___repr__(self):
         from nive.components.reform.schema import null
@@ -1790,8 +1790,8 @@ class Test_null(unittest.TestCase):
 
     def test_pickling(self):
         from nive.components.reform.schema import null
-        import cPickle
-        self.failUnless(cPickle.loads(cPickle.dumps(null)) is null)
+        import pickle
+        self.assertTrue(pickle.loads(pickle.dumps(null)) is null)
 
 class Dummy(object):
     pass
@@ -1866,7 +1866,7 @@ class TestSet(unittest.TestCase):
         typ = self._makeOne()
         provided = []
         result = typ.serialize(node, provided)
-        self.failUnless(result is provided)
+        self.assertTrue(result is provided)
 
     def test_serialize_null(self):
         from nive.components.reform.schema import null
@@ -1966,7 +1966,7 @@ class TestList(unittest.TestCase):
         typ = self._makeOne()
         provided = []
         result = typ.serialize(node, provided)
-        self.failUnless(result is provided)
+        self.assertTrue(result is provided)
 
     def test_serialize_null(self):
         from nive.components.reform.schema import null
@@ -2027,7 +2027,7 @@ class TestCodeList(unittest.TestCase):
         typ = self._makeOne(allowed=("aaa","bbb"))
         provided = []
         result = typ.serialize(node, provided)
-        self.failUnless(result is provided)
+        self.assertTrue(result is provided)
 
     def test_serialize_null(self):
         from nive.components.reform.schema import null
@@ -2104,7 +2104,7 @@ class TestLines(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         e = invalid_exc(typ.deserialize, node, val)
-        self.failUnless(e.msg)
+        self.assertTrue(e.msg)
 
     def test_deserialize_stringlist(self):
         value = u'123\r\n456\r\n789\r\n'

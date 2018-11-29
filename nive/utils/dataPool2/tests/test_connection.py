@@ -21,13 +21,13 @@ class ConnectionTest(unittest.TestCase):
     """
     """
     def test_conn(self):
-        self.assert_(Connection(conn))
+        self.assertTrue(Connection(conn))
         
     def test_conntl(self):
-        self.assert_(ConnectionThreadLocal(conn))
+        self.assertTrue(ConnectionThreadLocal(conn))
     
     def test_connreq(self):
-        self.assert_(ConnectionRequest(conn))
+        self.assertTrue(ConnectionRequest(conn))
 
 
 

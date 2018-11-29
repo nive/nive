@@ -17,6 +17,6 @@ class TestConf(unittest.TestCase):
         if not r:
             return
         print(FormatConfTestFailure(r))
-        self.assert_(False, "Configuration Error")
+        self.assertTrue(False, "Configuration Error")
 
 

@@ -5,7 +5,7 @@
 import weakref
 import os
 import uuid
-from StringIO import StringIO
+from io import StringIO
 
 from zope.interface import implements
 
@@ -179,7 +179,7 @@ class File(object):
         
         maxFileSize = fileentry.maxFileSize
         if self.size and self.size > maxFileSize:
-            raise ValueError, "File too big"
+            raise ValueError("File too big")
 
         # create temp path for current
         backupPath = None
@@ -201,12 +201,12 @@ class File(object):
             while data:
                 size += len(data)
                 if maxFileSize and size > maxFileSize:
-                    raise ValueError, "File too big"
+                    raise ValueError("File too big")
                 out.write(data)
                 data = self.read(10000)
             out.close()
             #file.close()
-        except Exception, e:
+        except Exception as e:
             try:
                 self.file.close()
             except:
@@ -227,7 +227,7 @@ class File(object):
             backupPath.SetExtension(originalPath.GetExtension())
             if originalPath.Exists() and not originalPath.Rename(backupPath):
                 tempPath.Delete()
-                raise IOError, "Rename file failed"
+                raise IOError("Rename file failed")
             self.deleteOnSuccess = str(backupPath)
 
         try:
@@ -259,7 +259,7 @@ class File(object):
     # file class dictionary support ---------------------------------------
 
     def __iter__(self):
-        return iter(self.__dict__.keys())
+        return iter(list(self.__dict__.keys()))
     
     def __getitem__(self, key):
         return getattr(self, key)
@@ -272,7 +272,7 @@ class File(object):
             return default
         
     def update(self, data):
-        for k in data.keys():
+        for k in list(data.keys()):
             setattr(self, k, data[k])
 
 
@@ -536,7 +536,7 @@ class FileEntry(object):
         """
         if not isinstance(files, dict):
             files = {"":files}
-        for key, file in files.items():
+        for key, file in list(files.items()):
             if not hasattr(file, "deleteOnSuccess"):
                 continue
             path = DvPath(file.deleteOnSuccess)
@@ -672,7 +672,7 @@ class FileIterator(object):
     def __iter__(self):
         return self
     
-    def next(self):
+    def __next__(self):
         if self.length is not None and self.length <= 0:
             raise StopIteration
         chunk = self.fileobj.read(self.chunk_size)

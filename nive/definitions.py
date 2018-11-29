@@ -232,7 +232,7 @@ class baseConf(object):
         #alsoProvides(self, IConf)
         if copyFrom:
             self._empty=False
-            import helper
+            from . import helper
             i,c = helper.ResolveConfiguration(copyFrom)
             if c:
                 data = copy.deepcopy(c.__dict__)
@@ -248,7 +248,7 @@ class baseConf(object):
         return not self._empty
     
     def keys(self):
-        k = self.__dict__.keys()
+        k = list(self.__dict__.keys())
         k.remove("_empty")
         k.remove("_parent")
         try:
@@ -265,7 +265,7 @@ class baseConf(object):
     def update(self, values):
         self._empty=False
         #opt
-        for k in values.keys():
+        for k in list(values.keys()):
             setattr(self, k, values[k])
             
     @property
@@ -285,11 +285,11 @@ class baseConf(object):
         if self._parent is not None:
             if key in self._parent.__dict__:
                 return self._parent.__dict__[key]
-        raise AttributeError, key
+        raise AttributeError(key)
 
     def __setattr__(self, key, value):
         if self.locked:
-            raise ConfigurationError, "Configuration locked."
+            raise ConfigurationError("Configuration locked.")
         self.__dict__["_empty"]=False
         self.__dict__[key]=value
 
@@ -298,18 +298,18 @@ class baseConf(object):
 
     def __setitem__(self, key, value):
         if self.locked:
-            raise ConfigurationError, "Configuration locked."
+            raise ConfigurationError("Configuration locked.")
         self._empty=False
         setattr(self, key, value)
         
     def __delitem__(self, key):
         if self.locked:
-            raise ConfigurationError, "Configuration locked."
+            raise ConfigurationError("Configuration locked.")
         if key in self.__dict__:
             del self.__dict__[key]
 
     def __iter__(self):
-        return iter(self.keys())
+        return iter(list(self.keys()))
 
     def __deepcopy__(self, memo):
         data = copy.deepcopy(self.__dict__)
@@ -553,7 +553,7 @@ class AppConf(baseConf):
         # bw 0.9.3 
         # database connection parameter
         if hasattr(self, "dbConfiguration") and isinstance(self.dbConfiguration, basestring):
-            import helper
+            from . import helper
             self.dbConfiguration = helper.LoadConfiguration(self.dbConfiguration)
         
  
@@ -758,7 +758,7 @@ class ObjectConf(baseConf):
         self.description = u""
         self.version = "1"
         baseConf.__init__(self, copyFrom, **values)
-        import helper
+        from . import helper
         d=[]
         for field in self.data:
             if isinstance(field, dict):
@@ -1100,7 +1100,7 @@ class ViewConf(baseConf):
             report.append((ImportError, " for ViewConf.view", self))
         # check renderer
         if self.renderer:
-            import helper
+            from . import helper
             r = helper.ResolveAsset(self.renderer)
             try:
                 r = helper.ResolveAsset(self.renderer)

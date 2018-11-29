@@ -122,7 +122,7 @@ class Field(object):
     def __init__(self, schema, renderer=None, counter=None,
                  resource_registry=None, **kw):
         self.counter = counter or itertools.count()
-        self.order = self.counter.next()
+        self.order = next(self.counter)
         self.oid = 'reformField%s' % self.order
         self.schema = schema
         self.typ = self.schema.typ # required by Invalid exception
@@ -223,7 +223,7 @@ class Field(object):
         than the last renderered field of this set."""
         cloned = self.__class__(self.schema)
         cloned.__dict__.update(self.__dict__)
-        cloned.order = cloned.counter.next()
+        cloned.order = next(cloned.counter)
         cloned.oid = 'reformField%s' % cloned.order
         cloned.children = [ field.clone() for field in self.children ]
         return cloned
@@ -244,7 +244,7 @@ class Field(object):
             widget_maker = widget.default_widget_makers.get(
                 self.schema.typ.__class__)
             if widget_maker is None:
-                for (cls, wgt) in widget.default_widget_makers.items():
+                for (cls, wgt) in list(widget.default_widget_makers.items()):
                     if isinstance(self.schema.typ, cls):
                         widget_maker = wgt
                         break
@@ -389,7 +389,7 @@ class Field(object):
           Set *form* node's widget to a ``MyMappingWidget``.
 
         """
-        for k, v in values.items():
+        for k, v in list(values.items()):
             if not k:
                 self.widget = v
             else:
@@ -513,14 +513,14 @@ class Field(object):
 
         try:
             cstruct = self.deserialize(pstruct)
-        except schema.Invalid, e:
+        except schema.Invalid as e:
             # fill in errors raised by widgets
             self.widget.handle_error(self, e)
             cstruct = e.value
 
         try:
             appstruct = self.schema.deserialize(cstruct)
-        except schema.Invalid, e:
+        except schema.Invalid as e:
             # fill in errors raised by schema nodes
             self.widget.handle_error(self, e)
 

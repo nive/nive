@@ -84,7 +84,7 @@ class Events(object):
         - *function*: callback to be called if the event is fired
 
         """
-        if not self._eventdispatch.has_key(signal):
+        if signal not in self._eventdispatch:
             self._eventdispatch[signal] = [function]
         else:
             self._eventdispatch[signal].append(function)
@@ -98,7 +98,7 @@ class Events(object):
         - *function*: callback to be called if the event is fired
 
         """
-        if not self._eventdispatch.has_key(signal):
+        if signal not in self._eventdispatch:
             return
         if not function:
             del self._eventdispatch[signal]

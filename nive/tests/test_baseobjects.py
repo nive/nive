@@ -9,47 +9,47 @@ from nive.components import baseobjects
 class baseTest(unittest.TestCase):
 
     def test_imports(self):
-        self.assert_(baseobjects.ApplicationBase)
-        self.assert_(IApplication.implementedBy(baseobjects.ApplicationBase))
+        self.assertTrue(baseobjects.ApplicationBase)
+        self.assertTrue(IApplication.implementedBy(baseobjects.ApplicationBase))
         
-        self.assert_(baseobjects.RootBase)
-        self.assert_(IContainer.implementedBy(baseobjects.RootBase))
-        self.assert_(IRoot.implementedBy(baseobjects.RootBase))
+        self.assertTrue(baseobjects.RootBase)
+        self.assertTrue(IContainer.implementedBy(baseobjects.RootBase))
+        self.assertTrue(IRoot.implementedBy(baseobjects.RootBase))
         
-        self.assert_(baseobjects.RootReadOnlyBase)
-        self.assert_(IRoot.implementedBy(baseobjects.RootReadOnlyBase))
-        self.assert_(IContainer.implementedBy(baseobjects.RootReadOnlyBase))
-        self.assert_(IReadonly.implementedBy(baseobjects.RootReadOnlyBase))
+        self.assertTrue(baseobjects.RootReadOnlyBase)
+        self.assertTrue(IRoot.implementedBy(baseobjects.RootReadOnlyBase))
+        self.assertTrue(IContainer.implementedBy(baseobjects.RootReadOnlyBase))
+        self.assertTrue(IReadonly.implementedBy(baseobjects.RootReadOnlyBase))
     
-        self.assert_(baseobjects.ObjectBase)
-        self.assert_(INonContainer.implementedBy(baseobjects.ObjectBase))
-        self.assert_(IObject.implementedBy(baseobjects.ObjectBase))
+        self.assertTrue(baseobjects.ObjectBase)
+        self.assertTrue(INonContainer.implementedBy(baseobjects.ObjectBase))
+        self.assertTrue(IObject.implementedBy(baseobjects.ObjectBase))
     
-        self.assert_(baseobjects.ObjectReadOnlyBase)
-        self.assert_(INonContainer.implementedBy(baseobjects.ObjectReadOnlyBase))
-        self.assert_(IObject.implementedBy(baseobjects.ObjectReadOnlyBase))
-        self.assert_(IReadonly.implementedBy(baseobjects.ObjectReadOnlyBase))
+        self.assertTrue(baseobjects.ObjectReadOnlyBase)
+        self.assertTrue(INonContainer.implementedBy(baseobjects.ObjectReadOnlyBase))
+        self.assertTrue(IObject.implementedBy(baseobjects.ObjectReadOnlyBase))
+        self.assertTrue(IReadonly.implementedBy(baseobjects.ObjectReadOnlyBase))
     
-        self.assert_(baseobjects.ObjectContainerBase)
-        self.assert_(IContainer.implementedBy(baseobjects.ObjectContainerBase))
-        self.assert_(IObject.implementedBy(baseobjects.ObjectContainerBase))
+        self.assertTrue(baseobjects.ObjectContainerBase)
+        self.assertTrue(IContainer.implementedBy(baseobjects.ObjectContainerBase))
+        self.assertTrue(IObject.implementedBy(baseobjects.ObjectContainerBase))
     
-        self.assert_(baseobjects.ObjectContainerReadOnlyBase)
-        self.assert_(IObject.implementedBy(baseobjects.ObjectContainerReadOnlyBase))
-        self.assert_(IContainer.implementedBy(baseobjects.ObjectContainerReadOnlyBase))
-        self.assert_(IReadonly.implementedBy(baseobjects.ObjectContainerReadOnlyBase))
+        self.assertTrue(baseobjects.ObjectContainerReadOnlyBase)
+        self.assertTrue(IObject.implementedBy(baseobjects.ObjectContainerReadOnlyBase))
+        self.assertTrue(IContainer.implementedBy(baseobjects.ObjectContainerReadOnlyBase))
+        self.assertTrue(IReadonly.implementedBy(baseobjects.ObjectContainerReadOnlyBase))
 
 
     
     
     def test_old_imports(self):
-        self.assert_(base.ApplicationBase)
-        self.assert_(base.RootBase)
-        self.assert_(base.RootReadOnlyBase)
-        self.assert_(base.ObjectBase)
-        self.assert_(base.ObjectReadOnlyBase)
-        self.assert_(base.ObjectContainerBase)
-        self.assert_(base.ObjectContainerReadOnlyBase)
+        self.assertTrue(base.ApplicationBase)
+        self.assertTrue(base.RootBase)
+        self.assertTrue(base.RootReadOnlyBase)
+        self.assertTrue(base.ObjectBase)
+        self.assertTrue(base.ObjectReadOnlyBase)
+        self.assertTrue(base.ObjectContainerBase)
+        self.assertTrue(base.ObjectContainerReadOnlyBase)
         # moved to nive_cms
         #self.assert_(base.PageBase)
         #self.assert_(base.PageRootBase)

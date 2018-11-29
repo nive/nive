@@ -23,24 +23,24 @@ class FilenameLookup(object):
         `file` is a reserved name and used in the current object to map file downloads. 
         """
         if id == u"file":
-            raise KeyError, id
+            raise KeyError(id)
         id = id.split(u".")
         if len(id)>2:
             id = (u".").join(id[:-1])
         else:
             id = id[0]
         try:
-            id = long(id)
+            id = int(id)
         except:
             name = id
             id = 0
             if name:
                 id = self.dataroot.FilenameToID(name, self.id)
             if not id:
-                raise KeyError, id
+                raise KeyError(id)
         o = self.GetObj(id)
         if not o:
-            raise KeyError, id
+            raise KeyError(id)
         return o
 
 

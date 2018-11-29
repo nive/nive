@@ -23,7 +23,7 @@ except ImportError:
         Warning = None
         @staticmethod
         def connect(*args,**kw):
-            raise ImportError, "Python postgres binding not available. Try 'pip install psycopg2' to install the package."
+            raise ImportError("Python postgres binding not available. Try 'pip install psycopg2' to install the package.")
             
             
 from nive.utils.utils import STACKF
@@ -61,7 +61,7 @@ class PostgresConnection(Connection):
         db = self.PrivateConnection()
         if not db:
             conf = self.configuration
-            raise OperationalError, "Cannot connect to database '%s.%s'" % (conf.host, conf.dbName)
+            raise OperationalError("Cannot connect to database '%s.%s'" % (conf.host, conf.dbName))
         self._set(db)
         return db
 
@@ -97,7 +97,7 @@ class PostgresConnection(Connection):
         Format a parameter for sql queries like literal for db. This function is not
         secure for any values. 
         """
-        if isinstance(param, (int, long, float)):
+        if isinstance(param, (int, float)):
             return unicode(param)
         d = unicode(param)
         if d.find(u"'")!=-1:

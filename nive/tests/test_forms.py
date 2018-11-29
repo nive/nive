@@ -56,7 +56,7 @@ class FormTest(unittest.TestCase):
     def test_form(self, **kw):
         form = HTMLForm(loadFromType="type1", context=None, request=Request(), app=self.app, view=self.view)
         form.Setup()
-        self.assert_(form.GetFields())
+        self.assertTrue(form.GetFields())
         form._SetUpSchema()
         self.assertFalse(form.GetField("test000"))
         request = Request()
@@ -76,12 +76,12 @@ class FormTest(unittest.TestCase):
         form = Form(loadFromType="type1", app=self.app, view=self.view)
         form.Setup()
         result, data = form.Extract({"ftext": ""})
-        self.assert_(data.get("ftext")=="")
+        self.assertTrue(data.get("ftext")=="")
         
         form = Form(loadFromType="type2", app=self.app, view=self.view)
         form.Setup()
         result, data = form.Extract({"fstr": ""})
-        self.assert_(data.get("fstr")=="" and data.get("ftext")==None)
+        self.assertTrue(data.get("fstr")=="" and data.get("ftext")==None)
 
         
     def test_values(self, **kw):
@@ -89,15 +89,15 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         v,d,e = form.Validate(data=data1_1)
-        self.assert_(v, str(e))
+        self.assertTrue(v, str(e))
         
         v,d,e = form.Validate(data1_2)
         self.assertFalse(v, e)
         
         result, data = form.Extract(data1_1)
-        self.assert_(data)
+        self.assertTrue(data)
         result, data = form.Extract(data1_2)
-        self.assert_(data)        
+        self.assertTrue(data)        
 
 
     def test_values2(self, **kw):
@@ -106,19 +106,19 @@ class FormTest(unittest.TestCase):
         form.subsets = subsets
         form.Setup(subset="test")
         v,d,e = form.Validate(data1_2)
-        self.assert_(v, e)
+        self.assertTrue(v, e)
 
         form = Form(loadFromType="type1", app=self.app, view=self.view)
         subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unit"})]}}
         form.subsets = subsets
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
-        self.assert_(v, e)
+        self.assertTrue(v, e)
 
         result, data = form.Extract(data1_1)
-        self.assert_(data)
+        self.assertTrue(data)
         result, data = form.Extract(data1_2)
-        self.assert_(data)
+        self.assertTrue(data)
 
 
     def test_values3(self, **kw):
@@ -127,12 +127,12 @@ class FormTest(unittest.TestCase):
         form.subsets = subsets
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
-        self.assert_(v, e)
+        self.assertTrue(v, e)
 
         result, data = form.Extract(data1_1)
-        self.assert_(data)
+        self.assertTrue(data)
         result, data = form.Extract(data1_2)
-        self.assert_(data)
+        self.assertTrue(data)
 
 
     def test_html(self, **kw):
@@ -143,16 +143,16 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         v,d,e = form.Validate(data1_1)
-        self.assert_(v, str(e))
+        self.assertTrue(v, str(e))
         
         v,d,e = form.Validate(data1_2)
         self.assertFalse(v, e)
         form.Render(d, msgs=None, errors=None)
         
         result, data = form.Extract(data1_1)
-        self.assert_(data)
+        self.assertTrue(data)
         result, data = form.Extract(data1_2)
-        self.assert_(data)
+        self.assertTrue(data)
         
         
     def test_html2(self, **kw):
@@ -163,7 +163,7 @@ class FormTest(unittest.TestCase):
         form.subsets = {u"test": {"fields": [u"ftext",u"funit"]}}
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
-        self.assert_(v, e)
+        self.assertTrue(v, e)
         form.Render(d, msgs=None, errors=None)
 
 
@@ -175,7 +175,7 @@ class FormTest(unittest.TestCase):
         form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "number"})]}}
         form.Setup(subset=u"test")
         v,d,e = form.Validate(data1_2)
-        self.assert_(v, e)
+        self.assertTrue(v, e)
         form.Render(d, msgs=None, errors=None)
 
 
@@ -236,12 +236,12 @@ class FormTest(unittest.TestCase):
 
         data = {"parameter1": "True", "parameter2": "test"}
         r,v,e = form.Validate(data)
-        self.assert_(r, e)
-        self.assert_(isinstance(v, dict))
+        self.assertTrue(r, e)
+        self.assertTrue(isinstance(v, dict))
         data = {"parameter1": "True", "parameter2": "test"}
         r,v = form.Extract(data)
-        self.assert_(r, v)
-        self.assert_(isinstance(v, dict))
+        self.assertTrue(r, v)
+        self.assertTrue(isinstance(v, dict))
         
 
     def test_actions(self, **kw):
@@ -258,9 +258,9 @@ class FormTest(unittest.TestCase):
         ]
         form.Setup()
         a = form.GetActions(removeHidden=False)
-        self.assert_(len(a)==3)
+        self.assertTrue(len(a)==3)
         a = form.GetActions(removeHidden=True)
-        self.assert_(len(a)==2)
+        self.assertTrue(len(a)==2)
 
 
     def test_fields(self, **kw):
@@ -272,9 +272,9 @@ class FormTest(unittest.TestCase):
         form.Setup()
 
         f = form.GetFields(removeReadonly=True)
-        self.assert_(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds)-len(UserFlds))
+        self.assertTrue(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds)-len(UserFlds))
         f = form.GetFields(removeReadonly=False)
-        self.assert_(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds))
+        self.assertTrue(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds))
 
         
 
@@ -315,7 +315,7 @@ class FormTest_db:
         
         count = self.app.db.GetCountEntries()
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"default")
         self.assertEqual(count, self.app.db.GetCountEntries())
 
@@ -323,7 +323,7 @@ class FormTest_db:
         req.update(data1_1)
         form.request = req
         result, data, action=form.Process(values={"fnumber":999})
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"create")
         self.assertEqual(count+1, self.app.db.GetCountEntries())
         self.remove.append(result.id)
@@ -331,7 +331,7 @@ class FormTest_db:
         req = {"cancel$":1}
         form.request = req
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"cancel")
         self.assertEqual(count+1, self.app.db.GetCountEntries())
         
@@ -340,7 +340,7 @@ class FormTest_db:
                                   "actions": [u"default", u"create",u"cancel"]}}
         form.Setup(subset = "test", addTypeField = True)
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"default")
         self.assertEqual(count+1, self.app.db.GetCountEntries())
 
@@ -348,7 +348,7 @@ class FormTest_db:
         req.update(data1_2)
         form.request = req
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"create")
         self.assertEqual(count+2, self.app.db.GetCountEntries())
         self.remove.append(result.id)
@@ -356,7 +356,7 @@ class FormTest_db:
         req = {"cancel$":1}
         form.request = req
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"cancel")
         self.assertEqual(count+2, self.app.db.GetCountEntries())
 
@@ -365,7 +365,7 @@ class FormTest_db:
                                   "actions": [u"default", u"create",u"cancel"]}}
         form.Setup(subset = "test", addTypeField = True)
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"default")
         self.assertEqual(count+2, self.app.db.GetCountEntries())
         
@@ -373,7 +373,7 @@ class FormTest_db:
         req.update(data1_2)
         form.request = req
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"create")
         self.assertEqual(count+3, self.app.db.GetCountEntries())
         self.remove.append(result.id)
@@ -381,7 +381,7 @@ class FormTest_db:
         req = {"cancel$":1}
         form.request = req
         result, data, action=form.Process()
-        self.assert_(result)
+        self.assertTrue(result)
         self.assertEqual(action.id,"cancel")
         self.assertEqual(count+3, self.app.db.GetCountEntries())
 
@@ -451,7 +451,7 @@ class FormTest_db:
         try:
             form.Setup(subset="test3")
             form.Process()
-            self.assert_(False)
+            self.assertTrue(False)
         except ConfigurationError:
             pass
         self.assertEqual(count, self.app.db.GetCountEntries())
@@ -482,7 +482,7 @@ class FormTest_db:
         form.request = data
         form.Process()
 
-        self.assert_(obj.data.get("ftext"))
+        self.assertTrue(obj.data.get("ftext"))
         
 
 class FormTest_db_sqlite(FormTest_db, __local.SqliteTestCase):

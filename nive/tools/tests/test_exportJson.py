@@ -19,7 +19,7 @@ class DBExportTest1(unittest.TestCase):
         if not r:
             return
         print(FormatConfTestFailure(r))
-        self.assert_(False, "Configuration Error")
+        self.assertTrue(False, "Configuration Error")
 
     def test_tool(self):
         exportJson(configuration,None)
@@ -42,21 +42,21 @@ class DBExportTest1_db(__local.DefaultTestCase):
     
     def test_toolrun1(self):
         t = self.app.GetTool("nive.tools.exportJson", self.app)
-        self.assert_(t)
+        self.assertTrue(t)
         r,v = t(tree=1,filedata="none")
-        self.assert_(r)
+        self.assertTrue(r)
 
 
     def test_toolrun2(self):
         t = self.app.GetTool("exportJson", self.app)
-        self.assert_(t)
+        self.assertTrue(t)
         r,v = t(tree=0,filedata="path")
-        self.assert_(r)
+        self.assertTrue(r)
 
 
     def test_toolrun3(self):
         t = self.app.GetTool("exportJson", self.app)
-        self.assert_(t)
+        self.assertTrue(t)
         r,v = t(tree=1,filedata="data")
-        self.assert_(r)
+        self.assertTrue(r)
 

@@ -64,7 +64,7 @@ class TestFunctional(unittest.TestCase):
         form = self._makeForm(schema)
         try:
             form.validate([])
-        except ValidationFailure, ve:
+        except ValidationFailure as ve:
             e = ve.error
         self.assertEqual(form.error, e)
         self.assertEqual(form.children[0].error, e.children[0])

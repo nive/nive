@@ -8,7 +8,7 @@ try:
 except:
     pass
 
-import test_db
+from . import test_db
 from nive.utils.dataPool2.sqlite.sqlite3Pool import *
 
 
@@ -475,14 +475,14 @@ def report(modes, printed):
         for m in modes:
             rep.append(printed[p*c+n])
             p+=1
-    print
-    print
+    print()
+    print()
     i=0
     for p in rep:
         print(p)
         i+=1
         if i==len(modes):
-            print
+            print()
             i=0
 
 
@@ -492,7 +492,7 @@ def run(modes):
     printed = [""]
     for m in modes:
         mode = m
-        print
+        print()
         print(mode,)
         empty()
         connects(n)

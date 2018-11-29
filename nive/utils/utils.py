@@ -2,14 +2,14 @@
 # Released under GPL3. See license.txt
 #
 
-import re, htmlentitydefs
+import re, html.entities
 import iso8601
 import os, tempfile, json
 import datetime
 from mimetypes import guess_type, guess_extension
 from operator import itemgetter, attrgetter
 
-from path import DvPath
+from .path import DvPath
 
 
 def MakeListItems(items):
@@ -59,7 +59,7 @@ def ConvertToDateTime(date):
         return None
     try:
         return iso8601.parse_date(date)
-    except (iso8601.ParseError, TypeError), e:
+    except (iso8601.ParseError, TypeError) as e:
         pass
     # try other string format versions
     try: # 2011-12-23
@@ -100,7 +100,7 @@ def FormatBytesForDisplay(size):
         return u""
     if size == 1:
         return u"1 byte"
-    for factor, suffix in ((1<<30L, u"GB"),(1<<20L, u"MB"),(1<<10L, u"kB"),(1, u"bytes")):
+    for factor, suffix in ((1<<30, u"GB"),(1<<20, u"MB"),(1<<10, u"kB"),(1, u"bytes")):
         if size >= factor:
             break
     if factor != 1:
@@ -242,7 +242,7 @@ def TidyHtml(data, options=None):
                     'write-back'         : '0'}
 
     cmds = ""
-    for k in options.keys():
+    for k in list(options.keys()):
         cmds += " --"+k+" "+options[k]
 
     # write file
@@ -297,7 +297,7 @@ def ReplaceHTMLEntities(text, codepage = None):
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = unichr(html.entities.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text # leave as is
@@ -334,7 +334,7 @@ def ConvertToStr(data, sep=u"\n"):
         return ConvertListToStr(data)
     elif isinstance(data, dict):
         v = []
-        for key, value in data.items():
+        for key, value in list(data.items()):
             v.append(u"%s: %s"%(unicode(key), ConvertToStr(value, sep)))
         return sep.join(v)
     return unicode(data)
@@ -380,17 +380,17 @@ def ConvertToFloat(data, raiseExcp = False):
 
 def ConvertToLong(data, raiseExcp = False):
     try:
-        return long(data)
+        return int(data)
     except:
         try:
             if ConvertToBool(data, raiseExcp):
-                return 1L
+                return 1
             else:
-                return 0L
+                return 0
         except:
             if raiseExcp:
                 raise
-        return 0L
+        return 0
 
 def ConvertToList(data, raiseExcp = False):
     """
@@ -453,7 +453,7 @@ def ConvertListToStr(values, sep = u", ", textMarker = u"", keepType = False):
         if textMarker != u"":
             tm = textMarker
             if keepType:
-                if isinstance(v, (int, long, float)):
+                if isinstance(v, (int, float)):
                     tm = u""
             s.append(u"%s%s%s" % (textMarker, unicode(v), textMarker))
         else:
@@ -472,7 +472,7 @@ def ConvertDictToStr(values, sep = u"\n"):
         
     result string
     """
-    s = [u"%s: %s" % (key, ConvertToStr(value, sep)) for key, value in values.items()]
+    s = [u"%s: %s" % (key, ConvertToStr(value, sep)) for key, value in list(values.items())]
     return sep.join(s)
 
 
@@ -498,8 +498,8 @@ def STACKF(t=0, label = "", limit = 15, path = "_stackf.txt", name=""):
     if limit<2:
         DUMP("%s\r\n%s\r\n" % (h, label), path)
         return
-    import StringIO
-    s = StringIO.StringIO()
+    import io
+    s = io.StringIO()
     traceback.print_stack(limit=limit, file=s)
     DUMP("%s\r\n%s\r\n%s" % (h, label, s.getvalue()), path)
 

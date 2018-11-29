@@ -77,7 +77,7 @@ def DumpObjects(stream):
         
     stream.write("<table class='table-bordered table table-condensed' style='width:70%'>\n")
     sorted = []
-    for r,v in trefs.items():
+    for r,v in list(trefs.items()):
         if v < limit:
             continue
         sorted.append((r,v))

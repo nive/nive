@@ -1,6 +1,6 @@
 
 
-import copy, time, StringIO
+import copy, time, io
 import unittest
 from datetime import datetime
 from datetime import date
@@ -39,42 +39,42 @@ class StructureTest(unittest.TestCase):
         structure = PoolStructure(structure=test_Base.struct, 
                                   fieldtypes=ftypes, 
                                   stdMeta=[u"id",u"pool_type"])
-        self.assert_(structure.get(u"pool_meta"))
-        self.assert_(len(structure.get(u"pool_meta")) == len(test_Base.struct[u"pool_meta"]))
-        self.assert_(len(structure.get(u"data1"))==len(test_Base.struct[u"data1"]))
-        self.assert_(len(structure.get(u"data2"))==len(test_Base.struct[u"data2"]))
-        self.assert_(len(structure.stdMeta)==2)
-        self.assert_(structure.fieldtypes[u"data2"][u"fstr"]=="string")
-        self.assert_(structure.codepage==u"utf-8")
+        self.assertTrue(structure.get(u"pool_meta"))
+        self.assertTrue(len(structure.get(u"pool_meta")) == len(test_Base.struct[u"pool_meta"]))
+        self.assertTrue(len(structure.get(u"data1"))==len(test_Base.struct[u"data1"]))
+        self.assertTrue(len(structure.get(u"data2"))==len(test_Base.struct[u"data2"]))
+        self.assertTrue(len(structure.stdMeta)==2)
+        self.assertTrue(structure.fieldtypes[u"data2"][u"fstr"]=="string")
+        self.assertTrue(structure.codepage==u"utf-8")
 
     def test_set2(self):
         structure = PoolStructure()
         structure.Init(structure=test_Base.struct, 
                        fieldtypes=ftypes, 
                        codepage="latin-1")
-        self.assert_(structure.get(u"pool_meta"))
-        self.assert_(len(structure.get(u"pool_meta")) == len(test_Base.struct[u"pool_meta"]))
-        self.assert_(len(structure.get(u"data1"))==len(test_Base.struct[u"data1"]))
-        self.assert_(len(structure.get(u"data2"))==len(test_Base.struct[u"data2"]))
-        self.assert_(len(structure.stdMeta)==0)
-        self.assert_(structure.fieldtypes[u"data2"][u"fstr"]=="string")
-        self.assert_(structure.codepage==u"latin-1")
+        self.assertTrue(structure.get(u"pool_meta"))
+        self.assertTrue(len(structure.get(u"pool_meta")) == len(test_Base.struct[u"pool_meta"]))
+        self.assertTrue(len(structure.get(u"data1"))==len(test_Base.struct[u"data1"]))
+        self.assertTrue(len(structure.get(u"data2"))==len(test_Base.struct[u"data2"]))
+        self.assertTrue(len(structure.stdMeta)==0)
+        self.assertTrue(structure.fieldtypes[u"data2"][u"fstr"]=="string")
+        self.assertTrue(structure.codepage==u"latin-1")
         
     def test_set3(self):
         structure = PoolStructure()
         structure.Init(structure={u"pool_meta": [], u"data1": [], u"data2": []}, 
                        fieldtypes=ftypes, 
                        codepage="latin-1")
-        self.assert_(structure.get(u"pool_meta"))
-        self.assert_(len(structure.get(u"pool_meta"))==2)
-        self.assert_(len(structure.get(u"data1"))==0)
-        self.assert_(len(structure.get(u"data2"))==0)
+        self.assertTrue(structure.get(u"pool_meta"))
+        self.assertTrue(len(structure.get(u"pool_meta"))==2)
+        self.assertTrue(len(structure.get(u"data1"))==0)
+        self.assertTrue(len(structure.get(u"data2"))==0)
         
 
 
     def test_empty(self):
         structure = PoolStructure()
-        self.assert_(structure.IsEmpty())
+        self.assertTrue(structure.IsEmpty())
 
 
     def test_func(self):
@@ -83,13 +83,13 @@ class StructureTest(unittest.TestCase):
                                   stdMeta=[u"id",u"pool_type"])
         self.assertFalse(structure.IsEmpty())
         
-        self.assert_(structure.get("pool_meta"))
-        self.assert_(structure.get("none","aaa")=="aaa")
-        self.assert_(structure["pool_meta"])
-        self.assert_(structure["data1"])
-        self.assert_(structure["data2"])
-        self.assert_(structure.has_key("data2"))
-        self.assert_(len(structure.keys())==3)
+        self.assertTrue(structure.get("pool_meta"))
+        self.assertTrue(structure.get("none","aaa")=="aaa")
+        self.assertTrue(structure["pool_meta"])
+        self.assertTrue(structure["data1"])
+        self.assertTrue(structure["data2"])
+        self.assertTrue("data2" in structure)
+        self.assertTrue(len(list(structure.keys()))==3)
         
         
 
@@ -106,106 +106,106 @@ class ConversionTest(unittest.TestCase):
 
 
     def test_serialize_notype(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"somevalue", 123)==123)
-        self.assert_(isinstance(self.structure.serialize(u"pool_meta", u"somevalue", "123"), unicode))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", 123)==123)
+        self.assertTrue(isinstance(self.structure.serialize(u"pool_meta", u"somevalue", "123"), unicode))
         value = datetime.now()
-        self.assert_(self.structure.serialize(u"pool_meta", u"somevalue", value)==value.strftime("%Y-%m-%d %H:%M:%S"))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", value)==value.strftime("%Y-%m-%d %H:%M:%S"))
         value = ("aaa","bbb")
-        self.assert_(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
         value = (u"aaa",u"bbb")
-        self.assert_(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
         value = [1,2,3]
-        self.assert_(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", value).startswith(u"_json_"))
         
     def test_se_multilist(self):
         v = {u"id":u"123", u"pool_stag":u"123.12", u"pool_wfa":["value"], u"somevalue": "test"}
         values = self.structure.serialize(u"pool_meta", None, v)
-        self.assert_(values[u"id"]==123)
-        self.assert_(values[u"pool_stag"]==123.12)
-        self.assert_(values[u"pool_wfa"]==u"value")        
+        self.assertTrue(values[u"id"]==123)
+        self.assertTrue(values[u"pool_stag"]==123.12)
+        self.assertTrue(values[u"pool_wfa"]==u"value")        
 
     def test_se_number(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", 123)==123)
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", u"123")==123)
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", "123")==123)
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", 123.12)==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", 123)==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", u"123")==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", "123")==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", 123.12)==123)
 
     def test_se_float(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", 123)==123.0)
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", u"123.12")==123.12)
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", "123.0")==123.0)
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", 123.12)==123.12)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", 123)==123.0)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", u"123.12")==123.12)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", "123.0")==123.0)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", 123.12)==123.12)
 
     def test_se_date(self):
         value = datetime.now()
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_change", value)==unicode(value))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_change", value)==unicode(value))
         value = date.today()
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_create", value)==unicode(value))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_create", value)==unicode(value))
         value = time.time()
-        self.assert_(self.structure.serialize(u"data2", u"ftime", value)==unicode(value))
+        self.assertTrue(self.structure.serialize(u"data2", u"ftime", value)==unicode(value))
 
     def test_se_list(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_wfa", u"value")==u"value")
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_wfa", ["value"])=="value")
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_wfa", ())=="")
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_wfa", u"value")==u"value")
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_wfa", ["value"])=="value")
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_wfa", ())=="")
 
     def test_se_mlist(self):
-        self.assert_(self.structure.serialize(u"data2", u"fmultilist", u"value"))
-        self.assert_(self.structure.serialize(u"data2", u"fmultilist", [u"value"]))
-        self.assert_(self.structure.serialize(u"data2", u"fmultilist", ("value",)))
+        self.assertTrue(self.structure.serialize(u"data2", u"fmultilist", u"value"))
+        self.assertTrue(self.structure.serialize(u"data2", u"fmultilist", [u"value"]))
+        self.assertTrue(self.structure.serialize(u"data2", u"fmultilist", ("value",)))
         self.assertFalse(self.structure.serialize(u"data2", u"fmultilist", u""))
         
-        self.assert_(self.structure.serialize(u"data2", u"checkbox", u"value"))
-        self.assert_(self.structure.serialize(u"data2", u"furllist", u"value"))
-        self.assert_(self.structure.serialize(u"data2", u"funitlist", u"value"))
+        self.assertTrue(self.structure.serialize(u"data2", u"checkbox", u"value"))
+        self.assertTrue(self.structure.serialize(u"data2", u"furllist", u"value"))
+        self.assertTrue(self.structure.serialize(u"data2", u"funitlist", u"value"))
 
     def test_se_bool(self):
-        self.assert_(self.structure.serialize(u"data2", u"fbool", u"true")==1)
-        self.assert_(self.structure.serialize(u"data2", u"fbool", u"false")==0)
-        self.assert_(self.structure.serialize(u"data2", u"fbool", True)==1)
-        self.assert_(self.structure.serialize(u"data2", u"fbool", False)==0)
-        self.assert_(self.structure.serialize(u"data2", u"fbool", u"True")==1)
-        self.assert_(self.structure.serialize(u"data2", u"fbool", u"False")==0)
-        self.assert_(self.structure.serialize(u"data2", u"fbool", ("???",))==0)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", u"true")==1)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", u"false")==0)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", True)==1)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", False)==0)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", u"True")==1)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", u"False")==0)
+        self.assertTrue(self.structure.serialize(u"data2", u"fbool", ("???",))==0)
 
     def test_se_json(self):
-        self.assert_(self.structure.serialize(u"data2", u"fjson", {"a":123,"b":"aaa"}))
-        self.assert_(json.loads(self.structure.serialize(u"data2", u"fjson", {"a":123,"b":"aaa"}))["a"]==123)
-        self.assert_(json.loads(self.structure.serialize(u"data2", u"fjson", {"a":123,"b":"aaa"}))["b"]==u"aaa")
+        self.assertTrue(self.structure.serialize(u"data2", u"fjson", {"a":123,"b":"aaa"}))
+        self.assertTrue(json.loads(self.structure.serialize(u"data2", u"fjson", {"a":123,"b":"aaa"}))["a"]==123)
+        self.assertTrue(json.loads(self.structure.serialize(u"data2", u"fjson", {"a":123,"b":"aaa"}))["b"]==u"aaa")
     
     
     def test_deserialize_notype(self):
         value = u"_json_"+json.dumps(("aaa","bbb"))
-        self.assert_(self.structure.deserialize(u"pool_meta", u"somevalue", value)[0]==u"aaa")
-        self.assert_(self.structure.deserialize(u"pool_meta", u"somevalue", "somevalue")==u"somevalue")
+        self.assertTrue(self.structure.deserialize(u"pool_meta", u"somevalue", value)[0]==u"aaa")
+        self.assertTrue(self.structure.deserialize(u"pool_meta", u"somevalue", "somevalue")==u"somevalue")
         
     def test_ds_multilist(self):
         v = {u"fmultilist": json.dumps(["aaa","bbb"]),u"furllist":json.dumps(["aaa","bbb"]), u"somevalue": "test"}
         values = self.structure.deserialize(u"data2", None, v)
-        self.assert_(values[u"fmultilist"][0]=="aaa")
-        self.assert_(values[u"furllist"][0]=="aaa")
+        self.assertTrue(values[u"fmultilist"][0]=="aaa")
+        self.assertTrue(values[u"furllist"][0]=="aaa")
 
     def test_ds_date(self):
         value = datetime.now()
         x=self.structure.deserialize(u"pool_meta", u"pool_change", unicode(value))
-        self.assert_(x.strftime("%Y-%m-%d %H:%M:%S")==value.strftime("%Y-%m-%d %H:%M:%S"))
+        self.assertTrue(x.strftime("%Y-%m-%d %H:%M:%S")==value.strftime("%Y-%m-%d %H:%M:%S"))
         value = date.today()
         x=self.structure.deserialize(u"pool_meta", u"pool_create", unicode(value))
-        self.assert_(x.strftime("%Y-%m-%d")==value.strftime("%Y-%m-%d"))
+        self.assertTrue(x.strftime("%Y-%m-%d")==value.strftime("%Y-%m-%d"))
         value = time.time()
-        self.assert_(self.structure.deserialize(u"data2", u"ftime", value))
+        self.assertTrue(self.structure.deserialize(u"data2", u"ftime", value))
 
     def test_ds_multilist(self):
-        self.assert_(self.structure.deserialize(u"data2", u"fmultilist", json.dumps(["aaa","bbb"]))[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"fcheckbox", json.dumps(["aaa","bbb"]))[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"furllist", json.dumps(["aaa","bbb"]))[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"funitlist", json.dumps(["123","123"]))[0]==123)
+        self.assertTrue(self.structure.deserialize(u"data2", u"fmultilist", json.dumps(["aaa","bbb"]))[0]=="aaa")
+        self.assertTrue(self.structure.deserialize(u"data2", u"fcheckbox", json.dumps(["aaa","bbb"]))[0]=="aaa")
+        self.assertTrue(self.structure.deserialize(u"data2", u"furllist", json.dumps(["aaa","bbb"]))[0]=="aaa")
+        self.assertTrue(self.structure.deserialize(u"data2", u"funitlist", json.dumps(["123","123"]))[0]==123)
         self.assertRaises(ValueError, self.structure.deserialize, u"data2", u"funitlist", json.dumps(["aaa","bbb"]))
-        self.assert_(self.structure.deserialize(u"data2", u"fcheckbox", "aaa")[0]=="aaa")
-        self.assert_(self.structure.deserialize(u"data2", u"fcheckbox", ["aaa","bbb"])[0]=="aaa")
+        self.assertTrue(self.structure.deserialize(u"data2", u"fcheckbox", "aaa")[0]=="aaa")
+        self.assertTrue(self.structure.deserialize(u"data2", u"fcheckbox", ["aaa","bbb"])[0]=="aaa")
         
     def test_ds_json(self):
-        self.assert_(self.structure.deserialize(u"data2", u"fjson", json.dumps(["aaa","bbb"]))[0]=="aaa")
+        self.assertTrue(self.structure.deserialize(u"data2", u"fjson", json.dumps(["aaa","bbb"]))[0]=="aaa")
 
 
 
@@ -232,27 +232,27 @@ class CallbackTest(unittest.TestCase):
 
 
     def test_serialize_callback(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"title", u"somevalue")==u"SOMEVALUE")
-        self.assert_(self.structure.deserialize(u"pool_meta", u"title", u"somevalue")==u"Somevalue")
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"title", u"somevalue")==u"SOMEVALUE")
+        self.assertTrue(self.structure.deserialize(u"pool_meta", u"title", u"somevalue")==u"Somevalue")
 
         
     def test_se_multilist(self):
         v = {u"id":u"123", u"pool_stag":u"123.12", u"pool_wfa":["value"], u"somevalue": "test"}
         values = self.structure.serialize(u"pool_meta", None, v)
-        self.assert_(values[u"id"]==123)
-        self.assert_(values[u"pool_stag"]==123.12)
-        self.assert_(values[u"pool_wfa"]==u"value")        
+        self.assertTrue(values[u"id"]==123)
+        self.assertTrue(values[u"pool_stag"]==123.12)
+        self.assertTrue(values[u"pool_wfa"]==u"value")        
 
     def test_se_number(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", 123)==123)
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", u"123")==123)
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", "123")==123)
-        self.assert_(self.structure.serialize(u"pool_meta", u"id", 123.12)==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", 123)==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", u"123")==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", "123")==123)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"id", 123.12)==123)
 
     def test_se_float(self):
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", 123)==123.0)
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", u"123.12")==123.12)
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", "123.0")==123.0)
-        self.assert_(self.structure.serialize(u"pool_meta", u"pool_stag", 123.12)==123.12)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", 123)==123.0)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", u"123.12")==123.12)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", "123.0")==123.0)
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_stag", 123.12)==123.12)
 
         

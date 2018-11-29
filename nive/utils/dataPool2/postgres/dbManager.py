@@ -108,7 +108,7 @@ class PostgresManager(DatabaseManager):
             if cval in ("", " ", None):
                 cval = 0
             if isinstance(cval, basestring):
-                cval = long(cval)
+                cval = int(cval)
             size = conf.get("size", 4)
             if size == 2:
                 col = u"SMALLINT NOT NULL DEFAULT %d" % (cval)
@@ -143,7 +143,7 @@ class PostgresManager(DatabaseManager):
             if cval in ("", " ", None):
                 cval = 0
             if isinstance(cval, basestring):
-                cval = long(cval)
+                cval = int(cval)
             col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "unitlist":
@@ -213,7 +213,7 @@ class PostgresManager(DatabaseManager):
             if cval in ("", " ", None):
                 cval = 0
             if isinstance(cval, basestring):
-                cval = long(cval)
+                cval = int(cval)
             col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
 
         if conf.get("unique"):
@@ -301,7 +301,7 @@ class PostgresManager(DatabaseManager):
         else:
             sql = u"CREATE TABLE %s" % (tableName)
             if not columns:
-                raise ConfigurationError, "No database fields defined."
+                raise ConfigurationError("No database fields defined.")
             aCnt = 0
             sql += u"("
             for c in columns:

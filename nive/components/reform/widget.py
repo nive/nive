@@ -1,7 +1,7 @@
 import csv
 import random
 import string
-import StringIO
+import io
 import copy
 import base64
 import os
@@ -211,7 +211,7 @@ class FormWidget(Widget):
                             
             try:
                 result[name] = subfield.deserialize(subval, pstruct)
-            except Invalid, e:
+            except Invalid as e:
                 result[name] = e.value
                 if error is None:
                     error = Invalid(field.schema, value=result)
@@ -1365,7 +1365,7 @@ class TextAreaCSVWidget(Widget):
             cstruct = []
         textrows = getattr(field, 'unparseable', None)
         if textrows is None:
-            outfile = StringIO.StringIO()
+            outfile = io.StringIO()
             writer = csv.writer(outfile)
             writer.writerows(cstruct)
             textrows = outfile.getvalue()
@@ -1378,10 +1378,10 @@ class TextAreaCSVWidget(Widget):
         if not pstruct.strip():
             return null
         try:
-            infile = StringIO.StringIO(pstruct)
+            infile = io.StringIO(pstruct)
             reader = csv.reader(infile)
             rows = list(reader)
-        except Exception, e:
+        except Exception as e:
             field.unparseable = pstruct
             raise Invalid(field.schema, str(e))
         return rows
@@ -1422,7 +1422,7 @@ class TextInputCSVWidget(Widget):
             cstruct = ''
         textrow = getattr(field, 'unparseable', None)
         if textrow is None:
-            outfile = StringIO.StringIO()
+            outfile = io.StringIO()
             writer = csv.writer(outfile)
             writer.writerow(cstruct)
             textrow = outfile.getvalue().strip()
@@ -1435,10 +1435,10 @@ class TextInputCSVWidget(Widget):
         if not pstruct.strip():
             return null
         try:
-            infile = StringIO.StringIO(pstruct)
+            infile = io.StringIO(pstruct)
             reader = csv.reader(infile)
-            row = reader.next()
-        except Exception, e:
+            row = next(reader)
+        except Exception as e:
             field.unparseable = pstruct
             raise Invalid(field.schema, str(e))
         return row

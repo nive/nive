@@ -16,7 +16,7 @@ _marker = required # bw compat
 
 class _null(object):
     """ Represents a null value in colander-related operations. """
-    def __nonzero__(self):
+    def __bool__(self):
         return False
 
     def __repr__(self):
@@ -171,7 +171,7 @@ class All(object):
         for validator in self.validators:
             try:
                 validator(node, value)
-            except Invalid, e:
+            except Invalid as e:
                 msgs.append(e.msg)
 
         if msgs:
@@ -447,7 +447,7 @@ class Mapping(SchemaType):
     def _validate(self, node, value):
         try:
             return dict(value)
-        except Exception, e:
+        except Exception as e:
             raise Invalid(node,
                           _('"${val}" is not a mapping type: ${err}',
                           mapping = {'val':value, 'err':e})
@@ -464,7 +464,7 @@ class Mapping(SchemaType):
             subval = value.pop(name, null)
             try:
                 result[name] = callback(subnode, subval)
-            except Invalid, e:
+            except Invalid as e:
                 if error is None:
                     error = Invalid(node)
                 error.add(e, num)
@@ -590,7 +590,7 @@ class Tuple(Positional, SchemaType):
             subval = value[num]
             try:
                 result.append(callback(subnode, subval))
-            except Invalid, e:
+            except Invalid as e:
                 if error is None:
                     error = Invalid(node)
                 error.add(e, num)
@@ -754,7 +754,7 @@ class String(SchemaType):
                 else:
                     result = unicode(appstruct)
             return result
-        except Exception, e:
+        except Exception as e:
             raise Invalid(node,
                           _('"${val} cannot be serialized: ${err}',
                             mapping={'val':appstruct, 'err':e})
@@ -773,7 +773,7 @@ class String(SchemaType):
                     result = unicode(str(cstruct), self.encoding)
                 else:
                     result = unicode(cstruct)
-        except Exception, e:
+        except Exception as e:
             raise Invalid(node,
                           _('${val} is not a string: %{err}',
                             mapping={'val':cstruct, 'err':e}))
@@ -1079,9 +1079,9 @@ class DateTime(SchemaType):
             try:
                 appstruct = iso8601.parse_date(
                     appstruct, default_timezone=self.default_tzinfo)
-            except (iso8601.ParseError, TypeError), e:
+            except (iso8601.ParseError, TypeError) as e:
                 try:
-                    year, month, day = map(int, appstruct.split('-', 2))
+                    year, month, day = list(map(int, appstruct.split('-', 2)))
                     appstruct = datetime.datetime(year, month, day,
                                                tzinfo=self.default_tzinfo)
                 except:
@@ -1107,12 +1107,12 @@ class DateTime(SchemaType):
         try:
             result = iso8601.parse_date(
                 cstruct, default_timezone=self.default_tzinfo)
-        except (iso8601.ParseError, TypeError), e:
+        except (iso8601.ParseError, TypeError) as e:
             try:
-                year, month, day = map(int, cstruct.split('-', 2))
+                year, month, day = list(map(int, cstruct.split('-', 2)))
                 result = datetime.datetime(year, month, day,
                                            tzinfo=self.default_tzinfo)
-            except Exception, e:
+            except Exception as e:
                 raise Invalid(node, _(self.err_template,
                                       mapping={'val':cstruct, 'err':e}))
         return result
@@ -1166,9 +1166,9 @@ class Date(SchemaType):
         if isinstance(appstruct, basestring):
             try:
                 appstruct = iso8601.parse_date(appstruct)
-            except (iso8601.ParseError, TypeError), e:
+            except (iso8601.ParseError, TypeError) as e:
                 try:
-                    year, month, day = map(int, appstruct.split('-', 2))
+                    year, month, day = list(map(int, appstruct.split('-', 2)))
                     appstruct = datetime.date(year, month, day)
                 except:
                     pass
@@ -1192,9 +1192,9 @@ class Date(SchemaType):
             result = result.date()
         except (iso8601.ParseError, TypeError):
             try:
-                year, month, day = map(int, cstruct.split('-', 2))
+                year, month, day = list(map(int, cstruct.split('-', 2)))
                 result = datetime.date(year, month, day)
-            except Exception, e:
+            except Exception as e:
                 raise Invalid(node,
                               _(self.err_template,
                                 mapping={'val':cstruct, 'err':e})
@@ -1291,7 +1291,7 @@ class Time(SchemaType):
                 except ValueError:
                     try:
                         result = timeparse(cstruct, '%H')
-                    except Exception, e:
+                    except Exception as e:
                         raise Invalid(node,
                                       _(self.err_template,
                                         mapping={'val':cstruct, 'err':e})
@@ -1371,7 +1371,7 @@ class SchemaNode(object):
 
     def __new__(cls, *arg, **kw):
         inst = object.__new__(cls)
-        inst._order = cls._counter.next()
+        inst._order = next(cls._counter)
         return inst
 
     def __init__(self, typ, *children, **kw):
@@ -1526,7 +1526,7 @@ class SchemaNode(object):
     def _bind(self, kw):
         for child in self.children:
             child._bind(kw)
-        for k, v in self.__dict__.items():
+        for k, v in list(self.__dict__.items()):
             if isinstance(v, deferred):
                 v = v(self, kw)
                 setattr(self, k, v)
@@ -1578,7 +1578,7 @@ class SchemaNode(object):
 class _SchemaMeta(type):
     def __init__(cls, name, bases, clsattrs):
         nodes = []
-        for name, value in clsattrs.items():
+        for name, value in list(clsattrs.items()):
             if isinstance(value, SchemaNode):
                 value.name = name
                 if value.raw_title is _marker:
@@ -1602,7 +1602,7 @@ class Schema(object):
     def __new__(cls, *args, **kw):
         node = object.__new__(cls.node_type)
         node.name = None
-        node._order = SchemaNode._counter.next()
+        node._order = next(SchemaNode._counter)
         typ = cls.schema_type()
         node.__init__(typ, *args, **kw)
         for n in cls.nodes:

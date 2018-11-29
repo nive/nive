@@ -1,6 +1,6 @@
 # -*- coding: latin-1 -*-
 
-import copy, time, StringIO
+import copy, time, io
 import unittest
 
 from nive.utils.dataPool2.base import *
@@ -92,11 +92,11 @@ class BaseTest(unittest.TestCase):
     def test_structure(self):
         base = Base()
         base.structure.Init(structure=struct, stdMeta=struct[u"pool_meta"])
-        self.assert_(len(base.structure.stdMeta)==len(struct[u"pool_meta"]))
+        self.assertTrue(len(base.structure.stdMeta)==len(struct[u"pool_meta"]))
 
     def test_config(self):
         base = Base(**conf)
-        self.assert_(str(base.GetRoot()).find(conf["root"])!=-1)
+        self.assertTrue(str(base.GetRoot()).find(conf["root"])!=-1)
 
     def test_database(self):
         base = Base()

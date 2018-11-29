@@ -134,7 +134,7 @@ class Base(object):
     @property
     def dbapi(self):
         if not self._conn:
-            raise ConnectionError, "No Connection"
+            raise ConnectionError("No Connection")
         return self._conn.dbapi
 
 
@@ -255,7 +255,7 @@ class Base(object):
         where = []
         if parameter is None:
             parameter={}
-        for key in parameter.keys():
+        for key in list(parameter.keys()):
             value = parameter[key]
             paramname = key
 
@@ -360,7 +360,7 @@ class Base(object):
                 addCombi = True
 
             # fmt number values
-            elif isinstance(value, (int, long, float)):
+            elif isinstance(value, (int, float)):
                 if addCombi:
                     where.append(u" %s " % aCombi)
                 if operator == u"LIKE":
@@ -516,13 +516,13 @@ class Base(object):
             values = self._EmptyValues
         try:
             cursor.execute(sql, values)
-        except self._OperationalError, e:
+        except self._OperationalError as e:
             # map to nive.utils.dataPool2.base.OperationalError
-            raise OperationalError, e
-        except self._ProgrammingError, e:
+            raise OperationalError(e)
+        except self._ProgrammingError as e:
             # map to nive.utils.dataPool2.base.OperationalError
             self.Undo()
-            raise ProgrammingError, e
+            raise ProgrammingError(e)
         return cursor
 
     
@@ -558,16 +558,16 @@ class Base(object):
             values = self._EmptyValues
         try:
             c.execute(sql, values)
-        except self._OperationalError, e:
+        except self._OperationalError as e:
             # map to nive.utils.dataPool2.base.OperationalError
             self.Undo()
             logging.getLogger(self.name).error(str(e) + "  " + sql)
-            raise OperationalError, e
-        except self._ProgrammingError, e:
+            raise OperationalError(e)
+        except self._ProgrammingError as e:
             # map to nive.utils.dataPool2.base.OperationalError
             self.Undo()
             logging.getLogger(self.name).error(str(e) + "  " + sql)
-            raise ProgrammingError, e
+            raise ProgrammingError(e)
         if not getResult:
             if cc:
                 c.close()
@@ -613,9 +613,9 @@ class Base(object):
             result = cursor.fetchall()
         except self._Warning:
             pass
-        except self._OperationalError, e:
+        except self._OperationalError as e:
             # map to nive.utils.dataPool2.base.OperationalError
-            raise OperationalError, e
+            raise OperationalError(e)
         if cc:
             cursor.close()
         return result
@@ -635,7 +635,7 @@ class Base(object):
         phdata = []
         ph = self.placeholder
         data = self.structure.serialize(table, None, data)
-        for key, value in data.items():
+        for key, value in list(data.items()):
             flds.append(key)
             phdata.append(ph)
             dataList.append(value)
@@ -653,9 +653,9 @@ class Base(object):
             cursor.execute(sql, dataList)
         except self._Warning:
             pass
-        except self._OperationalError, e:
+        except self._OperationalError as e:
             # map to nive.utils.dataPool2.base.OperationalError
-            raise OperationalError, e
+            raise OperationalError(e)
         except:
             self.Undo()
             raise
@@ -694,7 +694,7 @@ class Base(object):
         dataList = []
         data = self.structure.serialize(table, None, data)
         sql = [u"UPDATE %s SET " % (table)]
-        for key, value in data.items():
+        for key, value in list(data.items()):
             dataList.append(value)
             if len(sql)>1:
                 sql.append(u",%s=%s"%(key, ph))
@@ -711,9 +711,9 @@ class Base(object):
             cursor.execute(sql, dataList)
         except self._Warning:
             pass
-        except self._OperationalError, e:
+        except self._OperationalError as e:
             # map to nive.utils.dataPool2.base.OperationalError
-            raise OperationalError, e
+            raise OperationalError(e)
         except:
             self.Undo()
             raise
@@ -733,7 +733,7 @@ class Base(object):
         p = []
         v = []
         ph = self.placeholder
-        for field, value in parameter.items():
+        for field, value in list(parameter.items()):
             p.append(u"%s=%s"%(field, ph))
             v.append(value)
         sql = u"DELETE FROM %s WHERE %s" % (table, u" AND ".join(p))
@@ -782,7 +782,7 @@ class Base(object):
         """
         Convert a database record tuple to dictionary based on flds list
         """
-        return dict(zip(flds, rec))
+        return dict(list(zip(flds, rec)))
 
 
     # Entries -------------------------------------------------------------------------------------------
@@ -881,7 +881,7 @@ class Base(object):
         if preload == u"meta":
             flds = self.structure.get(self.MetaTable, version=version)
             if not flds:
-                raise ConfigurationError, "Meta layer is empty."
+                raise ConfigurationError("Meta layer is empty.")
             parameter = {"id": ids}
             operators = {"id": u"IN"}
             sql, values = self.FmtSQLSelect(flds, parameter=parameter, dataTable=self.MetaTable, max=len(ids), sort=sort, operators=operators, singleTable=1)
@@ -913,7 +913,7 @@ class Base(object):
         t = u""
         fldsm = self.structure.get(self.MetaTable, version=version)
         if not fldsm:
-            raise ConfigurationError, "Meta layer is empty."
+            raise ConfigurationError("Meta layer is empty.")
         unsorted = []
         for table in tables:
             structure = self.structure.get(table, version=version)
@@ -1063,7 +1063,7 @@ class Base(object):
                 if not add:
                     continue
                 # add item to tree list
-                if not current.has_key("items"):
+                if "items" not in current:
                     current["items"] = []
                 refentry = self._InList(current["items"], data[ref])
                 if not refentry:
@@ -1071,7 +1071,7 @@ class Base(object):
                     current["items"].append(refentry)
                 current = refentry
             # add data 
-            if not current.has_key("items"):
+            if "items" not in current:
                 current["items"] = []
             entry = self._InList(current["items"], data["id"])
             if not entry:
@@ -1221,7 +1221,7 @@ class Base(object):
         if id!=None:
             parameter[u"id"] = id
         else:
-            raise TypeError, "id must not be none"
+            raise TypeError("id must not be none")
         if userid:
             parameter[u"userid"] = userid
         if group:
@@ -1246,7 +1246,7 @@ class Base(object):
         if id!=None:
             data["id"] = id
         else:
-            raise TypeError, "id must not be none"
+            raise TypeError("id must not be none")
         self.InsertFields(self.GroupsTable, data)
 
 
@@ -1258,7 +1258,7 @@ class Base(object):
         if id!=None:
             p["id"] = id
         else:
-            raise TypeError, "id must not be none"
+            raise TypeError("id must not be none")
         if userid:
             p["userid"] = userid
         if group:
@@ -1362,7 +1362,7 @@ class Entry(object):
             self.Load(preload)
             if self.data.IsEmpty() and self.meta.IsEmpty() and self.files.IsEmpty():
                 if not self.Exists():
-                    raise NotFound, "%s not found" % str(id)
+                    raise NotFound("%s not found" % str(id))
         #else:
         #    if not self.Exists():
         #        raise NotFound, "%s not found" % str(id)
@@ -1438,7 +1438,7 @@ class Entry(object):
             self.meta.clear()
             self.files.SetContent(self.files.GetTemp())
             self.files.clear()
-        except Exception, e:
+        except Exception as e:
             try:
                 self.Undo()
             except:
@@ -1469,7 +1469,7 @@ class Entry(object):
         elif fld == u"pool_size":
             return self.GetDataSize()
 
-        if not fromDB and self.cacheRec and self.meta.has_key(fld):
+        if not fromDB and self.cacheRec and fld in self.meta:
             return self.meta[fld]
 
         sql, values = self.pool.FmtSQLSelect([fld], parameter={"id":self.id}, dataTable=self.pool.MetaTable, singleTable=1)
@@ -1484,7 +1484,7 @@ class Entry(object):
         Read a single field from data layer
         if fromDB data is loaded from db, not cache
         """
-        if not fromDB and self.cacheRec and self.data.has_key(fld):
+        if not fromDB and self.cacheRec and fld in self.data:
             return self.data[fld]
 
         tbl = self.GetDataTbl()
@@ -1790,7 +1790,7 @@ class Entry(object):
             r = cursor.fetchone()
             cursor.close()
             return r[0]
-        except self.pool._Warning, e:
+        except self.pool._Warning as e:
             try:    cursor.close()
             except: pass
             if self.pool._debug:
@@ -1855,7 +1855,7 @@ class Entry(object):
         if c:
             cursor.close()
         if not r:
-            raise TypeError, sql
+            raise TypeError(sql)
         # split data and meta
         meta = pool.ConvertRecToDict(r[:len(metaFlds)], metaFlds)
         data = pool.ConvertRecToDict(r[len(metaFlds):], dataFlds)

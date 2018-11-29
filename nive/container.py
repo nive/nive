@@ -38,7 +38,7 @@ class Container(object):
         o = self.GetObj(id)
         if o:
             return o
-        raise KeyError, id
+        raise KeyError(id)
 
 
     # Container functions ----------------------------------------------------
@@ -57,7 +57,7 @@ class Container(object):
         - loadObj(obj)
         """
         try:
-            id = long(id)
+            id = int(id)
         except:
             return None
         if not id:
@@ -290,14 +290,14 @@ class ContainerEdit:
         app = self.app
         typedef = app.GetObjectConf(type)
         if not typedef:
-            raise ConfigurationError, "Type not found (%s)" % (str(type))
+            raise ConfigurationError("Type not found (%s)" % (str(type)))
 
         # allow subobject
         if not self.IsTypeAllowed(typedef, user):
-            raise ContainmentError, "Add type not allowed here (%s)" % (str(type))
+            raise ContainmentError("Add type not allowed here (%s)" % (str(type)))
 
         if not self.WfAllow("add", user=user):
-            raise WorkflowNotAllowed, "Not allowed in current workflow state (add)"
+            raise WorkflowNotAllowed("Not allowed in current workflow state (add)")
 
         self.Signal("beforeAdd", data=data, type=type, user=user, **kw)
         db = app.db
@@ -311,7 +311,7 @@ class ContainerEdit:
             obj.Signal("create", user=user, **kw)
             if not kw.get("nocommit") and app.configuration.autocommit:
                 obj.CommitInternal(user=user)
-        except Exception, e:
+        except Exception as e:
             db.Undo()
             raise 
         self.Signal("afterAdd", obj=obj, user=user, **kw)
@@ -341,7 +341,7 @@ class ContainerEdit:
             obj.meta["pool_type"] = typedef.id
             obj.meta["pool_unitref"] = obj.parent.id
             obj.meta["pool_stag"] = obj.selectTag
-        except Exception, e:
+        except Exception as e:
             db.Undo()
             raise
         return obj
@@ -374,10 +374,10 @@ class ContainerEdit:
         type=obj.GetTypeID()
         # allow subobject
         if not self.IsTypeAllowed(type, user):
-            raise ContainmentError, "Add type not allowed here (%s)" % (str(type))
+            raise ContainmentError("Add type not allowed here (%s)" % (str(type)))
         
         if not self.WfAllow("add", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (add)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (add)")
 
         self.Signal("beforeAdd", data=updateValues, type=type, user=user, **kw)
         newDataEntry = None
@@ -396,7 +396,7 @@ class ContainerEdit:
             newobj.CreateSelf(data, user=user)
             newobj.Signal("duplicate", **kw)
             
-        except Exception, e:
+        except Exception as e:
             db = app.db
             if newDataEntry:
                 try:
@@ -414,7 +414,7 @@ class ContainerEdit:
             self.WfAction("add", user=user)
             if app.configuration.autocommit:
                 newobj.CommitInternal(user=user)
-        except Exception, e:
+        except Exception as e:
              self._DeleteObj(newobj)
              raise 
          
@@ -483,13 +483,13 @@ class ContainerEdit:
             if not obj:
                 return False
         if obj.parent.id!=self.id:
-            raise ContainmentError, "Object is not a child (%s)" % (str(id))
+            raise ContainmentError("Object is not a child (%s)" % (str(id)))
 
         # call workflow
         if not self.WfAllow("remove", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (remove)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (remove)")
         if not obj.WfAllow("delete", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (delete)"
+            raise WorkflowNotAllowed("Workflow: Not allowed (delete)")
         obj.Signal("delete", user=user)
         if hasattr(obj, "_RecursiveDelete"):
             obj._RecursiveDelete(user)
@@ -525,7 +525,7 @@ class ContainerEdit:
             obj = self.GetObj(id, queryRestraints=False, **kw)
         else:
             if not obj.parent==self:
-                raise ContainmentError, "Object is not a child (%s)" % (str(id))
+                raise ContainmentError("Object is not a child (%s)" % (str(id)))
         obj.Signal("delete")
         if hasattr(obj, "_RecursiveDeleteInternal"):
             obj._RecursiveDeleteInternal(user)
@@ -697,7 +697,7 @@ class ContainerFactory:
                 #raise Exception, "NotFound"
 
             if dbEntry.meta["pool_unitref"]!=self.id:
-                raise ContainmentError, "Object is not a child (%s)" % (str(id))
+                raise ContainmentError("Object is not a child (%s)" % (str(id)))
 
         # create object for type
         if not parentObj:
@@ -711,14 +711,14 @@ class ContainerFactory:
                 return None
             configuration = app.GetObjectConf(type)
             if not configuration:
-                raise ConfigurationError, "Type not found (%s)" % (str(type))
+                raise ConfigurationError("Type not found (%s)" % (str(type)))
         obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
         obj = obj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
 
         # check security if context passed in keywords
         if kw.get("securityContext") and kw.get("permission"):
             if not has_permission(kw["permission"], obj, kw["securityContext"]):
-                raise PermissionError, "Permission check failed (%s)" % (str(id))
+                raise PermissionError("Permission check failed (%s)" % (str(id)))
 
         if useCache:
             self.Cache(obj, obj.id)
@@ -730,7 +730,7 @@ class ContainerFactory:
         This loads an object for a non existing database entry.
         """
         if not configuration:
-            raise ConfigurationError, "Type not found"
+            raise ConfigurationError("Type not found")
         app = self.app
         obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
         dbEntry = app.db.GetEntry(0, virtual=1)
@@ -876,7 +876,7 @@ class Root(object):
         returns the object or None
         """
         try:
-            id = long(id)
+            id = int(id)
         except:
             return None
         if id <= 0:
@@ -886,10 +886,10 @@ class Root(object):
             #raise Exception, "NotFound"
 
         # proxy object
-        if kw.has_key("proxyObj") and kw["proxyObj"]:
+        if "proxyObj" in kw and kw["proxyObj"]:
             obj = self._GetObj(id, parentObj = kw["proxyObj"], **kw)
             if not obj:
-                raise ContainmentError, "Proxy object not found"
+                raise ContainmentError("Proxy object not found")
             return obj
 
         # load tree structure
@@ -1122,7 +1122,7 @@ class RootWorkflow:
         wf = app.GetWorkflow(wfTag, contextObject=self)
         # enable strict workflow checking
         if not wf:
-            raise ConfigurationError, "Workflow process not found (%s)"%(wfTag)
+            raise ConfigurationError("Workflow process not found (%s)"%(wfTag))
         self.Signal("wfLoad", workflow=wf)
         return wf
 

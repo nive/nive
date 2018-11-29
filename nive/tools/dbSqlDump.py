@@ -61,7 +61,7 @@ class dbSqlDump(Tool):
         export = [(MetaTbl,mapfields(app.GetAllMetaFlds(ignoreSystem=False)))]
         for t in app.GetAllObjectConfs():
             export.append((t.dbparam, ["id"]+mapfields(t.data)))
-        for t in Structure.items():
+        for t in list(Structure.items()):
             export.append((t[0], mapfields(t[1]["fields"])))
 
         for table in export:

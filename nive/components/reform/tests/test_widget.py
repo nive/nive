@@ -4,7 +4,7 @@ def invalid_exc(func, *arg, **kw):
     from nive.components.reform.schema import Invalid
     try:
         func(*arg, **kw)
-    except Invalid, e:
+    except Invalid as e:
         return e
     else:
         raise AssertionError('Invalid not raised') # pragma: no cover
@@ -52,7 +52,7 @@ class TestWidget(unittest.TestCase):
     def test_configuration(self):
         from nive.definitions import FieldConf
         widget = self._makeOne(configuration=FieldConf())
-        self.assert_(widget.configuration)
+        self.assertTrue(widget.configuration)
         widget = self._makeOne()
         self.assertFalse(widget.configuration)
 
@@ -379,20 +379,20 @@ class TestRichTextWidget(TestTextInputWidget):
         field = DummyField()
         widget = self._makeOne(strip=False)
         result = widget.renderOptions(field)
-        self.assert_(result)
+        self.assertTrue(result)
         widget = self._makeOne(configuration=Conf())
         result = widget.renderOptions(field)
-        self.assert_(result)
+        self.assertTrue(result)
         widget = self._makeOne(configuration=Conf(settings={"width":"12345","height":"67890"}))
         result = widget.renderOptions(field)
-        self.assert_(result)
-        self.assert_(result.find("12345")!=-1)
-        self.assert_(result.find("67890")!=-1)
+        self.assertTrue(result)
+        self.assertTrue(result.find("12345")!=-1)
+        self.assertTrue(result.find("67890")!=-1)
         opts = {"nothing": "00000"}
         widget = self._makeOne(configuration=Conf(settings={"options":opts}))
         result = widget.renderOptions(field)
-        self.assert_(result)
-        self.assert_(result.find("nothing")!=-1)
+        self.assertTrue(result)
+        self.assertTrue(result.find("nothing")!=-1)
 
 class TestCodeTextWidget(TestTextInputWidget):
     def _makeOne(self, **kw):
@@ -405,15 +405,15 @@ class TestCodeTextWidget(TestTextInputWidget):
         field = DummyField()
         widget = self._makeOne(strip=False)
         result = widget.renderOptions(field)
-        self.assert_(result)
+        self.assertTrue(result)
         widget = self._makeOne(configuration=Conf())
         result = widget.renderOptions(field)
-        self.assert_(result)
+        self.assertTrue(result)
         opts = {"nothing": "00000"}
         widget = self._makeOne(configuration=Conf(settings={"options":opts}))
         result = widget.renderOptions(field)
-        self.assert_(result)
-        self.assert_(result.find("nothing")!=-1)
+        self.assertTrue(result)
+        self.assertTrue(result.find("nothing")!=-1)
 
 class TestCheckboxWidget(unittest.TestCase):
     def _makeOne(self, **kw):
@@ -817,7 +817,7 @@ class TestFileUploadWidget(unittest.TestCase):
         tmpstore = DummyTmpStore()
         widget = self._makeOne(tmpstore)
         result = widget.deserialize(field, {'upload':upload})
-        uid = tmpstore.keys()[0]
+        uid = list(tmpstore.keys())[0]
         self.assertEqual(result['uid'], uid)
         self.assertEqual(result['fp'], 'fp')
         self.assertEqual(result['filename'], 'filename')
@@ -1131,7 +1131,7 @@ class TestResourceRegistry(unittest.TestCase):
     def test_dont_use_defaults(self):
         from nive.components.reform.widget import default_resources
         reg = self._makeOne(use_defaults=False)
-        self.failIfEqual(reg.registry, default_resources)
+        self.assertNotEqual(reg.registry, default_resources)
 
     def test_set_js_resources(self):
         reg = self._makeOne()
@@ -1248,7 +1248,7 @@ class TestFileToDataUploadWidget(unittest.TestCase):
     def test_deserialize_file(self):
         from nive.components.reform.schema import null
         from nive.helper import File
-        from StringIO import StringIO
+        from io import StringIO
         schema = DummySchema()
         field = DummyField(schema)
         widget = self._makeOne()
@@ -1270,7 +1270,7 @@ class TestFileToDataUploadWidget(unittest.TestCase):
     def test_deserialize_file_b64(self):
         from nive.components.reform.schema import null
         from nive.helper import File
-        from StringIO import StringIO
+        from io import StringIO
         import base64
         schema = DummySchema()
         field = DummyField(schema)

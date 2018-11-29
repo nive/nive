@@ -12,6 +12,7 @@ data rendering, url generation, http headers and user lookup.
 
 import os
 import time
+import collections
 try:
     import simplejson
 except:
@@ -244,7 +245,7 @@ class BaseView(object):
         if not context:
             context = self.context
 
-        if callable(url):
+        if isinstance(url, collections.Callable):
             return url(context, self)
 
         parts = url.split(u"/")
@@ -374,7 +375,7 @@ class BaseView(object):
                 templatename = self.context.configuration.id
         tmpl = self._LookupTemplate(templatename)
         if not tmpl:
-            raise ConfigurationError, "Template not found: %(name)s %(type)s." % {"name": templatename, "type": self.context.configuration.id}
+            raise ConfigurationError("Template not found: %(name)s %(type)s." % {"name": templatename, "type": self.context.configuration.id})
         if not "context" in values: values[u"context"] = self.context
         if not "view" in values: values[u"view"] = self
         response = render_to_response(tmpl, values, request=self.request)
@@ -384,7 +385,7 @@ class BaseView(object):
     def _LookupTemplate(self, tmplfile):
         conf = self.viewModule
         if not tmplfile:
-            raise TypeError, "'tmplfile' is None. Need a template name to lookup the path."
+            raise TypeError("'tmplfile' is None. Need a template name to lookup the path.")
         if not conf or u":" in tmplfile:
             return tmplfile
         path = conf.templates
@@ -482,10 +483,10 @@ class BaseView(object):
         
         js_tags = css_tags = []
         if types in (None, "js"):
-            js_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".js"), assets)]
+            js_links = [self.StaticUrl(r[1]) for r in [v for v in assets if v[0] not in ignore and v[1].endswith(u".js")]]
             js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         if types in (None, "css"):
-            css_links = [self.StaticUrl(r[1]) for r in filter(lambda v: v[0] not in ignore and v[1].endswith(u".css"), assets)]
+            css_links = [self.StaticUrl(r[1]) for r in [v for v in assets if v[0] not in ignore and v[1].endswith(u".css")]]
             css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
         return (u"\r\n").join(js_tags + css_tags)
         
@@ -511,7 +512,7 @@ class BaseView(object):
         if not len(self.request.subpath):
             raise NotFound
         path = self.request.subpath[0]
-        if self.context.files.has_key(path):
+        if path in self.context.files:
             file = self.context.GetFile(path)
         else:
             file = self.context.GetFileByName(path)
@@ -622,7 +623,7 @@ class BaseView(object):
             if v.custom_predicates:
                 for c in v.custom_predicates:
                     # match the first one
-                    if apply(c, (self.context, self.request)):
+                    if c(*(self.context, self.request)):
                         return v
         return None
 
@@ -870,7 +871,7 @@ class BaseView(object):
         url = []
         params = kw
         #opt
-        for p in params.keys():
+        for p in list(params.keys()):
             if len(url):
                 url.append(u"&")
             url.append(u"%s=%s" % (p, params[p]))
@@ -885,7 +886,7 @@ class BaseView(object):
         """
         form = []
         params = kw
-        for p in params.keys():
+        for p in list(params.keys()):
             value = ConvertToStr(params[p])
             form.append(u"<input type='hidden' name='%s' value='%s'>" % (p, value))
         return "".join(form)
@@ -946,7 +947,7 @@ class BaseView(object):
             return u"</%s>" % (tag)
         attrs = u""
         if attributes:
-            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in attributes.items()]
+            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in list(attributes.items())]
             attrs = u" " + u" ".join(attrs)
         if closeTag=="inline":
             return u"<%s%s/>" % (tag, attrs)

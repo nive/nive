@@ -179,73 +179,73 @@ class WfTest(unittest.TestCase):
     
 
     def test_proc1(self):
-        self.assert_(self.wf.Allow("create", self.obj, self.user1, transition=None))
-        self.assert_(self.wf.Action("create", self.obj, self.user1, transition=None))
-        self.assert_(self.obj.meta.pool_wfa=="edit")
+        self.assertTrue(self.wf.Allow("create", self.obj, self.user1, transition=None))
+        self.assertTrue(self.wf.Action("create", self.obj, self.user1, transition=None))
+        self.assertTrue(self.obj.meta.pool_wfa=="edit")
         # based on users
         self.assertFalse(self.wf.PossibleTransitions("edit", action="", transition="", context=self.obj, user=self.user1))
-        self.assert_(self.wf.PossibleTransitions("edit", action="", transition="", context=self.obj, user=self.user2))
+        self.assertTrue(self.wf.PossibleTransitions("edit", action="", transition="", context=self.obj, user=self.user2))
 
-        self.assert_(self.wf.GetObjInfo(self.obj, self.user1, extended = True).get("name")=="Workflow 1")
-        self.assert_(self.wf.GetObjState(self.obj).id=="edit")
-        self.assert_(self.wf.GetTransition("commit").id=="commit")
-        self.assert_(self.wf.GetState("edit").name=="Edit")
+        self.assertTrue(self.wf.GetObjInfo(self.obj, self.user1, extended = True).get("name")=="Workflow 1")
+        self.assertTrue(self.wf.GetObjState(self.obj).id=="edit")
+        self.assertTrue(self.wf.GetTransition("commit").id=="commit")
+        self.assertTrue(self.wf.GetState("edit").name=="Edit")
 
 
     def test_proc2(self):
-        self.assert_(self.wf.Allow("create", self.obj, self.user1, transition=None))
+        self.assertTrue(self.wf.Allow("create", self.obj, self.user1, transition=None))
         a = self.obj.meta.pool_wfa
         self.obj.meta.pool_wfa = "aaaaa"
         self.assertFalse(self.wf.Allow("create", self.obj, self.user1, transition=None))
         self.obj.meta.pool_wfa = a
         self.assertFalse(self.wf.Allow("ohno", self.obj, self.user1, transition=None))
-        self.assert_(self.wf.Action("create", self.obj, self.user1, transition=None))
+        self.assertTrue(self.wf.Action("create", self.obj, self.user1, transition=None))
         try:
             self.wf.Action("commit", self.obj, self.user1, transition=None)
-            self.assert_(False, "WorkflowNotAllowed not raised")
+            self.assertTrue(False, "WorkflowNotAllowed not raised")
         except WorkflowNotAllowed:
             pass
         self.wf.Action("commit", self.obj, self.user2, transition=None)
-        self.assert_(self.obj.meta.pool_wfa=="end")
+        self.assertTrue(self.obj.meta.pool_wfa=="end")
         try:
             self.wf.Action("commit", self.obj, self.user2, transition=None)
-            self.assert_(False, "WorkflowNotAllowed not raised")
+            self.assertTrue(False, "WorkflowNotAllowed not raised")
         except WorkflowNotAllowed:
             pass
         self.wf.Action("edit", self.obj, self.user1, transition=None)
         try:
             self.wf.Action("commit", self.obj, self.user2, transition="edit")
-            self.assert_(False, "WorkflowNotAllowed not raised")
+            self.assertTrue(False, "WorkflowNotAllowed not raised")
         except WorkflowNotAllowed:
             pass
         self.wf.Action("commit", self.obj, self.user2, transition="commit")
 
     
     def test_multiple(self):
-        self.assert_(self.wf.Action("multiple", self.obj, self.user1, transition=None))
+        self.assertTrue(self.wf.Action("multiple", self.obj, self.user1, transition=None))
 
     
     def test_wfstates(self):
-        self.assert_(self.wf.GetObjState(self.obj).id=="start")
-        self.assert_(self.wf.GetObjState(None).id=="start")
+        self.assertTrue(self.wf.GetObjState(self.obj).id=="start")
+        self.assertTrue(self.wf.GetObjState(None).id=="start")
         self.assertFalse(self.wf.GetState("ohno"))
         self.assertFalse(self.wf._LoadStates(None))
         self.assertRaises(ConfigurationError, self.wf._LoadStates, [s1,t1])
         
 
     def test_wftransition(self):
-        self.assert_(self.wf.Action("create", self.obj, self.user1, transition=None))
-        self.assert_(self.obj.testvalue=="")
-        self.assert_(self.wf.Action("commit", self.obj, self.user2, transition=None))
-        self.assert_(self.obj.testvalue=="huh")
-        self.assert_(self.wf.Action("edit", self.obj, self.user2, transition=None))
+        self.assertTrue(self.wf.Action("create", self.obj, self.user1, transition=None))
+        self.assertTrue(self.obj.testvalue=="")
+        self.assertTrue(self.wf.Action("commit", self.obj, self.user2, transition=None))
+        self.assertTrue(self.obj.testvalue=="huh")
+        self.assertTrue(self.wf.Action("edit", self.obj, self.user2, transition=None))
         
         self.assertFalse(self.wf.GetTransition("ohno"))
         self.assertFalse(self.wf.GetTransition("commit").IsInteractive())
         self.assertFalse(self.wf.GetTransition("commit").GetInteractiveFunctions())
         try:
             self.wf.Action("error", self.obj, self.user2, transition=None)
-            self.assert_(False, "WorkflowNotAllowed not raised")
+            self.assertTrue(False, "WorkflowNotAllowed not raised")
         except WorkflowNotAllowed:
             pass
 
@@ -257,8 +257,8 @@ class WfTest(unittest.TestCase):
         a = app_nodb()
         a.Register(wf1)
         a.Register(wf2)
-        self.assert_(a.GetWorkflowConf(wf1.id, self.obj).id==wf1.id)
-        self.assert_(a.GetWorkflowConf(wf2.id).id==wf2.id)
+        self.assertTrue(a.GetWorkflowConf(wf1.id, self.obj).id==wf1.id)
+        self.assertTrue(a.GetWorkflowConf(wf2.id).id==wf2.id)
 
 
 class TransisiotnTest(unittest.TestCase):
@@ -322,7 +322,7 @@ class ConfTest(unittest.TestCase):
             states = [],
             transitions = []
         )
-        self.assert_(len(testconf.test())==0)
+        self.assertTrue(len(testconf.test())==0)
 
     def test_err1(self):
         testconf = WfProcessConf(
@@ -333,8 +333,8 @@ class ConfTest(unittest.TestCase):
             states = [WfTransitionConf()],
             transitions = [WfStateConf()]
         )
-        self.assert_(len(testconf.test())==4)
-        self.assert_(str(testconf))
+        self.assertTrue(len(testconf.test())==4)
+        self.assertTrue(str(testconf))
         testconf(self)
 
 
@@ -351,7 +351,7 @@ class ConfTest(unittest.TestCase):
             execute = ["nive.tests.test_workflow.wftestfunction"],
             conditions = ["nive.tests.test_workflow.wftestfunction"]
         )
-        self.assert_(len(testconf.test())==0)
+        self.assertTrue(len(testconf.test())==0)
 
     def test_err2(self):
         testconf = WfTransitionConf(
@@ -366,8 +366,8 @@ class ConfTest(unittest.TestCase):
             execute = ["ohno"],
             conditions = ["ohno"]
         )
-        self.assert_(len(testconf.test())==6)
-        self.assert_(str(testconf))
+        self.assertTrue(len(testconf.test())==6)
+        self.assertTrue(str(testconf))
 
 
     def test_obj3(self):
@@ -377,7 +377,7 @@ class ConfTest(unittest.TestCase):
             description = "",
             actions = ["stay"]
         )
-        self.assert_(len(testconf.test())==0)
+        self.assertTrue(len(testconf.test())==0)
 
     def test_err3(self):
         testconf = WfStateConf(
@@ -387,6 +387,6 @@ class ConfTest(unittest.TestCase):
             description = "",
             actions = ["stay"]
         )
-        self.assert_(len(testconf.test())==2)
-        self.assert_(str(testconf))
+        self.assertTrue(len(testconf.test())==2)
+        self.assertTrue(str(testconf))
 

@@ -1,6 +1,6 @@
 
 from copy import deepcopy
-import language_data 
+from . import language_data 
 
 
 class LanguageExtension(object):
@@ -37,7 +37,7 @@ class LanguageExtension(object):
         return language_data.GetConf(lang).get("name")
 
 
-import country_data 
+from . import country_data 
 
 class CountryExtension(object):
     """    

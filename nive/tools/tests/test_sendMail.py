@@ -24,7 +24,7 @@ class SendMailTest1(unittest.TestCase):
         if not r:
             return
         print(FormatConfTestFailure(r))
-        self.assert_(False, "Configuration Error")
+        self.assertTrue(False, "Configuration Error")
 
     def test_tool(self):
         sendMail(configuration,None)
@@ -43,12 +43,12 @@ class SendMailTest2_db(__local.DefaultTestCase):
 
     def test_tool(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
 
     
     def test_toolrun1(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
         try:
             r,v = t()
         except ConfigurationError:
@@ -57,7 +57,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
 
     def test_toolrun2(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
         try:
             r,v = t(recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
         except ConfigurationError:
@@ -66,7 +66,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
 
     def test_toolrundebug(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
         try:
             r,v = t(debug=1, recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
         except ConfigurationError:
@@ -76,14 +76,14 @@ class SendMailTest2_db(__local.DefaultTestCase):
     def test_date(self):
         t = self.app.GetTool("sendMail")
         date = t._FormatDate()
-        self.assert_(date)
+        self.assertTrue(date)
 
 
     def test_mailstr(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t._GetMailStr("aaa@ddd.aa")=="aaa@ddd.aa")
-        self.assert_(t._GetMailStr(("aaa@ddd.aa","a a"))=='"=?utf-8?q?a_a?=" <aaa@ddd.aa>', t._GetMailStr(("aaa@ddd.aa","a a")))
-        self.assert_(t._GetMailStr(("aaa@ddd.aa",))=="aaa@ddd.aa")
+        self.assertTrue(t._GetMailStr("aaa@ddd.aa")=="aaa@ddd.aa")
+        self.assertTrue(t._GetMailStr(("aaa@ddd.aa","a a"))=='"=?utf-8?q?a_a?=" <aaa@ddd.aa>', t._GetMailStr(("aaa@ddd.aa","a a")))
+        self.assertTrue(t._GetMailStr(("aaa@ddd.aa",))=="aaa@ddd.aa")
 
 
     def test_message(self):
@@ -99,7 +99,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
                       replyTo=u"uoah",
                       subject=u"My mail")
         m = t._PrepareMessage(**values)
-        self.assert_(str(m))
+        self.assertTrue(str(m))
 
         values = dict(contentType="text/html;charset=utf-8",
                       body=u"aaaaa",
@@ -109,4 +109,4 @@ class SendMailTest2_db(__local.DefaultTestCase):
                       bcc=u"ooo",
                       subject=u"My mail")
         m = t._PrepareMessage(**values)
-        self.assert_(str(m))
+        self.assertTrue(str(m))

@@ -47,7 +47,7 @@ class Connection(object):
     def cursor(self):
         db = self._get()
         if not db:
-            raise OperationalError, "Database is closed"
+            raise OperationalError("Database is closed")
         return db.cursor()
     
     def begin(self):
@@ -126,7 +126,7 @@ class Connection(object):
         Format a parameter for sql queries like literal for db. This function is not
         secure for any values. 
         """
-        if isinstance(param, (int, long, float)):
+        if isinstance(param, (int, float)):
             return unicode(param)
         d = unicode(param)
         if d.find(u'"')!=-1:
@@ -136,7 +136,7 @@ class Connection(object):
 
     def GetDBManager(self):
         """ returns the database manager obj """
-        raise TypeError, "please use a subclassed connection"
+        raise TypeError("please use a subclassed connection")
 
 
     def _get(self, connect=True):
@@ -198,7 +198,7 @@ class ConnectionCache(object):
         return self.connections[key]
     
     def close(self):
-        for key, conn in self.connections.iteritems():
+        for key, conn in self.connections.items():
             # rollback uncommited values by default
             conn.rollback()
             conn.close()
@@ -249,7 +249,7 @@ class ConnectionRequest(Connection):
             if not connect:
                 return db
             return db or self.connect()
-        except (AttributeError, TypeError, KeyError), e:
+        except (AttributeError, TypeError, KeyError) as e:
             if not connect:
                 return None
             return self.connect()

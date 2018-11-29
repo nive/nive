@@ -37,13 +37,13 @@ class PersistentConf(object):
         """
         Load configuration values from backend and map to configuration.
         """
-        raise TypeError, "subclass"
+        raise TypeError("subclass")
         
     def Save(self, values):
         """
         Store configuration values in backend.
         """
-        raise TypeError, "subclass"
+        raise TypeError("subclass")
         
     def Changed(self):
         """
@@ -104,7 +104,7 @@ class DbPersistence(PersistentConf):
         except db.ProgrammingError:
             data = None
             db.rollback()
-        except Exception, e:
+        except Exception as e:
             log = logging.getLogger(self.app.id)
             log.error("DbPersistence.Load() failed %s", str(e))
             return None

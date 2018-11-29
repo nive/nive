@@ -164,7 +164,7 @@ def SetupRuntimeAcls(acl, context):
     processed = []
     for a in acl:
         if len(a)==4:
-            if apply(a[3], (context,)):
+            if a[3](*(context,)):
                 processed.append(tuple(list(a[:3])))
             continue
         processed.append(tuple(a))

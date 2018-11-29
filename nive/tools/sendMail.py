@@ -160,14 +160,14 @@ class sendMail(Tool):
             replyTo=replyTo)
 
         if not host:
-            raise ConfigurationError, "Empty mail host"
+            raise ConfigurationError("Empty mail host")
         mailer = SMTP(host, port)
         try:
             mailer.ehlo()
             if ssl:
                 mailer.starttls()
                 mailer.ehlo()
-        except (SMTPServerDisconnected, SMTPHeloError, SMTPException), e:
+        except (SMTPServerDisconnected, SMTPHeloError, SMTPException) as e:
             log.error(" %s", repr(e))
             return False
 
@@ -186,18 +186,18 @@ class sendMail(Tool):
                 self.stream.write(recv[0] + u" ok, ")
                 log.debug(u"%s - %s - %s" % (recv[0], title, str(info)))
 
-            except (SMTPSenderRefused, SMTPDataError), e:
+            except (SMTPSenderRefused, SMTPDataError) as e:
                 result = 0
                 log.error("%s", repr(e))
                 log.error(u"->  %s", u"%s - %s - %s" % (recv[0], recv[1], title))
                 self.stream.write(str(e))
 
-            except SMTPRecipientsRefused, e:
+            except SMTPRecipientsRefused as e:
                 result = 0
                 log.error("%s", repr(e))
                 self.stream.write(str(e))
 
-            except (SMTPServerDisconnected,), e:
+            except (SMTPServerDisconnected,) as e:
                 result = 0
                 log.error("%s", repr(e))
                 self.stream.write(str(e))

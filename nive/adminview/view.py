@@ -249,7 +249,7 @@ class AdminBasics(BaseView):
         returns string
         """
         v=[u"<table id='%s' style='display:none'>"%(ref)]
-        for d in conf.__dict__.items():
+        for d in list(conf.__dict__.items()):
             if d[0]=="_empty":
                 continue
             if d[0]=="_parent" and not d[1]:

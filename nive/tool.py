@@ -35,7 +35,7 @@ Subclass and overwrite ``def _Run()`` function. Use self.stream to write result 
 
 """
 
-from StringIO import StringIO
+from io import StringIO
 
 from nive.definitions import Interface, ITool, implements
 from nive.definitions import ConfigurationError
@@ -68,10 +68,10 @@ class Tool(object):
         loads self.configuration 
         """
         if not self.configuration:
-            raise ConfigurationError, "Tool configuration is None. Please load the tool by referencing the tool configuration."
+            raise ConfigurationError("Tool configuration is None. Please load the tool by referencing the tool configuration.")
         
         c = self.configuration
-        for k in c.keys():
+        for k in list(c.keys()):
             # special values
             if k == "id" and c.id:
                 self.__name__ = c.id

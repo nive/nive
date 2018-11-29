@@ -16,6 +16,7 @@ from nive.helper import LoadListItems, ResolveName
 from nive.components.reform.schema import *
 from nive.components.reform.widget import *
 from nive.components.reform.form import Button
+import collections
 
 
 
@@ -87,7 +88,7 @@ def SchemaFactory(form, fields, actions, force=False):
             if isinstance(widget, basestring):
                 widget = ResolveName(widget)
                 kw["widget"] = widget(**kwWidget)
-            elif callable(widget):
+            elif isinstance(widget, collections.Callable):
                 kw["widget"] = widget(**kwWidget)
             else:
                 widget.form = form
@@ -114,7 +115,7 @@ def SchemaFactory(form, fields, actions, force=False):
             n = hidden_node(field, kw, kwWidget, form)
 
         else:
-            n = apply(nodeMapping[field.datatype], (field, kw, kwWidget, form))
+            n = nodeMapping[field.datatype](*(field, kw, kwWidget, form))
             
         # add node to form
         if not n:

@@ -43,21 +43,21 @@ class tdbPersistence(__local.DefaultTestCase):
         if not r:
             return
         print(FormatConfTestFailure(r))
-        self.assert_(False, "Configuration Error")
+        self.assertTrue(False, "Configuration Error")
         
         
     def test_storedconf(self):
         storage = self.app.Factory(IModuleConf, "persistence")
-        self.assert_(storage)
+        self.assertTrue(storage)
         LoadStoredConfValues(self.app, None)
 
 
     def test_load(self):
         storage = self.app.Factory(IModuleConf, "persistence")
-        self.assert_(storage)
+        self.assertTrue(storage)
         storage(self.app, Conf(id="test")).Save({"title":u"öäüß", "something": 123})
 
         values = Conf(id="test")
         storage(self.app, values).Load()
-        self.assert_(values["something"] == 123)
-        self.assert_(values["title"] == u"öäüß")
+        self.assertTrue(values["something"] == 123)
+        self.assertTrue(values["title"] == u"öäüß")
