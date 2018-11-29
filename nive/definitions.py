@@ -2,6 +2,8 @@
 # Released under GPL3. See license.txt
 #
 
+# todo [3] remove cms definitions
+
 __doc__ = """
 Using configuration classes
 -----------------------------
