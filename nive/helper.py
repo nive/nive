@@ -157,7 +157,7 @@ def FormatConfTestFailure(report, fmt="text"):
     v=[]
     for r in report:
         v+= u"-----------------------------------------------------------------------------------\r\n"
-        v+= unicode(r[0]) + " " + r[1] + "\r\n"
+        v+= str(r[0]) + " " + r[1] + "\r\n"
         v+= u"-----------------------------------------------------------------------------------\r\n"
         for d in list(r[2].__dict__.items()):
             a = d[1]
@@ -166,7 +166,7 @@ def FormatConfTestFailure(report, fmt="text"):
                     a = r[2].parent.get(d[0])
                 except:
                     pass
-            v+= unicode(d[0])+u":  "+unicode(a)+u"\r\n"
+            v+= str(d[0])+u":  "+str(a)+u"\r\n"
         v+= u"\r\n"
     return "".join(v)
 
@@ -534,9 +534,9 @@ class FakeLocalizer(object):
     def translate(self, text):
         try:
             if text.mapping:
-                v = unicode(text)
+                v = str(text)
                 for k in text.mapping:
-                    v = v.replace(u"${%s}"%k, unicode(text.mapping[k]))
+                    v = v.replace(u"${%s}"%k, str(text.mapping[k]))
                 return v
         except:
             pass

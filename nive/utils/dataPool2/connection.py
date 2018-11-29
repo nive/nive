@@ -127,8 +127,8 @@ class Connection(object):
         secure for any values. 
         """
         if isinstance(param, (int, float)):
-            return unicode(param)
-        d = unicode(param)
+            return str(param)
+        d = str(param)
         if d.find(u'"')!=-1:
             d = d.replace(u'"',u'\\"')
         return u'"%s"'%d

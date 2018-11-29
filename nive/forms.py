@@ -698,8 +698,8 @@ class Form(Events, ReForm):
                 value = request.POST.getall(key)
                 if not value:
                     value = request.GET.getall(key)
-            if type(value)==StringType:
-                value = unicode(value, self.app.configuration.frontendCodepage)
+            if type(value)==StringType: # todo [3] unicode ?
+                value = str(value, self.app.configuration.frontendCodepage)
         except (AttributeError,KeyError):
             if method == "POST":
                 value = request.POST.get(key)
@@ -709,8 +709,8 @@ class Form(Events, ReForm):
                 value = request.POST.get(key)
                 if not value:
                     value = request.GET.get(key)
-            if type(value)==StringType:
-                value = unicode(value, self.app.configuration.frontendCodepage)
+            if type(value)==StringType: # todo [3] unicode ?
+                value = str(value, self.app.configuration.frontendCodepage)
             return value
         if not len(value):
             return None
@@ -755,7 +755,7 @@ class Form(Events, ReForm):
         #cp=self.app.configuration.frontendCodepage
         #for k in values.items():
         #    if type(k[1]) == StringType:
-        #        values[k[0]] = unicode(values[k[0]], cp)
+        #        values[k[0]] = str(values[k[0]], cp)
         return values
 
 

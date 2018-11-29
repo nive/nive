@@ -237,7 +237,7 @@ class AdminBasics(BaseView):
     def RenderConf(self, c):
         return u"""<strong><a onclick="$('#%d').toggle()" style="cursor:pointer">%s</a></strong><br>%s""" % (
                 abs(id(c)), 
-                unicode(c).replace("<", "&lt;").replace(">", "&gt;"), 
+                str(c).replace("<", "&lt;").replace(">", "&gt;"),
                 self.Format(c, str(abs(id(c))))
                 )
         
@@ -268,12 +268,12 @@ class AdminBasics(BaseView):
                     if hasattr(i, "ccc"):
                         a.append(self.RenderConf(i))
                     else:
-                        a.append(unicode(i).replace(u"<", u"&lt;").replace(u">", u"&gt;")+u"<br>")
+                        a.append(str(i).replace(u"<", u"&lt;").replace(u">", u"&gt;")+u"<br>")
                 value = u"".join(a)
             elif isinstance(value, dict):
                 value = ConvertDictToStr(value, u"<br>")
             else:
-                value = unicode(value).replace(u"<", u"&lt;").replace(u">", u"&gt;")
+                value = str(value).replace(u"<", u"&lt;").replace(u">", u"&gt;")
             v.append(u"<tr><th>%s</th><td>%s</td></tr>\r\n" % (d[0], value))
         v.append(u"</table>")
         return u"".join(v)

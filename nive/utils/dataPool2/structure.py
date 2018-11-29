@@ -363,10 +363,10 @@ class PoolStructure(object):
             elif isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:
-                    value = [unicode(v, self.codepage) for v in value]
+                    value = [str(v, self.codepage) for v in value]
                 value = u"_json_"+json.dumps(value)
             elif isinstance(value, bytes):
-                value = unicode(value, self.codepage)
+                value = str(value, self.codepage)
             return value
         
         if isinstance(fieldtype, dict):
@@ -388,25 +388,25 @@ class PoolStructure(object):
 
         elif fieldtype in ("date", "datetime"):
             if isinstance(value, (float,int)):
-                value = unicode(datetime.fromtimestamp(value))
+                value = str(datetime.fromtimestamp(value))
             elif value is None:
                 pass
-            elif not isinstance(value, unicode):
-                value = unicode(value)
+            elif not isinstance(value, str):
+                value = str(value)
         
         elif fieldtype == "time":
             if isinstance(value, (float,int)):
-                value = unicode(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
+                value = str(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
             elif value is None:
                 pass
-            elif not isinstance(value, unicode):
-                value = unicode(value)
+            elif not isinstance(value, str):
+                value = str(value)
 
         elif fieldtype == "timestamp":
             if value is None:
                 pass
             elif not isinstance(value, str):
-                value = unicode(value)
+                value = str(value)
         
         elif fieldtype in ("list","radio"):
             # to single item string
@@ -425,7 +425,7 @@ class PoolStructure(object):
             if isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:
-                    value = [unicode(v, self.codepage) for v in value]
+                    value = [str(v, self.codepage) for v in value]
                 value = json.dumps(value)
 
         elif fieldtype in ("bool"):
@@ -448,7 +448,7 @@ class PoolStructure(object):
             
         # assure unicode except filedata
         if isinstance(value, bytes) and fieldtype!="file":
-            value = unicode(value, self.codepage)
+            value = str(value, self.codepage)
         
         return value
 
@@ -459,7 +459,7 @@ class PoolStructure(object):
             if isinstance(value, str) and value.startswith(u"_json_"):
                 value = json.loads(value[len(u"_json_"):])
             if isinstance(value, bytes):
-                value = unicode(value, self.codepage)
+                value = str(value, self.codepage)
             return value
 
         if isinstance(fieldtype, dict):
@@ -480,7 +480,7 @@ class PoolStructure(object):
             # -> to datetime.time
             if isinstance(value, str):
                 # misuse datetime parser
-                value2 = ConvertToDateTime(u"2015-01-01 "+unicode(value))
+                value2 = ConvertToDateTime(u"2015-01-01 "+str(value))
                 if value2:
                     value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
             elif isinstance(value, (float,int)):

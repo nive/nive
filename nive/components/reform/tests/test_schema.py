@@ -806,7 +806,7 @@ class TestString(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.deserialize(node, value)
-        self.assertEqual(result, unicode(value))
+        self.assertEqual(result, str(value))
 
     def test_deserialize_from_utf8(self):
         uni = u'\xf8'
@@ -843,7 +843,7 @@ class TestString(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.serialize(node, value)
-        self.assertEqual(result, unicode(value))
+        self.assertEqual(result, str(value))
 
     def test_serialize_unicode_to_None(self):
         value = u'abc'

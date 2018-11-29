@@ -80,8 +80,8 @@ class dbSqlDump(Tool):
                 for col in rec:
                     data.append(conn.FmtParam(col))
                 data = (",").join(data)
-                if not isinstance(data, unicode):
-                    data = unicode(data, codepage)
+                if not isinstance(data, str):
+                    data = str(data, codepage)
                 value = u"INSERT INTO %s (%s) VALUES (%s);\n"%(tablename, columns, data)
                 value = value.encode(codepage)
                 self.stream.write(value)        

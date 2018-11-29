@@ -467,8 +467,8 @@ class Base(object):
 
     def _FmtLimit(self, start, max):
         if start != None:
-            return u"LIMIT %s, %s" % (unicode(start), unicode(max))
-        return u"LIMIT %s" % (unicode(max))
+            return u"LIMIT %s, %s" % (str(start), str(max))
+        return u"LIMIT %s" % (str(max))
 
 
     def GetFulltextSQL(self, searchPhrase, flds, parameter, dataTable = u"", **kw):
@@ -762,7 +762,7 @@ class Base(object):
         if text is None:
             return text
         if isinstance(text, bytes):
-            return unicode(text, self.dbCodePage, "replace")
+            return str(text, self.dbCodePage, "replace")
         return text
 
 
@@ -774,7 +774,7 @@ class Base(object):
         if text is None:
             return text
         if isinstance(text, bytes):
-            return unicode(text, self.codePage, "replace")
+            return str(text, self.codePage, "replace")
         return text
 
 

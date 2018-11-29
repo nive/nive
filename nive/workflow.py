@@ -551,7 +551,7 @@ class Transition(object):
                 # use custom user lookup
                 groups = user.GetGroups(context)
                 if context and ILocalGroups.providedBy(context):
-                    local = context.GetLocalGroups(unicode(user))
+                    local = context.GetLocalGroups(str(user))
                     groups = list(groups)+list(local)
         else:
             groups = (u"system.Everyone",)

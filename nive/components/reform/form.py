@@ -126,7 +126,7 @@ class Form(Field):
                                    **kw))
 
 
-class Raw(unicode):
+class Raw(str):
     def __html__(self):
         return self
 

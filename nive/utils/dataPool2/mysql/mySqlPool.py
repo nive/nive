@@ -49,6 +49,7 @@ class MySqlConnection(Connection):
 
     timeout is set to 3.
     """
+    # todo [3] unicode ?
 
     def connect(self):
         """ Close and connect to server """

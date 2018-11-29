@@ -186,7 +186,7 @@ class File(object):
         
         newPath = DvPath(self._CreatePath(self.filekey, self.filename))
         tempPath = DvPath(str(newPath))
-        tempPath.SetName(u"_temp_" + unicode(uuid.uuid4()))
+        tempPath.SetName(u"_temp_" + str(uuid.uuid4()))
         tempPath.SetExtension(newPath.GetExtension())
 
         if tempPath.Exists():
@@ -222,7 +222,7 @@ class File(object):
         # store path for cleanup on success
         if str(originalPath) and originalPath.Exists():
             backupPath = DvPath(str(originalPath))
-            backupPath.SetName("_del_" + unicode(uuid.uuid4()))
+            backupPath.SetName("_del_" + str(uuid.uuid4()))
             backupPath.SetExtension(originalPath.GetExtension())
             if originalPath.Exists() and not originalPath.Rename(backupPath):
                 tempPath.Delete()

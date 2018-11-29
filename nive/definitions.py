@@ -655,7 +655,7 @@ class DatabaseConf(baseConf):
         self.user = ""
         self.password = ""
         self.useTrashcan = False
-        self.unicode = True
+        self.unicode = True # [3] deprecated
         self.timeout = 3
         self.verifyConnection = False
         self.connection = None

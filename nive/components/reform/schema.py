@@ -695,24 +695,24 @@ class String(SchemaType):
        - A Unicode input value to ``serialize`` is returned untouched.
 
        - A non-Unicode input value to ``serialize`` is run through the
-         ``unicode()`` function without an ``encoding`` parameter
-         (``unicode(value)``) and the result is returned.
+         ``str()`` function without an ``encoding`` parameter
+         (``str(value)``) and the result is returned.
 
        - A Unicode input value to ``deserialize`` is returned untouched.
 
        - A non-Unicode input value to ``deserialize`` is run through the
-         ``unicode()`` function without an ``encoding`` parameter
-         (``unicode(value)``) and the result is returned.
+         ``str()`` function without an ``encoding`` parameter
+         (``str(value)``) and the result is returned.
 
        If ``encoding`` is not ``None``:
 
        - A Unicode input value to ``serialize`` is run through the
          ``unicode`` function with the encoding parameter
-         (``unicode(value, encoding)``) and the result (a ``str``
+         (``str(value, encoding)``) and the result (a ``str``
          object) is returned.
 
        - A non-Unicode input value to ``serialize`` is converted to a
-         Unicode using the encoding (``unicode(value, encoding)``);
+         Unicode using the encoding (``str(value, encoding)``);
          subsequently the Unicode object is reeencoded to a ``str``
          object using the encoding and returned.
 
@@ -722,7 +722,7 @@ class String(SchemaType):
        - A non-Unicode input value to ``deserialize`` is converted to
          a ``str`` object using ``str(value``).  The resulting str
          value is converted to Unicode using the encoding
-         (``unicode(value, encoding)``) and the result is returned.
+         (``str(value, encoding)``) and the result is returned.
 
        A corollary: If a string (as opposed to a unicode object) is
        provided as a value to either the serialize or deserialize
@@ -742,17 +742,17 @@ class String(SchemaType):
             return null
 
         try:
-            if isinstance(appstruct, unicode):
+            if isinstance(appstruct, str):
                 if self.encoding:
                     result = appstruct.encode(self.encoding)
                 else:
                     result = appstruct
             else:
                 encoding = self.encoding
-                if encoding:
-                    result = unicode(appstruct, encoding).encode(encoding)
+                if encoding: # todo [3] unicode ?
+                    result = str(appstruct, encoding).encode(encoding)
                 else:
-                    result = unicode(appstruct)
+                    result = str(appstruct)
             return result
         except Exception as e:
             raise Invalid(node,
@@ -768,11 +768,11 @@ class String(SchemaType):
 
         try:
             result = cstruct
-            if not isinstance(result, unicode):
-                if self.encoding:
-                    result = unicode(str(cstruct), self.encoding)
+            if not isinstance(result, str):
+                if self.encoding: # todo [3] unicode ?
+                    result = str(str(cstruct), self.encoding)
                 else:
-                    result = unicode(cstruct)
+                    result = str(cstruct)
         except Exception as e:
             raise Invalid(node,
                           _('${val} is not a string: %{err}',
@@ -1879,7 +1879,7 @@ class CodeList(object):
             value = value[0]
         
         if not isinstance(value, str):
-            value = unicode(value)
+            value = str(value)
         
         if not value in self.allowed:
             if value:

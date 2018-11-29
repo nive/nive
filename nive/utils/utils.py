@@ -303,7 +303,7 @@ def ReplaceHTMLEntities(text, codepage = None):
         return text # leave as is
 
     if codepage:
-        text = unicode(text, codepage)
+        text = str(text, codepage)
     result = re.sub(u"&#?\w+;", _fixup, text)
     if codepage:
         result = result.encode(codepage)
@@ -335,9 +335,9 @@ def ConvertToStr(data, sep=u"\n"):
     elif isinstance(data, dict):
         v = []
         for key, value in list(data.items()):
-            v.append(u"%s: %s"%(unicode(key), ConvertToStr(value, sep)))
+            v.append(u"%s: %s"%(str(key), ConvertToStr(value, sep)))
         return sep.join(v)
-    return unicode(data)
+    return str(data)
 
 def ConvertToBool(data, raiseExcp = False):
     try:
@@ -455,9 +455,9 @@ def ConvertListToStr(values, sep = u", ", textMarker = u"", keepType = False):
             if keepType:
                 if isinstance(v, (int, float)):
                     tm = u""
-            s.append(u"%s%s%s" % (textMarker, unicode(v), textMarker))
+            s.append(u"%s%s%s" % (textMarker, str(v), textMarker))
         else:
-            s.append(unicode(v))
+            s.append(str(v))
     return sep.join(s)
 
 

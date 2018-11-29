@@ -114,7 +114,7 @@ class AdminUser(object):
         return str(self.identity)
 
     def Authenticate(self, password):
-        return password == unicode(self.data["password"])
+        return password == str(self.data["password"])
     
     def Login(self):
         """ """

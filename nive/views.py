@@ -439,7 +439,7 @@ class BaseView(object):
             self.request.response = orgresp
             self.request.view_name = orgname
 
-        return unicode(value, codepage)
+        return str(value, codepage)
 
     
     def Assets(self, assets=None, ignore=None, viewModuleConfID=None, types=None):  
@@ -782,7 +782,7 @@ class BaseView(object):
                 if not value:
                     value = request.GET.getall(key)
             if isinstance(value, bytes):
-                value = unicode(value, self.context.app.configuration.frontendCodepage)
+                value = str(value, self.context.app.configuration.frontendCodepage)
         except (AttributeError,KeyError):
             if method == "POST":
                 if request.content_type=="application/json":
@@ -799,7 +799,7 @@ class BaseView(object):
                 if not value:
                     value = request.GET.get(key)
             if isinstance(value, bytes):
-                value = unicode(value, self.context.app.configuration.frontendCodepage)
+                value = str(value, self.context.app.configuration.frontendCodepage)
             if value is None:
                 return default
             return value
@@ -947,7 +947,7 @@ class BaseView(object):
             return u"</%s>" % (tag)
         attrs = u""
         if attributes:
-            attrs = [u'%s="%s"'%(a[0],unicode(a[1])) for a in list(attributes.items())]
+            attrs = [u'%s="%s"'%(a[0],str(a[1])) for a in list(attributes.items())]
             attrs = u" " + u" ".join(attrs)
         if closeTag=="inline":
             return u"<%s%s/>" % (tag, attrs)
@@ -1081,7 +1081,7 @@ def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=
         else:
             for m in messages:
                 request.session.flash(m, slot)
-    if isinstance(url, unicode):
+    if isinstance(url, str): # todo [3] unicode ?
         url = url.encode("utf-8")
     body = json.dumps({u"location": url, u"messages": messages, "refresh": refresh})
     headers = [('X-Relocate', url)]

@@ -107,7 +107,7 @@ class ConversionTest(unittest.TestCase):
 
     def test_serialize_notype(self):
         self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", 123)==123)
-        self.assertTrue(isinstance(self.structure.serialize(u"pool_meta", u"somevalue", "123"), unicode))
+        self.assertTrue(isinstance(self.structure.serialize(u"pool_meta", u"somevalue", "123"), str))
         value = datetime.now()
         self.assertTrue(self.structure.serialize(u"pool_meta", u"somevalue", value)==value.strftime("%Y-%m-%d %H:%M:%S"))
         value = ("aaa","bbb")
@@ -138,11 +138,11 @@ class ConversionTest(unittest.TestCase):
 
     def test_se_date(self):
         value = datetime.now()
-        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_change", value)==unicode(value))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_change", value)==str(value))
         value = date.today()
-        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_create", value)==unicode(value))
+        self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_create", value)==str(value))
         value = time.time()
-        self.assertTrue(self.structure.serialize(u"data2", u"ftime", value)==unicode(value))
+        self.assertTrue(self.structure.serialize(u"data2", u"ftime", value)==str(value))
 
     def test_se_list(self):
         self.assertTrue(self.structure.serialize(u"pool_meta", u"pool_wfa", u"value")==u"value")
@@ -187,10 +187,10 @@ class ConversionTest(unittest.TestCase):
 
     def test_ds_date(self):
         value = datetime.now()
-        x=self.structure.deserialize(u"pool_meta", u"pool_change", unicode(value))
+        x=self.structure.deserialize(u"pool_meta", u"pool_change", str(value))
         self.assertTrue(x.strftime("%Y-%m-%d %H:%M:%S")==value.strftime("%Y-%m-%d %H:%M:%S"))
         value = date.today()
-        x=self.structure.deserialize(u"pool_meta", u"pool_create", unicode(value))
+        x=self.structure.deserialize(u"pool_meta", u"pool_create", str(value))
         self.assertTrue(x.strftime("%Y-%m-%d")==value.strftime("%Y-%m-%d"))
         value = time.time()
         self.assertTrue(self.structure.deserialize(u"data2", u"ftime", value))

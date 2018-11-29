@@ -98,8 +98,8 @@ class PostgresConnection(Connection):
         secure for any values. 
         """
         if isinstance(param, (int, float)):
-            return unicode(param)
-        d = unicode(param)
+            return str(param)
+        d = str(param)
         if d.find(u"'")!=-1:
             d = d.replace(u"'",u"\\'")
         return u"'%s'"%d
@@ -214,8 +214,8 @@ class PostgreSql(FileManager, Base):
 
     def _FmtLimit(self, start, max):
         if start != None:
-            return u"LIMIT %s OFFSET %s" % (unicode(max), unicode(start))
-        return u"LIMIT %s" % (unicode(max))
+            return u"LIMIT %s OFFSET %s" % (str(max), str(start))
+        return u"LIMIT %s" % (str(max))
 
 
 class PostgreSqlEntry(FileEntry, Entry):

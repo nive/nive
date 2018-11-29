@@ -47,7 +47,7 @@ def DumpObjects(stream):
     _getr(gcl, olist, seen)
 
     stream.write(u"Number of objects found: ")
-    stream.write(unicode(len(olist)))
+    stream.write(str(len(olist)))
     stream.write(u"<br>\n")
     #stream.write(olist[0].__dict__)
     trefs = {}
