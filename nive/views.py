@@ -785,7 +785,10 @@ class BaseView(object):
         except (AttributeError,KeyError):
             if method == "POST":
                 if request.content_type=="application/json":
-                    value = request.json_body.get(key)
+                    try:
+                        value = request.json_body.get(key)
+                    except AttributeError:
+                        value = None
                 else:
                     value = request.POST.get(key)
             elif method == "GET":
