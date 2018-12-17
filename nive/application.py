@@ -378,7 +378,7 @@ class Application(object):
                 db.connection.connect()
                 if not db.connection.IsConnected():
                     return False, "No connection"
-            self.Query("select id from pool_meta where id =1")
+            #self.Query("select id from pool_meta where id =1")
             return True, "OK"
 
         except Exception, err:

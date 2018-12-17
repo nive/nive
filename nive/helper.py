@@ -531,7 +531,7 @@ class Event(object):
         self.request = request or Request()
 
 class FakeLocalizer(object):
-    def translate(self, text):
+    def translate(self, text, mapping=None):
         try:
             if text.mapping:
                 v = unicode(text)
