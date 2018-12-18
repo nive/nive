@@ -79,7 +79,7 @@ class PostgresManager(DatabaseManager):
         date -> DATE NULL DEFAULT default
         datetime -> TIMESTAMP NULL DEFAULT default
         time -> TIME NULL DEFAULT default
-        timestamp -> TIMESTAMP
+        timestamp -> DOUBLE PRECISION DEFAULT default
         listt -> VARCHAR(30) NOT NULL DEFAULT default
         listn -> SMALLINT NOT NULL DEFAULT default
         multilist, checkbox -> VARCHAR(2048) NOT NULL DEFAULT default
@@ -189,7 +189,8 @@ class PostgresManager(DatabaseManager):
                 col = u"TIME NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "timestamp":
-            col = u"TIMESTAMP DEFAULT NOW()"
+            cval = conf["default"]
+            col = u"DOUBLE PRECISION DEFAULT %s" % (cval)
 
         elif datatype == "listt":
             col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
