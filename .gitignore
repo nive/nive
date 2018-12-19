@@ -20,15 +20,9 @@ pip-log.txt
 .coverage
 .tox
 
-#Translations
-*.mo
-
 #Mr Developer
 .mr.developer.cfg
 
 #ide
-.project
-.pydevproject
-.amateras
 .settings
 .idea
