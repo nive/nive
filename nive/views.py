@@ -808,7 +808,7 @@ class BaseView(object):
         if not len(value):
             return default
         elif len(value)==1:
-            if value is None:
+            if value[0] is None:
                 return default
             return value[0]
         if value is None:
