@@ -1,4 +1,4 @@
-<div class="form-actions">
+<div class="form-actions" i18n:domain="nive">
 <div class="row">
   <div class="${form.widget.settings.get('column1_css', 'span2')}">
   </div>

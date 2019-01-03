@@ -38,6 +38,22 @@ msgid "Item exists!"
 msgstr ""
 
 #: ./nive/forms.py:1727
+msgid "Create"
+msgstr ""
+
+#: ./nive/forms.py:1727
+msgid "Save"
+msgstr ""
+
+#: ./nive/forms.py:1727
+msgid "Cancel"
+msgstr ""
+
+#: ./nive/forms.py:1727
+msgid "Start"
+msgstr ""
+
+#: ./nive/forms.py:1727
 msgid "Item deleted!"
 msgstr ""
 

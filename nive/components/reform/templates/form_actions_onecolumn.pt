@@ -1,4 +1,4 @@
-<div class="form-actions">
+<div class="form-actions" i18n:domain="nive">
   <div class="">
     <tal:block repeat="button buttons">
       <button

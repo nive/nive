@@ -807,7 +807,7 @@ class HTMLForm(Form):
 
     actions = [
         Conf(id=u"default", method="StartForm",    name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
-        Conf(id=u"edit",    method="ProcessForm",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+        Conf(id=u"edit",    method="ProcessForm",  name=_(u"Save"),    hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
     ]
     subsets = {
         "edit":   {"actions": [u"edit"],    "defaultAction": "default"}
@@ -1210,10 +1210,10 @@ class ObjectForm(HTMLForm):
     """
     actions = [
         Conf(id=u"default",    method="StartFormRequest",  name=u"Initialize", hidden=True,  css_class=u"",            html=u"", tag=u""),
-        Conf(id=u"create",     method="CreateObj",  name=u"Create",     hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
-        Conf(id=u"defaultEdit",method="StartObject",name=u"Initialize", hidden=True,  css_class=u"",            html=u"", tag=u""),
-        Conf(id=u"edit",       method="UpdateObj",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
-        Conf(id=u"cancel",     method="Cancel",     name=u"Cancel",     hidden=False, css_class=u"buttonCancel",html=u"", tag=u"")
+        Conf(id=u"create",     method="CreateObj",  name=_(u"Create"),     hidden=False, css_class=u"btn btn-primary", html=u"", tag=u""),
+        Conf(id=u"defaultEdit",method="StartObject",name=u"Initialize",    hidden=True,  css_class=u"",                html=u"", tag=u""),
+        Conf(id=u"edit",       method="UpdateObj",  name=_(u"Save"),       hidden=False, css_class=u"btn btn-primary", html=u"", tag=u""),
+        Conf(id=u"cancel",     method="Cancel",     name=_(u"Cancel"),     hidden=False, css_class=u"buttonCancel",    html=u"", tag=u"")
     ]
     subsets = {
         "create": {"actions": [u"create"],  "defaultAction": "default"},
@@ -1421,7 +1421,7 @@ class ToolForm(HTMLForm):
     """
     actions = [
         Conf(id=u"default", method="StartForm", name=u"Initialize", hidden=True,  css_class=u"", html=u"", tag=u""),
-        Conf(id=u"run",     method="RunTool",   name=u"Start",      hidden=False, css_class=u"", html=u"", tag=u""),
+        Conf(id=u"run",     method="RunTool",   name=_(u"Start"),   hidden=False, css_class=u"", html=u"", tag=u""),
     ]
 
     def Setup(self, subset=None):
@@ -1586,7 +1586,7 @@ class JsonMappingForm(HTMLForm):
 
     actions = [
         Conf(id=u"default",    method="StartObject",name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
-        Conf(id=u"edit",       method="UpdateObj",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+        Conf(id=u"edit",       method="UpdateObj",  name=_(u"Save"),    hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
     ]
 
     def Validate(self, data, removeNull=True):
@@ -1692,7 +1692,7 @@ class JsonSequenceForm(HTMLForm):
     
     actions = [
         Conf(id=u"default",    method="StartObject",name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
-        Conf(id=u"edit",       method="UpdateObj",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+        Conf(id=u"edit",       method="UpdateObj",  name=_(u"Save"),    hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
     ]
     editKeyFld = FieldConf(id=editKey, name=u"indexKey", datatype="number", hidden=True, default=u"")
     
