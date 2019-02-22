@@ -100,30 +100,8 @@ class INonContainer(Interface):
 class IPortal(Interface):
     pass
 
-# pages and elements
-class IWebsite(Interface):
-    pass
-class IPage(Interface):
-    pass
-class IPageContainer(Interface):
-    pass
-class IPageElement(Interface):
-    pass
-class IPageElementContainer(Interface):
-    pass
-class IFolder(Interface):
-    pass
-class IColumn(Interface):
-    pass
-class IFile(Interface):
-    pass
+# additional interfaces
 class ITool(Interface):
-    pass
-class IIFaceRoot(Interface):
-    pass
-class ICMSRoot(Interface):
-    pass
-class IWebsiteRoot(Interface):
     pass
 class ICache(Interface):
     pass
@@ -131,7 +109,13 @@ class IPersistent(Interface):
     pass
 class IUser(Interface):
     pass
-        
+class IFileStorage(Interface):
+    """
+    Used for file storage classes on object level.
+    """
+    pass
+
+
 # configuration 
 class IConf(Interface):
     pass
@@ -163,12 +147,6 @@ class IGroupConf(Interface):
 class IWorkflowConf(Interface):
     pass
 
-class IFileStorage(Interface):
-    """
-    Used for file storage classes on object level.
-    """
-    pass
-    
 # workflow
 class IWfProcessConf(Interface):
     pass
@@ -185,25 +163,6 @@ class IUserDatabase(Interface):
     pass
 class ILocalGroups(Interface):
     pass
-
-# interface extensions
-class IToolboxWidgetConf(Interface):
-    """
-    IToolboxWidgetConf refers to toolbox plugin points. Use IToolboxWidgetConf as widgetType
-    in your WidgetConf() to link a widget to the nive toolbox.
-    """
-
-class IEditorWidgetConf(Interface):
-    """
-    IEditorWidgetConf refers to editor tab plugin point. Use IEditorWidgetConf as widgetType
-    in your WidgetConf() to link a new tab to the nive editor header.
-    """
-
-class IAdminWidgetConf(Interface):
-    """
-    IAdminWidgetConf refers to the nive.components.adminview tab plugin point. Use IAdminWidgetConf as widgetType
-    in your WidgetConf() to link a new tab to the nive admin header.
-    """
 
 class ISort(Interface):
     pass
@@ -1590,11 +1549,7 @@ LocalGroupsTbl: {"identity": None,
 # select tags (pool_stag) ----------------------------------------------------------------------------
 
 StagContainer = 0        # 0-9
-StagPage = 10            # 10-19
-StagPageElement = 20     # 20-29
-StagItem = 30            # 30-39
 StagRessource = 50       # 50-59
-StagUser = 100           # 100-109
 
 
 # allowed types in contaier --------------------------------------------------------------------------

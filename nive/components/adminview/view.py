@@ -7,16 +7,25 @@ Administration interface module
 """
 
 from pyramid.renderers import get_renderer, render_to_response, render
+from zope.interface import Interface
 
 from nive.i18n import _
 from nive.definitions import ViewConf, ViewModuleConf, FieldConf, WidgetConf, Conf
-from nive.definitions import IApplication, IUser, IAdminWidgetConf, IUserDatabase, IPersistent, IModuleConf, IViewModuleConf
-from nive.definitions import IWebsiteRoot, ICMSRoot
+from nive.definitions import IApplication, IUser, IUserDatabase, IPersistent, IModuleConf, IViewModuleConf
 
 from nive.views import BaseView
 from nive.forms import ValidationError, HTMLForm
 from nive.extensions.persistentRoot import IPersistentRoot
 from nive.utils.utils import SortConfigurationList, ConvertDictToStr
+
+
+
+class IAdminWidgetConf(Interface):
+    """
+    IAdminWidgetConf refers to the nive.components.adminview tab plugin point. Use IAdminWidgetConf as widgetType
+    in your WidgetConf() to link a new tab to the nive admin header.
+    """
+
 
 
 # view module definition ------------------------------------------------------------------
@@ -138,7 +147,7 @@ class ConfigurationForm(HTMLForm):
                 result = False
             errors=None
             if self.view and redirectSuccess:
-                redirectSuccess = self.view.ResolveUrl(redirectSuccess, obj)
+                redirectSuccess = self.view.ResolveUrl(redirectSuccess, self.context)
                 if self.use_ajax:
                     self.view.Relocate(redirectSuccess, messages=msgs, raiseException=True)
                 else:
@@ -206,7 +215,7 @@ class RootForm(HTMLForm):
             msgs.append(_(u"OK. Data saved."))
             errors=None
             if self.view and redirectSuccess:
-                redirectSuccess = self.view.ResolveUrl(redirectSuccess, obj)
+                redirectSuccess = self.view.ResolveUrl(redirectSuccess, self.context)
                 if self.use_ajax:
                     self.view.Relocate(redirectSuccess, messages=msgs, raiseException=True)
                 else:
@@ -297,14 +306,6 @@ class AdminBasics(BaseView):
                     continue
                 url = self.ResolveUrl(vm.get("adminLink"), app)
                 links.append({"href":url, "title":app.configuration.title + u": " + vm.name})
-
-            # bw.0.9.13
-            # search for cms editor and public view by root
-            for root in app.GetRoots():
-                if ICMSRoot.providedBy(root):
-                    links.append({"href":self.Url(root), "title":app.configuration.title + u": " + _(u"editor")})
-                elif IWebsiteRoot.providedBy(root):
-                    links.append({"href":self.Url(root), "title":app.configuration.title + u": " + _(u"public")})
 
         return links
                 

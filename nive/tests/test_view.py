@@ -344,7 +344,7 @@ class viewTest_db:
         self.assertTrue(view.index_tmpl(path=None)==None)
         self.assertTrue(view.index_tmpl(path="nive.tests:index.pt"))
         
-        view._c_vm=viewModule()
+        view.__configuration__=viewModule
         self.assertTrue(view.index_tmpl(path=None))
         
         self.assertRaises(ValueError, view.DefaultTemplateRenderer, {}, templatename = None)
@@ -354,8 +354,6 @@ class viewTest_db:
         view.RenderView(self.context, name="", secure=True, raiseUnauthorized=False)
         view.RenderView(self.context, name="test", secure=False, raiseUnauthorized=True)
         view.RenderView(self.context, name="", secure=True, raiseUnauthorized=False, codepage="utf-8")
-        view.IsPage(self.context)
-        view.IsPage()
         view.tmpl()
 
     
@@ -415,7 +413,7 @@ class viewTest_db:
 
     def test_assets(self):
         view2 = BaseView(self.context, self.request)
-        view2._c_vm=viewModule()
+        view2.__configuration__=viewModule
         self.assertTrue(view2.Assets())
         self.assertTrue(view2.Assets(ignore="jquery.js"))
         self.assertTrue(view2.Assets(assets=(("jquery.js", "nive.components.adminview:static/mods/jquery.min.js"),)))

@@ -37,7 +37,7 @@ from nive.utils.utils import ConvertToStr, ConvertListToStr, ConvertToDateTime
 from nive.utils.utils import FmtSeconds, FormatBytesForDisplay, CutText, GetMimeTypeExtension
 from nive import FileNotFound
 from nive.definitions import ViewConf
-from nive.definitions import IPage, IObject, IViewModuleConf
+from nive.definitions import IViewModuleConf
 from nive.definitions import ConfigurationError
 
 
@@ -52,8 +52,6 @@ class Unauthorized(Exception):
 class BaseView(object):
     """    """
     __configuration__ = None
-    # bw 0.9.13
-    viewModuleID = None
 
     
     def __init__(self, context, request):
@@ -62,8 +60,6 @@ class BaseView(object):
         self.appRequestKeys = []
         self.fileExpires = 3600
         self._t = time.time()
-        # bw 0.9.13
-        self._c_vm = None     # caches the view module configuration
 
     @property
     def configuration(self):
@@ -140,13 +136,15 @@ class BaseView(object):
             return u""
         if file.startswith((u"http://",u"https://",u"/")):
             return file
-        if not u":" in file and self.viewModule and self.viewModule.static:
-            if self.viewModule.static.endswith((u"/",u":")):
-                file = self.viewModule.static + file
-            else:
-                file = u"%s/%s" % (self.viewModule.static, file)
-            if file.startswith((u"http://",u"https://",u"/")):
-                return file
+        if not u":" in file:
+            conf = self.configuration
+            if conf and conf.static:
+                if conf.static.endswith((u"/",u":")):
+                    file = conf.static + file
+                else:
+                    file = u"%s/%s" % (conf.static, file)
+                if file.startswith((u"http://",u"https://",u"/")):
+                    return file
         return static_url(file, self.request)
 
     def FileUrl(self, fieldID, resource=None):
@@ -348,7 +346,7 @@ class BaseView(object):
         #if path:
         #    return get_renderer(path).implementation()
         if not path:
-            conf = self.viewModule
+            conf = self.configuration
             if not conf or not conf.template:
                 return None
             path = conf.template
@@ -383,7 +381,7 @@ class BaseView(object):
         return response
 
     def _LookupTemplate(self, tmplfile):
-        conf = self.viewModule
+        conf = self.configuration
         if not tmplfile:
             raise TypeError("'tmplfile' is None. Need a template name to lookup the path.")
         if not conf or u":" in tmplfile:
@@ -474,8 +472,8 @@ class BaseView(object):
             if not conf:
                 return u""
             assets = conf.assets
-        if assets is None and self.viewModule:
-            assets = self.viewModule.assets
+        if assets is None and self.configuration:
+            assets = self.configuration.assets
         if not assets:
             return u""
         
@@ -971,27 +969,7 @@ class BaseView(object):
             return u""
 
 
-    # to be removed in the future
-    def IsPage(self, object=None):
-        # to be removed
-        if not object:
-            return IPage.providedBy(self.context)
-        return IPage.providedBy(object)
 
-
-    @property
-    def viewModule(self):
-        # bw 0.9.13
-        # use self.configuration instead
-        if self.__configuration__:
-            return self.configuration
-        if not self.viewModuleID:
-            return self._c_vm
-        self._c_vm = self._c_vm or self.context.app.QueryConfByName(IViewModuleConf, self.viewModuleID)
-        return self._c_vm
-
-
- 
 # Configuration helper -------------------------------------------------
 def UpdateViewConf(viewModule, viewname, **viewconfig):
     """
