@@ -24,285 +24,15 @@ See :py:mod:`nive.components.baseobjects` for subclassing base classes
 
 import weakref
 
+from nive.definitions import implementer
 from nive.definitions import StagContainer, ReadonlySystemFlds
-from nive.definitions import IFieldConf, ICache, IContainer
+from nive.definitions import IFieldConf, ICache, IContainer, INonContainer, IObject
 from nive.definitions import ConfigurationError
 from nive.workflow import WorkflowNotAllowed
 from nive.security import SetupRuntimeAcls
 
+from nive.events import Events
 
-class Object(object):
-    """    
-    Object implementation with read access.
-    """
-
-    def __init__(self, id, dbEntry, parent, configuration, **kw):
-        self.__name__ = str(id)
-        self.__parent__ = parent
-        self.id = id
-        self.idhash = id
-        self.path = str(id)
-        self.dbEntry = dbEntry
-        self.configuration = configuration
-        self.selectTag = configuration.get("selectTag", StagContainer)
-
-        # load security
-        acl = SetupRuntimeAcls(configuration.acl, self)
-        if acl:
-            # omit if empty. acls will be loaded from parent object
-            self.__acl__ = acl
-
-        self.Signal("init")
-
-    # Shortcuts -----------------------------------------------------------
-
-    @property
-    def meta(self):
-        """ meta values """
-        return self.dbEntry.meta
-
-    @property
-    def data(self):
-        """ data values """
-        return self.dbEntry.data
-
-    @property
-    def files(self):
-        """ files """
-        return self.dbEntry.files
-
-    @property
-    def dataroot(self):
-        """ returns the current root object in parent chain """
-        return self.parent.dataroot
-
-    @property
-    def app(self):
-        """ returns the cms application itself """
-        return self.dataroot.app
-
-    @property
-    def parent(self):
-        """ returns the parent object """
-        return self.__parent__
-    
-    @property
-    def db(self):
-        """ returns the database object """
-        return self.app.db
-
-
-    # Values ------------------------------------------------------
-
-    def GetFld(self, fldname):
-        """
-        Get the meta/data value and convert to type.
-        
-        returns value or None
-        """
-        #data
-        for f in self.configuration["data"]:
-            if f["id"] == fldname:
-                if f["datatype"] == "file":
-                    return self.GetFile(fldname)
-                return self.data.get(fldname)
-
-        # meta
-        f = self.app.GetMetaFld(fldname)
-        if f:
-            return self.meta.get(fldname)
-        return None
-
-
-    def GetFile(self, fldname, loadFileData=False):
-        """
-        Get the file as `File` object with meta information. The included file 
-        pointer is opened on read. 
-        This functions directly accesses the database and ignores files cached in 
-        object.files.
-        
-        returns File object or None
-        """
-        return self.dbEntry.GetFile(fldname, loadFileData=loadFileData)
-
-    def GetFileByName(self, filename):
-        """
-        Get a file by filename. See GetFile() for details.
-        This functions directly accesses the database and ignores files cached in 
-        object.files.
-        
-        returns File object or None
-        """
-        file = self.dbEntry.Files(parameter={u"filename":filename})
-        if not len(file):
-            return None
-        return file[0]
-
-    def GetFileByUID(self, uid):
-        """
-        Get a file by uid. Only for files contained in this object. See GetFile() for details.
-        This functions directly accesses the database and ignores files cached in 
-        object.files.
-        
-        returns File object or none
-        """
-        file = self.dbEntry.Files(parameter={u"fileid":uid})
-        if not len(file):
-            return None
-        return file[0]
-
-    def GetID(self):
-        """
-        Get the object id as number.
-        
-        returns number
-        """
-        return self.id
-
-    def GetTypeID(self):
-        """ returns the object type as string """
-        return self.configuration["id"]
-
-    def GetTypeName(self):
-        """ returns the the object type name as string """
-        return self.configuration["name"]
-
-    def GetFieldConf(self, fldId):
-        """
-        Get the FieldConf for the field with id = fldId. Looks up data, file and meta 
-        fields.
-
-        If `fldId` is a Field Configuration (``nive.definitions.FieldConf``) the functions
-        checks if the field id is defined for the object.
-
-        returns FieldConf or None
-        """
-        if IFieldConf.providedBy(fldId):
-            f = [d for d in self.configuration.data if d["id"]==fldId.id]
-            if f:
-                return fldId
-        else:
-            f = [d for d in self.configuration.data if d["id"]==fldId]
-            if f:
-                return f[0]
-        return self.app.GetMetaFld(fldId)
-
-    def GetTitle(self):
-        """ returns the objects meta.title as string """
-        return self.meta.get("title","")
-
-    def GetPath(self):
-        """ returns the url path name of the object as string """
-        return self.__name__
-
-
-    # parents ----------------------------------------------------
-
-    def IsRoot(self):
-        """ returns bool """
-        return False
-
-    def GetParents(self):
-        """ returns all parent objects as list """
-        p = []
-        o = self
-        while o:
-            o = o.parent
-            if o:
-                p.append(o)
-        return p
-
-    def GetParentIDs(self):
-        """ returns all parent ids as list """
-        p = []
-        o = self
-        while o:
-            o = o.parent
-            if o:
-                p.append(o.GetID())
-        return p
-
-    def GetParentTitles(self):
-        """ returns all parent titles as list """
-        p = []
-        o = self
-        while o:
-            o = o.parent
-            if o:
-                p.append(o.GetTitle())
-        return p
-
-    def GetParentPaths(self):
-        """ returns all parent paths as list """
-        p = []
-        o = self
-        while o:
-            o = o.parent
-            if o:
-                p.append(o.GetPath())
-        return p
-
-
-    def IsContainer(self):
-        """ returns if this object is a container """
-        return IContainer.providedBy(self)
-
-
-    # tools ----------------------------------------------------
-
-    def GetTool(self, name):
-        """
-        Load a tool for execution in the objects context. Only works for tools applied
-        to this objects type. ::
-            
-            returns the tool or None
-        
-        Event
-        - loadToool(tool=toolObj)
-        """
-        t = self.app.GetTool(name, self)
-        self.Signal("loadTool", tool=t)
-        return t
-
-
-    def Close(self):
-        """
-        Close the object and all contained objects. Currently only used in combination with caches.
-        
-        Event
-        - close()
-        """
-        self.Signal("close")
-        if ICache.providedBy(self):
-            #opt
-            for o in self.GetAllFromCache():
-                o.Close()
-            p = self.parent
-            if ICache.providedBy(p):
-                p.RemoveCache(self.id)
-        self.dbEntry.Close()
-
-
-    # to be removed in future versions ------------------------------------------------------------
-
-    def root(self):
-        """ 
-        bw 0.9.12: use `dataroot` property instead! 
-        returns the current root object in parent chain 
-        """
-        return self.parent.root()
-
-    def GetRoot(self):
-        """bw 0.9.12: to be removed. returns the current root object """
-        return self.dataroot
-
-    def GetApp(self):
-        """bw 0.9.12: to be removed. returns the cms main application object """
-        return self.dataroot.app
-
-    def GetParent(self):
-        """bw 0.9.12: to be removed. returns the parent object in the hierarchy """
-        return self.__parent__
 
 
 
@@ -711,5 +441,270 @@ class ObjectWorkflow:
         return True
 
 
+@implementer(INonContainer, IObject)
+class Object(ObjectEdit, Events, ObjectWorkflow):
+    """
+    Object implementation with read access.
+    """
 
+    def __init__(self, id, dbEntry, parent, configuration, **kw):
+        self.__name__ = str(id)
+        self.__parent__ = parent
+        self.id = id
+        self.idhash = id
+        self.path = str(id)
+        self.dbEntry = dbEntry
+        self.configuration = configuration
+        self.selectTag = configuration.get("selectTag", StagContainer)
+
+        # load security
+        acl = SetupRuntimeAcls(configuration.acl, self)
+        if acl:
+            # omit if empty. acls will be loaded from parent object
+            self.__acl__ = acl
+
+        self.Signal("init")
+
+    # Shortcuts -----------------------------------------------------------
+
+    @property
+    def meta(self):
+        """ meta values """
+        return self.dbEntry.meta
+
+    @property
+    def data(self):
+        """ data values """
+        return self.dbEntry.data
+
+    @property
+    def files(self):
+        """ files """
+        return self.dbEntry.files
+
+    @property
+    def dataroot(self):
+        """ returns the current root object in parent chain """
+        return self.parent.dataroot
+
+    @property
+    def app(self):
+        """ returns the cms application itself """
+        return self.dataroot.app
+
+    @property
+    def parent(self):
+        """ returns the parent object """
+        return self.__parent__
+
+    @property
+    def db(self):
+        """ returns the database object """
+        return self.app.db
+
+    # Values ------------------------------------------------------
+
+    def GetFld(self, fldname):
+        """
+        Get the meta/data value and convert to type.
+
+        returns value or None
+        """
+        # data
+        for f in self.configuration["data"]:
+            if f["id"] == fldname:
+                if f["datatype"] == "file":
+                    return self.GetFile(fldname)
+                return self.data.get(fldname)
+
+        # meta
+        f = self.app.GetMetaFld(fldname)
+        if f:
+            return self.meta.get(fldname)
+        return None
+
+    def GetFile(self, fldname, loadFileData=False):
+        """
+        Get the file as `File` object with meta information. The included file
+        pointer is opened on read.
+        This functions directly accesses the database and ignores files cached in
+        object.files.
+
+        returns File object or None
+        """
+        return self.dbEntry.GetFile(fldname, loadFileData=loadFileData)
+
+    def GetFileByName(self, filename):
+        """
+        Get a file by filename. See GetFile() for details.
+        This functions directly accesses the database and ignores files cached in
+        object.files.
+
+        returns File object or None
+        """
+        file = self.dbEntry.Files(parameter={u"filename": filename})
+        if not len(file):
+            return None
+        return file[0]
+
+    def GetFileByUID(self, uid):
+        """
+        Get a file by uid. Only for files contained in this object. See GetFile() for details.
+        This functions directly accesses the database and ignores files cached in
+        object.files.
+
+        returns File object or none
+        """
+        file = self.dbEntry.Files(parameter={u"fileid": uid})
+        if not len(file):
+            return None
+        return file[0]
+
+    def GetID(self):
+        """
+        Get the object id as number.
+
+        returns number
+        """
+        return self.id
+
+    def GetTypeID(self):
+        """ returns the object type as string """
+        return self.configuration["id"]
+
+    def GetTypeName(self):
+        """ returns the the object type name as string """
+        return self.configuration["name"]
+
+    def GetFieldConf(self, fldId):
+        """
+        Get the FieldConf for the field with id = fldId. Looks up data, file and meta
+        fields.
+
+        If `fldId` is a Field Configuration (``nive.definitions.FieldConf``) the functions
+        checks if the field id is defined for the object.
+
+        returns FieldConf or None
+        """
+        if IFieldConf.providedBy(fldId):
+            f = [d for d in self.configuration.data if d["id"] == fldId.id]
+            if f:
+                return fldId
+        else:
+            f = [d for d in self.configuration.data if d["id"] == fldId]
+            if f:
+                return f[0]
+        return self.app.GetMetaFld(fldId)
+
+    def GetTitle(self):
+        """ returns the objects meta.title as string """
+        return self.meta.get("title", "")
+
+    def GetPath(self):
+        """ returns the url path name of the object as string """
+        return self.__name__
+
+    # parents ----------------------------------------------------
+
+    def IsRoot(self):
+        """ returns bool """
+        return False
+
+    def GetParents(self):
+        """ returns all parent objects as list """
+        p = []
+        o = self
+        while o:
+            o = o.parent
+            if o:
+                p.append(o)
+        return p
+
+    def GetParentIDs(self):
+        """ returns all parent ids as list """
+        p = []
+        o = self
+        while o:
+            o = o.parent
+            if o:
+                p.append(o.GetID())
+        return p
+
+    def GetParentTitles(self):
+        """ returns all parent titles as list """
+        p = []
+        o = self
+        while o:
+            o = o.parent
+            if o:
+                p.append(o.GetTitle())
+        return p
+
+    def GetParentPaths(self):
+        """ returns all parent paths as list """
+        p = []
+        o = self
+        while o:
+            o = o.parent
+            if o:
+                p.append(o.GetPath())
+        return p
+
+    def IsContainer(self):
+        """ returns if this object is a container """
+        return IContainer.providedBy(self)
+
+    # tools ----------------------------------------------------
+
+    def GetTool(self, name):
+        """
+        Load a tool for execution in the objects context. Only works for tools applied
+        to this objects type. ::
+
+            returns the tool or None
+
+        Event
+        - loadToool(tool=toolObj)
+        """
+        t = self.app.GetTool(name, self)
+        self.Signal("loadTool", tool=t)
+        return t
+
+    def Close(self):
+        """
+        Close the object and all contained objects. Currently only used in combination with caches.
+
+        Event
+        - close()
+        """
+        self.Signal("close")
+        if ICache.providedBy(self):
+            # opt
+            for o in self.GetAllFromCache():
+                o.Close()
+            p = self.parent
+            if ICache.providedBy(p):
+                p.RemoveCache(self.id)
+        self.dbEntry.Close()
+
+    # to be removed in future versions ------------------------------------------------------------
+
+    def root(self):
+        """
+        bw 0.9.12: use `dataroot` property instead!
+        returns the current root object in parent chain
+        """
+        return self.parent.root()
+
+    def GetRoot(self):
+        """bw 0.9.12: to be removed. returns the current root object """
+        return self.dataroot
+
+    def GetApp(self):
+        """bw 0.9.12: to be removed. returns the cms main application object """
+        return self.dataroot.app
+
+    def GetParent(self):
+        """bw 0.9.12: to be removed. returns the parent object in the hierarchy """
+        return self.__parent__
 

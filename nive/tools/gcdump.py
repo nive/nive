@@ -18,7 +18,11 @@ configuration = ToolConf(
 
 
 import gc
-from types import InstanceType
+try:
+  from types import InstanceType
+except ImportError:
+  InstanceType = object
+
 
 def DumpObjects(stream):
         

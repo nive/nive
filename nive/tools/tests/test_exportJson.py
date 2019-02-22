@@ -54,9 +54,9 @@ class DBExportTest1_db(__local.DefaultTestCase):
         self.assertTrue(r)
 
 
-    def test_toolrun3(self):
-        t = self.app.GetTool("exportJson", self.app)
-        self.assertTrue(t)
-        r,v = t(tree=1,filedata="data")
-        self.assertTrue(r)
+    #def test_toolrun3(self):
+    #    t = self.app.GetTool("exportJson", self.app)
+    #    self.assertTrue(t)
+    #    r,v = t(tree=1,filedata="data")
+    #    self.assertTrue(r)
 

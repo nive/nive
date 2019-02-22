@@ -47,7 +47,7 @@ class containerTest_db:
         
         try:
             o2.IsTypeAllowed("type1", user=user)
-            self.assertTrue(False, "ObjectBase is not a container: IsTypeAllowed")
+            self.assertTrue(False, "Object is not a container: IsTypeAllowed")
         except AttributeError:
             pass
         self.assertTrue(r.GetAllowedTypes(user=user))
@@ -109,6 +109,7 @@ class containerTest_db:
         self.assertTrue(o5)
         o6 = createObj2(o5)
         self.assertTrue(o6)
+        # todo [3] fix containment non container
         self.assertRaises(ContainmentError, createObj1, o5)
         
         self.assertTrue(ccc+6==statdb(a))

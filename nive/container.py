@@ -9,12 +9,13 @@ are separated into classes by functionality.
 See :py:mod:`nive.components.baseobjects` for subclassing containers.
 """
 
-from time import time
 from datetime import datetime
 
+
+from nive.definitions import implementer
 from nive.definitions import Conf, baseConf
 from nive.definitions import StagContainer, StagRessource, MetaTbl
-from nive.definitions import IContainer, ICache, IObject, IConf 
+from nive.definitions import IContainer, IRoot, ICache, IObject, IConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
 from nive.security import has_permission, SetupRuntimeAcls
@@ -22,8 +23,12 @@ from nive.workflow import WorkflowNotAllowed
 from nive.helper import ResolveName, ClassFactory
 from nive.i18n import translate
 
+from nive.events import Events
+from nive.search import Search
+from nive.objects import Object
 
-class Container(object):
+
+class ContainerBase(object):
     """
     Container implementation with read access for subobjects used for objects and roots.
 
@@ -40,19 +45,18 @@ class Container(object):
             return o
         raise KeyError(id)
 
-
     # Container functions ----------------------------------------------------
 
     def GetObj(self, id, **kw):
         """
         Get the subobject by id. ::
-        
+
             id = object id as number
             permission = check current users permissions for the page. requires securityContext.
             securityContext = required to check the permission. the request object by default.
             **kw = load information
             returns the object or None
-        
+
         Events:
         - loadObj(obj)
         """
@@ -66,20 +70,19 @@ class Container(object):
         self.Signal("loadObj", obj)
         return obj
 
-
-    def GetObjs(self, parameter = None, operators = None, pool_type = None, **kw):
+    def GetObjs(self, parameter=None, operators=None, pool_type=None, **kw):
         """
         Search for subobjects based on parameter and operators. ::
-        
+
             parameter = dict. see nive.Search
             operators = dict. see nive.Search
             kw.sort = sort objects. if None container default sort is used
             kw.batch = load subobjects as batch
             **kw = see Container.GetObj()
             returns all matching subobjects as list
-    
+
         see :class:`nive.Search` for parameter/operators description
-        
+
         Events
         - loadObj(obj)
         """
@@ -89,11 +92,12 @@ class Container(object):
             operators = {}
         parameter[u"pool_unitref"] = self.id
         sort = kw.get("sort", self.GetSort())
-        fields = [u"id",u"pool_datatbl",u"pool_dataref",u"pool_type"]
+        fields = [u"id", u"pool_datatbl", u"pool_dataref", u"pool_type"]
         root = self.dataroot
-        if kw.get("queryRestraints")!=False:
-            parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort=sort)
+        if kw.get("queryRestraints") != False:
+            parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
+        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
+                                  sort=sort)
         useBatch = kw.get("batch", True)
         if useBatch:
             ids = [c["id"] for c in objects]
@@ -118,24 +122,23 @@ class Container(object):
         self.Signal("loadObj", objs)
         return objs
 
-
-    def GetObjsList(self, fields = None, parameter = None, operators = None, pool_type = None, **kw):
+    def GetObjsList(self, fields=None, parameter=None, operators=None, pool_type=None, **kw):
         """
         Search for subobjects based on parameter and operators. This function performs a sql query based on parameters and
         does not load any object. ::
-        
+
             fields = list. see nive.Search
             parameter = dict. see nive.Search
             operators = dict. see nive.Search
             kw.sort = sort objects. if None container default sort is used
             kw.batch = load subobjects as batch
             returns dictionary list
-    
+
         see :class:`nive.Search` for parameter/operators description
         """
-        if parameter==None:
+        if parameter == None:
             parameter = {}
-        if operators==None:
+        if operators == None:
             operators = {}
         parameter[u"pool_unitref"] = self.id
         sort = kw.get("sort", self.GetSort())
@@ -144,17 +147,18 @@ class Container(object):
             fields = self.app.configuration.listDefault
             if not fields:
                 # bw: 0.9.12 fallback for backward compatibility
-                fields = [u"id", u"title", u"pool_filename", u"pool_type", u"pool_state", u"pool_sort", u"pool_stag", u"pool_wfa"]
+                fields = [u"id", u"title", u"pool_filename", u"pool_type", u"pool_state", u"pool_sort", u"pool_stag",
+                          u"pool_wfa"]
         root = self.dataroot
-        parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort = sort)
+        parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
+        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
+                                  sort=sort)
         return objects
-    
-        
+
     def GetObjsBatch(self, ids, **kw):
         """
         Tries to load the objects with as few sql queries as possible. ::
-        
+
             ids = list of object ids as number
             **kw = see Container.GetObj()
             returns all matching sub objects as list
@@ -163,26 +167,25 @@ class Container(object):
         - loadObj(objs)
         """
         sort = kw.get("sort", self.GetSort())
-        fields = [u"id",u"pool_datatbl",u"pool_dataref"]
-        parameter,operators = {}, {}
+        fields = [u"id", u"pool_datatbl", u"pool_dataref"]
+        parameter, operators = {}, {}
         parameter[u"id"] = ids
         parameter[u"pool_unitref"] = self.id
         operators[u"id"] = "IN"
         root = self.dataroot
-        parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort = sort)
+        parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
+        objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
         ids = [c["id"] for c in objects]
         kw["meta"] = objects
         objs = self._GetObjBatch(ids, **kw)
         self.Signal("loadObj", objs)
         return objs
-    
-        
-    def GetContainers(self, parameter = None, operators = None, **kw):
+
+    def GetContainers(self, parameter=None, operators=None, **kw):
         """
-        Loads all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to 
+        Loads all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to
         `nive.definitions.StagRessource - 1`.  ::
-        
+
             kw.batch = load subobjects as batch and not as single object
             parameter = see pool Search
             operators = see pool Search
@@ -194,19 +197,18 @@ class Container(object):
         Events
         - loadObj(objs)
         """
-        if parameter==None:
+        if parameter == None:
             parameter = {}
-        if operators==None:
+        if operators == None:
             operators = {}
-        parameter[u"pool_stag"] = (StagContainer, StagRessource-1)
+        parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
         operators[u"pool_stag"] = u"BETWEEN"
-        objs = self.GetObjs(parameter, operators, **kw)        
+        objs = self.GetObjs(parameter, operators, **kw)
         return objs
 
-        
-    def GetContainerList(self, fields = None, parameter = None, operators = None, **kw):
+    def GetContainerList(self, fields=None, parameter=None, operators=None, **kw):
         """
-        Lists all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to 
+        Lists all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to
         `nive.definitions.StagRessource - 1`. This function performs a sql query based on parameters and
         does not load any object. ::
 
@@ -219,15 +221,14 @@ class Container(object):
 
         see :class:`nive.Search` for parameter/operators description
         """
-        if parameter==None:
+        if parameter == None:
             parameter = {}
-        if operators==None:
+        if operators == None:
             operators = {}
-        parameter[u"pool_stag"] = (StagContainer, StagRessource-1)
+        parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
         operators[u"pool_stag"] = u"BETWEEN"
         return self.GetObjsList(fields, parameter, operators, **kw)
-    
-        
+
     def GetContainedIDs(self, sort=None):
         """
         Returns the ids of all contained objects including subfolders sorted by *sort*. Default is *GetSort()*.
@@ -240,19 +241,18 @@ class Container(object):
         ids = db.GetContainedIDs(sort=sort, base=self.id)
         return ids
 
-
     def GetSort(self):
         """
         The default sort order field name.
-        
+
         returns the field id as string
         """
         return u"id"
 
-
     def IsContainer(self):
         """ """
         return IContainer.providedBy(self)
+
 
 
 class ContainerEdit:
@@ -801,264 +801,11 @@ class ContainerFactory:
             db.DeleteEntry(id)
 
 
-
-class Root(object):
+@implementer(IContainer, IObject)
+class Container(Object, ContainerBase, ContainerEdit, ContainerSecurity, Events, ContainerFactory):
     """
-    The root is a container for objects but does not store any data in the database itself. It
-    is the entry point for object access. Roots are only handled by the application. 
-
-    Requires (Container, ContainerFactory, Event)
+    Container implementation for objects and roots.
     """
-    
-    def __init__(self, path, app, rootDef):
-        self.__name__ = str(path)
-        self.__parent__ = app
-        self.id = 0 
-        # unique root id generated from name . negative integer.
-        self.idhash = abs(hash(self.__name__))*-1
-        self.path = path
-        self.configuration = rootDef
-        self.queryRestraints = {}, {}
-
-        self.meta = Conf(pool_type=rootDef["id"], 
-                         title=translate(rootDef["name"]), 
-                         pool_state=1, 
-                         pool_filename=path, 
-                         pool_wfa=u"",
-                         pool_change=datetime.now(tz=app.pytimezone),
-                         pool_changedby=u"",
-                         pool_create=datetime.now(tz=app.pytimezone),
-                         pool_createdby=u"")
-        self.data = Conf()
-        self.files = Conf()
-
-        # load security
-        acl = SetupRuntimeAcls(rootDef.acl, self)
-        if acl:
-            # omit if empty. acls will be loaded from parent object
-            self.__acl__ = acl
-
-        self.Signal("init")
-
-
-    # Properties -----------------------------------------------------------
-
-    @property
-    def dataroot(self):
-        """ this will return itself. Used for object compatibility. """
-        return self
-
-    @property
-    def app(self):
-        """ returns the cms application the root is used for """
-        return self.__parent__
-
-    @property
-    def db(self):
-        """ returns the datapool object """
-        return self.app.db
-
-    @property
-    def parent(self):
-        """ this will return None. Used for object compatibility. """
-        return None
-
-    # Object Lookup -----------------------------------------------------------
-
-    def LookupObj(self, id, **kw):
-        """
-        Lookup the object referenced by id *anywhere* in the tree structure. Use obj() to 
-        restrain lookup to the first sublevel only. ::
-        
-            id = number
-            **kw = version information
-        
-        returns the object or None
-        """
-        try:
-            id = int(id)
-        except:
-            return None
-        if id <= 0:
-            return self
-        if not id:
-            return None
-            #raise Exception, "NotFound"
-
-        # proxy object
-        if "proxyObj" in kw and kw["proxyObj"]:
-            obj = self._GetObj(id, parentObj = kw["proxyObj"], **kw)
-            if not obj:
-                raise ContainmentError("Proxy object not found")
-            return obj
-
-        # load tree structure
-        path = self.app.db.GetParentPath(id)
-        if path is None:
-            return None
-            #raise Exception, "NotFound"
-        
-        # check and adjust root id
-        if hasattr(self, "rootID"):
-            if self.rootID in path:
-                path = path[path.index(self.rootID)+1:]
-        if hasattr(self.app, "rootID"):
-            if self.app.rootID in path:
-                path = path[path.index(self.app.rootID)+1:]
-
-        # reverse lookup of object tree. loads all parent objs.
-        path.append(id)
-        #opt
-        obj = self
-        for id in path:
-            if id == self.id:
-                continue
-            obj = obj._GetObj(id, **kw)
-            if not obj:
-                return None
-                #raise Exception, "NotFound"
-        return obj
-
-
-    def ObjQueryRestraints(self, containerObj=None, parameter=None, operators=None):
-        """
-        The functions returns two dictionaries (parameter, operators) used to restraint
-        object lookup in subtree. For example a restraint can be set to ignore all
-        objects with meta.pool_state=0. All container get (GetObj, GetObjs, ...) functions 
-        use query restraints internally. 
-        
-        See `nive.search` for parameter and operator usage.
-        
-        Please note: Setting the wrong values for query restraints can easily crash 
-        the application. 
-        
-        Event:
-        - loadRestraints(parameter, operators)
-        
-        returns parameter dict, operators dict
-        """
-        p, o = self.queryRestraints
-        if parameter:
-            parameter.update(p)
-            if operators:
-                operators.update(o)
-            else:
-                operators = o.copy()
-        else:
-            parameter=p.copy()
-            operators=o.copy()
-        self.Signal("loadRestraints", parameter=parameter, operators=operators)
-        return parameter, operators
-
-
-    # Values ------------------------------------------------------
-
-    def GetID(self):
-        """ returns 0. the root id is always zero. """
-        return self.id
-
-    def GetTypeID(self):
-        """ returns the root type id from configuration """
-        return self.configuration.id
-
-    def GetTypeName(self):
-        """ returns the root type name from configuration """
-        return self.configuration.name
-
-    def GetFieldConf(self, fldId):
-        """
-        Get the FieldConf for the field with id = fldId. Looks up data, file and meta
-        fields.
-
-        returns FieldConf or None
-        """
-        for f in self.configuration["data"]:
-            if f["id"] == fldId:
-                return f
-        return self.app.GetMetaFld(fldId)
-
-    def GetTitle(self):
-        """ returns the root title from configuration. """
-        return self.meta.get("title","")
-
-    def GetPath(self):
-        """ returns the url path name as string. """
-        return self.__name__
-
-
-    # Parents ----------------------------------------------------
-
-    def IsRoot(self):
-        """ returns always True. """
-        return True
-
-    def GetParents(self):
-        """ returns empty list. Used for object compatibility. """
-        return []
-
-    def GetParentIDs(self):
-        """ returns empty list. Used for object compatibility. """
-        return []
-
-    def GetParentTitles(self):
-        """ returns empty list. Used for object compatibility. """
-        return []
-
-    def GetParentPaths(self):
-        """ returns empty list. Used for object compatibility. """
-        return []
-
-
-    # tools ----------------------------------------------------
-
-    def GetTool(self, name):
-        """
-        Load a tool in the roots' context. Only works for tools registered for roots or this root type. ::
-            
-            returns the tool object or None
-        
-        Event
-        - loadToool(tool=toolObj)
-        """
-        t = self.app.GetTool(name, self)
-        self.Signal("loadTool", tool=t)
-        return t
-
-
-    def Close(self):
-        """
-        Close the root and all contained objects. Currently only used in combination with caches.
-        
-        Event
-        - close()
-        """
-        self.Signal("close")
-        if ICache.providedBy(self):
-            #opt
-            for o in self.GetAllFromCache():
-                o.Close()
-        return
-
-    # to be removed in future versions --------------------------------------------
-
-    def root(self):
-        """
-        bw 0.9.12: use dataroot property instead! 
-        this will return itself. Used for object compatibility. 
-        """
-        return self
-
-    def GetRoot(self):
-        """bw 0.9.12: to be removed. returns self. """
-        return self
-
-    def GetApp(self):
-        """bw 0.9.12: to be removed. returns the cms application. """
-        return self.app
-
-    def GetParent(self):
-        """bw 0.9.12: to be removed. returns None. """
-        return None
 
 
 
@@ -1160,4 +907,259 @@ class RootWorkflow:
         regardless of transitions or calling any workflow actions.
         """
         self.meta["pool_wfa"] = stateID
+
+
+
+@implementer(IContainer, IRoot)
+class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, ContainerFactory, RootWorkflow):
+    """
+    The root is a container for objects but does not store any data in the database itself. It
+    is the entry point for object access. Roots are only handled by the application.
+
+    Requires (Container, ContainerFactory, Event)
+    """
+
+    def __init__(self, path, app, rootDef):
+        self.__name__ = str(path)
+        self.__parent__ = app
+        self.id = 0
+        # unique root id generated from name . negative integer.
+        self.idhash = abs(hash(self.__name__)) * -1
+        self.path = path
+        self.configuration = rootDef
+        self.queryRestraints = {}, {}
+
+        self.meta = Conf(pool_type=rootDef["id"],
+                         title=translate(rootDef["name"]),
+                         pool_state=1,
+                         pool_filename=path,
+                         pool_wfa=u"",
+                         pool_change=datetime.now(tz=app.pytimezone),
+                         pool_changedby=u"",
+                         pool_create=datetime.now(tz=app.pytimezone),
+                         pool_createdby=u"")
+        self.data = Conf()
+        self.files = Conf()
+
+        # load security
+        acl = SetupRuntimeAcls(rootDef.acl, self)
+        if acl:
+            # omit if empty. acls will be loaded from parent object
+            self.__acl__ = acl
+
+        self.Signal("init")
+
+    # Properties -----------------------------------------------------------
+
+    @property
+    def dataroot(self):
+        """ this will return itself. Used for object compatibility. """
+        return self
+
+    @property
+    def app(self):
+        """ returns the cms application the root is used for """
+        return self.__parent__
+
+    @property
+    def db(self):
+        """ returns the datapool object """
+        return self.app.db
+
+    @property
+    def parent(self):
+        """ this will return None. Used for object compatibility. """
+        return None
+
+    # Object Lookup -----------------------------------------------------------
+
+    def LookupObj(self, id, **kw):
+        """
+        Lookup the object referenced by id *anywhere* in the tree structure. Use obj() to
+        restrain lookup to the first sublevel only. ::
+
+            id = number
+            **kw = version information
+
+        returns the object or None
+        """
+        try:
+            id = int(id)
+        except:
+            return None
+        if id <= 0:
+            return self
+        if not id:
+            return None
+            # raise Exception, "NotFound"
+
+        # proxy object
+        if "proxyObj" in kw and kw["proxyObj"]:
+            obj = self._GetObj(id, parentObj=kw["proxyObj"], **kw)
+            if not obj:
+                raise ContainmentError("Proxy object not found")
+            return obj
+
+        # load tree structure
+        path = self.app.db.GetParentPath(id)
+        if path is None:
+            return None
+            # raise Exception, "NotFound"
+
+        # check and adjust root id
+        if hasattr(self, "rootID"):
+            if self.rootID in path:
+                path = path[path.index(self.rootID) + 1:]
+        if hasattr(self.app, "rootID"):
+            if self.app.rootID in path:
+                path = path[path.index(self.app.rootID) + 1:]
+
+        # reverse lookup of object tree. loads all parent objs.
+        path.append(id)
+        # opt
+        obj = self
+        for id in path:
+            if id == self.id:
+                continue
+            obj = obj._GetObj(id, **kw)
+            if not obj:
+                return None
+                # raise Exception, "NotFound"
+        return obj
+
+    def ObjQueryRestraints(self, containerObj=None, parameter=None, operators=None):
+        """
+        The functions returns two dictionaries (parameter, operators) used to restraint
+        object lookup in subtree. For example a restraint can be set to ignore all
+        objects with meta.pool_state=0. All container get (GetObj, GetObjs, ...) functions
+        use query restraints internally.
+
+        See `nive.search` for parameter and operator usage.
+
+        Please note: Setting the wrong values for query restraints can easily crash
+        the application.
+
+        Event:
+        - loadRestraints(parameter, operators)
+
+        returns parameter dict, operators dict
+        """
+        p, o = self.queryRestraints
+        if parameter:
+            parameter.update(p)
+            if operators:
+                operators.update(o)
+            else:
+                operators = o.copy()
+        else:
+            parameter = p.copy()
+            operators = o.copy()
+        self.Signal("loadRestraints", parameter=parameter, operators=operators)
+        return parameter, operators
+
+    # Values ------------------------------------------------------
+
+    def GetID(self):
+        """ returns 0. the root id is always zero. """
+        return self.id
+
+    def GetTypeID(self):
+        """ returns the root type id from configuration """
+        return self.configuration.id
+
+    def GetTypeName(self):
+        """ returns the root type name from configuration """
+        return self.configuration.name
+
+    def GetFieldConf(self, fldId):
+        """
+        Get the FieldConf for the field with id = fldId. Looks up data, file and meta
+        fields.
+
+        returns FieldConf or None
+        """
+        for f in self.configuration["data"]:
+            if f["id"] == fldId:
+                return f
+        return self.app.GetMetaFld(fldId)
+
+    def GetTitle(self):
+        """ returns the root title from configuration. """
+        return self.meta.get("title", "")
+
+    def GetPath(self):
+        """ returns the url path name as string. """
+        return self.__name__
+
+    # Parents ----------------------------------------------------
+
+    def IsRoot(self):
+        """ returns always True. """
+        return True
+
+    def GetParents(self):
+        """ returns empty list. Used for object compatibility. """
+        return []
+
+    def GetParentIDs(self):
+        """ returns empty list. Used for object compatibility. """
+        return []
+
+    def GetParentTitles(self):
+        """ returns empty list. Used for object compatibility. """
+        return []
+
+    def GetParentPaths(self):
+        """ returns empty list. Used for object compatibility. """
+        return []
+
+    # tools ----------------------------------------------------
+
+    def GetTool(self, name):
+        """
+        Load a tool in the roots' context. Only works for tools registered for roots or this root type. ::
+
+            returns the tool object or None
+
+        Event
+        - loadToool(tool=toolObj)
+        """
+        t = self.app.GetTool(name, self)
+        self.Signal("loadTool", tool=t)
+        return t
+
+    def Close(self):
+        """
+        Close the root and all contained objects. Currently only used in combination with caches.
+
+        Event
+        - close()
+        """
+        self.Signal("close")
+        if ICache.providedBy(self):
+            # opt
+            for o in self.GetAllFromCache():
+                o.Close()
+        return
+
+    # to be removed in future versions --------------------------------------------
+
+    def root(self):
+        """
+        bw 0.9.12: use dataroot property instead!
+        this will return itself. Used for object compatibility.
+        """
+        return self
+
+    def GetRoot(self):
+        """bw 0.9.12: to be removed. returns self. """
+        return self
+
+    def GetApp(self):
+        """bw 0.9.12: to be removed. returns the cms application. """
+        return self.app
+
+    def GetParent(self):
+        """bw 0.9.12: to be removed. returns None. """
+        return None
 

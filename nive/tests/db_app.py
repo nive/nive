@@ -9,14 +9,14 @@ from nive.definitions import *
 from nive.portal import Portal
 from nive.security import User, Allow, Everyone
 
-from nive.components.baseobjects import ApplicationBase
+from nive.application import Application
 from nive.utils.dataPool2.files import File
 
 root = RootConf(
     id = u"root",
     name = u"Data root",
     default = 1,
-    context = "nive.components.baseobjects.RootBase",
+    context = "nive.container.Root",
     subtypes = [IObject],
     acl = ((Allow, Everyone, 'view'),)
 )
@@ -26,7 +26,7 @@ type1 = ObjectConf(
     name = u"Type 1 container",
     hidden = False,
     dbparam = u"data1",
-    context = "nive.components.baseobjects.ObjectContainerBase",
+    context = "nive.container.Container",
     subtypes = [IObject],
     acl = ((Allow, Everyone, 'view'),)
 )
@@ -47,7 +47,7 @@ type2 = ObjectConf(
     name = u"Type 2 Object",
     hidden = True,
     dbparam = u"data2",
-    context = "nive.components.baseobjects.ObjectBase",
+    context = "nive.objects.Object",
     subtypes = None
 )
 data2 = []
@@ -66,7 +66,7 @@ type3 = ObjectConf(
     name = u"Type 3 Object",
     hidden = True,
     dbparam = u"data3",
-    context = "nive.components.baseobjects.ObjectContainerBase",
+    context = "nive.container.Container",
     subtypes = [INonContainer],
     events = (Conf(event="create", callback=create_callback),)
 )
@@ -83,7 +83,7 @@ group2 = GroupConf(**{u"id":u"group2", u"name":u"Group 2"})
 # configuration
 appconf = AppConf(
     id = u"unittest",
-    context="nive.components.baseobjects.ApplicationBase",
+    context="nive.application.Application",
     title = u"nive application python unittest",
     timezone = "UTC",
     modules = [root, type1, type2, type3],
@@ -132,7 +132,7 @@ file2_2 = {"filename":"file2.txt", "file":file2_2_data}
 
 # empty -------------------------------------------------------------------------
 def app_db(modules=None):
-    a = ApplicationBase()
+    a = Application()
     a.Register(appconf)
     if modules:
         for m in modules:
@@ -167,7 +167,7 @@ def app_db(modules=None):
     return a
 
 def app_nodb():
-    a = ApplicationBase()
+    a = Application()
     a.Register(appconf)
     a.Register(DatabaseConf())
     p = Portal()

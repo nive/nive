@@ -7,7 +7,6 @@ from nive.workflow import WfProcessConf
 from nive.helper import *
 from nive.events import Events
 from nive.portal import Portal
-from nive.components import baseobjects
 from nive.security import User
 
 from nive.tool import _IGlobal, _GlobalObject
@@ -54,7 +53,7 @@ mAppErr = AppConf(id="app2",
 )
 
 
-class testapp(Application, Registration, Configuration, AppFactory, Events):
+class testapp(Application):
     """
     """
     
@@ -92,8 +91,7 @@ class modTest(unittest.TestCase):
         self.app.Register(ModuleConf(id="aaa"), provided=IObject, name="testttttt")
         
         # python modules
-        self.assertRaises(TypeError, self.app.Register, (testapp()))
-        self.app.Register(baseobjects.ApplicationBase())
+        self.app.Register(Application())
         
         # debug test
         self.app.debug = 1
@@ -360,9 +358,9 @@ class appTest_db:
         conn=self.app.db.usedconnection
         self.assertTrue(conn)
         
-        from nive.components.baseobjects import ApplicationBase
+        from nive.application import Application
         from nive.tests.db_app import appconf
-        a = ApplicationBase()
+        a = Application()
         a.Register(appconf)
         a.Register(conn.configuration)
         a.Startup(None, cachedDbConnection=conn)

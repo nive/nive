@@ -97,8 +97,6 @@ class IContainer(Interface):
     pass
 class INonContainer(Interface):
     pass
-class IReadonly(Interface):
-    pass
 class IPortal(Interface):
     pass
 
@@ -516,7 +514,7 @@ class AppConf(baseConf):
 
     def __init__(self, copyFrom=None, **values):
         self.id = "app"
-        self.context = "nive.components.baseobjects.ApplicationBase"
+        self.context = "nive.application.Application"
         
         self.title = u""
         self.description = u""
@@ -738,7 +736,7 @@ class ObjectConf(baseConf):
         self.name = u""
         self.dbparam = u""
         self.selectTag = 0
-        self.context = "nive.components.baseobjects.ObjectContainerBase"
+        self.context = "nive.container.Container"
         self.template = None
         self.extensions = None
         self.data = []
@@ -865,7 +863,7 @@ class RootConf(baseConf):
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.name = u""
-        self.context = "nive.components.baseobjects.RootBase"
+        self.context = "nive.container.Root"
         self.extensions = None
         self.template = None
         self.default = True
