@@ -24,7 +24,7 @@ class viewModule(object):
     templates = u"nive.tests:"
     parent = None
     static = u"nive.tests:"
-    assets = (("jquery.js", "nive.adminview:static/mods/jquery.min.js"), ("another.css", "nive.adminview:static/adminview.css"))
+    assets = (("jquery.js", "nive.components.adminview:static/mods/jquery.min.js"), ("another.css", "nive.components.adminview:static/adminview.css"))
 
 
 class viewTest(unittest.TestCase):
@@ -176,7 +176,7 @@ class viewTest_db:
         self.request.subpath = ["file1.txt"]
         self.request.context = None
         self.request.content_type = None
-        self._loadApp(["nive.adminview.view"])
+        self._loadApp(["nive.components.adminview.view"])
         self.app.Startup(self.config)
         #self.request = getRequest()
         user = User(u"test")
@@ -418,7 +418,7 @@ class viewTest_db:
         view2._c_vm=viewModule()
         self.assertTrue(view2.Assets())
         self.assertTrue(view2.Assets(ignore="jquery.js"))
-        self.assertTrue(view2.Assets(assets=(("jquery.js", "nive.adminview:static/mods/jquery.min.js"),)))
+        self.assertTrue(view2.Assets(assets=(("jquery.js", "nive.components.adminview:static/mods/jquery.min.js"),)))
         self.assertFalse(view2.Assets(assets=[]))
         self.assertTrue(view2.Assets(types="js").find(".css")==-1)
         self.assertTrue(view2.Assets(types="css").find(".js")==-1)

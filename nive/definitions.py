@@ -201,7 +201,7 @@ class IEditorWidgetConf(Interface):
 
 class IAdminWidgetConf(Interface):
     """
-    IAdminWidgetConf refers to the nive.adminview tab plugin point. Use IAdminWidgetConf as widgetType
+    IAdminWidgetConf refers to the nive.components.adminview tab plugin point. Use IAdminWidgetConf as widgetType
     in your WidgetConf() to link a new tab to the nive admin header.
     """
 

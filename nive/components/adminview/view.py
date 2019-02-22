@@ -26,17 +26,17 @@ configuration = ViewModuleConf(
     id = "administration",
     name = _(u"Administration"),
     context = IApplication,
-    view = "nive.adminview.view.AdminView",
-    templates = "nive.adminview:",
+    view = "nive.components.adminview.view.AdminView",
+    templates = "nive.components.adminview:",
     template = "index.pt",
     permission = "administration",
     adminLink = u"app_folder_url/admin",
-    static = "nive.adminview:static",
+    static = "nive.components.adminview:static",
     assets = [
-        ('bootstrap.min.css', 'nive.adminview:static/mods/bootstrap/css/bootstrap.min.css'),
-        ('adminview.css', 'nive.adminview:static/adminview.css'),   # nive css
-        ('jquery.js', 'nive.adminview:static/mods/jquery.min.js'),
-        ('bootstrap.min.js', 'nive.adminview:static/mods/bootstrap/js/bootstrap.min.js'),
+        ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap/css/bootstrap.min.css'),
+        ('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
+        ('jquery.js', 'nive.components.adminview:static/mods/jquery.min.js'),
+        ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap/js/bootstrap.min.js'),
     ],
 )
 t = configuration.templates
@@ -75,12 +75,12 @@ dbAdminConfiguration = ViewModuleConf(
     name = _(u"Database Administration"),
     static = "",
     context = IApplication,
-    view = "nive.adminview.view.AdminView",
-    templates = "nive.adminview:",
+    view = "nive.components.adminview.view.AdminView",
+    templates = "nive.components.adminview:",
     permission = "administration",
     views = [
         # Database Management Views
-        ViewConf(name = "database", attr = "editdatabase",   renderer = "nive.adminview:form.pt"),
+        ViewConf(name = "database", attr = "editdatabase",   renderer = "nive.components.adminview:form.pt"),
     ],
     widgets = [
         WidgetConf(name=_(u"Database"),  viewmapper="database",   id="admin.database", sort=200,   apply=(IApplication,), widgetType=IAdminWidgetConf),

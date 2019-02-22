@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from nive.adminview import view
+from nive.components.adminview import view
 
 from nive.tests.db_app import *
 from nive.tests import __local
@@ -105,16 +105,16 @@ class tTemplates(__local.DefaultTestCase):
 
         values = v.editbasics()
         values.update(vrender)
-        render("nive.adminview:form.pt", values)
+        render("nive.components.adminview:form.pt", values)
         
         values = v.tools()
         values.update(vrender)
-        render("nive.adminview:tools.pt", values)
+        render("nive.components.adminview:tools.pt", values)
         
-        render("nive.adminview:modules.pt", vrender)
-        render("nive.adminview:root.pt", vrender)
-        render("nive.adminview:views.pt", vrender)
-        render("nive.adminview:help.pt", values)
+        render("nive.components.adminview:modules.pt", vrender)
+        render("nive.components.adminview:root.pt", vrender)
+        render("nive.components.adminview:views.pt", vrender)
+        render("nive.components.adminview:help.pt", values)
 
     
 
