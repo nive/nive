@@ -123,6 +123,7 @@ class FileTest(unittest.TestCase):
         self.assertTrue(file.filename=="test_db.py")
         self.assertTrue(file.extension=="py")
         self.assertFalse(file.abspath())
+        file.close()
 
         file = File(filekey="aaa",
                     file=None

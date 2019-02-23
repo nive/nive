@@ -183,7 +183,7 @@ class containerTest_db:
         # errors
         id = 9865898568444
         try:
-            r.LookupObj(id)
+            r.obj(id)
             self.assertTrue(False)
         except:
             pass
@@ -225,7 +225,7 @@ class containerTest_db:
 
         # objects
         id = o1.GetID()
-        self.assertTrue(r.LookupObj(id))
+        self.assertTrue(r.obj(id))
         self.assertTrue(r.GetObj(id))
         self.assertTrue(o1.GetObj(o3.GetID()))
         self.assertTrue(o3.GetObj(o4.GetID()))
@@ -296,7 +296,7 @@ class containerTest_db:
         # errors
         id = 9865898568444
         try:
-            r.LookupObj(id)
+            r.obj(id)
             self.assertTrue(False)
         except:
             pass
@@ -340,12 +340,12 @@ class containerTest_db:
 
         # objects
         id = o1.GetID()
-        self.assertFalse(r.LookupObj(id))
+        self.assertFalse(r.obj(id))
         self.assertFalse(r.GetObj(id))
         self.assertFalse(o1.GetObj(o3.GetID()))
         self.assertFalse(o3.GetObj(o4.GetID()))
         id = o5.GetID()
-        self.assertFalse(r.LookupObj(id))
+        self.assertFalse(r.obj(id))
 
         # subitems
         #root

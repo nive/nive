@@ -195,7 +195,7 @@ class ConversionTest(unittest.TestCase):
         value = time.time()
         self.assertTrue(self.structure.deserialize(u"data2", u"ftime", value))
 
-    def test_ds_multilist(self):
+    def test_ds_multilist2(self):
         self.assertTrue(self.structure.deserialize(u"data2", u"fmultilist", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assertTrue(self.structure.deserialize(u"data2", u"fcheckbox", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assertTrue(self.structure.deserialize(u"data2", u"furllist", json.dumps(["aaa","bbb"]))[0]=="aaa")

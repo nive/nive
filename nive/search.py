@@ -818,9 +818,6 @@ class Search:
         if not flds:
             # lookup meta list default fields
             flds = self.app.configuration.listDefault
-            if not flds:
-                # bw: 0.9.12 fallback for backward compatibility
-                flds = [u"id", u"pool_unitref", u"title", u"pool_filename", u"pool_type", u"pool_state", u"pool_wfa", u"pool_sort"]
         db = self.db
         return db.GetTree(flds=flds, sort=sort, base=base, parameter=parameter)
 
@@ -947,9 +944,6 @@ class Search:
         operators[u"pool_filename"] = u"="
         # lookup meta list default fields
         flds = self.app.configuration.listDefault
-        if not flds:
-            # bw: 0.9.12 fallback for backward compatibility
-            flds = [u"id", u"pool_unitref", u"pool_type"]
         recs = self.Select(parameter=parameter, fields=flds, operators=operators)
         #print recs
         if firstResultOnly:
@@ -1020,11 +1014,7 @@ class Search:
 
         # lookup meta list default fields
         flds = self.app.configuration.listDefault
-        if not flds:
-            # bw: 0.9.12 fallback for backward compatibility
-            flds = [u"id", u"pool_unitref", u"pool_filename", u"pool_type", u"pool_state"]
-        else:
-            flds = list(flds)
+        flds = list(flds)
         # search unit flds
         for t in types:
             for f in t["data"]:

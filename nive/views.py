@@ -243,6 +243,9 @@ class BaseView(object):
         if not context:
             context = self.context
 
+        # todo [3]
+        # DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working
+        #   if isinstance(url, collections.Callable):
         if isinstance(url, collections.Callable):
             return url(context, self)
 
@@ -281,7 +284,7 @@ class BaseView(object):
         """
         try:
             i = int(link)
-            o = self.context.dataroot.LookupObj(i)
+            o = self.context.dataroot.obj(i)
             if not o:
                 return link
             try:

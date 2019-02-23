@@ -66,7 +66,7 @@ def app():
     return app
 
 
-
+# todo [3] move to registration_tests.py
 class modTest(unittest.TestCase):
     
     def setUp(self):
@@ -89,9 +89,6 @@ class modTest(unittest.TestCase):
         self.app.Register(mMod)
         self.app.Register(mDb)
         self.app.Register(ModuleConf(id="aaa"), provided=IObject, name="testttttt")
-        
-        # python modules
-        self.app.Register(Application())
         
         # debug test
         self.app.debug = 1
@@ -173,12 +170,6 @@ class appTest(unittest.TestCase):
         self.assertTrue(len(s["object"])==2)
         pass
 
-
-    def test_fncs(self):
-        self.assertTrue(self.app.GetVersion())
-        self.assertTrue(self.app.CheckVersion())
-        self.assertTrue(self.app.GetApp())
-        
 
     def test_del(self):
         self.app.__del__()
@@ -409,10 +400,10 @@ class appTest_db:
     def test_real_objects(self):
         id = self.oid
 
-        self.assertTrue(self.app.LookupObj(id))
-        self.assertTrue(self.app.LookupObj(id, rootname = ""))
-        self.assertTrue(self.app.LookupObj(id, rootname = "root"))
-        self.assertFalse(self.app.LookupObj(id, rootname = "no_root"))
+        self.assertTrue(self.app.obj(id))
+        self.assertTrue(self.app.obj(id, rootname = ""))
+        self.assertTrue(self.app.obj(id, rootname = "root"))
+        self.assertFalse(self.app.obj(id, rootname = "no_root"))
         self.assertTrue(self.app.obj(id, rootname = ""))
         self.assertTrue(self.app.obj(id, rootname = "root"))
         self.assertFalse(self.app.obj(id, rootname = "no_root"))
@@ -420,7 +411,7 @@ class appTest_db:
         # should reopen the connection
         self.app.Close()
         self.app.db.usedconnection.IsConnected()
-        self.assertTrue(self.app.LookupObj(id))
+        self.assertTrue(self.app.obj(id))
 
 
     def test_sysvalues(self):

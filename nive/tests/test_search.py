@@ -99,8 +99,8 @@ class SearchTest_db:
         self.assertTrue(r.GetMaxID())
 
         #test_refs
-        self.assertTrue(r.GetReferences(35))
-        self.assertTrue(r.GetReferences(35, types=["type1"]))
+        self.assertTrue(r.GetReferences(self.ids[0]))
+        self.assertTrue(r.GetReferences(self.ids[0], types=["type1"]))
 
         #test_search
         r = self.app.root()

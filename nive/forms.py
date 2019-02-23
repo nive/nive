@@ -833,12 +833,6 @@ class HTMLForm(Form):
 
         returns bool, html, dict (result, data, action)
         """
-        # bw 0.9.13
-        if u"renderSuccess" in kw:
-            self.renderSuccess = kw[u"renderSuccess"]
-        if u"redirectSuccess" in kw:
-            self.redirectSuccess = kw[u"redirectSuccess"]
-
         # find default action
         defaultAction = None
         if self.subset:

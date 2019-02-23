@@ -110,16 +110,7 @@ class DbPersistence(PersistentConf):
         if close:
             db.close()
         if data:
-            try:
-                values = json.loads(data[0][0])
-            except ValueError:
-                # Invalid data
-                # bw 0.9.13 try previously used pickled data conversion
-                try:
-                    values = pickle.loads(data[0][0])
-                except KeyError:
-                    # Invalid data
-                    return None
+            values = json.loads(data[0][0])
             lock = 0
             if self.conf.locked:
                 lock = 1

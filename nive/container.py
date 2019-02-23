@@ -136,7 +136,7 @@ class ContainerBase(object):
 
         see :class:`nive.Search` for parameter/operators description
         """
-        if parameter == None:
+        if parameter is None:
             parameter = {}
         if operators == None:
             operators = {}
@@ -145,10 +145,6 @@ class ContainerBase(object):
         if not fields:
             # lookup meta list default fields
             fields = self.app.configuration.listDefault
-            if not fields:
-                # bw: 0.9.12 fallback for backward compatibility
-                fields = [u"id", u"title", u"pool_filename", u"pool_type", u"pool_state", u"pool_sort", u"pool_stag",
-                          u"pool_wfa"]
         root = self.dataroot
         parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
         objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
@@ -197,7 +193,7 @@ class ContainerBase(object):
         Events
         - loadObj(objs)
         """
-        if parameter == None:
+        if parameter is None:
             parameter = {}
         if operators == None:
             operators = {}
@@ -221,7 +217,7 @@ class ContainerBase(object):
 
         see :class:`nive.Search` for parameter/operators description
         """
-        if parameter == None:
+        if parameter is None:
             parameter = {}
         if operators == None:
             operators = {}

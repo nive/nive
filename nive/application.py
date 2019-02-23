@@ -27,13 +27,12 @@ from zope.interface import providedBy
 from nive.utils.dataPool2.structure import PoolStructure
 
 from nive.definitions import MetaTbl, ReadonlySystemFlds
-from nive.definitions import IViewModuleConf, IViewConf, IRootConf, IObjectConf, IToolConf 
-from nive.definitions import IAppConf, IDatabaseConf, IModuleConf, IWidgetConf, IFieldConf
+from nive.definitions import IRootConf, IObjectConf, IToolConf, IFieldConf, IAppConf
 from nive.definitions import ConfigurationError
 
+from nive.registration import Registration
 from nive.events import Events
-from nive.helper import ResolveName, ResolveConfiguration, FormatConfTestFailure, GetClassRef, ClassFactory
-from nive.helper import DecorateViewClassWithViewModuleConf
+from nive.helper import ResolveName, ResolveConfiguration, GetClassRef, ClassFactory
 from nive.tool import _IGlobal, _GlobalObject
 from nive.workflow import IWfProcessConf
 from nive.utils.utils import SortConfigurationList
@@ -41,313 +40,6 @@ from nive.utils.utils import SortConfigurationList
 
 from nive.definitions import implementer
 from nive.definitions import IApplication
-
-
-
-class Registration(object):
-
-    def Register(self, module, **kw):
-        """
-        Include a module or configuration to store in the registry.
-
-        Handles configuration objects with the following interfaces:
-        
-        - IAppConf
-        - IRootConf
-        - IObjectConf
-        - IViewModuleConf
-        - IViewConf 
-        - IToolConf
-        - IModuleConf
-        - IWidgetConf
-        - IWfProcessConf
-        
-        Other modules are registered as utility with **kws as parameters.
-        
-        raises TypeError, ConfigurationError, ImportError
-        """
-        iface, conf = ResolveConfiguration(module)
-        if not conf:
-            self.log.debug('Register python module: %s', str(module))
-            return self.registry.registerUtility(module, **kw)
-        
-        # test conf
-        if self.debug:
-            r=conf.test()
-            if r:
-                v = FormatConfTestFailure(r)
-                self.log.warn('Configuration test failed:\r\n%s', v)
-                #return False
-        
-        self.log.debug('Register module: %s %s', str(conf), str(iface))
-        # register module views
-        if iface not in (IViewModuleConf, IViewConf):
-            self._RegisterConfViews(conf)
-            
-        # reset cached class value. makes testing easier
-        try:
-            del conf._c_class
-        except:
-            pass
-            
-        # register module itself
-        if hasattr(conf, "unlock"):
-            conf.unlock()
-        
-        # events
-        if conf.get("events"):
-            for e in conf.events:
-                self.log.debug('Register Event: %s for %s', str(e.event), str(e.callback))
-                self.ListenEvent(e.event, e.callback)
-
-        if iface == IRootConf:
-            self.registry.registerUtility(conf, provided=IRootConf, name=conf.id)
-            if conf.default or not self._defaultRoot:
-                self._defaultRoot = conf.id
-            return True
-        elif iface == IObjectConf:
-            self.registry.registerUtility(conf, provided=IObjectConf, name=conf.id)
-            return True
-
-        elif iface == IViewConf:
-            self.registry.registerUtility(conf, provided=IViewConf, name=conf.id or str(uuid.uuid4()))
-            return True
-        elif iface == IViewModuleConf:
-            self.registry.registerUtility(conf, provided=IViewModuleConf, name=conf.id)
-            if conf.widgets:
-                for w in conf.widgets:
-                    self.Register(w)
-            return True
-
-        elif iface == IToolConf:
-            if conf.apply:
-                for i in conf.apply:
-                    if i == None:
-                        self.registry.registerAdapter(conf, (_IGlobal,), IToolConf, name=conf.id)
-                    else:
-                        self.registry.registerAdapter(conf, (i,), IToolConf, name=conf.id)
-            else:
-                self.registry.registerAdapter(conf, (_IGlobal,), IToolConf, name=conf.id)
-            if conf.modules:
-                for m in conf.modules:
-                    self.Register(m, **kw)
-            return True
-
-        elif iface == IAppConf:
-            self.registry.registerUtility(conf, provided=IAppConf, name="IApp")
-            if conf.modules:
-                for m in conf.modules:
-                    self.Register(m)
-            self.configuration = conf
-            return True
-        
-        elif iface == IDatabaseConf:
-            self.registry.registerUtility(conf, provided=IDatabaseConf, name="IDatabase")
-            self.dbConfiguration = conf
-            return True
-        
-        elif iface == IModuleConf:
-            # modules
-            if conf.modules:
-                for m in conf.modules:
-                    self.Register(m, **kw)
-            self.registry.registerUtility(conf, provided=IModuleConf, name=conf.id)
-            return True
-
-        elif iface == IWidgetConf:
-            for i in conf.apply:
-                self.registry.registerAdapter(conf, (i,), conf.widgetType, name=conf.id)
-            return True
-
-        elif iface == IWfProcessConf:
-            if conf.apply:
-                for i in conf.apply:
-                    self.registry.registerAdapter(conf, (i,), IWfProcessConf, name=conf.id)
-            else:
-                self.registry.registerAdapter(conf, (_IGlobal,), IWfProcessConf, name=conf.id)
-            return True
-
-        raise TypeError("Unknown configuration interface type (%s)" % (str(conf)))
-        
-        
-    def SetupApplication(self):
-        """
-        Loads self.configuration, includes modules and updates meta fields.
-        """
-        if not self.configuration:
-            raise ConfigurationError("Configuration is empty")
-        c = self.configuration
-        # special values
-        if c.get("id") and not self.__name__:
-            self.__name__ = c.id
-        if c.get("acl"):
-            self.__acl__ = tuple(c.acl)
-        if c.get("dbConfiguration"):
-            self.dbConfiguration = c.dbConfiguration
-        tz = self.configuration.get("timezone")
-        if tz is not None:
-            self.pytimezone = pytz.timezone(tz)
-
-        
-    def _RegisterConfViews(self, conf):
-        """
-        Register view configurations included as ``configuration.views`` in other 
-        configuration classes like ObjectConf, RootConf and so on.
-        """
-        views = None
-        try: 
-            views = conf.views
-        except:
-            pass
-        if not views:
-            return
-        for v in views:
-
-            if isinstance(v, str):
-                iface, conf = ResolveConfiguration(v)
-                if not conf:
-                    raise ConfigurationError(str(v))
-                v = conf
-                
-            self.Register(v)
-
-
-    def _RegisterViews(self, config):
-        """
-        Register configured views and static views with the pyramid web framework.
-        """
-        views = self.registry.getAllUtilitiesRegisteredFor(IViewConf)
-        # single views
-        for view in views:
-            config.add_view(view=view.view,
-                            context=view.context,
-                            attr=view.attr,
-                            name=view.name,
-                            renderer=view.renderer,
-                            permission=view.permission,
-                            containment=view.containment,
-                            custom_predicates=view.custom_predicates or (self.AppViewPredicate,),
-                            **view.options)
-        return config
-
-
-    def _RegisterViewModules(self, config):
-        """
-        Register configured views and static views with the pyramid web framework.
-        """
-        mods = self.registry.getAllUtilitiesRegisteredFor(IViewModuleConf)
-        for viewmod in mods:
-            # decorate viewmod to add a pointer to the view module configuration. otherwise there is no way
-            # to access the configuration from inside the view callable
-            viewcls = viewmod.view
-            if viewcls:
-                viewcls = DecorateViewClassWithViewModuleConf(viewmod, viewcls)
-            # object views
-            for view in viewmod.views:
-                config.add_view(attr=view.attr,
-                                name=view.name,
-                                view=view.view or viewcls,
-                                context=view.context or viewmod.context,
-                                renderer=view.renderer or viewmod.renderer,
-                                permission=view.permission or viewmod.permission,
-                                containment=view.containment or viewmod.containment,
-                                custom_predicates=view.custom_predicates or viewmod.custom_predicates or (self.AppViewPredicate,),
-                                **view.options)
-            
-            # static views
-            maxage = 60*60*4
-            if self.debug:
-                maxage = None
-            config.add_static_view(name=viewmod.staticName or viewmod.id, path=viewmod.static, cache_max_age=maxage)
-        
-            # acls
-            if viewmod.get("acl"):
-                self.__acl__ = tuple(list(viewmod.get("acl")) + list(self.__acl__))
-        
-        return config
-
-
-    def _RegisterTranslations(self, config):
-        """
-        Register translation directories contained in configurations.
-        Translations can be specified as `configuraion.translations` for 
-        IAppConf, IViewModuleConf, IObjectConf, IRootConf, IToolConf, IModuleConf, IWidgetConf
-        """
-        for confType in (IAppConf, IViewModuleConf, IObjectConf, IRootConf, IToolConf, IModuleConf, IWidgetConf): 
-            mods = self.registry.getAllUtilitiesRegisteredFor(confType)
-            for modconf in mods:
-                path = modconf.translations
-                # translations
-                if isinstance(path, str):
-                    config.add_translation_dirs(path)
-                elif isinstance(path, (list, tuple)):
-                    config.add_translation_dirs(*path)
-
-
-    def _Lock(self):
-        # lock all configurations
-        # adapters
-        for a in self.registry.registeredAdapters():
-            try:       a.factory.lock()
-            except:    pass
-        for a in self.registry.registeredUtilities():
-            try:       a.component.lock()
-            except:    pass
-
-    
-    def _LoadStructure(self, forceReload = False):
-        """
-        returns dictionary containing database tables and columns
-        """
-        if forceReload:
-            self._structure = PoolStructure()
-        if not self._structure.IsEmpty():
-            return self._structure
-
-        structure = {}
-        fieldtypes = {}
-        meta = self.GetAllMetaFlds(ignoreSystem = False)
-        m = []
-        f = {}
-        for fld in meta:
-            f[fld.id] = fld.datatype
-            if fld.datatype == "file":
-                continue
-            m.append(fld.id)
-        structure[MetaTbl] = m
-        fieldtypes[MetaTbl] = f
-
-        types = self.GetAllObjectConfs()
-        for ty in types:
-            t = []
-            f = {}
-            for fld in self.GetAllObjectFlds(ty.id):
-                f[fld.id] = fld.datatype
-                if fld.datatype == "file":
-                    continue
-                t.append(fld.id)
-            structure[ty.dbparam] = t
-            fieldtypes[ty.dbparam] = f
-        
-        self._structure.Init(structure, fieldtypes, m, self.configuration.frontendCodepage)
-        # reset cached db
-        if self._dbpool is not None:
-            self._dbpool.Close()
-        return structure
-
-
-    def AppViewPredicate(self, context, request):
-        """
-        Check if context of view is this application. For multisite support.
-        """
-        app = context.app
-        return app == self
-    AppViewPredicate.__text__ = "nive.AppViewPredicate"
-        
-        
-    #bw 0.9.13 outdated
-    def SetupRegistry(self):
-        return self.SetupApplication()
 
 
 
@@ -710,34 +402,6 @@ class Configuration(object):
         return w
 
 
-    # System value storage -------------------------------------------------------------
-
-    def StoreSysValue(self, key, value):
-        """
-        Stores a value in `pool_sys` table. Value must be a string of any size.
-        """
-        db = self.db
-        db.UpdateFields(u"pool_sys", key, {u"id": key, u"value":value, u"ts":time()}, autoinsert=True)
-        db.Commit()
-
-    def LoadSysValue(self, key):
-        """
-        Loads the value stored as `key` from `pool_sys` table. 
-        """
-        db = self.db
-        sql, values = db.FmtSQLSelect([u"value", u"ts"], parameter={"id":key}, dataTable=u"pool_sys", singleTable=1)
-        r = db.Query(sql, values)
-        if not r:
-            return None
-        return r[0][0]
-
-    def DeleteSysValue(self, key):
-        """
-        Deletes a single system value
-        """
-        db = self.db
-        db.DeleteRecords(u"pool_sys", {u"id": key})
-        db.Commit()
 
 
 class AppFactory(object):
@@ -929,7 +593,7 @@ class AppFactory(object):
 
 
 @implementer(IApplication)
-class Application(AppFactory, Configuration, Registration, Events):
+class Application(AppFactory, Configuration, Events):
     """
     nive Application implementaion.
 
@@ -956,7 +620,7 @@ class Application(AppFactory, Configuration, Registration, Events):
                               password="password")
         appConf.modules.append(dbConf)
 
-    Requires (Configuration, Registration, AppFactory, Events.Events)
+    Requires (Configuration, AppFactory, Events.Events)
 
     The startup process is handled by nive.portal.portal on application startup.
     During startup the system fires four events in the following order:
@@ -1049,10 +713,26 @@ class Application(AppFactory, Configuration, Registration, Events):
         self.starttime = time()
         self.log.debug("Startup with debug=%s", str(debug))
         self.debug = debug
-        # removed obsolete Register(). Called in StartRegistration().
-        # self.Register(self.configuration)
         self.Signal("startup", app=self)
         self.SetupApplication()
+
+    def SetupApplication(self):
+        """
+        Loads self.configuration, includes modules and updates meta fields.
+        """
+        if not self.configuration:
+            raise ConfigurationError("Configuration is empty")
+        c = self.configuration
+        # special values
+        if c.get("id") and not self.__name__:
+            self.__name__ = c.id
+        if c.get("acl"):
+            self.__acl__ = tuple(c.acl)
+        if c.get("dbConfiguration"):
+            self.dbConfiguration = c.dbConfiguration
+        tz = self.configuration.get("timezone")
+        if tz is not None:
+            self.pytimezone = pytz.timezone(tz)
 
     def StartRegistration(self, pyramidConfig):
         """
@@ -1064,16 +744,17 @@ class Application(AppFactory, Configuration, Registration, Events):
         - startRegistration(app, pyramidConfig)
         """
         # register modules `configuration.modules`
-        self.Register(self.configuration)
+        reg = Registration(self)
+        reg.RegisterComponents(self.configuration)
         # signal before committing views
         self.Signal("startRegistration", app=self, pyramidConfig=pyramidConfig)
         # register pyramid views and translations
         if pyramidConfig:
-            self._RegisterViewModules(pyramidConfig)
+            reg.RegisterViewModules(pyramidConfig)
             pyramidConfig.commit()
-            self._RegisterViews(pyramidConfig)
+            reg.RegisterViews(pyramidConfig)
             pyramidConfig.commit()
-            self._RegisterTranslations(pyramidConfig)
+            reg.RegisterTranslations(pyramidConfig)
             pyramidConfig.commit()
 
         # register groups
@@ -1166,7 +847,7 @@ class Application(AppFactory, Configuration, Registration, Events):
         root = self._GetRootObj(rootname)
         if not root:
             return None
-        return root.LookupObj(id, **kw)
+        return root.obj(id, **kw)
 
     @property
     def db(self):
@@ -1273,23 +954,108 @@ class Application(AppFactory, Configuration, Registration, Events):
         """
         return self._GetDBApi()
 
-    # to be removed in future versions -------------------------------------------
 
-    def GetApp(self):
-        # bw 0.9.12: to be removed
-        return self
+    # System value storage -------------------------------------------------------------
 
-    def GetVersion(self):
-        """ """
-        return __version__, __version__
-
-    def CheckVersion(self):
-        """ """
-        return __version__ == __version__
-
-    def LookupObj(self, id, rootname="", **kw):
+    def StoreSysValue(self, key, value):
         """
-        use obj() instead
+        Stores a value in `pool_sys` table. Value must be a string of any size.
         """
-        return self.obj(id, rootname, **kw)
+        db = self.db
+        db.UpdateFields(u"pool_sys", key, {u"id": key, u"value":value, u"ts":time()}, autoinsert=True)
+        db.Commit()
+
+    def LoadSysValue(self, key):
+        """
+        Loads the value stored as `key` from `pool_sys` table.
+        """
+        db = self.db
+        sql, values = db.FmtSQLSelect([u"value", u"ts"], parameter={"id":key}, dataTable=u"pool_sys", singleTable=1)
+        r = db.Query(sql, values)
+        if not r:
+            return None
+        return r[0][0]
+
+    def DeleteSysValue(self, key):
+        """
+        Deletes a single system value
+        """
+        db = self.db
+        db.DeleteRecords(u"pool_sys", {u"id": key})
+        db.Commit()
+
+
+    def AppViewPredicate(self, context, request):
+        """
+        Check if context of view is this application. For multisite support.
+        """
+        app = context.app
+        return app == self
+
+    AppViewPredicate.__text__ = "nive.AppViewPredicate"
+
+
+    def _Lock(self):
+        # lock all configurations
+        # adapters
+        for a in self.app.registry.registeredAdapters():
+            try:
+                a.factory.lock()
+            except:
+                pass
+        for a in self.app.registry.registeredUtilities():
+            try:
+                a.component.lock()
+            except:
+                pass
+
+
+    def _LoadStructure(self, forceReload=False):
+        """
+        returns dictionary containing database tables and columns
+        """
+        app = self.app
+        if forceReload:
+            app._structure = PoolStructure()
+        if not app._structure.IsEmpty():
+            return app._structure
+
+        structure = {}
+        fieldtypes = {}
+        meta = app.GetAllMetaFlds(ignoreSystem=False)
+        m = []
+        f = {}
+        for fld in meta:
+            f[fld.id] = fld.datatype
+            if fld.datatype == "file":
+                continue
+            m.append(fld.id)
+        structure[MetaTbl] = m
+        fieldtypes[MetaTbl] = f
+
+        types = app.GetAllObjectConfs()
+        for ty in types:
+            t = []
+            f = {}
+            for fld in app.GetAllObjectFlds(ty.id):
+                f[fld.id] = fld.datatype
+                if fld.datatype == "file":
+                    continue
+                t.append(fld.id)
+            structure[ty.dbparam] = t
+            fieldtypes[ty.dbparam] = f
+
+        app._structure.Init(structure, fieldtypes, m, app.configuration.frontendCodepage)
+        # reset cached db
+        if app._dbpool is not None:
+            app._dbpool.Close()
+        return structure
+
+
+    # bw tests
+    def Register(self, conf, **kw):
+        iface, conf = ResolveConfiguration(conf)
+        if iface == IAppConf:
+            self.configuration = conf
+        Registration(self).RegisterComponents(conf, **kw)
 

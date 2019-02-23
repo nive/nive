@@ -66,15 +66,6 @@ def SchemaFactory(form, fields, actions, force=False):
         if field.settings and isinstance(field.settings, dict):
             kwWidget.update(field.settings)
 
-        # ----------------------------------------------------------
-        # bw 0.9.12 -> moved from `field.settings` to `field`
-        # to be removed in future. use field.widget and field.validator instead. 
-        if field.settings and field.settings.get("validator"):
-            kw["validator"] = field.settings["validator"]
-        if field.settings and field.settings.get("widget"):
-            kw["widget"] = field.settings["widget"]
-        # ----------------------------------------------------------
-
         # custom validator
         if field.get("validator"):
             kw["validator"] = field.validator
@@ -340,8 +331,5 @@ nodeMapping = {
     "timestamp": timestamp_node,
     "nlist": nlist_node,
     "binary": binary_node,
-    # bw 0.9.23
-    "mselection": multilist_node,
-    "mcheckboxes": checkbox_node,
 }
 

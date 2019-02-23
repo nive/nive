@@ -252,4 +252,4 @@ def createObj2file(c):
 
 def maxobj(r):
     id = r.GetMaxID()
-    return r.LookupObj(id)
+    return r.obj(id)

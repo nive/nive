@@ -504,13 +504,7 @@ class AppConf(baseConf):
 
         if not self.meta:
             self.meta = copy.deepcopy(AllMetaFlds)
-                        
-        # bw 0.9.3 
-        # database connection parameter
-        if hasattr(self, "dbConfiguration") and isinstance(self.dbConfiguration, str):
-            from . import helper
-            self.dbConfiguration = helper.LoadConfiguration(self.dbConfiguration)
-        
+
  
     def __str__(self):
         return "%(id)s implemented by %(context)s" % self
@@ -934,9 +928,6 @@ class ViewModuleConf(baseConf):
         self.templates = ""
         self.views = []
         baseConf.__init__(self, copyFrom, **values)
-        # bw 0.9.13
-        if self.get("mainTemplate") and not self.get("template"):
-            self.template = self.mainTemplate
 
 
     def __str__(self):
@@ -1461,9 +1452,6 @@ Conf(id="timestamp",   name=_(u"Timestamp"),          description=u""),
 # not supported as database field yet
 Conf(id="binary",      name=_(u"Binary"),             description=u""),   
 Conf(id="nlist",       name=_(u"List of numbers"),    description=u""),
-# bw 0.9.23
-Conf(id="mselection",  name=_(u"Multiple Selection"), description=u""), # use multilist instead
-Conf(id="mcheckboxes", name=_(u"Multiple Checkboxes"),description=u""), # use checkbox instead
 )
 
 
