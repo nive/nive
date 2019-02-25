@@ -258,8 +258,8 @@ class WfTest(unittest.TestCase):
         a = app_nodb()
         a.Register(wf1)
         a.Register(wf2)
-        self.assertTrue(a.GetWorkflowConf(wf1.id, self.obj).id==wf1.id)
-        self.assertTrue(a.GetWorkflowConf(wf2.id).id==wf2.id)
+        self.assertTrue(a.configurationQuery.GetWorkflowConf(wf1.id, self.obj).id==wf1.id)
+        self.assertTrue(a.configurationQuery.GetWorkflowConf(wf2.id).id==wf2.id)
 
 
 class TransisiotnTest(unittest.TestCase):

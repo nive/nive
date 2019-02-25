@@ -67,7 +67,7 @@ class exportJson(Tool):
         def mapfields(fields):
             return [f.id for f in fields]
         
-        metaflds = mapfields(app.GetAllMetaFlds(ignoreSystem=False))
+        metaflds = mapfields(app.configurationQuery.GetAllMetaFlds(ignoreSystem=False))
 
         def exportObj(o):
             values = {"__items__": []}
@@ -92,7 +92,7 @@ class exportJson(Tool):
                     values["__items__"].append(cv)
             return values
                 
-        root = app.root()
+        root = app.root
         data = {"__items__": []}
         for child in root.GetObjs():
             cv = exportObj(child)

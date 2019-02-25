@@ -455,14 +455,14 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
                 portal = app
             return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "types":
-            return app.GetAllObjectConfs()
+            return app.configurationQuery.GetAllObjectConfs()
         elif dyn == "categories":
-            return app.GetAllCategories()
+            return app.configurationQuery.GetAllCategories()
         elif dyn[:5] == "type:":
             type = dyn[5:]
-            return app.root().GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
+            return app.root.GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "meta":
-            return app.root().GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
+            return app.root.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "languages":
             return LanguageExtension().Codelist()
         elif dyn == "countries":
@@ -470,10 +470,10 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
 
     fld = fieldconf.id
     if fld == "pool_type":
-        values = app.GetAllObjectConfs()
+        values = app.configurationQuery.GetAllObjectConfs()
 
     elif fld == "pool_category":
-        values = app.GetAllCategories()
+        values = app.configurationQuery.GetAllCategories()
 
     elif fld == "pool_groups":
         local = fieldconf.settings.get("local")
@@ -498,7 +498,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             except:
                 pass
         elif pool_type:
-            aWfp = app.GetObjectConf(pool_type).get("workflowID")
+            aWfp = app.configurationQuery.GetObjectConf(pool_type).get("workflowID")
             try:
                 obj = app.GetWorkflow(aWfp)
                 values = obj.GetActivities()
@@ -508,7 +508,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             values = []
 
     elif fld == "pool_wfp":
-        values = app.GetAllWorkflowConfs()
+        values = app.configurationQuery.GetAllWorkflowConfs()
 
     return values
 

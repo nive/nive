@@ -170,7 +170,7 @@ class ListItemTest_db:
 
     def setUp(self):
         self._loadApp()
-        r=self.app.root()
+        r=self.app.root
 
     def tearDown(self):
         self.app.Close()
@@ -178,9 +178,9 @@ class ListItemTest_db:
 
     def test_listitems(self):
         self._loadApp()
-        r=self.app.root()
+        r=self.app.root
 
-        self.assertTrue(len(LoadListItems(self.app.GetFld("pool_type"), app=self.app, obj=None, pool_type=None, force=True))==3)
+        self.assertTrue(len(LoadListItems(self.app.configurationQuery.GetFld("pool_type"), app=self.app, obj=None, pool_type=None, force=True))==3)
         LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"users"}), app=self.app)
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"groups"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"languages"}), app=self.app))

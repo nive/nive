@@ -296,7 +296,7 @@ class groupsTest_db:
 
     def tearDown(self):
         u = User(u"test")
-        root = self.app.root()
+        root = self.app.root
         for r in self.remove:
             root.Delete(r, u)
         self.app.Close()

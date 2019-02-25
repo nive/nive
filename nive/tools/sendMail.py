@@ -280,7 +280,7 @@ class sendMail(Tool):
         
 
     def _GetRecv(self, recvids, recvrole, force, app):
-        userdb = app.root()
+        userdb = app.root
         if not hasattr(userdb, "GetUsersWithRole"):
             userdb = app.portal.userdb.GetRoot()
         recvList = []

@@ -133,7 +133,7 @@ class Search:
                 parameter["pool_type"] = pool_type
             if "pool_type" not in operators:
                 operators["pool_type"] = u"="
-            typeInf = self.app.GetObjectConf(pool_type)
+            typeInf = self.app.configurationQuery.GetObjectConf(pool_type)
             if not typeInf:
                 raise ConfigurationError(pool_type + " type not found")
             sql, values = db.FmtSQLSelect(fields, 
@@ -292,7 +292,7 @@ class Search:
         removeID = self._HandleGroupByQueries(fields, fldList, groupcol, kw)
         self._HandleTypeJoins(pool_type, parameter, operators, kw)
 
-        typeInf = self.app.GetObjectConf(pool_type)
+        typeInf = self.app.configurationQuery.GetObjectConf(pool_type)
         if not typeInf:
             raise ConfigurationError("Type not found (%s)" % (pool_type))
 
@@ -361,7 +361,7 @@ class Search:
         fields, fldList, groupcol = self._PrepareFields(fields, pool_type)
         removeID = self._HandleGroupByQueries(fields, fldList, groupcol, kw)
 
-        typeInf = self.app.GetObjectConf(pool_type)
+        typeInf = self.app.configurationQuery.GetObjectConf(pool_type)
         if not typeInf:
             raise ConfigurationError("Type not found (%s)" % (pool_type))
 
@@ -525,7 +525,7 @@ class Search:
         else:
             phrase = phrase.replace(u"*", u"%")
 
-        typeInf = self.app.GetObjectConf(pool_type)
+        typeInf = self.app.configurationQuery.GetObjectConf(pool_type)
         if not typeInf:
             raise ConfigurationError("Type not found (%s)" % (pool_type))
 
@@ -690,7 +690,7 @@ class Search:
                 f.append(FieldConf(**{"id": fld, "name": fld, "datatype": "string"}))
                 continue
 
-            fl = self.app.GetFld(fld, pool_type)
+            fl = self.app.configurationQuery.GetFld(fld, pool_type)
             if fl:
                 f.append(fl)
         return f
@@ -700,7 +700,7 @@ class Search:
         removeID = False
         if (not "id" in fldList and groupcol == 0 and kws.get("groupby") == None) or kws.get("addID")==1:
             fldList.append("id")
-            fields.append(self.app.GetFld("id"))
+            fields.append(self.app.configurationQuery.GetFld("id"))
             removeID = True
         return removeID
     
@@ -764,7 +764,7 @@ class Search:
         for r in relations:
             # special cases: user lookup pool_createdby, pool_changedby
             if r in (u"pool_createdby", u"pool_changedby"):
-                GetUser = self.app.portal.userdb.root().GetUser
+                GetUser = self.app.portal.userdb.root.GetUser
                 for i in items:
                     ref = u"user:"+i[r]
                     if ref in cache:
@@ -1001,11 +1001,11 @@ class Search:
         returns id list
         """
         if not types:
-            types = self.app.GetAllObjectConfs()
+            types = self.app.configurationQuery.GetAllObjectConfs()
         else:
             l = []
             for t in types:
-                l.append(self.app.GetObjectConf(t))
+                l.append(self.app.configurationQuery.GetObjectConf(t))
             types = l
         references = []
         ids = [unitID]

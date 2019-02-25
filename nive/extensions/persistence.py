@@ -59,7 +59,7 @@ class PersistentConf(object):
         
 def LoadStoredConfValues(app, pyramidConfig):
     # lookup persistent manager for configuration
-    storage = app.Factory(IModuleConf, "persistence")
+    storage = app.NewModule(IModuleConf, "persistence")
     if not storage:
         return
     try:

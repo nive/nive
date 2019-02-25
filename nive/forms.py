@@ -332,7 +332,7 @@ class Form(Events, ReForm):
         if self.loadFromType:
             typeOrConfiguration = self.loadFromType
             if isinstance(typeOrConfiguration, str):
-                config = self.app.GetObjectConf(typeOrConfiguration)
+                config = self.app.configurationQuery.GetObjectConf(typeOrConfiguration)
                 if not config:
                     raise ConfigurationError("Type not found (%s)" % (str(typeOrConfiguration)))
             else:
@@ -372,7 +372,7 @@ class Form(Events, ReForm):
         elif self.fields:
             temp = self.fields
         elif config and self.app:
-            temp = list(self.app.GetAllMetaFlds(ignoreSystem = True)) + list(config.data)
+            temp = list(self.app.configurationQuery.GetAllMetaFlds(ignoreSystem = True)) + list(config.data)
         if not temp:
             raise ConfigurationError("No form fields defined")
         # lookup field configurations
@@ -391,7 +391,7 @@ class Form(Events, ReForm):
                             fld = a
                             break
                 if not fld:
-                    fld = self.app.GetMetaFld(f)
+                    fld = self.app.configurationQuery.GetMetaFld(f)
                 if not fld:
                     raise ConfigurationError("Form field lookup failed: " + f)
                 f = fld
@@ -1437,7 +1437,7 @@ class ToolForm(HTMLForm):
         if self.loadFromType:
             typeOrConfiguration = self.loadFromType
             if isinstance(typeOrConfiguration, str):
-                config = self.app.GetToolConf(typeOrConfiguration)
+                config = self.app.configurationQuery.GetToolConf(typeOrConfiguration)
                 if not config:
                     raise ConfigurationError("Tool not found (%s). Use configuration instance instead of a string." % (str(typeOrConfiguration)))
             else:

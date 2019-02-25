@@ -13,29 +13,25 @@ See Application.Startup() for the main entry point and connected events.
 Not to be mixed up with pyramid applications or projects. It is possible to use multiple nive
 applications in a single pyramid app.
 """
-from nive import __version__
 
 import logging
-import uuid
 import pytz
 
 from time import time
 
 from zope.interface.registry import Components
-from zope.interface import providedBy
 
 from nive.utils.dataPool2.structure import PoolStructure
 
-from nive.definitions import MetaTbl, ReadonlySystemFlds
-from nive.definitions import IRootConf, IObjectConf, IToolConf, IFieldConf, IAppConf
+from nive.definitions import MetaTbl
+from nive.definitions import IAppConf
 from nive.definitions import ConfigurationError
 
-from nive.registration import Registration
+from nive.registration import Registration, AppConfigurationQuery
 from nive.events import Events
-from nive.helper import ResolveName, ResolveConfiguration, GetClassRef, ClassFactory
-from nive.tool import _IGlobal, _GlobalObject
-from nive.workflow import IWfProcessConf
+from nive.helper import ResolveConfiguration, GetClassRef, ClassFactory
 from nive.utils.utils import SortConfigurationList
+from nive.tool import _IGlobal, _GlobalObject
 
 
 from nive.definitions import implementer
@@ -43,557 +39,8 @@ from nive.definitions import IApplication
 
 
 
-class Configuration(object):
-    """
-    Read access functions for root, type, type field, meta field and category configurations.
-
-    Requires:
-    - nive.nive
-    """
-
-    def QueryConf(self, queryFor, context=None):
-        """
-        Returns a list of configurations or empty list
-        """
-        if isinstance(queryFor, str):
-            queryFor = ResolveName(queryFor, raiseExcp=False)
-            if not queryFor:
-                return ()
-        if context:
-            return self.registry.getAdapters((context,), queryFor)
-        return self.registry.getAllUtilitiesRegisteredFor(queryFor)
-
-    def QueryConfByName(self, queryFor, name, context=None):
-        """
-        Returns configuration or None
-        """
-        if isinstance(queryFor, str):
-            queryFor = ResolveName(queryFor, raiseExcp=False)
-            if not queryFor:
-                return None
-        if context:
-            v = self.registry.queryAdapter(context, queryFor, name=name)
-            if v:
-                return v[0]
-            return None
-        return self.registry.queryUtility(queryFor, name=name)
-    
-    def Factory(self, queryFor, name, context=None):
-        """
-        Query for configuration and lookup class reference. Does not call __init__ for
-        the new class.
-        
-        returns class or None
-        """
-        c = self.QueryConfByName(queryFor, name, context=context)
-        if not c:
-            return None
-        return ClassFactory(c)
-
-
-    # Roots -------------------------------------------------------------
-
-    def GetRootConf(self, name=""):
-        """
-        Get the root object configuration. If name is empty, the default name is used.
-        
-        returns dict or None
-        """
-        if name == "":
-            name = self._defaultRoot
-        return self.registry.queryUtility(IRootConf, name=name)
-
-
-    def GetAllRootConfs(self):
-        """
-        Get all root object configurations as list.
-        
-        returns list
-        """
-        return self.registry.getAllUtilitiesRegisteredFor(IRootConf)
-
-
-    def GetRootIds(self):
-        """
-        Get all root object ids.
-        
-        returns list
-        """
-        return [r["id"] for r in self.GetAllRootConfs()]
-
-
-    def GetDefaultRootName(self):
-        """
-        Returns the name of the default root.
-        
-        returns string
-        """
-        return self._defaultRoot
-
-
-    # Types -------------------------------------------------------------
-
-    def GetObjectConf(self, typeID, skipRoot=False):
-        """
-        Get the type configuration for typeID. If type is not found root definitions are
-        searched as well.
-        
-        returns configuration or none
-        """
-        c = self.registry.queryUtility(IObjectConf, name=typeID)
-        if c or skipRoot:
-            return c
-        return self.GetRootConf(typeID)
-
-
-    def GetAllObjectConfs(self, visibleOnly = False):
-        """
-        Get all type configurations.
-        
-        returns list
-        """
-        c = self.registry.getAllUtilitiesRegisteredFor(IObjectConf)
-        if not visibleOnly:
-            return c
-        return [t for t in c if t.get("hidden") != True]
-
-
-    def GetTypeName(self, typeID):
-        """
-        Get the object type name for the id.
-        
-        returns string
-        """
-        t = self.GetObjectConf(typeID)
-        if t:
-            return t.name
-        return ""
-
-
-    # General Fields -------------------------------------------------------------
-
-    def GetFld(self, fldID, typeID = None):
-        """
-        Get type or meta field definition. Type fields have the priority if typeID is not None.
-
-        returns configuration or None
-        """
-        if typeID is not None:
-            f = self.GetObjectFld(fldID, typeID)
-            if f:
-                return f
-        return self.GetMetaFld(fldID)
-
-
-    def GetFldName(self, fldID, typeID = None):
-        """
-        Get type or meta field name. Type fields have the priority if typeID is not None.
-        
-        returns string
-        """
-        if typeID:
-            f = self.GetObjectFld(fldID, typeID)
-            if f:
-                return f["name"]
-        return self.GetMetaFldName(fldID)
-
-
-    # Type Data Fields -------------------------------------------------------------
-
-    def GetObjectFld(self, fldID, typeID):
-        """
-        Returns object field configuration.
-        
-        returns configuration or None
-        """
-        fields = self.GetAllObjectFlds(typeID)
-        if not fields:
-            return None
-        if IFieldConf.providedBy(fldID):
-            f = [d for d in fields if d["id"]==fldID.id]
-            if f:
-                return fldID
-        else:
-            f = [d for d in fields if d["id"]==fldID]
-            if f:
-                return f[0]
-        return None
-
-
-    def GetAllObjectFlds(self, typeID):
-        """
-        Get all object field configurations.
-        
-        returns list or None
-        """
-        t = self.GetObjectConf(typeID)
-        if not t:
-            return None
-        return t.data
-
-
-    # Meta Fields -------------------------------------------------------------
-
-    def GetMetaFld(self, fldID):
-        """
-        Get meta field configuration
-        
-        returns configuration or None
-        """
-        if IFieldConf.providedBy(fldID):
-            f = [d for d in self.configuration.meta if d["id"]==fldID.id]
-            if f:
-                return fldID
-        else:
-            f = [d for d in self.configuration.meta if d["id"]==fldID]
-            if f:
-                return f[0]
-        return None
-
-
-    def GetAllMetaFlds(self, ignoreSystem=True):
-        """
-        Get all meta field configurations.
-        
-        returns list
-        """
-        if not ignoreSystem:
-            return self.configuration.meta
-        return [m for m in self.configuration.meta if m["id"] not in ReadonlySystemFlds]
-
-
-    def GetMetaFldName(self, fldID):
-        """
-        Get meta field name for id.
-        
-        returns string
-        """
-        m = [d for d in self.configuration.meta if d["id"]==fldID]
-        if not m:
-            return u""
-        return m[0]["name"]
-
-
-    # Tool -------------------------------------------------------------
-
-    def GetToolConf(self, toolID, contextObject=None):
-        """
-        Get the tool configuration.
-        
-        returns configuration or None
-        """
-        if not contextObject:
-            contextObject = _GlobalObject()
-        v = self.registry.queryAdapter(contextObject, IToolConf, name=toolID)
-        if v:
-            return v[0]
-        return None
-
-    def GetAllToolConfs(self, contextObject=None):
-        """
-        Get all tool configurations.
-        
-        returns list
-        """
-        tools = []
-        for a in self.registry.registeredAdapters():
-            if a.provided==IToolConf:
-                if contextObject:
-                    if not a.required[0] in providedBy(contextObject):
-                        continue
-                tools.append(a.factory)
-        return tools
-
-
-    # Categories -------------------------------------------------------------------------------------------------------
-
-    def GetCategory(self, categoryID=""):
-        """
-        Get category configuration.
-        
-        returns configuration or None
-        """
-        c = [d for d in self.configuration.categories if d["id"]==categoryID]
-        if not c:
-            return None
-        return c[0]
-
-
-    def GetAllCategories(self, sort=u"name", visibleOnly=False):
-        """
-        Get all category configurations.
-        
-        returns list
-        """
-        if not visibleOnly:
-            return SortConfigurationList(self.configuration.categories, sort)
-        c = [a for a in self.configuration.categories if not a.get("hidden")]
-        return SortConfigurationList(c, sort)
-
-
-    def GetCategoryName(self, categoryID):
-        """
-        Get category name for id.
-        
-        returns string
-        """
-        c = [d for d in self.configuration.categories if d["id"]==categoryID]
-        if not c:
-            return u""
-        return c[0]["name"]
-
-
-    # Groups -------------------------------------------------------------
-
-    def GetGroups(self, sort=u"name", visibleOnly=False):
-        """
-        Get a list of configured groups.
-        
-        returns list
-        """
-        if not self.configuration.groups:
-            return []
-        if not visibleOnly:
-            return SortConfigurationList(self.configuration.groups, sort)
-        c = [a for a in self.configuration.groups if not a.get("hidden")]
-        return SortConfigurationList(c, sort)
-
-
-    def GetGroupName(self, groupID):
-        """
-        Get group name for id.
-        
-        returns string
-        """
-        g = [d for d in self.configuration.groups if d["id"]==groupID]
-        if not g:
-            return u""
-        return g[0]["name"]
-
-
-    # Workflow -------------------------------------------------------------
-
-    def GetWorkflowConf(self, processID, contextObject=None):
-        """
-        Get the workflow process configuration.
-        
-        returns configuration or None
-        """
-        v = self.registry.queryAdapter(contextObject or _GlobalObject(), IWfProcessConf, name=processID)
-        if v:
-            return v[0]
-        return None
-
-
-    def GetAllWorkflowConfs(self, contextObject=None):
-        """
-        Get all workflow configurations.
-        
-        returns list
-        """
-        w = []
-        adpts = self.registry.registeredAdapters()
-        for a in adpts:
-            if a.provided==IWfProcessConf:
-                if contextObject:
-                    if not a.required[0] in providedBy(contextObject):
-                        continue
-                w.append(a.factory)
-        return w
-
-
-
-
-class AppFactory(object):
-    """
-    Internal class for dynamic object creation and caching.
-
-    Requires:
-    - Application
-    """
-
-    def _GetDataPoolObj(self, cachedDbConnection=None):
-        """
-        creates the database object
-        """
-        if not self.dbConfiguration:
-            raise ConfigurationError("Database configuration empty. application.dbConfiguration is None.")
-        poolTag = self.dbConfiguration.context
-        if not poolTag:
-            raise TypeError("Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
-        elif poolTag.lower() in ("sqlite","sqlite3"):
-            poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
-        elif poolTag.lower() == "mysql":
-            poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
-        elif poolTag.lower() in ("postgres","postgresql"):
-            poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
-
-        # if a database connection other than the default is configured
-        if cachedDbConnection is not None:
-            connObj = cachedDbConnection
-        elif self.dbConfiguration.connection:
-            connObj = GetClassRef(self.dbConfiguration.connection, self.reloadExtensions, True, None)
-            connObj = connObj(config=self.dbConfiguration, connectNow=False)
-        else:
-            connObj = None
-
-        dbObj = GetClassRef(poolTag, self.reloadExtensions, True, None)
-        conn = self.dbConfiguration
-        dbObj = dbObj(connection=connObj,
-                      connParam=conn,      # use the default connection defined in db if connection is none
-                      structure=self._structure, 
-                      root=conn.fileRoot, 
-                      useTrashcan=conn.useTrashcan, 
-                      dbCodePage=conn.dbCodePage,
-                      timezone=self.pytimezone,
-                      debug=conn.querylog[0],
-                      log=conn.querylog[1])
-        return dbObj
-
-    
-    def _GetConnection(self):
-        """
-        Creates a new database connection. Works before startup and application setup.
-        """
-        if self._dbpool:
-            try:
-                return self._dbpool.usedconnection
-            except:
-                pass
-                
-        cTag = self.dbConfiguration.connection
-        poolTag = self.dbConfiguration.context
-        if cTag:
-            connObj = GetClassRef(cTag, self.reloadExtensions, True, None)
-            connObj = connObj(config=self.dbConfiguration, connectNow=False)
-            return connObj
-        if self._dbpool:
-            return self._dbpool.CreateConnection(self.dbConfiguration)
-        if not cTag and not poolTag:
-            raise TypeError("Database connection type not set. application.dbConfiguration.connection and application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
-        poolTag = self.dbConfiguration.context
-        if not poolTag:
-            raise TypeError("Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
-        elif poolTag.lower() in ("sqlite","sqlite3"):
-            poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
-        elif poolTag.lower() == "mysql":
-            poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
-        elif poolTag.lower() in ("postgres","postgresql"):
-            poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
-        dbObj = GetClassRef(poolTag, self.reloadExtensions, True, None)
-        return dbObj._DefaultConnection(config=self.dbConfiguration, connectNow=False)
-
-
-    def _GetDBApi(self):
-        """
-        Creates a new and raw database connection. Works before startup and application setup.
-        """
-        conn = self._GetConnection()
-        if conn:
-            return conn.PrivateConnection()
-        return None
-
-
-    def _GetRootObj(self, name):
-        """
-        creates the root object
-        """
-        if not name:
-            name = self.GetDefaultRootName()
-        useCache = self.configuration.useCache
-        if isinstance(name, str):
-            cachename = "_c_root"+name
-            if useCache and hasattr(self, cachename) and getattr(self, cachename):
-                rootObj = getattr(self, cachename)
-                rootObj.Signal("loadFromCache")
-                return rootObj
-            rootConf = self.GetRootConf(name)
-        else:
-            rootConf = name
-
-        if not rootConf:
-            return None
-
-        name = rootConf.id
-        cachename = "_c_root"+name
-        if useCache and hasattr(self, cachename) and getattr(self, cachename):
-            rootObj = getattr(self, cachename)
-            rootObj.Signal("loadFromCache")
-        else:
-            rootObj = ClassFactory(rootConf, self.reloadExtensions, True, base=None)
-            rootObj = rootObj(name, self, rootConf)
-            if rootObj and useCache:
-                setattr(self, cachename, rootObj)
-        self.Signal("loadRoot", rootObj)
-        return rootObj
-
-
-    def _CloseRootObj(self, name=None):
-        """
-        close root objects. if name = none, all are closed.
-        """
-        if not name:
-            if self.registry is None:
-                return
-            n = self.GetRootIds()
-        else:
-            n = (name,)
-        for name in n:
-            cachename = "_c_root"+name
-            try:
-                o = getattr(self, cachename)
-                o.Close()
-                setattr(self, cachename, None)
-            except:
-                pass
-
-
-    def _GetToolObj(self, name, contextObject):
-        """
-        creates the tool object
-        """
-        if isinstance(name, str):
-            conf = self.GetToolConf(name, contextObject)
-            if isinstance(conf, (list, tuple)):
-                conf = conf[0]
-        else:
-            conf = name
-        if not conf:
-            iface, conf = ResolveConfiguration(name)
-            if not conf:
-                raise ImportError("Tool not found. Please load the tool by referencing the tool id. (%s)" % (str(name)))
-        tag = conf.context
-        toolObj = GetClassRef(tag, self.reloadExtensions, True, None)
-        toolObj = toolObj(conf, self)
-        if not _IGlobal.providedBy(contextObject):
-            toolObj.__parent__ = contextObject
-        return toolObj
-
-
-    def _GetWfObj(self, name, contextObject):
-        """
-        creates the root object
-        """
-        wfConf = None
-        if isinstance(name, str):
-            wfConf = self.GetWorkflowConf(name, contextObject)
-            if isinstance(wfConf, (list, tuple)):
-                wfConf = wfConf[0]
-        if not wfConf:
-            iface, wfConf = ResolveConfiguration(name)
-            if not wfConf:
-                raise ImportError("Workflow process not found. Please load the workflow by referencing the process id. (%s)" % (str(name)))
-
-        wfTag = wfConf.context
-        wfObj = GetClassRef(wfTag, self.reloadExtensions, True, None)
-        wfObj = wfObj(wfConf, self)
-        if not _IGlobal.providedBy(contextObject):
-            wfObj.__parent__ = contextObject
-        return wfObj
-
-
 @implementer(IApplication)
-class Application(AppFactory, Configuration, Events):
+class Application(Events):
     """
     nive Application implementaion.
 
@@ -665,11 +112,7 @@ class Application(AppFactory, Configuration, Events):
         self.debug = False
         self.reloadExtensions = False
 
-        # v0.9.12: moved _meta to configuration.meta
-        # meta fields are now handled by the application configuration
-        # self._meta = copy.deepcopy(SystemFlds)
-
-        # default root name if multiple
+        # default root name (root.configuration.id)
         self._defaultRoot = ""
         # cache database structure
         self._structure = PoolStructure()
@@ -690,10 +133,65 @@ class Application(AppFactory, Configuration, Events):
         name.
         """
         name = name.split(".")[0]
-        o = self.root(name)
-        if o and o.configuration.urlTraversal:
+        o = self.GetRoot(name)
+        if o is not None and o.configuration.urlTraversal:
             return o
         raise KeyError(name)
+
+    # Properties -----------------------------------------------------------
+
+    @property
+    def root(self):
+        """
+        Get default root object. Use `GetRoot(rootname)` if multiple roots used.
+
+        Events:
+        - loadRoot(root)
+        - loadFromCache() called for the root
+
+        returns root object
+        """
+        return self.factory.GetRootObj(self._defaultRoot)
+
+    @property
+    def db(self):
+        """ returns datapool object    """
+        return self._dbpool
+
+    @property
+    def portal(self):
+        """ returns the portal """
+        return self.__parent__
+
+    @property
+    def factory(self):
+        """ returns the obj factory instance. """
+        return AppFactory(self)
+
+    @property
+    def configurationQuery(self):
+        """ returns the app configuration/registry query instance """
+        return AppConfigurationQuery(self)
+
+    @property
+    def app(self):
+        """ returns itself. for compatibility. """
+        return self
+
+    @property
+    def rootname(self):
+        """ returns the name of the default root. """
+        return self._defaultRoot
+
+    def obj(self, id, rootname="", **kw):
+        """ returns object    """
+        root = self.factory.GetRootObj(rootname)
+        if root is None:
+            return None
+        return root.obj(id, **kw)
+
+
+    # Events and Setup ------------------------------------------------------------------
 
     def Startup(self, pyramidConfig, debug=False, cachedDbConnection=None):
         self.Setup(debug=debug)
@@ -780,7 +278,7 @@ class Application(AppFactory, Configuration, Events):
 
         # reload database structure
         self._LoadStructure(forceReload=True)
-        self._dbpool = self._GetDataPoolObj(cachedDbConnection)
+        self._dbpool = self.factory.GetDataPoolObj(cachedDbConnection)
 
         # test and create database fields
         if self.debug:
@@ -816,7 +314,7 @@ class Application(AppFactory, Configuration, Events):
         - close()
         """
         self.Signal("close")
-        self._CloseRootObj()
+        self.factory.CloseRootObj()
         if self._dbpool:
             self._dbpool.Close()
 
@@ -830,40 +328,6 @@ class Application(AppFactory, Configuration, Events):
         self.dbConfiguration = None
         self.__parent__ = None
 
-    # Properties -----------------------------------------------------------
-
-    def root(self, name=""):
-        """
-        Events:
-        - loadRoot(root)
-        - loadFromCache() called for the root
-
-        returns root object
-        """
-        return self._GetRootObj(name)
-
-    def obj(self, id, rootname="", **kw):
-        """ returns object    """
-        root = self._GetRootObj(rootname)
-        if not root:
-            return None
-        return root.obj(id, **kw)
-
-    @property
-    def db(self):
-        """ returns datapool object    """
-        return self._dbpool
-
-    @property
-    def portal(self):
-        """ returns the portal    """
-        return self.__parent__
-
-    @property
-    def app(self):
-        """ returns itself. for compatibility.    """
-        return self
-
     # Content and root objects -----------------------------------------------------------
 
     def GetRoot(self, name=""):
@@ -876,7 +340,7 @@ class Application(AppFactory, Configuration, Events):
 
         returns root object
         """
-        return self._GetRootObj(name)
+        return self.factory.GetRootObj(name)
 
     def GetRoots(self):
         """
@@ -884,7 +348,15 @@ class Application(AppFactory, Configuration, Events):
 
         returns list
         """
-        return [self.GetRoot(r.id) for r in self.GetAllRootConfs()]
+        return [self.GetRoot(r.id) for r in self.configurationQuery.GetAllRootConfs()]
+
+    def GetRootNames(self):
+        """
+        Get all root object names (root.configuration.id).
+
+        returns list
+        """
+        return [r["id"] for r in self.configurationQuery.GetAllRootConfs()]
 
     def GetTool(self, toolID, contextObject=None):
         """
@@ -892,7 +364,7 @@ class Application(AppFactory, Configuration, Events):
 
         returns the tool object.
         """
-        return self._GetToolObj(toolID, contextObject or _GlobalObject())
+        return self.factory.GetToolObj(toolID, contextObject or _GlobalObject())
 
     def GetWorkflow(self, wfProcID, contextObject=None):
         """
@@ -902,7 +374,34 @@ class Application(AppFactory, Configuration, Events):
         """
         if not self.configuration.workflowEnabled:
             return None
-        return self._GetWfObj(wfProcID, contextObject or _GlobalObject())
+        return self.factory.GetWfObj(wfProcID, contextObject or _GlobalObject())
+
+    # Groups -------------------------------------------------------------
+
+    def GetGroups(self, sort=u"name", visibleOnly=False):
+        """
+        Get a list of configured groups.
+
+        returns list
+        """
+        configuration = self.configuration
+        if not configuration.groups:
+            return []
+        if not visibleOnly:
+            return SortConfigurationList(configuration.groups, sort)
+        c = [a for a in configuration.groups if not a.get("hidden")]
+        return SortConfigurationList(c, sort)
+
+    def GetGroupName(self, groupID):
+        """
+        Get group name for id.
+
+        returns string
+        """
+        g = [d for d in self.app.configuration.groups if d["id"] == groupID]
+        if not g:
+            return u""
+        return g[0]["name"]
 
     # Data Pool and database connections -------------------------------------------------------------------
 
@@ -946,13 +445,26 @@ class Application(AppFactory, Configuration, Events):
         """
         Creates a new database connection. Works before startup and application setup.
         """
-        return self._GetConnection()
+        return self.factory.GetConnection()
 
     def NewDBApi(self):
         """
         Creates a raw database connection (dbapi). Works before startup and application setup.
         """
-        return self._GetDBApi()
+        return self.factory.GetDBApi()
+
+    def NewModule(self, queryFor, name, context=None):
+        """
+        Query for configuration and lookup class reference. Does not call __init__ for
+        the new class.
+
+        returns class or None
+        """
+        c = self.configurationQuery.QueryConfByName(queryFor, name, context=context)
+        if c is None:
+            return None
+        return ClassFactory(c)
+
 
 
     # System value storage -------------------------------------------------------------
@@ -1022,7 +534,7 @@ class Application(AppFactory, Configuration, Events):
 
         structure = {}
         fieldtypes = {}
-        meta = app.GetAllMetaFlds(ignoreSystem=False)
+        meta = app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)
         m = []
         f = {}
         for fld in meta:
@@ -1033,11 +545,11 @@ class Application(AppFactory, Configuration, Events):
         structure[MetaTbl] = m
         fieldtypes[MetaTbl] = f
 
-        types = app.GetAllObjectConfs()
+        types = app.configurationQuery.GetAllObjectConfs()
         for ty in types:
             t = []
             f = {}
-            for fld in app.GetAllObjectFlds(ty.id):
+            for fld in app.configurationQuery.GetAllObjectFlds(ty.id):
                 f[fld.id] = fld.datatype
                 if fld.datatype == "file":
                     continue
@@ -1052,10 +564,204 @@ class Application(AppFactory, Configuration, Events):
         return structure
 
 
-    # bw tests
+    # bw [3] tests
     def Register(self, conf, **kw):
         iface, conf = ResolveConfiguration(conf)
         if iface == IAppConf:
             self.configuration = conf
         Registration(self).RegisterComponents(conf, **kw)
+
+
+class AppFactory(object):
+    """
+    Internal class for dynamic object creation and caching.
+
+    Requires:
+    - Application
+    """
+
+    def __init__(self, app):
+        self.app = app
+
+    def GetDataPoolObj(self, cachedDbConnection=None):
+        """
+        creates the database object
+        """
+        app = self.app
+        if not app.dbConfiguration:
+            raise ConfigurationError("Database configuration empty. application.dbConfiguration is None.")
+        poolTag = app.dbConfiguration.context
+        if not poolTag:
+            raise TypeError("Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
+        elif poolTag.lower() in ("sqlite", "sqlite3"):
+            poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
+        elif poolTag.lower() == "mysql":
+            poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
+        elif poolTag.lower() in ("postgres", "postgresql"):
+            poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
+
+        # if a database connection other than the default is configured
+        if cachedDbConnection is not None:
+            connObj = cachedDbConnection
+        elif app.dbConfiguration.connection:
+            connObj = GetClassRef(app.dbConfiguration.connection, app.reloadExtensions, True, None)
+            connObj = connObj(config=app.dbConfiguration, connectNow=False)
+        else:
+            connObj = None
+
+        dbObj = GetClassRef(poolTag, app.reloadExtensions, True, None)
+        conn = app.dbConfiguration
+        dbObj = dbObj(connection=connObj,
+                      connParam=conn,  # use the default connection defined in db if connection is none
+                      structure=app._structure,
+                      root=conn.fileRoot,
+                      useTrashcan=conn.useTrashcan,
+                      dbCodePage=conn.dbCodePage,
+                      timezone=app.pytimezone,
+                      debug=conn.querylog[0],
+                      log=conn.querylog[1])
+        return dbObj
+
+    def GetConnection(self):
+        """
+        Creates a new database connection. Works before startup and application setup.
+        """
+        app = self.app
+        if app._dbpool is not None:
+            try:
+                return app._dbpool.usedconnection
+            except AttributeError:
+                pass
+
+        cTag = app.dbConfiguration.connection
+        poolTag = app.dbConfiguration.context
+        if cTag:
+            connObj = GetClassRef(cTag, app.reloadExtensions, True, None)
+            connObj = connObj(config=app.dbConfiguration, connectNow=False)
+            return connObj
+        if app._dbpool is not None:
+            return app._dbpool.CreateConnection(app.dbConfiguration)
+        if not cTag and not poolTag:
+            raise TypeError(
+                "Database connection type not set. application.dbConfiguration.connection and application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
+        poolTag = app.dbConfiguration.context
+        if not poolTag:
+            raise TypeError("Database type not set. application.dbConfiguration.context is empty. Use Sqlite or Mysql!")
+        elif poolTag.lower() in ("sqlite", "sqlite3"):
+            poolTag = "nive.utils.dataPool2.sqlite.sqlite3Pool.Sqlite3"
+        elif poolTag.lower() == "mysql":
+            poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
+        elif poolTag.lower() in ("postgres", "postgresql"):
+            poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
+        dbObj = GetClassRef(poolTag, app.reloadExtensions, True, None)
+        return dbObj._DefaultConnection(config=app.dbConfiguration, connectNow=False)
+
+    def GetDBApi(self):
+        """
+        Creates a new and raw database connection. Works before startup and application setup.
+        """
+        conn = self.GetConnection()
+        if conn:
+            return conn.PrivateConnection()
+        return None
+
+    def GetRootObj(self, name):
+        """
+        creates the root object
+        """
+        app = self.app
+        if not name:
+            name = app.rootname
+        useCache = app.configuration.useCache
+        if isinstance(name, str):
+            cachename = "_c_root" + name
+            if useCache and hasattr(app, cachename) and getattr(app, cachename) is not None:
+                rootObj = getattr(app, cachename)
+                rootObj.Signal("loadFromCache")
+                return rootObj
+            rootConf = app.configurationQuery.GetRootConf(name)
+        else:
+            rootConf = name
+
+        if rootConf is None:
+            return None
+
+        name = rootConf.id
+        cachename = "_c_root" + name
+        if useCache and hasattr(app, cachename) and getattr(app, cachename) is not None:
+            rootObj = getattr(app, cachename)
+            rootObj.Signal("loadFromCache")
+        else:
+            rootObj = ClassFactory(rootConf, app.reloadExtensions, True, base=None)
+            rootObj = rootObj(name, app, rootConf)
+            if rootObj and useCache:
+                setattr(app, cachename, rootObj)
+        app.Signal("loadRoot", rootObj)
+        return rootObj
+
+    def CloseRootObj(self, name=None):
+        """
+        close root objects. if name = none, all are closed.
+        """
+        app = self.app
+        if not name:
+            if app.registry is None:
+                return
+            n = app.GetRootNames()
+        else:
+            n = (name,)
+        for name in n:
+            cachename = "_c_root" + name
+            try:
+                o = getattr(app, cachename)
+                o.Close()
+                setattr(app, cachename, None)
+            except AttributeError:
+                pass
+
+    def GetToolObj(self, name, contextObject):
+        """
+        creates the tool object
+        """
+        app = self.app
+        if isinstance(name, str):
+            conf = app.configurationQuery.GetToolConf(name, contextObject)
+            if isinstance(conf, (list, tuple)):
+                conf = conf[0]
+        else:
+            conf = name
+        if not conf:
+            iface, conf = ResolveConfiguration(name)
+            if not conf:
+                raise ImportError("Tool not found. Please load the tool by referencing the tool id. (%s)" % (str(name)))
+        tag = conf.context
+        toolObj = GetClassRef(tag, app.reloadExtensions, True, None)
+        toolObj = toolObj(conf, app)
+        if not _IGlobal.providedBy(contextObject):
+            toolObj.__parent__ = contextObject
+        return toolObj
+
+    def GetWfObj(self, name, contextObject):
+        """
+        creates the root object
+        """
+        app = self.app
+        wfConf = None
+        if isinstance(name, str):
+            wfConf = app.configurationQuery.GetWorkflowConf(name, contextObject)
+            if isinstance(wfConf, (list, tuple)):
+                wfConf = wfConf[0]
+        if not wfConf:
+            iface, wfConf = ResolveConfiguration(name)
+            if not wfConf:
+                raise ImportError(
+                    "Workflow process not found. Please load the workflow by referencing the process id. (%s)" % (
+                        str(name)))
+
+        wfTag = wfConf.context
+        wfObj = GetClassRef(wfTag, app.reloadExtensions, True, None)
+        wfObj = wfObj(wfConf, app)
+        if not _IGlobal.providedBy(contextObject):
+            wfObj.__parent__ = contextObject
+        return wfObj
 

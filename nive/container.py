@@ -288,7 +288,7 @@ class ContainerEdit:
         - create (called in context of the new object)
         """
         app = self.app
-        typedef = app.GetObjectConf(type)
+        typedef = app.configurationQuery.GetObjectConf(type)
         if not typedef:
             raise ConfigurationError("Type not found (%s)" % (str(type)))
 
@@ -574,7 +574,7 @@ class ContainerSecurity:
         subtypes = self.configuration.subtypes
         if not subtypes:
             return False
-        all = self.app.GetAllObjectConfs(visibleOnly=visible)
+        all = self.app.configurationQuery.GetAllObjectConfs(visibleOnly=visible)
         if subtypes == AllTypesAllowed:
             return all
 
@@ -627,7 +627,7 @@ class ContainerSecurity:
             if type in subtypes:
                 return True
             # dotted python to obj configuration
-            type = self.app.GetObjectConf(type)
+            type = self.app.configurationQuery.GetObjectConf(type)
             if type is None:
                 return False
             # create type from configuration
@@ -712,7 +712,7 @@ class ContainerFactory:
                 # broken entry 
                 #raise ConfigurationError, "Empty type"
                 return None
-            configuration = app.GetObjectConf(type)
+            configuration = app.configurationQuery.GetObjectConf(type)
             if not configuration:
                 raise ConfigurationError("Type not found (%s)" % (str(type)))
         obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
@@ -774,7 +774,7 @@ class ContainerFactory:
             type = dbEntry.meta.get("pool_type")
             if not type:
                 continue
-            configuration = app.GetObjectConf(type, skipRoot=1)
+            configuration = app.configurationQuery.GetObjectConf(type, skipRoot=1)
             if not configuration:
                 continue
             obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
@@ -1084,7 +1084,7 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Cont
         for f in self.configuration["data"]:
             if f["id"] == fldId:
                 return f
-        return self.app.GetMetaFld(fldId)
+        return self.app.configurationQuery.GetMetaFld(fldId)
 
     def GetTitle(self):
         """ returns the root title from configuration. """

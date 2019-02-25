@@ -88,7 +88,7 @@ By default this tool will only create new tables and columns and never delete an
         db.UseDatabase(conf.get("dbName"))
 
         # check types for data tables -------------------------------------------------------------
-        aTypes = app.GetAllObjectConfs()
+        aTypes = app.configurationQuery.GetAllObjectConfs()
         
         for aT in aTypes:
             fmt = aT["data"]
@@ -114,7 +114,7 @@ By default this tool will only create new tables and columns and never delete an
 
         # check meta table exists and update ---------------------------------------------------------------
         if not MetaTbl in ignoreTables:
-            meta = app.GetAllMetaFlds(ignoreSystem=False)
+            meta = app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)
             tableName = MetaTbl
 
             if not db.IsTable(tableName):

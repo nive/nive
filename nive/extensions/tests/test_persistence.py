@@ -47,13 +47,13 @@ class tdbPersistence(__local.DefaultTestCase):
         
         
     def test_storedconf(self):
-        storage = self.app.Factory(IModuleConf, "persistence")
+        storage = self.app.NewModule(IModuleConf, "persistence")
         self.assertTrue(storage)
         LoadStoredConfValues(self.app, None)
 
 
     def test_load(self):
-        storage = self.app.Factory(IModuleConf, "persistence")
+        storage = self.app.NewModule(IModuleConf, "persistence")
         self.assertTrue(storage)
         storage(self.app, Conf(id="test")).Save({"title":u"öäüß", "something": 123})
 

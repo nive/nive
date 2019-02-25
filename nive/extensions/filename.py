@@ -62,8 +62,8 @@ def SetupFilenameLookup(app, pyramidConfig):
             c.extensions = tuple(e)
             c.lock()
 
-    add(app.GetAllRootConfs())
-    add(app.GetAllObjectConfs())
+    add(app.configurationQuery.GetAllRootConfs())
+    add(app.configurationQuery.GetAllObjectConfs())
 
 
 configuration = ModuleConf(

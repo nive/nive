@@ -5,19 +5,19 @@
 <div class="alert alert-success" i18n:translate="">This page lists all included <em>views</em> for browsing in readonly mode.</div>
 
 <h2 i18n:translate="">View Modules</h2>
-<div tal:repeat="conf context.QueryConf('nive.definitions.IViewModuleConf')"
+<div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IViewModuleConf')"
      tal:replace="structure view.RenderConf(conf)"></div>
 
 <h2 i18n:translate="">Single Views</h2>
-<div tal:repeat="conf context.QueryConf('nive.definitions.IViewConf')"
+<div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IViewConf')"
      tal:replace="structure view.RenderConf(conf)"></div>
 
 <h2 i18n:translate="">Widgets</h2>
-<div tal:repeat="conf context.QueryConf('nive.definitions.IWidgetConf')"
+<div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IWidgetConf')"
      tal:replace="structure view.RenderConf(conf)"></div>
 
 <h2 i18n:translate="">Other modules</h2>
-<div tal:repeat="conf context.QueryConf('nive.definitions.IModuleConf')"
+<div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IModuleConf')"
      tal:replace="structure view.RenderConf(conf)"></div>
 
 </tal:block>

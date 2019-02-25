@@ -138,7 +138,7 @@ class ConfigurationForm(HTMLForm):
         result,data,errors = self.Validate(self.request)
         if result:
             # lookup persistent manager for configuration
-            storage = self.app.Factory(IModuleConf, "persistence")
+            storage = self.app.NewModule(IModuleConf, "persistence")
             if storage:
                 storage(app=self.app, configuration=conf).Save(data)
                 msgs.append(_(u"OK. Data saved."))
@@ -163,10 +163,10 @@ def RootnameValidator(node, value):
     """
     # lookup name in database
     app = node.widget.form.context.app
-    for root in app.GetAllRootConfs():
+    for root in app.configurationQuery.GetAllRootConfs():
         if root.id == value:
             # check if its the context
-            if app.root(root.id)!=node.widget.form.context:
+            if app.GetRoot(root.id)!=node.widget.form.context:
                 err = _(u"'${name}' already in use. Please choose a different name.", mapping={'name':value})
                 raise Invalid(node, err)
 
@@ -235,7 +235,7 @@ class AdminBasics(BaseView):
 
     def GetAdminWidgets(self):
         app = self.context.app
-        widgets = app.QueryConf(IAdminWidgetConf, app)
+        widgets = app.configurationQuery.QueryConf(IAdminWidgetConf, app)
         confs = []
         if not widgets:
             return confs
@@ -299,7 +299,7 @@ class AdminBasics(BaseView):
                 continue
 
             # search all view modules for admin links
-            for vm in app.QueryConf(IViewModuleConf):
+            for vm in app.configurationQuery.QueryConf(IViewModuleConf):
                 if not vm.get("adminLink"):
                     continue
                 if not self.Allowed(vm.permission, app):
@@ -330,7 +330,7 @@ class AdminView(AdminBasics):
 
 
     def editroot(self):
-        root = self.context.app.root(name="")
+        root = self.context.app.GetRoot(name="")
         if not IPersistentRoot.providedBy(root):
             return {u"content": _(u"The default root does not support persistent data storage."), u"result": False, u"head": u""}
         fields = (
@@ -400,7 +400,7 @@ class AdminView(AdminBasics):
             self.request.__dict__['__view__'] = self
             return {u"content": data, u"tools": [], u"tool":tool}
 
-        t = app.GetAllToolConfs(contextObject=app)
+        t = app.configurationQuery.GetAllToolConfs(contextObject=app)
         return {u"content": data, u"tools": t, u"tool":None}
     
     

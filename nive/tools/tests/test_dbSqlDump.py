@@ -30,14 +30,14 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
     def setUp(self):
         self._loadApp()
         self.app.Register(configuration)
-        root = self.app.root()
+        root = self.app.root
         self.o=o=db_app.createObj1(root)
         db_app.createObj1(o)
         db_app.createObj2(o)
         db_app.createObj3(o)
 
     def tearDown(self):
-        self.app.root().Delete(self.o.id, user=User("aaa"))
+        self.app.root.Delete(self.o.id, user=User("aaa"))
         self.app.Close()
             
     def test_toolrun1(self):

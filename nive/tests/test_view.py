@@ -180,7 +180,7 @@ class viewTest_db:
         self.app.Startup(self.config)
         #self.request = getRequest()
         user = User(u"test")
-        r = self.app.root()
+        r = self.app.root
         self.context = db_app.createObj1(r)
         self.context2 = db_app.createObj2(r)
         self.context2.StoreFile("file1", db_app.file2_1, user=user)
@@ -188,7 +188,7 @@ class viewTest_db:
 
     def tearDown(self):
         user = User(u"test")
-        r = self.app.root()
+        r = self.app.root
         r.Delete(self.context.id, user=user)
         r.Delete(self.context2.id, user=user)
         self.app.Close()
@@ -240,11 +240,11 @@ class viewTest_db:
         self.assertTrue(view.ResolveLink(str(self.context.id))!=str(self.context.id))
         self.assertTrue(view.ResolveLink("none")=="none")
 
-        self.request.virtual_root = self.app.root()
+        self.request.virtual_root = self.app.root
         self.assertTrue(view.PageUrl(self.context))
         self.assertTrue(view.Url(self.context))
-        self.assertTrue(view.PageUrl(self.app.root()))
-        self.assertTrue(view.Url(self.app.root()))
+        self.assertTrue(view.PageUrl(self.app.root))
+        self.assertTrue(view.Url(self.app.root))
 
 
 

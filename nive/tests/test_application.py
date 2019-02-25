@@ -79,11 +79,11 @@ class modTest(unittest.TestCase):
     def test_Register(self):
         self.app.Register(mApp)
         self.app.Register(mObject)
-        self.assertTrue(self.app.GetObjectConf(mObject.id)==mObject)
+        self.assertTrue(self.app.configurationQuery.GetObjectConf(mObject.id)==mObject)
         self.app.Register(mRoot)
-        self.assertTrue(self.app.GetRootConf(mRoot.id)==mRoot)
+        self.assertTrue(self.app.configurationQuery.GetRootConf(mRoot.id)==mRoot)
         self.app.Register(mTool)
-        self.assertTrue(self.app.GetToolConf(mTool.id)==mTool)
+        self.assertTrue(self.app.configurationQuery.GetToolConf(mTool.id)==mTool)
         self.app.Register(mViewm)
         self.app.Register(mView)
         self.app.Register(mMod)
@@ -181,7 +181,7 @@ class appTest(unittest.TestCase):
             self.assertTrue(False)
         except KeyError:
             pass
-        conf=self.app.root().configuration
+        conf=self.app.root.configuration
         conf.unlock()
         conf.urlTraversal=False
         conf.lock()
@@ -198,15 +198,16 @@ class appTest(unittest.TestCase):
             pass
         
     def test_props(self):
-        self.assertTrue(self.app.root())
+        self.assertTrue(self.app.root)
         self.assertTrue(self.app.portal)
         self.assertTrue(self.app.db)
         self.assertTrue(self.app.app)
     
     def test_roots(self):
-        self.assertTrue(self.app.root(name=""))
-        self.assertTrue(self.app.root(name="root"))
-        self.assertTrue(self.app.root(name="aaaaaaaa")==None)
+        self.assertTrue(self.app.root)
+        self.assertTrue(self.app.GetRoot(name=""))
+        self.assertTrue(self.app.GetRoot(name="root"))
+        self.assertTrue(self.app.GetRoot(name="aaaaaaaa")==None)
 
         self.assertTrue(self.app.__getitem__("root"))
         self.assertTrue(self.app.GetRoot(name="root"))
@@ -228,46 +229,6 @@ class appTest(unittest.TestCase):
         self.app.configuration.workflowEnabled = False
         self.app.configuration.lock()
 
-    def test_confs(self):
-        self.assertTrue(self.app.QueryConf(IRootConf))
-        self.assertTrue(self.app.QueryConf("nive.definitions.IRootConf"))
-        self.assertTrue(self.app.QueryConf(IToolConf, _GlobalObject()))
-        self.assertFalse(self.app.QueryConf("nive.definitions.no_conf"))
-        
-        self.assertTrue(self.app.QueryConfByName(IRootConf, "root"))
-        self.assertTrue(self.app.QueryConfByName("nive.definitions.IRootConf", "root"))
-        self.assertTrue(self.app.QueryConfByName(IToolConf, "tool", _GlobalObject()))
-        self.assertFalse(self.app.QueryConfByName("nive.definitions.no_conf", "root"))
-
-        self.assertTrue(self.app.Factory(IRootConf, "root"))
-        self.assertTrue(self.app.Factory("nive.definitions.IRootConf", "root"))
-        self.assertTrue(self.app.Factory(IToolConf, "tool", _GlobalObject()))
-        self.assertFalse(self.app.Factory("nive.definitions.no_conf", "root"))
-        
-    def test_rootconfs(self):
-        self.assertTrue(self.app.GetRootConf(name=""))
-        self.assertTrue(self.app.GetRootConf(name="root"))
-        self.assertTrue(len(self.app.GetAllRootConfs()))
-        self.assertTrue(len(self.app.GetRootIds())==1)
-        self.assertTrue(self.app.GetDefaultRootName()=="root")
-
-    def test_objconfs(self):
-        self.assertTrue(self.app.GetObjectConf("object", skipRoot=False))
-        self.assertTrue(self.app.GetObjectConf("root", skipRoot=True)==None)
-        self.assertTrue(self.app.GetObjectConf("oooooh", skipRoot=False)==None)
-        self.assertTrue(len(self.app.GetAllObjectConfs(visibleOnly = False))==1)
-        self.assertTrue(self.app.GetTypeName("object")=="Object")
-
-    def test_toolconfs(self):
-        self.assertTrue(self.app.GetToolConf("tool"))
-        self.assertTrue(len(self.app.GetAllToolConfs()))
-        
-    def test_categoriesconf(self):
-        self.assertTrue(self.app.GetCategory(categoryID = "c1"))
-        self.assertTrue(len(self.app.GetAllCategories(sort=u"name", visibleOnly=False))==1)
-        self.assertTrue(self.app.GetCategoryName("c1")=="C1")
-        self.assertTrue(self.app.GetCategoryName("no_cat")=="")
-
     def test_groups(self):
         self.assertTrue(self.app.GetGroups(sort=u"name", visibleOnly=False))
         self.assertTrue(self.app.GetGroups(sort=u"name", visibleOnly=True))
@@ -275,50 +236,156 @@ class appTest(unittest.TestCase):
         self.assertTrue(self.app.GetGroupName("g1")=="G1")
         self.assertTrue(self.app.GetGroupName("no_group")=="")
 
-    def test_flds(self):
-        self.assertTrue(self.app.GetFld("pool_type", typeID = None))
-        self.assertTrue(self.app.GetFld("aaaaa", typeID = None)==None)
-        self.assertTrue(self.app.GetFld("pool_stag", typeID = "object"))
-        self.assertTrue(self.app.GetFld("a1", typeID = "object"))
-        self.assertTrue(self.app.GetFld("a1", typeID = None)==None)
-        self.assertTrue(self.app.GetFld("a2", typeID = "object"))
-        self.assertTrue(self.app.GetFld("a2", typeID = "ooooo")==None)
-        self.assertTrue(self.app.GetFld("ooooo", typeID = "object")==None)
-        
-        self.assertTrue(self.app.GetFldName("a2", typeID = "object")=="A2")
-        self.assertTrue(self.app.GetObjectFld("a1", "object"))
-        self.assertTrue(len(self.app.GetAllObjectFlds("object"))==2)
-        self.assertTrue(self.app.GetMetaFld("pool_type"))
-        self.assertTrue(len(self.app.GetAllMetaFlds(ignoreSystem = True)))
-        self.assertTrue(len(self.app.GetAllMetaFlds(ignoreSystem = False)))
-        self.assertTrue(self.app.GetMetaFldName("pool_type")=="Type")
-        self.assertTrue(self.app.GetMetaFldName("no_field")=="")
-        
-    def test_flds_conf(self):
-        self.assertTrue(self.app.GetFld(FieldConf(id="pool_type"), typeID = None))
-        self.assertTrue(self.app.GetFld(FieldConf(id="aaaaa"), typeID = None)==None)
-        self.assertTrue(self.app.GetFld(FieldConf(id="pool_stag"), typeID = "object"))
-        self.assertTrue(self.app.GetFld(FieldConf(id="a1"), typeID = "object"))
-        self.assertTrue(self.app.GetFld(FieldConf(id="a1"), typeID = None)==None)
-        self.assertTrue(self.app.GetFld(FieldConf(id="a2"), typeID = "object"))
-        self.assertTrue(self.app.GetFld(FieldConf(id="a2"), typeID = "ooooo")==None)
-        self.assertTrue(self.app.GetFld(FieldConf(id="ooooo"), typeID = "object")==None)
 
-        self.assertTrue(self.app.GetObjectFld(FieldConf(id="a1"), "object"))
-        self.assertTrue(self.app.GetMetaFld(FieldConf(id="pool_type")))
+class appFactoryTest(unittest.TestCase):
+
+    def setUp(self):
+        self.app = testapp()
+        self.app.Register(mApp2)
+        self.portal = Portal()
+        self.portal.Register(self.app, "nive")
+        self.app.Startup(None)
+
+    def tearDown(self):
+        pass
 
     def test_structure(self):
-        self.app._LoadStructure(forceReload = False)
+        self.app._LoadStructure(forceReload=False)
         self.assertTrue(self.app._structure)
-        self.app._LoadStructure(forceReload = True)
+        self.app._LoadStructure(forceReload=True)
         self.assertTrue(self.app._structure)
 
     def test_factory(self):
-        self.assertTrue(self.app._GetDataPoolObj())
-        self.assertTrue(self.app._GetRootObj("root"))
-        self.app._CloseRootObj(name="root")
-        self.assertTrue(self.app._GetRootObj("root"))
-        self.assertTrue(self.app._GetToolObj("nive.tools.example", None))
+        self.assertTrue(self.app.factory.GetDataPoolObj())
+        self.assertTrue(self.app.factory.GetRootObj("root"))
+        self.app.factory.CloseRootObj(name="root")
+        self.assertTrue(self.app.factory.GetRootObj("root"))
+        self.assertTrue(self.app.factory.GetToolObj("nive.tools.example", None))
+
+
+class appConfigurationQueryTest(unittest.TestCase):
+
+    def setUp(self):
+        self.app = testapp()
+        self.app.Register(mApp2)
+        self.portal = Portal()
+        self.portal.Register(self.app, "nive")
+        self.app.Startup(None)
+
+    def tearDown(self):
+        pass
+
+    def test_include2(self):
+        s = self.app._structure.structure
+        self.assertTrue("pool_meta" in s)
+        self.assertTrue("object" in s)
+        self.assertTrue(len(s["pool_meta"]) > 10)
+        self.assertTrue(len(s["object"]) == 2)
+        pass
+
+    def test_del(self):
+        self.app.__del__()
+
+    def test_getitem(self):
+        self.assertTrue(self.app["root"])
+        try:
+            self.app["no_root"]
+            self.assertTrue(False)
+        except KeyError:
+            pass
+        conf = self.app.root.configuration
+        conf.unlock()
+        conf.urlTraversal = False
+        conf.lock()
+        try:
+            self.app["root"]
+            conf.unlock()
+            conf.urlTraversal = True
+            conf.lock()
+            self.assertTrue(False)
+        except KeyError:
+            conf.unlock()
+            conf.urlTraversal = True
+            conf.lock()
+            pass
+
+    def test_confs(self):
+        self.assertTrue(self.app.configurationQuery.QueryConf(IRootConf))
+        self.assertTrue(self.app.configurationQuery.QueryConf("nive.definitions.IRootConf"))
+        self.assertTrue(self.app.configurationQuery.QueryConf(IToolConf, _GlobalObject()))
+        self.assertFalse(self.app.configurationQuery.QueryConf("nive.definitions.no_conf"))
+
+        self.assertTrue(self.app.configurationQuery.QueryConfByName(IRootConf, "root"))
+        self.assertTrue(self.app.configurationQuery.QueryConfByName("nive.definitions.IRootConf", "root"))
+        self.assertTrue(self.app.configurationQuery.QueryConfByName(IToolConf, "tool", _GlobalObject()))
+        self.assertFalse(self.app.configurationQuery.QueryConfByName("nive.definitions.no_conf", "root"))
+
+        self.assertTrue(self.app.NewModule(IRootConf, "root"))
+        self.assertTrue(self.app.NewModule("nive.definitions.IRootConf", "root"))
+        self.assertTrue(self.app.NewModule(IToolConf, "tool", _GlobalObject()))
+        self.assertFalse(self.app.NewModule("nive.definitions.no_conf", "root"))
+
+    def test_rootconfs(self):
+        self.assertTrue(self.app.configurationQuery.GetRootConf(name=""))
+        self.assertTrue(self.app.configurationQuery.GetRootConf(name="root"))
+        self.assertTrue(len(self.app.configurationQuery.GetAllRootConfs()))
+        self.assertTrue(len(self.app.GetRootNames()) == 1)
+        self.assertTrue(self.app.rootname == "root")
+
+    def test_objconfs(self):
+        self.assertTrue(self.app.configurationQuery.GetObjectConf("object", skipRoot=False))
+        self.assertTrue(self.app.configurationQuery.GetObjectConf("root", skipRoot=True) == None)
+        self.assertTrue(self.app.configurationQuery.GetObjectConf("oooooh", skipRoot=False) == None)
+        self.assertTrue(len(self.app.configurationQuery.GetAllObjectConfs(visibleOnly=False)) == 1)
+        self.assertTrue(self.app.configurationQuery.GetTypeName("object") == "Object")
+
+    def test_toolconfs(self):
+        self.assertTrue(self.app.configurationQuery.GetToolConf("tool"))
+        self.assertTrue(len(self.app.configurationQuery.GetAllToolConfs()))
+
+    def test_categoriesconf(self):
+        self.assertTrue(self.app.configurationQuery.GetCategory(categoryID="c1"))
+        self.assertTrue(len(self.app.configurationQuery.GetAllCategories(sort=u"name", visibleOnly=False)) == 1)
+        self.assertTrue(self.app.configurationQuery.GetCategoryName("c1") == "C1")
+        self.assertTrue(self.app.configurationQuery.GetCategoryName("no_cat") == "")
+
+    def test_flds(self):
+        self.assertTrue(self.app.configurationQuery.GetFld("pool_type", typeID=None))
+        self.assertTrue(self.app.configurationQuery.GetFld("aaaaa", typeID=None) == None)
+        self.assertTrue(self.app.configurationQuery.GetFld("pool_stag", typeID="object"))
+        self.assertTrue(self.app.configurationQuery.GetFld("a1", typeID="object"))
+        self.assertTrue(self.app.configurationQuery.GetFld("a1", typeID=None) == None)
+        self.assertTrue(self.app.configurationQuery.GetFld("a2", typeID="object"))
+        self.assertTrue(self.app.configurationQuery.GetFld("a2", typeID="ooooo") == None)
+        self.assertTrue(self.app.configurationQuery.GetFld("ooooo", typeID="object") == None)
+
+        self.assertTrue(self.app.configurationQuery.GetFldName("a2", typeID="object") == "A2")
+        self.assertTrue(self.app.configurationQuery.GetObjectFld("a1", "object"))
+        self.assertTrue(len(self.app.configurationQuery.GetAllObjectFlds("object")) == 2)
+        self.assertTrue(self.app.configurationQuery.GetMetaFld("pool_type"))
+        self.assertTrue(len(self.app.configurationQuery.GetAllMetaFlds(ignoreSystem=True)))
+        self.assertTrue(len(self.app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)))
+        self.assertTrue(self.app.configurationQuery.GetMetaFldName("pool_type") == "Type")
+        self.assertTrue(self.app.configurationQuery.GetMetaFldName("no_field") == "")
+
+    def test_flds_conf(self):
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="pool_type"), typeID=None))
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="aaaaa"), typeID=None) == None)
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="pool_stag"), typeID="object"))
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="a1"), typeID="object"))
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="a1"), typeID=None) == None)
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="a2"), typeID="object"))
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="a2"), typeID="ooooo") == None)
+        self.assertTrue(self.app.configurationQuery.GetFld(FieldConf(id="ooooo"), typeID="object") == None)
+
+        self.assertTrue(self.app.configurationQuery.GetObjectFld(FieldConf(id="a1"), "object"))
+        self.assertTrue(self.app.configurationQuery.GetMetaFld(FieldConf(id="pool_type")))
+
+    def test_structure(self):
+        self.app._LoadStructure(forceReload=False)
+        self.assertTrue(self.app._structure)
+        self.app._LoadStructure(forceReload=True)
+        self.assertTrue(self.app._structure)
 
 
 
@@ -326,14 +393,14 @@ class appTest_db:
     
     def setUp(self):
         self._loadApp([mWfObj,mToolObj])
-        r = self.app.root()
+        r = self.app.root
         o = db_app.createObj1(r)
         self.oid = o.id
         
     def tearDown(self):
         user = User(u"test")
         if self.oid:
-            self.app.root().Delete(self.oid, user=user)
+            self.app.root.Delete(self.oid, user=user)
         self.app.Close()
 
 

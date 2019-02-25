@@ -28,7 +28,7 @@ def GetUsers(app):
     portal = app.portal
     try:
         userdb = portal.userdb
-        return userdb.root().GetUsers()
+        return userdb.root.GetUsers()
     except:
         return []
 

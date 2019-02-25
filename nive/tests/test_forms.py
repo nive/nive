@@ -291,7 +291,7 @@ class FormTest_db:
     def tearDown(self):
         v = Viewy()
         u = v.User()
-        root = self.app.root()
+        root = self.app.root
         for r in self.remove:
             root.Delete(r, u)
         self.app.Close()

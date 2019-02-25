@@ -60,7 +60,7 @@ class cmsstatistics(Tool):
         rec = c.fetchall()
         self.stream.write(localizer.translate(_(u"<tr><th>Physical files size</th><td>${value}</td></tr>\n", mapping={u"value": FormatBytesForDisplay(rec[0][0])})))
 
-        for t in app.GetAllObjectConfs():
+        for t in app.configurationQuery.GetAllObjectConfs():
             sql = "select count(*) from pool_meta where pool_type='%s'" % t.id
             c.execute(sql)
             rec = c.fetchall()

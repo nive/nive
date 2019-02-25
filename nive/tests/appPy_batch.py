@@ -21,7 +21,7 @@ def test1():
     a=db_app.app_db([DB_CONF])
     print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
+    r=a.root
     print(time.time() - t2, "Creating root")
     t2 = time.time()
 
@@ -62,7 +62,7 @@ def test2():
     a=db_app.app_db([DB_CONF])
     print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
+    r=a.root
     print(time.time() - t2, "Creating root")
     t2 = time.time()
 
@@ -104,7 +104,7 @@ def test3():
     a=db_app.app_db([DB_CONF])
     print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
+    r=a.root
     print(time.time() - t2, "Creating root")
     t2 = time.time()
 
@@ -133,7 +133,7 @@ def test3():
     a=db_app.app_db([DB_CONF])
     print(time.time() - t2, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
+    r=a.root
     print(time.time() - t2, "Creating root")
     t2 = time.time()
 
@@ -166,7 +166,7 @@ def test4():
     a=db_app.app_db([DB_CONF])
     print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
+    r=a.root
     print(time.time() - t2, "Creating root")
     t2 = time.time()
 
@@ -234,7 +234,7 @@ def test5():
     a=db_app.app_db([DB_CONF])
     print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
+    r=a.root
     print(time.time() - t2, "Creating root")
     t2 = time.time()
 
@@ -271,7 +271,7 @@ def test5():
     print(time.time() - t2, "Closing", n, "objects")
     t2 = time.time()
 
-    r=a.root()
+    r=a.root
     r.useCache = True
     o1 = r.GetObjs()
     cc = len(o1)

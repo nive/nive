@@ -64,7 +64,7 @@ class ObjectEdit:
                     files[id] = sourceData[id]
                 else:
                     data[id] = sourceData[id]
-        for f in self.app.GetAllMetaFlds(False):
+        for f in self.app.configurationQuery.GetAllMetaFlds(False):
             id = f["id"]
             if id in sourceData:
                 meta[id] = sourceData[id]
@@ -371,7 +371,7 @@ class Object(ObjectEdit, Events):
                 return self.data.get(fldname)
 
         # meta
-        f = self.app.GetMetaFld(fldname)
+        f = self.app.configurationQuery.GetMetaFld(fldname)
         if f:
             return self.meta.get(fldname)
         return None
@@ -447,7 +447,7 @@ class Object(ObjectEdit, Events):
             f = [d for d in self.configuration.data if d["id"] == fldId]
             if f:
                 return f[0]
-        return self.app.GetMetaFld(fldId)
+        return self.app.configurationQuery.GetMetaFld(fldId)
 
     def GetTitle(self):
         """ returns the objects meta.title as string """

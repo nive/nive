@@ -139,9 +139,9 @@ class ObjectWorkflow(object):
             return None
         wfID = self.obj.configuration.workflowID
         if wfID:
-            wf = app.GetWorkflowConf(wfID)
+            wf = app.configurationQuery.GetWorkflowConf(wfID)
             return wf
-        wf = app.GetAllWorkflowConfs(contextObject=self)
+        wf = app.configurationQuery.GetAllWorkflowConfs(contextObject=self)
         if wf is None:
             return None
         if len(wf) > 1:

@@ -56,7 +56,7 @@ class ToolTest_db:
 
     def test_toolobj(self):
         user = User(u"test")
-        r = self.app.root()
+        r = self.app.root
         o = db_app.createObj1(r)
         t = o.GetTool("nive.tools.example")
         r1,v = t()

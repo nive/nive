@@ -114,7 +114,7 @@ class Persistent(object):
                         files[id] = sourceData[id]
                     else:
                         data[id] = sourceData[id]
-        for f in self.app.GetAllMetaFlds(False):
+        for f in self.app.configurationQuery.GetAllMetaFlds(False):
             id = f["id"]
             if id in sourceData:
                 meta[id] = sourceData[id]

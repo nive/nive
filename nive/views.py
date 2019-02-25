@@ -262,9 +262,9 @@ class BaseView(object):
         elif url == u"parent_url":
             url = self.Url(context.parent)
         elif url == u"root_url":
-            url = self.Url(context.root())
+            url = self.Url(context.root)
         elif url == u"root_folder_url":
-            url = self.FolderUrl(context.root())
+            url = self.FolderUrl(context.root)
         elif url == u"app_url":
             url = self.Url(context.app)
         elif url == u"app_folder_url":
@@ -1194,7 +1194,7 @@ def User(context, request, sessionuser=True):
         ident = authenticated_userid(request)
         if not ident:
             return None
-        return context.app.portal.userdb.root().LookupUser(ident=ident)
+        return context.app.portal.userdb.root.LookupUser(ident=ident)
     try:
         user = request.environ["authenticated_user"]
         if user:
@@ -1204,7 +1204,7 @@ def User(context, request, sessionuser=True):
     ident = authenticated_userid(request)
     if not ident:
         return None
-    return context.app.portal.userdb.root().GetUser(ident)
+    return context.app.portal.userdb.root.GetUser(ident)
 
 
 class FieldRenderer(object):
@@ -1264,7 +1264,7 @@ class FieldRenderer(object):
             if settings.get("relation") == u"userid":
                 # load user name from database
                 try:
-                    udb = context.app.portal.userdb.root()
+                    udb = context.app.portal.userdb.root
                     user = udb.GetUser(data, activeOnly=0)
                     if user:
                         data = user.GetTitle()
