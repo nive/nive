@@ -33,6 +33,7 @@ from nive.events import Events
 from nive.helper import ResolveConfiguration, GetClassRef, ClassFactory
 from nive.utils.utils import SortConfigurationList
 from nive.tool import _IGlobal, _GlobalObject
+from nive.search import Search
 
 
 from nive.definitions import implementer
@@ -179,6 +180,10 @@ class Application(Events):
     def app(self):
         """ returns itself. for compatibility. """
         return self
+
+    @property
+    def search(self):
+        return Search(self.root)
 
     @property
     def rootname(self):

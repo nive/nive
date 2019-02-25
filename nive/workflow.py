@@ -528,10 +528,10 @@ class Process(object):
         self.app_ = app
         self.renderTools = True
         self.adminGroups = (u"group:admin",)  # always allowed
-        for k in configuration:
-            if k in ("states", "transitions"):
-                continue
-            setattr(self, k, configuration[k])
+        #for k in configuration:
+        #    if k in ("states", "transitions"):
+        #        continue
+        #    setattr(self, k, configuration[k])
         self._LoadStates(configuration.states)
         self._LoadTransitions(configuration.transitions)
 
@@ -582,7 +582,7 @@ class Process(object):
         """
         # set start as default
         if action in WfEntryActions:
-            context.SetWfState(self.entryPoint)
+            context.SetWfState(self.configuration.entryPoint)
 
         # get state
         state = self.GetObjState(context)
@@ -638,20 +638,20 @@ class Process(object):
         trans = []
         wc = []
         for t in self.transitions:
-            if t.fromstate == wfAllStates:
+            if t.configuration.fromstate == wfAllStates:
                 # store wildcard transition. wildcard transitions come last in sequence
                 wc.append(t)
                 continue
-            if t.fromstate == state:
+            elif t.configuration.fromstate == state:
                 if user:
                     if not t.Allow(context, user):
                         continue
                 if action != "":
-                    if not action in t.actions:
+                    if not action in t.configuration.actions:
                         continue
                 if not transition:
                     trans.append(t)
-                elif t.id == transition:
+                elif t.configuration.id == transition:
                     trans.append(t)
         trans.extend(wc)
         return trans
@@ -694,10 +694,10 @@ class Process(object):
         Returns contexts state as object.
         """
         if not context:
-            return self.GetState(self.entryPoint)
+            return self.GetState(self.configuration.entryPoint)
         state = context.GetWfState()
         if not state:
-            return self.GetState(self.entryPoint)
+            return self.GetState(self.configuration.entryPoint)
         return self.GetState(state)
 
 
@@ -767,8 +767,8 @@ class Transition(object):
         self.id = name
         self.configuration = configuration
         self.process = process
-        for k in list(configuration.keys()):
-            setattr(self, k, configuration[k])
+        #for k in list(configuration.keys()):
+        #    setattr(self, k, configuration[k])
         
         
     def Allow(self, context, user):
@@ -783,14 +783,14 @@ class Transition(object):
         returns True/False        
         """
         # condition
-        if self.conditions:
-            for c in self.conditions:
+        if self.configuration.conditions:
+            for c in self.configuration.conditions:
                 if isinstance(c, str):
                     c = ResolveName(c)
-                if not c(transition=self, context=context, user=user, values=self.values):
+                if not c(transition=self, context=context, user=user, values=self.configuration.values):
                     return False
         # roles
-        if self.roles == WfAllRoles:
+        if self.configuration.roles == WfAllRoles:
             return True
         if user:
             # call registered authentication policy
@@ -807,7 +807,7 @@ class Transition(object):
         for r in groups:
             if r in self.process.adminGroups:
                 return True
-            if r in self.roles:
+            if r in self.configuration.roles:
                 return True
         return False
 
@@ -818,7 +818,7 @@ class Transition(object):
         
         returns the new state id
         """
-        nextState = self.tostate
+        nextState = self.configuration.tostate
         context.SetWfState(nextState)
         return nextState
     
@@ -827,9 +827,9 @@ class Transition(object):
         """
         Returns if this transition has callables marked as interactive.
         """
-        if not self.execute:
+        if not self.configuration.execute:
             return False
-        for c in self.execute:
+        for c in self.configuration.execute:
             if hasattr(c, "interactive"):
                 return True
         return False
@@ -847,11 +847,11 @@ class Transition(object):
                     transition.configuration.values is used.
             
         """
-        if not self.execute:
+        if not self.configuration.execute:
             return True
 
         # execute function
-        for c in self.execute:
+        for c in self.configuration.execute:
             func = ResolveName(c)
             func(context=context, transition=self, user=user, values=values or self.configuration.values)
         return True
@@ -864,7 +864,7 @@ class Transition(object):
         returns callables
         """
         fncs = []
-        for f in self.execute:
+        for f in self.configuration.execute:
             f = ResolveName(f)
             if hasattr(f, "interactive"):
                 fncs.append(f)

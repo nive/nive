@@ -171,18 +171,6 @@ def FormatConfTestFailure(report, fmt="text"):
     return "".join(v)
 
 
-def GetVirtualObj(configuration, app):
-    """
-    This loads an object for a non existing database entry.
-    """
-    if not configuration:
-        raise ConfigurationError("Type not found")
-    obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-    dbEntry = app.db.GetEntry(0, virtual=1)
-    obj = obj(0, dbEntry, parent=None, configuration=configuration)
-    return obj
-
-
 def ReplaceInListByID(conflist, newconf, id=None):
     new = []
     id = id or newconf.id
@@ -309,6 +297,17 @@ def LoadJSONConf(jsondata, default=None):
     return conf
 
 
+
+def GetVirtualObj(configuration, app):
+    """
+    This loads an object for a non existing database entry.
+    """
+    if not configuration:
+        raise ConfigurationError("Type not found")
+    obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+    dbEntry = app.db.GetEntry(0, virtual=1)
+    obj = obj(0, dbEntry, parent=None, configuration=configuration)
+    return obj
 
 
 def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, storeConfAsStaticClassVar=False):

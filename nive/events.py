@@ -139,8 +139,6 @@ class Events(object):
                                 # (result, str(fnc), str(cls))
                                 result.append((r, str(fnc), str(cls)))
                 else:
-                    # todo [3]
-                    # DeprecationWarning: inspect.getargspec() is deprecated, use inspect.signature() or inspect.getfullargspec()
                     if "context" in inspect.getfullargspec(fnc).args:
                         r = fnc(context=self, **kw)
                     else:

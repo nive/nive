@@ -27,7 +27,7 @@ from nive.search import Search
 from nive.objects import Object
 
 
-class ContainerBase(Events):
+class ContainerRead(Events):
     """
     Container implementation with read access for subobjects used for objects and roots.
 
@@ -250,7 +250,7 @@ class ContainerBase(Events):
 
 
 
-class ContainerEdit:
+class ContainerWrite:
     """
     Container with add and delete functionality for subobjects.
 
@@ -667,7 +667,7 @@ class ContainerEdit:
 
 
 @implementer(IContainer, IObject)
-class Container(Object, ContainerBase, ContainerEdit):
+class Container(Object, ContainerRead, ContainerWrite):
     """
     Container implementation for objects and roots.
     """
@@ -683,7 +683,7 @@ class Container(Object, ContainerBase, ContainerEdit):
 
 
 @implementer(IContainer, IRoot)
-class Root(ContainerBase, ContainerEdit):
+class Root(ContainerRead, ContainerWrite):
     """
     The root is a container for objects but does not store any data in the database itself. It
     is the entry point for object access. Roots are only handled by the application.
