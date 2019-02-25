@@ -198,6 +198,103 @@ class ObjectWorkflow(object):
         return True
 
 
+class RootWorkflow:
+    """
+    Provides workflow functionality for roots.
+    Workflow process objects are handled and loaded by the application. Meta layer fields `pool_wfp` stores the
+    process id and `pool_wfa` the current state.
+    """
+
+    def __init__(self, obj):
+        self.obj = obj
+
+    def WfAllow(self, action, user, transition=None):
+        """
+        Check if action is allowed in current state in workflow. This functions returns True or False
+        and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
+
+        Event:
+        - wfAllow(name)
+
+        returns bool
+        """
+        wf = self.GetWf()
+        if not wf:
+            return True
+        self.obj.Signal("wfAllow", name=action)
+        return wf.Allow(action, self.obj, user=user, transition=transition)
+
+    def WfAction(self, action, user, transition=None):
+        """
+        Trigger workflow action. If several transitions are possible for the action in the current state
+        the first is used. In this case the transition id can be passed as parameter.
+
+        Event:
+        - wfAction(name)
+
+        raises WorkflowNotAllowed
+        """
+        wf = self.GetWf()
+        if not wf:
+            return
+        wf.Action(action, self.obj, user=user, transition=transition)
+        self.obj.Signal("wfAction", name=action)
+
+    def GetWf(self):
+        """
+        Returns the workflow process for the object.
+
+        Event:
+        - wfLoad(workflow)
+
+        returns object
+        """
+        app = self.obj.app
+        if not app.configuration.workflowEnabled:
+            return None
+        wfTag = self.GetNewWf()
+        if not wfTag:
+            return None
+        # load workflow
+        wf = app.GetWorkflow(wfTag, contextObject=self.obj)
+        # enable strict workflow checking
+        if not wf:
+            raise ConfigurationError("Workflow process not found (%s)" % (wfTag))
+        self.obj.Signal("wfLoad", workflow=wf)
+        return wf
+
+    def GetNewWf(self):
+        """
+        Returns the workflow process id for the object based on configuration settings.
+
+        returns string
+        """
+        if not self.obj.configuration.workflowEnabled:
+            return ""
+        return self.obj.configuration.workflowID
+
+    def GetWfInfo(self, user):
+        """
+        returns the current workflow state as dictionary
+        """
+        wf = self.GetWf()
+        if not wf:
+            return {}
+        return wf.GetObjInfo(self.obj, user)
+
+    def GetWfState(self):
+        """
+        """
+        return self.obj.meta["pool_wfa"]
+
+    def SetWfState(self, stateID):
+        """
+        Sets the workflow state for the object. The new is state is set
+        regardless of transitions or calling any workflow actions.
+        """
+        self.obj.meta["pool_wfa"] = stateID
+
+
 WfAllRoles = "*"
 WfAllActions = "*"
 wfAllStates = "*"

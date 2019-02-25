@@ -18,7 +18,7 @@ from nive.definitions import IContainer, IRoot, ICache, IObject, IConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
 from nive.security import has_permission, SetupRuntimeAcls
-from nive.workflow import WorkflowNotAllowed, ObjectWorkflow
+from nive.workflow import WorkflowNotAllowed, ObjectWorkflow, RootWorkflow
 from nive.helper import ResolveName, ClassFactory, GetVirtualObj
 from nive.i18n import translate
 
@@ -256,10 +256,6 @@ class ContainerEdit:
 
     Requires: Container
     """
-
-    @property
-    def workflow(self):
-        return ObjectWorkflow(self)
 
     def Create(self, type, data, user, **kw):
         """
@@ -685,106 +681,10 @@ class Container(Object, ContainerBase, ContainerEdit, ContainerSecurity, Events)
     def factory(self):
         return ContainerFactory(self)
 
+    @property
+    def workflow(self):
+        return ObjectWorkflow(self)
 
-
-class RootWorkflow:
-    """
-    Provides workflow functionality for roots. 
-    Workflow process objects are handled and loaded by the application. Meta layer fields `pool_wfp` stores the 
-    process id and `pool_wfa` the current state.
-    """
-
-    def WfAllow(self, action, user, transition = None):
-        """
-        Check if action is allowed in current state in workflow. This functions returns True or False
-        and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
-        
-        Event: 
-        - wfAllow(name)
-
-        returns bool
-        """
-        wf = self.GetWf()
-        if not wf:
-            return True
-        self.Signal("wfAllow", name=action)
-        return wf.Allow(action, self, user=user, transition=transition)
-
-
-    def WfAction(self, action, user, transition = None):
-        """
-        Trigger workflow action. If several transitions are possible for the action in the current state
-        the first is used. In this case the transition id can be passed as parameter.
-        
-        Event: 
-        - wfAction(name)
-
-        raises WorkflowNotAllowed 
-        """
-        wf = self.GetWf()
-        if not wf:
-            return 
-        wf.Action(action, self, user=user, transition=transition)
-        self.Signal("wfAction", name=action)
-
-
-    def GetWf(self):
-        """
-        Returns the workflow process for the object.
-
-        Event: 
-        - wfLoad(workflow) 
-        
-        returns object
-        """
-        app = self.app
-        if not app.configuration.workflowEnabled:
-            return None
-        wfTag = self.GetNewWf()
-        if not wfTag:
-            return None
-        # load workflow
-        wf = app.GetWorkflow(wfTag, contextObject=self)
-        # enable strict workflow checking
-        if not wf:
-            raise ConfigurationError("Workflow process not found (%s)"%(wfTag))
-        self.Signal("wfLoad", workflow=wf)
-        return wf
-
-
-    def GetNewWf(self):
-        """
-        Returns the workflow process id for the object based on configuration settings. 
-
-        returns string
-        """
-        if not self.configuration.workflowEnabled:
-            return ""
-        return self.configuration.workflowID
-
-
-    def GetWfInfo(self, user):
-        """
-        returns the current workflow state as dictionary
-        """
-        wf = self.GetWf()
-        if not wf:
-            return {}
-        return wf.GetObjInfo(self, user)
-
-
-    def GetWfState(self):
-        """
-        """
-        return self.meta["pool_wfa"]
-
-
-    def SetWfState(self, stateID):
-        """
-        Sets the workflow state for the object. The new is state is set
-        regardless of transitions or calling any workflow actions.
-        """
-        self.meta["pool_wfa"] = stateID
 
 
 
@@ -852,6 +752,10 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Root
     @property
     def factory(self):
         return ContainerFactory(self)
+
+    @property
+    def workflow(self):
+        return RootWorkflow(self)
 
     # Object Lookup -----------------------------------------------------------
 
