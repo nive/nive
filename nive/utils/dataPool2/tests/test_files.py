@@ -136,6 +136,7 @@ class FileTest(unittest.TestCase):
         file.fromPath(root+"test_db.py")
         self.assertTrue(file.filename=="qqqq.png")
         self.assertTrue(file.extension=="png")
+        file.close()
         
         
     def test_dict(self):

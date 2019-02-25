@@ -69,7 +69,9 @@ class File(object):
         if self.filename != "" and self.extension == "":
             fileName, fileExtension = os.path.splitext(self.filename)
             self.extension = fileExtension[1:6]
-    
+
+    def __del__(self):
+        self.close()
 
     def fromPath(self, path):
         """
@@ -120,7 +122,7 @@ class File(object):
         return self.file.tell()
 
     def close(self):
-        if self.file:
+        if self.file and not isinstance(self.file, str):
             self.file.close()
 
     def iterator(self):
