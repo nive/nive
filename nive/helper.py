@@ -472,9 +472,9 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             return app.configurationQuery.GetAllCategories()
         elif dyn[:5] == "type:":
             type = dyn[5:]
-            return app.root.GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
+            return app.root.search.GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "meta":
-            return app.root.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
+            return app.root.search.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "languages":
             return LanguageExtension().Codelist()
         elif dyn == "countries":

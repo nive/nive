@@ -6,6 +6,8 @@ from nive.security import User
 from nive.tests import db_app
 from nive.tests import __local
 
+from nive.search import Search
+
 # -----------------------------------------------------------------
 
 class SearchTest_db:
@@ -49,7 +51,7 @@ class SearchTest_db:
 
     
     def test_search(self):
-        r = self.app.root
+        r = Search(self.app.root)
         #test_tree
         self.assertTrue(len(r.TreeParentIDs(self.lastid))==2)
         self.assertTrue(len(r.TreeParentTitles(self.lastid))==2)
@@ -104,7 +106,7 @@ class SearchTest_db:
         #self.assertTrue(r.GetReferences(self.ids[0], types=["type1"]))
 
         #test_search
-        r = self.app.root
+        r = Search(self.app.root)
         parameter = {"pool_state":1}
         operators = {"pool_state":"<="}
         pool_type = "type1"

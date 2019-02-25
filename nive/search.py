@@ -84,11 +84,20 @@ from nive.definitions import IFieldConf
 from nive.definitions import FieldConf
 from nive.definitions import ConfigurationError, ConnectionError
 
-class Search:
-    """    """
-    app = None
-    db = None
 
+class Search(object):
+    """ Provides search functionality  """
+
+    def __init__(self, root):
+        self.root = root
+
+    @property
+    def app(self):
+        return self.root.app
+
+    @property
+    def db(self):
+        return self.root.db
 
 
     # Simple search functions ----------------------------------------------------------------------------------------------
@@ -109,7 +118,7 @@ class Search:
             
             fields = ["id", "title", "pool_type"]
             parameter["pool_unitref"] = self.id
-            records = self.dataroot.Select(parameter=parameter, fields=fields)
+            records = self.dataroot.search.Select(parameter=parameter, fields=fields)
         
         returns records as list
         """
@@ -173,7 +182,7 @@ class Search:
             fields = ["id", "title", "pool_type"]
             parameter = {"pool_unitref": self.id}
             operators = {"pool_type": "!="}
-            records = self.dataroot.SelectDict("image", 
+            records = self.dataroot.search.SelectDict("image",
                                                parameter=parameter, 
                                                fields=fields, 
                                                operators=operators)
@@ -513,7 +522,7 @@ class Search:
         fields = fields or ("id","title","-pool_fulltext.text as fulltext")
         operators = operators or {}
         parameter = parameter or {}
-        if phrase==None:
+        if phrase is None:
             phrase = u""
         searchFor = phrase
         start, max, kw = self._SearchKWs(kw)
@@ -941,7 +950,7 @@ class Search:
         """
         operators = operators or {}
         parameter = parameter or {}
-        if unitref != None:
+        if unitref is not None:
             parameter[u"pool_unitref"] = unitref
         parameter[u"pool_filename"] = filename
         operators[u"pool_filename"] = u"="
@@ -1048,15 +1057,4 @@ class Search:
 
         return references
 
-
-
-    # Field list items ------------------------------------------
-
-    def LoadListItems(self, fieldconf, obj=None, pool_type=None, force=False):
-        """
-        bw 0.9.12 
-        `LoadListItems` moved to nive.helper
-        """
-        import nive
-        return nive.helper.LoadListItems(fieldconf, app=self.app, obj=obj, pool_type=pool_type, force=force)
 

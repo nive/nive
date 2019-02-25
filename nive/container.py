@@ -27,7 +27,7 @@ from nive.search import Search
 from nive.objects import Object
 
 
-class ContainerBase(object):
+class ContainerBase(Events):
     """
     Container implementation with read access for subobjects used for objects and roots.
 
@@ -95,7 +95,7 @@ class ContainerBase(object):
         root = self.dataroot
         if kw.get("queryRestraints") != False:
             parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
+        objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
                                   sort=sort)
         useBatch = kw.get("batch", True)
         if useBatch:
@@ -146,8 +146,8 @@ class ContainerBase(object):
             fields = self.app.configuration.listDefault
         root = self.dataroot
         parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
-                                  sort=sort)
+        objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
+                                         sort=sort)
         return objects
 
     def GetObjsBatch(self, ids, **kw):
@@ -169,7 +169,7 @@ class ContainerBase(object):
         operators[u"id"] = "IN"
         root = self.dataroot
         parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
+        objects = root.search.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
         ids = [c["id"] for c in objects]
         kw["meta"] = objects
         objs = self.factory.GetObjBatch(ids, **kw)
@@ -253,6 +253,9 @@ class ContainerBase(object):
 class ContainerEdit:
     """
     Container with add and delete functionality for subobjects.
+
+    Provides functionality to allow or disallow the creation of objects based
+    on object configuration.subtypes.
 
     Requires: Container
     """
@@ -563,14 +566,6 @@ class ContainerEdit:
             self.DeleteInternal(o.id, obj=o, user=user)
             
             
-class ContainerSecurity:
-    """
-    Provides functionality to allow or disallow the creation of objects based
-    on object configuration.subtypes.
-    """
-    configuration = None
-    app = None
-
     def GetAllowedTypes(self, user=None, visible=1):
         """
         List types allowed to be created in this container based on
@@ -672,7 +667,7 @@ class ContainerSecurity:
 
 
 @implementer(IContainer, IObject)
-class Container(Object, ContainerBase, ContainerEdit, ContainerSecurity, Events):
+class Container(Object, ContainerBase, ContainerEdit):
     """
     Container implementation for objects and roots.
     """
@@ -687,9 +682,8 @@ class Container(Object, ContainerBase, ContainerEdit, ContainerSecurity, Events)
 
 
 
-
 @implementer(IContainer, IRoot)
-class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, RootWorkflow):
+class Root(ContainerBase, ContainerEdit):
     """
     The root is a container for objects but does not store any data in the database itself. It
     is the entry point for object access. Roots are only handled by the application.
@@ -756,6 +750,10 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Root
     @property
     def workflow(self):
         return RootWorkflow(self)
+
+    @property
+    def search(self):
+        return Search(self)
 
     # Object Lookup -----------------------------------------------------------
 
@@ -964,7 +962,7 @@ class ContainerFactory(object):
                 p, o = root.ObjQueryRestraints(obj)
                 p["id"] = id
                 p["pool_unitref"] = obj.id
-                e = root.Select(parameter=p, operators=o)
+                e = root.search.Select(parameter=p, operators=o)
                 if len(e) == 0:
                     return None
 
