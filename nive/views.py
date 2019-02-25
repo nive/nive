@@ -57,7 +57,7 @@ class BaseView(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.appRequestKeys = []
+        self.appRequestKeys = []  # todo ?
         self.fileExpires = 3600
         self._t = time.time()
 
@@ -713,13 +713,7 @@ class BaseView(object):
             return u"""<a href="%s">download</a>""" % (url)
         return FieldRenderer(context).Render(fld, data, context=context)
     
-    def HtmlTitle(self):
-        t = self.request.environ.get(u"htmltitle")
-        if t:
-            return t
-        return self.context.GetTitle()
-    
-    
+
     def Translate(self, text):
         """
         Tranlate a translation string. Extracts language from request.
@@ -970,6 +964,13 @@ class BaseView(object):
             return u"""<div class="mark">%.04f</div>""" % (time.time() - self.request.environ.get("START_TIME", self._t))
         except:
             return u""
+
+
+    def HtmlTitle(self):
+        t = self.request.environ.get(u"htmltitle")
+        if t:
+            return t
+        return self.context.GetTitle()
 
 
 

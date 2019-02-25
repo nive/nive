@@ -2,7 +2,7 @@ import time
 import unittest
 
 from nive.definitions import FieldConf, Conf, ConfigurationError, ReadonlySystemFlds, UserFlds
-from nive.forms import Form, HTMLForm, ToolForm, JsonMappingForm, ObjectForm
+from nive.components.reform.forms import Form, HTMLForm, ToolForm, JsonMappingForm, ObjectForm
 from nive.components.reform import schema
 from nive.events import Events
 from nive.views import BaseView

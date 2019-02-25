@@ -14,9 +14,10 @@ from nive.definitions import ViewConf, ViewModuleConf, FieldConf, WidgetConf, Co
 from nive.definitions import IApplication, IUser, IUserDatabase, IPersistent, IModuleConf, IViewModuleConf
 
 from nive.views import BaseView
-from nive.forms import ValidationError, HTMLForm
 from nive.extensions.persistentRoot import IPersistentRoot
 from nive.utils.utils import SortConfigurationList, ConvertDictToStr
+
+from nive.components.reform.forms import ValidationError, HTMLForm
 
 
 

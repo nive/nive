@@ -6,7 +6,6 @@ __doc__ = """
 This file provides *container* functionality for :term:`objects` and :term:`roots`. The different components
 are separated into classes by functionality. 
 
-See :py:mod:`nive.components.baseobjects` for subclassing containers.
 """
 
 from datetime import datetime

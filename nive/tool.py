@@ -40,7 +40,7 @@ from io import StringIO
 from nive.definitions import Interface, ITool, implementer
 from nive.definitions import ConfigurationError
 from nive.views import BaseView
-from nive.forms import ToolForm
+from nive.components.reform.forms import ToolForm
 
 
 @implementer(ITool)
