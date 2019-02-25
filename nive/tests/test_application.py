@@ -91,7 +91,7 @@ class modTest(unittest.TestCase):
         self.app.Register(ModuleConf(id="aaa"), provided=IObject, name="testttttt")
         
         # debug test
-        self.app.debug = 1
+        self.app.debug = 0
         self.app.Register(mToolErr)
         
         self.app.Startup(None)

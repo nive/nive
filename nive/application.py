@@ -16,6 +16,7 @@ applications in a single pyramid app.
 
 import logging
 import pytz
+import uuid
 
 from time import time
 
@@ -103,6 +104,7 @@ class Application(Events):
             self.id = configuration.id
         else:
             self.id = __name__
+        self.uid = str(uuid.uuid4())
 
         self.__name__ = u""
         self.__parent__ = None
@@ -495,16 +497,6 @@ class Application(Events):
         db = self.db
         db.DeleteRecords(u"pool_sys", {u"id": key})
         db.Commit()
-
-
-    def AppViewPredicate(self, context, request):
-        """
-        Check if context of view is this application. For multisite support.
-        """
-        app = context.app
-        return app == self
-
-    AppViewPredicate.__text__ = "nive.AppViewPredicate"
 
 
     def _Lock(self):

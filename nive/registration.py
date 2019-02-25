@@ -442,9 +442,16 @@ class Registration(object):
         Register configured views and static views with the pyramid web framework.
         """
         app = self.app
+        predicatename = app.uid+"_AppContainmentPredicate"
+        config.add_view_predicate(predicatename, AppContainmentPredicate)
+
         views = app.registry.getAllUtilitiesRegisteredFor(IViewConf)
         # single views
         for view in views:
+            opts = {predicatename: app.uid}
+            if view.options:
+                opts.update(view.options)
+
             config.add_view(view=view.view,
                             context=view.context,
                             attr=view.attr,
@@ -452,8 +459,7 @@ class Registration(object):
                             renderer=view.renderer,
                             permission=view.permission,
                             containment=view.containment,
-                            custom_predicates=view.custom_predicates or (app.AppViewPredicate,),
-                            **view.options)
+                            **opts)
         return config
 
     def RegisterViewModules(self, config):
@@ -461,6 +467,9 @@ class Registration(object):
         Register configured views and static views with the pyramid web framework.
         """
         app = self.app
+        predicatename = app.uid+"_AppContainmentPredicate"
+        config.add_view_predicate(predicatename, AppContainmentPredicate)
+
         mods = app.registry.getAllUtilitiesRegisteredFor(IViewModuleConf)
         for viewmod in mods:
             # decorate viewmod to add a pointer to the view module configuration. otherwise there is no way
@@ -470,8 +479,9 @@ class Registration(object):
                 viewcls = DecorateViewClassWithViewModuleConf(viewmod, viewcls)
             # object views
             for view in viewmod.views:
-                # todo [3]
-                #config.add_view_predicate
+                opts = {predicatename: app.uid}
+                if view.options:
+                    opts.update(view.options)
 
                 config.add_view(attr=view.attr,
                                 name=view.name,
@@ -480,9 +490,7 @@ class Registration(object):
                                 renderer=view.renderer or viewmod.renderer,
                                 permission=view.permission or viewmod.permission,
                                 containment=view.containment or viewmod.containment,
-                                custom_predicates=view.custom_predicates or viewmod.custom_predicates or (
-                                app.AppViewPredicate,),
-                                **view.options)
+                                **opts)
 
             # static views
             maxage = 60 * 60 * 4
@@ -533,4 +541,19 @@ class Registration(object):
                 v = conf
 
             self.RegisterComponents(v)
+
+
+class AppContainmentPredicate(object):
+    """
+    Check if context of view is this application. For multisite support.
+    """
+    def __init__(self, val, config):
+        self.uid = val
+
+    def __call__(self, context, request):
+        return context.app.uid == self.uid
+
+    def text(self):
+        return self.uid+".AppViewPredicate"
+    phash = text
 

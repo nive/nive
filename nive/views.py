@@ -246,7 +246,7 @@ class BaseView(object):
         # todo [3]
         # DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working
         #   if isinstance(url, collections.Callable):
-        if isinstance(url, collections.Callable):
+        if isinstance(url, collections.abc.Callable):
             return url(context, self)
 
         parts = url.split(u"/")
@@ -621,12 +621,12 @@ class BaseView(object):
         elif len(found)==0:
             return None
         # try to find the right one if multiple names match
-        for v in found:
-            if v.custom_predicates:
-                for c in v.custom_predicates:
-                    # match the first one
-                    if c(*(self.context, self.request)):
-                        return v
+        #for v in found:
+        #    if v.custom_predicates:
+        #        for c in v.custom_predicates:
+        #            # match the first one
+        #            if c(*(self.context, self.request)):
+        #                return v
         return None
 
 

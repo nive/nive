@@ -924,7 +924,6 @@ class ViewModuleConf(baseConf):
         self.containment = None    
         self.renderer = None    
         self.permission = None
-        self.custom_predicates = None
         self.templates = ""
         self.views = []
         baseConf.__init__(self, copyFrom, **values)
@@ -1019,7 +1018,6 @@ class ViewConf(baseConf):
         self.containment = None
         self.permission = None
         self.options = {}
-        self.custom_predicates = None
         self.settings = {}
         self.description = u""
         baseConf.__init__(self, copyFrom, **values)
