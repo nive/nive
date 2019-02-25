@@ -86,6 +86,9 @@ from nive.definitions import ConfigurationError, ConnectionError
 
 class Search:
     """    """
+    app = None
+    db = None
+
 
 
     # Simple search functions ----------------------------------------------------------------------------------------------

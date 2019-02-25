@@ -11,7 +11,6 @@ See :py:mod:`nive.components.baseobjects` for subclassing containers.
 
 from datetime import datetime
 
-
 from nive.definitions import implementer
 from nive.definitions import Conf, baseConf
 from nive.definitions import StagContainer, StagRessource, MetaTbl
@@ -20,7 +19,7 @@ from nive.definitions import ContainmentError, ConfigurationError, PermissionErr
 from nive.definitions import AllTypesAllowed
 from nive.security import has_permission, SetupRuntimeAcls
 from nive.workflow import WorkflowNotAllowed, ObjectWorkflow
-from nive.helper import ResolveName, ClassFactory
+from nive.helper import ResolveName, ClassFactory, GetVirtualObj
 from nive.i18n import translate
 
 from nive.events import Events
@@ -66,7 +65,7 @@ class ContainerBase(object):
             return None
         if not id:
             return None
-        obj = self._GetObj(id, **kw)
+        obj = self.factory.GetObj(id, **kw)
         self.Signal("loadObj", obj)
         return obj
 
@@ -103,7 +102,7 @@ class ContainerBase(object):
             ids = [c["id"] for c in objects]
             kw["meta"] = objects
             kw["sort"] = sort
-            objs = self._GetObjBatch(ids, queryRestraint=False, **kw)
+            objs = self.factory.GetObjBatch(ids, queryRestraint=False, **kw)
             return objs
         objs = []
         for c in objects:
@@ -111,7 +110,7 @@ class ContainerBase(object):
                 kw[u"pool_datatbl"] = c[u"pool_datatbl"]
                 kw[u"pool_dataref"] = c[u"pool_dataref"]
                 try:
-                    obj = self._GetObj(c[u"id"], queryRestraints=False, **kw)
+                    obj = self.factory.GetObj(c[u"id"], queryRestraints=False, **kw)
                 except PermissionError:
                     # ignore permission errors and continue
                     obj = None
@@ -173,7 +172,7 @@ class ContainerBase(object):
         objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
         ids = [c["id"] for c in objects]
         kw["meta"] = objects
-        objs = self._GetObjBatch(ids, **kw)
+        objs = self.factory.GetObjBatch(ids, **kw)
         self.Signal("loadObj", objs)
         return objs
 
@@ -304,7 +303,7 @@ class ContainerEdit:
         db = app.db
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
-            obj = self._GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj = self.factory.GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
             if typedef.events:
                 obj.SetupEventsFromConfiguration(typedef.events)
             obj.CreateSelf(data, user=user, **kw)
@@ -337,7 +336,7 @@ class ContainerEdit:
         dbEntry = None
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
-            obj = self._GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj = self.factory.GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
             obj.UpdateInternal(data)
             obj.meta["pool_type"] = typedef.id
             obj.meta["pool_unitref"] = obj.parent.id
@@ -394,7 +393,7 @@ class ContainerEdit:
             id = newDataEntry.GetID()
             typedef = obj.configuration
     
-            newobj = self._GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
+            newobj = self.factory.GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
             newobj.CreateSelf(data, user=user)
             newobj.Signal("duplicate", **kw)
             
@@ -442,7 +441,7 @@ class ContainerEdit:
         id = newDataEntry.GetID()
         typedef = obj.configuration
 
-        newobj = self._GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
+        newobj = self.factory.GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
         newobj.CreateSelf({}, user=user)
         newobj.Signal("duplicate", **kw)
         
@@ -537,6 +536,19 @@ class ContainerEdit:
         return 1
 
 
+    def _DeleteObj(self, obj, id=0):
+        """
+        Deletes the object and additional data from wfdata, wflog, fulltext,
+        security tables.
+        """
+        if obj:
+            id = obj.GetID()
+        obj.Close()
+        db = self.db
+        if id > 0:
+            db.DeleteEntry(id)
+
+
     def _RecursiveDelete(self, user):
         """
         Recursively deletes all subobjects
@@ -560,6 +572,8 @@ class ContainerSecurity:
     Provides functionality to allow or disallow the creation of objects based
     on object configuration.subtypes.
     """
+    configuration = None
+    app = None
 
     def GetAllowedTypes(self, user=None, visible=1):
         """
@@ -582,7 +596,7 @@ class ContainerSecurity:
         allowed = []
         for conf in all:
             # create type from configuration
-            type = self._GetVirtualObj(conf)
+            type = GetVirtualObj(conf, self.app)
             if not type:
                 continue
             # loop subtypes
@@ -631,7 +645,7 @@ class ContainerSecurity:
             if type is None:
                 return False
             # create type from configuration
-            type = self._GetVirtualObj(type)
+            type = GetVirtualObj(type, self.app)
             if type is None:
                 return False
 
@@ -639,7 +653,7 @@ class ContainerSecurity:
             if type.id in subtypes:
                 return True
             # create type from configuration
-            type = self._GetVirtualObj(type)
+            type = GetVirtualObj(type, self.app)
             if type is None:
                 return False
 
@@ -658,157 +672,18 @@ class ContainerSecurity:
             except:
                 pass
         return False
-    
 
-class ContainerFactory:
-    """
-    Container object factory. Creates objects based on type configuration.
-    """
-
-    def _GetObj(self, id, dbEntry = None, parentObj = None, configuration = None, **kw):
-        """
-        Loads and initializes the object. ::
-        
-            id = id of the object to be loaded
-            dbEntry = the database entry. Will be loaded automatically if None
-            parentObj = if a different parent than the container
-            configuration = the object configuration to be loaded
-            returns the object or None
-            
-        """
-        useCache = ICache.providedBy(self)
-        if useCache:
-            o = self.GetFromCache(id)
-            if o:
-                return o
-        app = self.app
-        if not dbEntry:
-            # check restraints
-            qr = kw.get("queryRestraints",None)
-            if qr!=False:
-                root = self.dataroot
-                p,o = root.ObjQueryRestraints(self)
-                p["id"] = id
-                p["pool_unitref"] = self.id
-                e = root.Select(parameter=p, operators=o)
-                if len(e)==0:
-                    return None
-
-            dbEntry = app.db.GetEntry(id, **kw)
-            if not dbEntry:
-                return None
-                #raise Exception, "NotFound"
-
-            if dbEntry.meta["pool_unitref"]!=self.id:
-                raise ContainmentError("Object is not a child (%s)" % (str(id)))
-
-        # create object for type
-        if not parentObj:
-            parentObj = self
-        obj = None
-        if not configuration:
-            type = dbEntry.GetMetaField("pool_type")
-            if not type:
-                # broken entry 
-                #raise ConfigurationError, "Empty type"
-                return None
-            configuration = app.configurationQuery.GetObjectConf(type)
-            if not configuration:
-                raise ConfigurationError("Type not found (%s)" % (str(type)))
-        obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-        obj = obj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
-
-        # check security if context passed in keywords
-        if kw.get("securityContext") and kw.get("permission"):
-            if not has_permission(kw["permission"], obj, kw["securityContext"]):
-                raise PermissionError("Permission check failed (%s)" % (str(id)))
-
-        if useCache:
-            self.Cache(obj, obj.id)
-        return obj
-
-
-    def _GetVirtualObj(self, configuration):
-        """
-        This loads an object for a non existing database entry.
-        """
-        if not configuration:
-            raise ConfigurationError("Type not found")
-        app = self.app
-        obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-        dbEntry = app.db.GetEntry(0, virtual=1)
-        obj = obj(0, dbEntry, parent=None, configuration=configuration)
-        return obj
-
-    
-    def _GetObjBatch(self, ids, parentObj = None, **kw):
-        """
-        Load multiple objects at once.
-        """
-        if len(ids)==0:
-            return []
-        useCache = ICache.providedBy(self)
-        objs = []
-        if useCache:
-            load = []
-            for id in ids:
-                o = self.GetFromCache(id)
-                if o:
-                    objs.append(o)
-                else:
-                    load.append(id)
-            if len(load)==0:
-                return objs
-            ids = load
-
-        app = self.app
-        entries = app.db.GetBatch(ids, preload="all", **kw)
-
-        # create object for type
-        if not parentObj:
-            parentObj = self
-        securityContext = kw.get("securityContext")
-        permission = kw.get("permission")
-        for dbEntry in entries:
-            obj = None
-            type = dbEntry.meta.get("pool_type")
-            if not type:
-                continue
-            configuration = app.configurationQuery.GetObjectConf(type, skipRoot=1)
-            if not configuration:
-                continue
-            obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-            obj = obj(dbEntry.id, dbEntry, parent=parentObj, configuration=configuration, **kw)
-
-            # check security if context passed in keywords
-            if securityContext and permission:
-                if not has_permission(permission, obj, securityContext):
-                    continue
-
-            if useCache:
-                self.Cache(obj, obj.id)
-            objs.append(obj)
-        return objs
-
-
-    def _DeleteObj(self, obj, id=0):
-        """
-        Deletes the object and additional data from wfdata, wflog, fulltext,
-        security tables.
-        """
-        if obj:
-            id = obj.GetID()
-        obj.Close()
-        db = self.db
-        if id > 0:
-            db.DeleteEntry(id)
 
 
 @implementer(IContainer, IObject)
-class Container(Object, ContainerBase, ContainerEdit, ContainerSecurity, Events, ContainerFactory):
+class Container(Object, ContainerBase, ContainerEdit, ContainerSecurity, Events):
     """
     Container implementation for objects and roots.
     """
+
+    @property
+    def factory(self):
+        return ContainerFactory(self)
 
 
 
@@ -914,7 +789,7 @@ class RootWorkflow:
 
 
 @implementer(IContainer, IRoot)
-class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, ContainerFactory, RootWorkflow):
+class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, RootWorkflow):
     """
     The root is a container for objects but does not store any data in the database itself. It
     is the entry point for object access. Roots are only handled by the application.
@@ -974,6 +849,10 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Cont
         """ this will return None. Used for object compatibility. """
         return None
 
+    @property
+    def factory(self):
+        return ContainerFactory(self)
+
     # Object Lookup -----------------------------------------------------------
 
     def LookupObj(self, id, **kw):
@@ -998,7 +877,7 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Cont
 
         # proxy object
         if "proxyObj" in kw and kw["proxyObj"]:
-            obj = self._GetObj(id, parentObj=kw["proxyObj"], **kw)
+            obj = self.factory.GetObj(id, parentObj=kw["proxyObj"], **kw)
             if not obj:
                 raise ContainmentError("Proxy object not found")
             return obj
@@ -1024,7 +903,7 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Cont
         for id in path:
             if id == self.id:
                 continue
-            obj = obj._GetObj(id, **kw)
+            obj = obj.factory.GetObj(id, **kw)
             if not obj:
                 return None
                 # raise Exception, "NotFound"
@@ -1146,3 +1025,122 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Cont
         return
 
 
+class ContainerFactory(object):
+    """
+    Container object factory. Creates objects based on type configuration.
+    """
+
+    def __init__(self, obj):
+        self.obj = obj
+
+
+    def GetObj(self, id, dbEntry=None, parentObj=None, configuration=None, **kw):
+        """
+        Loads and initializes the object. ::
+
+            id = id of the object to be loaded
+            dbEntry = the database entry. Will be loaded automatically if None
+            parentObj = if a different parent than the container
+            configuration = the object configuration to be loaded
+            returns the object or None
+
+        """
+        obj = self.obj
+        useCache = ICache.providedBy(obj)
+        if useCache:
+            o = obj.GetFromCache(id)
+            if o:
+                return o
+        app = obj.app
+        if not dbEntry:
+            # check restraints
+            qr = kw.get("queryRestraints", None)
+            if qr != False:
+                root = obj.dataroot
+                p, o = root.ObjQueryRestraints(obj)
+                p["id"] = id
+                p["pool_unitref"] = obj.id
+                e = root.Select(parameter=p, operators=o)
+                if len(e) == 0:
+                    return None
+
+            dbEntry = app.db.GetEntry(id, **kw)
+            if not dbEntry:
+                return None
+                # raise Exception, "NotFound"
+
+            if dbEntry.meta["pool_unitref"] != obj.id:
+                raise ContainmentError("Object is not a child (%s)" % (str(id)))
+
+        # create object for type
+        if not parentObj:
+            parentObj = obj
+        if not configuration:
+            type = dbEntry.GetMetaField("pool_type")
+            if not type:
+                # broken entry
+                # raise ConfigurationError, "Empty type"
+                return None
+            configuration = app.configurationQuery.GetObjectConf(type)
+            if not configuration:
+                raise ConfigurationError("Type not found (%s)" % (str(type)))
+        newobj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+        newobj = newobj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
+
+        # check security if context passed in keywords
+        if kw.get("securityContext") and kw.get("permission"):
+            if not has_permission(kw["permission"], newobj, kw["securityContext"]):
+                raise PermissionError("Permission check failed (%s)" % (str(id)))
+
+        if useCache:
+            obj.Cache(newobj, newobj.id)
+        return newobj
+
+    def GetObjBatch(self, ids, parentObj=None, **kw):
+        """
+        Load multiple objects at once.
+        """
+        if len(ids) == 0:
+            return []
+        obj = self.obj
+        useCache = ICache.providedBy(self.obj)
+        objs = []
+        if useCache:
+            load = []
+            for id in ids:
+                o = obj.GetFromCache(id)
+                if o:
+                    objs.append(o)
+                else:
+                    load.append(id)
+            if len(load) == 0:
+                return objs
+            ids = load
+
+        app = self.obj.app
+        entries = app.db.GetBatch(ids, preload="all", **kw)
+
+        # create object for type
+        if not parentObj:
+            parentObj = obj
+        securityContext = kw.get("securityContext")
+        permission = kw.get("permission")
+        for dbEntry in entries:
+            type = dbEntry.meta.get("pool_type")
+            if not type:
+                continue
+            configuration = app.configurationQuery.GetObjectConf(type, skipRoot=1)
+            if not configuration:
+                continue
+            newobj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+            newobj = newobj(dbEntry.id, dbEntry, parent=parentObj, configuration=configuration, **kw)
+
+            # check security if context passed in keywords
+            if securityContext and permission:
+                if not has_permission(permission, obj, securityContext):
+                    continue
+
+            if useCache:
+                obj.Cache(newobj, newobj.id)
+            objs.append(newobj)
+        return objs
