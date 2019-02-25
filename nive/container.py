@@ -1145,24 +1145,4 @@ class Root(ContainerBase, Search, ContainerEdit, ContainerSecurity, Events, Cont
                 o.Close()
         return
 
-    # to be removed in future versions --------------------------------------------
-
-    def root(self):
-        """
-        bw 0.9.12: use dataroot property instead!
-        this will return itself. Used for object compatibility.
-        """
-        return self
-
-    def GetRoot(self):
-        """bw 0.9.12: to be removed. returns self. """
-        return self
-
-    def GetApp(self):
-        """bw 0.9.12: to be removed. returns the cms application. """
-        return self.app
-
-    def GetParent(self):
-        """bw 0.9.12: to be removed. returns None. """
-        return None
 

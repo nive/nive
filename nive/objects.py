@@ -540,24 +540,3 @@ class Object(ObjectEdit, Events):
                 p.RemoveCache(self.id)
         self.dbEntry.Close()
 
-    # to be removed in future versions ------------------------------------------------------------
-
-    def root(self):
-        """
-        bw 0.9.12: use `dataroot` property instead!
-        returns the current root object in parent chain
-        """
-        return self.parent.root()
-
-    def GetRoot(self):
-        """bw 0.9.12: to be removed. returns the current root object """
-        return self.dataroot
-
-    def GetApp(self):
-        """bw 0.9.12: to be removed. returns the cms main application object """
-        return self.dataroot.app
-
-    def GetParent(self):
-        """bw 0.9.12: to be removed. returns the parent object in the hierarchy """
-        return self.__parent__
-
