@@ -19,7 +19,7 @@ from nive.definitions import IContainer, IRoot, ICache, IObject, IConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
 from nive.security import has_permission, SetupRuntimeAcls
-from nive.workflow import WorkflowNotAllowed
+from nive.workflow import WorkflowNotAllowed, ObjectWorkflow
 from nive.helper import ResolveName, ClassFactory
 from nive.i18n import translate
 
@@ -258,6 +258,10 @@ class ContainerEdit:
     Requires: Container
     """
 
+    @property
+    def workflow(self):
+        return ObjectWorkflow(self)
+
     def Create(self, type, data, user, **kw):
         """
         Creates a new sub object. ::
@@ -292,7 +296,8 @@ class ContainerEdit:
         if not self.IsTypeAllowed(typedef, user):
             raise ContainmentError("Add type not allowed here (%s)" % (str(type)))
 
-        if not self.WfAllow("add", user=user):
+        wf = self.workflow
+        if not wf.WfAllow("add", user=user):
             raise WorkflowNotAllowed("Not allowed in current workflow state (add)")
 
         self.Signal("beforeAdd", data=data, type=type, user=user, **kw)
@@ -303,7 +308,7 @@ class ContainerEdit:
             if typedef.events:
                 obj.SetupEventsFromConfiguration(typedef.events)
             obj.CreateSelf(data, user=user, **kw)
-            self.WfAction("add", user=user)
+            wf.WfAction("add", user=user)
             obj.Signal("create", user=user, **kw)
             if not kw.get("nocommit") and app.configuration.autocommit:
                 obj.CommitInternal(user=user)
@@ -365,14 +370,15 @@ class ContainerEdit:
         - create (called in context of the new object)
         """
         if not updateValues:
-            updateValues={}
+            updateValues = dict()
         app = self.app
-        type=obj.GetTypeID()
+        type = obj.GetTypeID()
         # allow subobject
         if not self.IsTypeAllowed(type, user):
             raise ContainmentError("Add type not allowed here (%s)" % (str(type)))
         
-        if not self.WfAllow("add", user=user):
+        wf = ObjectWorkflow(self)
+        if not wf.WfAllow("add", user=user):
             raise WorkflowNotAllowed("Workflow: Not allowed (add)")
 
         self.Signal("beforeAdd", data=updateValues, type=type, user=user, **kw)
@@ -407,7 +413,7 @@ class ContainerEdit:
             if obj.IsContainer():
                 for o in obj.GetObjs(queryRestraints=False):
                     newobj._RecursiveDuplicate(o, user, **kw)
-            self.WfAction("add", user=user)
+            wf.WfAction("add", user=user)
             if app.configuration.autocommit:
                 newobj.CommitInternal(user=user)
         except Exception as e:
@@ -482,20 +488,21 @@ class ContainerEdit:
             raise ContainmentError("Object is not a child (%s)" % (str(id)))
 
         # call workflow
-        if not self.WfAllow("remove", user=user):
+        wf = ObjectWorkflow(self)
+        if not wf.WfAllow("remove", user=user):
             raise WorkflowNotAllowed("Workflow: Not allowed (remove)")
-        if not obj.WfAllow("delete", user=user):
+        if not obj.workflow.WfAllow("delete", user=user):
             raise WorkflowNotAllowed("Workflow: Not allowed (delete)")
         obj.Signal("delete", user=user)
         if hasattr(obj, "_RecursiveDelete"):
             obj._RecursiveDelete(user)
 
         # call workflow
-        obj.WfAction("delete", user=user)
+        obj.workflow.WfAction("delete", user=user)
         self._DeleteObj(obj)
         if app.configuration.autocommit:
             self.db.Commit()
-        self.WfAction("remove", user=user)
+        wf.WfAction("remove", user=user)
         self.Signal("afterDelete", id=id, user=user)
 
         return True
