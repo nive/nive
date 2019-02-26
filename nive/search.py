@@ -431,7 +431,7 @@ class Search(object):
         
         Example ::
         
-            root().SearchFulltext("new", parameter={}, 
+            root.SearchFulltext("new", parameter={},
                               fields=["id", "title"], 
                               start=0, max=50, 
                               operators={"text":"LIKE"})

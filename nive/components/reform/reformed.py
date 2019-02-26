@@ -79,7 +79,7 @@ def SchemaFactory(form, fields, actions, force=False):
             if isinstance(widget, str):
                 widget = ResolveName(widget)
                 kw["widget"] = widget(**kwWidget)
-            elif isinstance(widget, collections.Callable):
+            elif isinstance(widget, collections.abc.Callable):
                 kw["widget"] = widget(**kwWidget)
             else:
                 widget.form = form
