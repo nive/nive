@@ -140,7 +140,7 @@ class objTest_db:
         o1.StoreFile(u"file2", File(**file2_2), user=user)
         o2.StoreFile(u"file2", File(**file2_2), user=user)
         self.assertTrue(o1.GetFld(u"ftext")==data2_1[u"ftext"])
-        self.assertTrue(o1.GetFld(u"pool_filename")==data2_1[u"pool_filename"])
+        self.assertTrue(o1.GetFld(u"pool_filename")==data2_1[u"pool_filename"], o1.GetFld(u"pool_filename"))
         self.assertTrue(o1.GetFile(u"file1").filename==file2_1["filename"])
         self.assertTrue(o1.GetFile(u"file2").filename==file2_2["filename"])
         self.assertTrue(o2.GetFld(u"fstr")==data2_2[u"fstr"])

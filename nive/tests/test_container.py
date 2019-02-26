@@ -193,10 +193,10 @@ class containerTest_db:
         except:
             pass
         # objects and parents
-        self.assertTrue(r.GetSort())
-        ccontainer = len(r.GetContainers(batch=False))
+        self.assertTrue(r.defaultSort)
+        ccontainer = len(r.GetObjs(containerOnly=1, batch=False))
         cobjs = len(r.GetObjs(batch=False))
-        ccontainer2 = len(r.GetContainerList(parameter={u"pool_type":u"type2"}))
+        ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))
         cobjs2 = len(r.GetObjsList(parameter={u"pool_type":u"type2"}))
         c=statdb(a)
         o1 = createObj1(r)
@@ -234,23 +234,23 @@ class containerTest_db:
 
         # subitems
         #root
-        self.assertTrue(len(r.GetContainers(batch=False))==ccontainer+2)
+        self.assertTrue(len(r.GetObjs(containerOnly=1, batch=False))==ccontainer+2)
         self.assertTrue(len(r.GetObjs(batch=False))==cobjs+2)
-        self.assertTrue(len(r.GetContainers())==ccontainer+2)  # less failsafe than batch=False. On failure reset testdata.
+        self.assertTrue(len(r.GetObjs(containerOnly=1))==ccontainer+2)  # less failsafe than batch=False. On failure reset testdata.
         self.assertTrue(len(r.GetObjs())==cobjs+2)
         self.assertTrue(len(r.GetObjs(pool_type="type2")))
-        self.assertTrue(len(r.GetContainerList(parameter={u"pool_type":u"type2"}))==ccontainer2+1)
+        self.assertTrue(len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==ccontainer2+1)
         self.assertTrue(len(r.GetObjsList(parameter={u"pool_type":u"type2"}))==cobjs2+1)
         self.assertTrue(len(o3.GetObjsBatch([o4.id,o5.id])))
         # object
-        self.assertTrue(len(o3.GetContainers())==2)
+        self.assertTrue(len(o3.GetObjs(containerOnly=1))==2)
         self.assertTrue(len(o3.GetObjs())==2)
         self.assertTrue(len(o3.GetObjs(pool_type="type2"))==2)
-        self.assertTrue(len(o3.GetContainerList(parameter={u"pool_type":u"type2"}))==2)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==2)
         self.assertTrue(len(o3.GetObjsList(parameter={u"pool_type":u"type2"}))==2)
-        self.assertTrue(len(o3.GetContainerList(parameter={u"pool_type":u"type2"}, operators={"pool_type":u"<>"}))==0)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}, operators={"pool_type":u"<>"}))==0)
         self.assertTrue(len(o3.GetObjsList(parameter={u"pool_type":u"type2"}, operators={u"pool_type":u"<>"}))==0)
-        self.assertTrue(len(o1.GetContainedIDs())==3)
+        self.assertTrue(len(o1.GetSubtreeIDs())==3)
         
         r.DeleteInternal(o1.GetID(), user=user)
         r.DeleteInternal(o2.GetID(), user=user, obj=o2)
@@ -306,10 +306,10 @@ class containerTest_db:
         except:
             pass
         # objects and parents
-        self.assertTrue(r.GetSort())
-        ccontainer = len(r.GetContainers(batch=False))
+        self.assertTrue(r.defaultSort)
+        ccontainer = len(r.GetObjs(containerOnly=1, batch=False))
         cobjs = len(r.GetObjs(batch=False))
-        ccontainer2 = len(r.GetContainerList(parameter={u"pool_type":u"type2"}))
+        ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))
         cobjs2 = len(r.GetObjsList(parameter={u"pool_type":u"type2"}))
         c=statdb(a)
         o1 = createObj1(r)
@@ -349,24 +349,24 @@ class containerTest_db:
 
         # subitems
         #root
-        self.assertTrue(len(r.GetContainers(batch=False))==0)
+        self.assertTrue(len(r.GetObjs(containerOnly=1, batch=False))==0)
         self.assertTrue(len(r.GetObjs(batch=False))==0)
-        self.assertTrue(len(r.GetContainers())==0)
+        self.assertTrue(len(r.GetObjs(containerOnly=1))==0)
         self.assertTrue(len(r.GetObjs())==0)
-        self.assertTrue(len(r.GetContainerList(parameter={u"pool_type":u"type2"}))==0)
+        self.assertTrue(len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==0)
         p,o=r.ObjQueryRestraints(r)
         p.update({u"pool_type":u"type2"})
         self.assertTrue(len(r.GetObjsList(parameter=p))==0)
         self.assertTrue(len(o3.GetObjsBatch([o4.id,o5.id]))==0)
         # object
-        self.assertTrue(len(o3.GetContainers())==0)
+        self.assertTrue(len(o3.GetObjs(containerOnly=1))==0)
         self.assertTrue(len(o3.GetObjs())==0)
-        self.assertTrue(len(o3.GetContainerList(parameter={u"pool_type":u"type2"}))==0)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==0)
         p,o=r.ObjQueryRestraints(self)
         p.update({u"pool_type":u"type2"})
         self.assertTrue(len(o3.GetObjsList(parameter=p))==0)
         p,o=r.ObjQueryRestraints(self)
-        self.assertTrue(len(o3.GetContainerList(parameter={u"pool_type":u"type2"}, operators={u"pool_type":u"<>"}))==0)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}, operators={u"pool_type":u"<>"}))==0)
         p,o=r.ObjQueryRestraints(self)
         p.update({u"pool_type":u"type2"})
         o.update({u"pool_type":u"<>"})

@@ -32,6 +32,7 @@ class ContainerRead(Events):
 
     Requires: ContainerFactory
     """
+    defaultSort = u"id"
 
     def obj(self, id, **kw):
         """ shortcut for GetObj """
@@ -68,7 +69,7 @@ class ContainerRead(Events):
         self.Signal("loadObj", obj)
         return obj
 
-    def GetObjs(self, parameter=None, operators=None, pool_type=None, **kw):
+    def GetObjs(self, parameter=None, operators=None, pool_type=None, containerOnly=False, **kw):
         """
         Search for subobjects based on parameter and operators. ::
 
@@ -88,14 +89,19 @@ class ContainerRead(Events):
             parameter = {}
         if operators is None:
             operators = {}
+
+        if containerOnly:
+            parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
+            operators[u"pool_stag"] = u"BETWEEN"
+
         parameter[u"pool_unitref"] = self.id
-        sort = kw.get("sort", self.GetSort())
+        sort = kw.get("sort", self.defaultSort)
         fields = [u"id", u"pool_datatbl", u"pool_dataref", u"pool_type"]
         root = self.dataroot
         if kw.get("queryRestraints") != False:
             parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
         objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
-                                  sort=sort)
+                                         sort=sort)
         useBatch = kw.get("batch", True)
         if useBatch:
             ids = [c["id"] for c in objects]
@@ -120,7 +126,7 @@ class ContainerRead(Events):
         self.Signal("loadObj", objs)
         return objs
 
-    def GetObjsList(self, fields=None, parameter=None, operators=None, pool_type=None, **kw):
+    def GetObjsList(self, fields=None, parameter=None, operators=None, pool_type=None, containerOnly=False, **kw):
         """
         Search for subobjects based on parameter and operators. This function performs a sql query based on parameters and
         does not load any object. ::
@@ -136,10 +142,15 @@ class ContainerRead(Events):
         """
         if parameter is None:
             parameter = {}
-        if operators == None:
+        if operators is None:
             operators = {}
+
+        if containerOnly:
+            parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
+            operators[u"pool_stag"] = u"BETWEEN"
+
         parameter[u"pool_unitref"] = self.id
-        sort = kw.get("sort", self.GetSort())
+        sort = kw.get("sort", self.defaultSort)
         if not fields:
             # lookup meta list default fields
             fields = self.app.configuration.listDefault
@@ -160,7 +171,7 @@ class ContainerRead(Events):
         Events
         - loadObj(objs)
         """
-        sort = kw.get("sort", self.GetSort())
+        sort = kw.get("sort", self.defaultSort)
         fields = [u"id", u"pool_datatbl", u"pool_dataref"]
         parameter, operators = {}, {}
         parameter[u"id"] = ids
@@ -175,25 +186,33 @@ class ContainerRead(Events):
         self.Signal("loadObj", objs)
         return objs
 
+    def GetSubtreeIDs(self, sort=None):
+        """
+        Returns the ids of all contained objects including subfolders sorted by *sort*. Default is *self.defaultSort*.
+
+        returns list
+        """
+        if not sort:
+            sort = self.defaultSort
+        db = self.app.db
+        ids = db.GetContainedIDs(sort=sort, base=self.id)
+        return ids
+
+    def IsContainer(self):
+        """ """
+        return IContainer.providedBy(self)
+
+
+
+    # bw [3]
+
+    def GetSort(self):
+        return self.defaultSort
+
     def GetContainers(self, parameter=None, operators=None, **kw):
-        """
-        Loads all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to
-        `nive.definitions.StagRessource - 1`.  ::
-
-            kw.batch = load subobjects as batch and not as single object
-            parameter = see pool Search
-            operators = see pool Search
-            **kw = see Container.GetObj()
-            returns all matching sub objects as list
-
-        see :class:`nive.Search` for parameter/operators description
-
-        Events
-        - loadObj(objs)
-        """
         if parameter is None:
             parameter = {}
-        if operators == None:
+        if operators is None:
             operators = {}
         parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
         operators[u"pool_stag"] = u"BETWEEN"
@@ -201,52 +220,16 @@ class ContainerRead(Events):
         return objs
 
     def GetContainerList(self, fields=None, parameter=None, operators=None, **kw):
-        """
-        Lists all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to
-        `nive.definitions.StagRessource - 1`. This function performs a sql query based on parameters and
-        does not load any object. ::
-
-            fields = list. see nive.Search
-            parameter = see pool Search
-            operators = see pool Search
-            kw.batch = load subobjects as batch
-            **kw = see Container.GetObj()
-            returns dictionary list
-
-        see :class:`nive.Search` for parameter/operators description
-        """
         if parameter is None:
             parameter = {}
-        if operators == None:
+        if operators is None:
             operators = {}
         parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
         operators[u"pool_stag"] = u"BETWEEN"
         return self.GetObjsList(fields, parameter, operators, **kw)
 
     def GetContainedIDs(self, sort=None):
-        """
-        Returns the ids of all contained objects including subfolders sorted by *sort*. Default is *GetSort()*.
-
-        returns list
-        """
-        if not sort:
-            sort = self.GetSort()
-        db = self.app.db
-        ids = db.GetContainedIDs(sort=sort, base=self.id)
-        return ids
-
-    def GetSort(self):
-        """
-        The default sort order field name.
-
-        returns the field id as string
-        """
-        return u"id"
-
-    def IsContainer(self):
-        """ """
-        return IContainer.providedBy(self)
-
+        return self.GetSubtreeIDs(sort)
 
 
 class ContainerWrite:
@@ -882,19 +865,19 @@ class Root(ContainerRead, ContainerWrite):
 
     def GetParents(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     def GetParentIDs(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     def GetParentTitles(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     def GetParentPaths(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     # tools ----------------------------------------------------
 

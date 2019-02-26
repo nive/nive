@@ -187,7 +187,7 @@ class ListItemTest_db:
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"countries"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"types"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"meta"}), app=self.app))
-        #self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"})))
+        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"})))
 
 
 class ListItemTest_db_sqlite(ListItemTest_db, __local.SqliteTestCase):
