@@ -112,7 +112,7 @@ class ObjectWorkflow(object):
         app = self.obj.app
         if not app.configuration.workflowEnabled:
             return None
-        wfTag = self.obj.meta["pool_wfp"]
+        wfTag = self.obj.meta.get("pool_wfp")
         if not wfTag:
             return None
         # load workflow

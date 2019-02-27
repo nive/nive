@@ -219,7 +219,7 @@ class ObjectRead(Events):
         while o:
             o = o.parent
             if o:
-                p.append(o.GetID())
+                p.append(o.id)
         return p
 
     def GetParentTitles(self):

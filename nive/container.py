@@ -365,7 +365,7 @@ class ContainerWrite:
         newDataEntry = None
         try:
             newDataEntry = obj.dbEntry.Duplicate()
-            updateValues["pool_unitref"] = self.GetID()
+            updateValues["pool_unitref"] = self.id
             updateValues["pool_wfa"] = ""
             data, meta, files = obj.SplitData(updateValues)
             newDataEntry.meta.update(meta)
@@ -413,7 +413,7 @@ class ContainerWrite:
         updateValues = {}
         self.Signal("beforeAdd", data=updateValues, type=type, **kw)
         newDataEntry = obj.dbEntry.Duplicate()
-        updateValues["pool_unitref"] = self.GetID()
+        updateValues["pool_unitref"] = self.id
         updateValues["pool_wfa"] = ""
         data, meta, files = obj.SplitData(updateValues)
         newDataEntry.meta.update(meta)
@@ -523,11 +523,10 @@ class ContainerWrite:
         security tables.
         """
         if obj:
-            id = obj.GetID()
+            id = obj.id
         obj.Close()
-        db = self.db
         if id > 0:
-            db.DeleteEntry(id)
+            self.db.DeleteEntry(id)
 
 
     def _RecursiveDelete(self, user):
