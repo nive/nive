@@ -23,7 +23,7 @@ configuration = ToolConf(
     mimetype = "text/html",
     data = [
         FieldConf(id="modify",     datatype="bool", default=0, name=_("Modify existing columns"),  description=_("Change existing database columns to new configuration. Depending on the changes, data may be lost!")),
-        FieldConf(id="showSystem", datatype="bool", default=0, name=_("Show system columns"),      description="")
+        FieldConf(id="showSystem", datatype="bool", default=0, name=_("Show system columns"),      description=""),
     ],
     views = [
         ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbStructureUpdater.dbStructureUpdater")

@@ -2,9 +2,9 @@
 import time
 import unittest
 
-from nive.definitions import *
+from nive.definitions import IObject
+
 from nive.workflow import *
-from nive.security import User
 
 from nive.tests.db_app import app_nodb
 

@@ -12,14 +12,14 @@ WIN = sys.platform.startswith("win")
 
 # sqlite and mysql
 if WIN:
-    ROOT = "c:\\Temp\\nive\\"
+    ROOT = "c:\\Temp\\nive3-test\\"
 else:
-    ROOT = "/var/tmp/nive/"
+    ROOT = "/tmp/nive3-test/"
 
 
 
 DB_CONF = DatabaseConf(
-    dbName = ROOT+"nive.db",
+    dbName = ROOT+"test.db",
     fileRoot = ROOT,
     context = "Sqlite3"
 )

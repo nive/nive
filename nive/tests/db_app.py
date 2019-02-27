@@ -146,7 +146,8 @@ def app_db(modules=None):
     root = DvPath(a.dbConfiguration.fileRoot)
     if not root.IsDirectory():
         root.CreateDirectories()
-    
+
+    """
     try:
         a.Query("select id from pool_meta where id=1")
         a.Query("select id from data1 where id=1")
@@ -158,9 +159,10 @@ def app_db(modules=None):
         a.Query("select title from pool_meta where id=1")
     except:
         a.GetTool("nive.tools.dbStructureUpdater")()
+    """
 
     # disable this to update test tables each time the tests are called
-    #a.GetTool("nive.tools.dbStructureUpdater")()
+    a.GetTool("nive.tools.dbStructureUpdater")()
     a.Startup(None)
     # this will reset all testdata
     #emptypool(a)

@@ -2,7 +2,7 @@
 import time
 import unittest
 
-from nive.definitions import *
+from nive.definitions import Conf
 from nive.events import *
 
 

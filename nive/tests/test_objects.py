@@ -1,9 +1,14 @@
 #-*- coding: utf-8 -*-
 
 import unittest
-from nive.helper import *
 
-from nive.tests.db_app import *
+from datetime import datetime
+from datetime import time as datetime_time
+
+from nive import File
+from nive.definitions import ContainmentError
+
+from nive.tests import db_app
 from nive.tests import __local
 
 
@@ -18,9 +23,9 @@ class objTest_db:
 
     def test_obj1(self):
         a=self.app
-        r=root(a)
-        user = User("test")
-        o = createObj1(r)
+        r=db_app.root(a)
+        user = db_app.User("test")
+        o = db_app.createObj1(r)
         id = o.id
         o.Close()
         o = r.obj(id)
@@ -38,13 +43,13 @@ class objTest_db:
 
     def test_obj_timezone(self):
         a=self.app
-        r=root(a)
-        user = User("test")
-        o = createObj1(r)
+        r=db_app.root(a)
+        user = db_app.User("test")
+        o = db_app.createObj1(r)
         id = o.id
         self.assertTrue(o.meta.pool_create)
         self.assertTrue(o.meta.pool_create.hour==datetime.utcnow().hour)
-        o.Update(data1_2, user)
+        o.Update(db_app.data1_2, user)
         self.assertTrue(o.meta.pool_change)
         self.assertTrue(o.meta.pool_change.hour==datetime.utcnow().hour)
 
@@ -56,12 +61,12 @@ class objTest_db:
         a=self.app
         ccc = a.db.GetCountEntries()
         # create
-        user = User("test")
+        user = db_app.User("test")
 
-        r=root(a)
+        r=db_app.root(a)
         self.assertTrue(r.__acl__[0][2]=='view')
 
-        oo = createObj1(r)
+        oo = db_app.createObj1(r)
         self.assertTrue(oo.__acl__[0][2]=='view')
 
         r.Delete(oo, user=user)
@@ -71,12 +76,12 @@ class objTest_db:
         #print "Testing object update and commit"
         a=self.app
         ccc = a.db.GetCountEntries()
-        r=root(a)
+        r=db_app.root(a)
         # create
-        user = User("test")
+        user = db_app.User("test")
 
-        oo = createObj1(r)
-        o1 = createObj1(oo)
+        oo = db_app.createObj1(r)
+        o1 = db_app.createObj1(oo)
         self.assertTrue(oo.GetTypeID()=="type1")
         self.assertTrue(oo.GetTypeName()=="Type 1 container")
         self.assertTrue(oo.GetFieldConf("ftext").name=="ftext")
@@ -85,37 +90,37 @@ class objTest_db:
         self.assertTrue(str(o1.GetFld("ftime"))==str(datetime_time(16,55)), str(o1.GetFld("ftime")))
 
         id = o1.GetID()
-        o1.Update(data1_2, user)
+        o1.Update(db_app.data1_2, user)
         self.assertTrue(o1.GetID()==id)
-        self.assertTrue(o1.GetFld("ftext")==data1_2["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data1_2["pool_filename"])
+        self.assertTrue(o1.GetFld("ftext")==db_app.data1_2["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data1_2["pool_filename"])
         self.assertTrue(str(o1.GetFld("ftime"))==str(datetime_time(23,8,13,500)), str(o1.GetFld("ftime")))
         del o1
         o1 = oo.obj(id)
-        self.assertTrue(o1.GetFld("ftext")==data1_2["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data1_2["pool_filename"])
+        self.assertTrue(o1.GetFld("ftext")==db_app.data1_2["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data1_2["pool_filename"])
         oo.Delete(id, user=user)
 
 
-        o1 = createObj1(oo)
+        o1 = db_app.createObj1(oo)
         id = o1.GetID()
-        data, meta, files = o1.SplitData(data1_2)
+        data, meta, files = o1.SplitData(db_app.data1_2)
         o1.meta.update(meta)
         o1.data.update(data)
         o1.files.update(files)
         o1.Commit(user)
         self.assertTrue(o1.GetID()==id)
-        self.assertTrue(o1.GetFld("ftext")==data1_2["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data1_2["pool_filename"])
+        self.assertTrue(o1.GetFld("ftext")==db_app.data1_2["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data1_2["pool_filename"])
         del o1
         o1 = oo.obj(id)
-        self.assertTrue(o1.GetFld("ftext")!=data1_1["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")!=data1_1["pool_filename"])
+        self.assertTrue(o1.GetFld("ftext")!=db_app.data1_1["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")!=db_app.data1_1["pool_filename"])
         
-        o1.UpdateInternal(data1_1)
+        o1.UpdateInternal(db_app.data1_1)
         o1.CommitInternal(user)
-        self.assertTrue(o1.GetFld("ftext")==data1_1["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data1_1["pool_filename"])
+        self.assertTrue(o1.GetFld("ftext")==db_app.data1_1["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data1_1["pool_filename"])
 
         self.assertRaises(ContainmentError, r.Delete, id, user)
         r.Delete(oo.GetID(), user=user)
@@ -126,26 +131,26 @@ class objTest_db:
     def test_objectfiles(self):
         #print "Testing object files update and commit"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         ccc = a.db.GetCountEntries()
         # create
-        user = User("test")
+        user = db_app.User("test")
 
         # testing StoreFile()
-        o1 = createObj2(r)
-        o2 = createObj2(r)
-        o1.Update(data2_1, user)
-        o2.Update(data2_2, user)
-        o1.StoreFile("file1", File(**file2_1), user=user)
-        o1.StoreFile("file2", File(**file2_2), user=user)
-        o2.StoreFile("file2", File(**file2_2), user=user)
-        self.assertTrue(o1.GetFld("ftext")==data2_1["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_1["pool_filename"], o1.GetFld("pool_filename"))
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
-        self.assertTrue(o1.GetFile("file2").filename==file2_2["filename"])
-        self.assertTrue(o2.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o2.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o2.GetFile("file2").filename==file2_2["filename"])
+        o1 = db_app.createObj2(r)
+        o2 = db_app.createObj2(r)
+        o1.Update(db_app.data2_1, user)
+        o2.Update(db_app.data2_2, user)
+        o1.StoreFile("file1", File(**db_app.file2_1), user=user)
+        o1.StoreFile("file2", File(**db_app.file2_2), user=user)
+        o2.StoreFile("file2", File(**db_app.file2_2), user=user)
+        self.assertTrue(o1.GetFld("ftext")==db_app.data2_1["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_1["pool_filename"], o1.GetFld("pool_filename"))
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
+        self.assertTrue(o1.GetFile("file2").filename==db_app.file2_2["filename"])
+        self.assertTrue(o2.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o2.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o2.GetFile("file2").filename==db_app.file2_2["filename"])
 
         id1 = o1.id
         id2 = o2.id
@@ -153,42 +158,42 @@ class objTest_db:
         del o2
         o1 = r.obj(id1)
         o2 = r.obj(id2)
-        self.assertTrue(o1.GetFld("ftext")==data2_1["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_1["pool_filename"])
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
-        self.assertTrue(o1.GetFile("file2").filename==file2_2["filename"])
-        self.assertTrue(o2.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o2.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o2.GetFile("file2").filename==file2_2["filename"])
-        self.assertTrue(o2.GetFileByName(file2_2["filename"]))
+        self.assertTrue(o1.GetFld("ftext")==db_app.data2_1["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_1["pool_filename"])
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
+        self.assertTrue(o1.GetFile("file2").filename==db_app.file2_2["filename"])
+        self.assertTrue(o2.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o2.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o2.GetFile("file2").filename==db_app.file2_2["filename"])
+        self.assertTrue(o2.GetFileByName(db_app.file2_2["filename"]))
 
         #delete files
         self.assertTrue(o1.DeleteFile("file1", user=user))
         self.assertTrue(o1.DeleteFile("file2", user=user))
         self.assertFalse(o1.GetFile("file1"))
         self.assertFalse(o1.GetFile("file2"))
-        self.assertFalse(o1.GetFileByName(file2_2["filename"]))
+        self.assertFalse(o1.GetFileByName(db_app.file2_2["filename"]))
 
         r.Delete(o1.GetID(), user=user)
         r.Delete(o2.GetID(), user=user)
 
         # testing files wrapper
-        o1 = createObj2(r)
-        o2 = createObj2(r)
-        d = data2_1.copy()
-        d["file1"] = File(**file2_1)
-        d["file2"] = File(**file2_2)
+        o1 = db_app.createObj2(r)
+        o2 = db_app.createObj2(r)
+        d = db_app.data2_1.copy()
+        d["file1"] = File(**db_app.file2_1)
+        d["file2"] = File(**db_app.file2_2)
         o1.Update(d, user)
-        d = data2_2.copy()
-        d["file2"] = File(**file2_2)
+        d = db_app.data2_2.copy()
+        d["file2"] = File(**db_app.file2_2)
         o2.Update(d, user)
-        self.assertTrue(o1.GetFld("ftext")==data2_1["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_1["pool_filename"])
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
-        self.assertTrue(o1.GetFile("file2").filename==file2_2["filename"])
-        self.assertTrue(o2.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o2.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o2.GetFile("file2").filename==file2_2["filename"])
+        self.assertTrue(o1.GetFld("ftext")==db_app.data2_1["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_1["pool_filename"])
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
+        self.assertTrue(o1.GetFile("file2").filename==db_app.file2_2["filename"])
+        self.assertTrue(o2.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o2.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o2.GetFile("file2").filename==db_app.file2_2["filename"])
 
         id1 = o1.id
         id2 = o2.id
@@ -196,13 +201,13 @@ class objTest_db:
         del o2
         o1 = r.obj(id1)
         o2 = r.obj(id2)
-        self.assertTrue(o1.GetFld("ftext")==data2_1["ftext"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_1["pool_filename"])
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
-        self.assertTrue(o1.GetFile("file2").filename==file2_2["filename"])
-        self.assertTrue(o2.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o2.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o2.GetFile("file2").filename==file2_2["filename"])
+        self.assertTrue(o1.GetFld("ftext")==db_app.data2_1["ftext"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_1["pool_filename"])
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
+        self.assertTrue(o1.GetFile("file2").filename==db_app.file2_2["filename"])
+        self.assertTrue(o2.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o2.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o2.GetFile("file2").filename==db_app.file2_2["filename"])
 
         r.Delete(o1.GetID(), user=user)
         r.Delete(o2.GetID(), user=user)
@@ -214,59 +219,59 @@ class objTest_db:
         #print "Testing object commit and undo for data and files"
         a=self.app
         ccc = a.db.GetCountEntries()
-        r=root(a)
+        r=db_app.root(a)
         # create
-        user = User("test")
+        user = db_app.User("test")
 
         # testing commit
-        o1 = createObj2(r)
-        d = data2_2.copy()
-        d["file1"] = File(**file2_1)
-        d["file2"] = File(**file2_2)
+        o1 = db_app.createObj2(r)
+        d = db_app.data2_2.copy()
+        d["file1"] = File(**db_app.file2_1)
+        d["file2"] = File(**db_app.file2_2)
         data, meta, files = o1.SplitData(d)
         o1.data.update(data)
         o1.meta.update(meta)
         o1.files.update(files)
-        self.assertTrue(o1.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o1.files["file1"]["filename"]==file2_1["filename"])
-        self.assertTrue(o1.files["file2"]["filename"]==file2_2["filename"])
+        self.assertTrue(o1.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o1.files["file1"]["filename"]==db_app.file2_1["filename"])
+        self.assertTrue(o1.files["file2"]["filename"]==db_app.file2_2["filename"])
         o1.Commit(user)
-        self.assertTrue(o1.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
-        self.assertTrue(o1.GetFile("file2").filename==file2_2["filename"])
+        self.assertTrue(o1.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
+        self.assertTrue(o1.GetFile("file2").filename==db_app.file2_2["filename"])
         id = o1.id
         del o1
         o1 = r.obj(id)
-        self.assertTrue(o1.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
-        self.assertTrue(o1.GetFile("file2").filename==file2_2["filename"])
+        self.assertTrue(o1.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
+        self.assertTrue(o1.GetFile("file2").filename==db_app.file2_2["filename"])
         r.Delete(o1.GetID(), user=user)
 
         # testing undo
-        o1 = createObj2(r)
-        o1.StoreFile("file1", File(**file2_1), user=user)
-        d = data2_2.copy()
-        d["file1"] = File(**file2_2)
+        o1 = db_app.createObj2(r)
+        o1.StoreFile("file1", File(**db_app.file2_1), user=user)
+        d = db_app.data2_2.copy()
+        d["file1"] = File(**db_app.file2_2)
         data, meta, files = o1.SplitData(d)
         o1.data.update(data)
         o1.meta.update(meta)
         o1.files.update(files)
-        self.assertTrue(o1.GetFld("fstr")==data2_2["fstr"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_2["pool_filename"])
-        self.assertTrue(o1.files.get("file1").filename==file2_2["filename"])
+        self.assertTrue(o1.GetFld("fstr")==db_app.data2_2["fstr"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_2["pool_filename"])
+        self.assertTrue(o1.files.get("file1").filename==db_app.file2_2["filename"])
         o1.Undo()
-        self.assertTrue(o1.GetFld("fstr")==data2_1["fstr"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_1["pool_filename"])
-        self.assertTrue(o1.files.get("file1").filename==file2_1["filename"])
+        self.assertTrue(o1.GetFld("fstr")==db_app.data2_1["fstr"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_1["pool_filename"])
+        self.assertTrue(o1.files.get("file1").filename==db_app.file2_1["filename"])
         id = o1.id
         del o1
         o1 = r.obj(id)
-        self.assertTrue(o1.GetFld("fstr")==data2_1["fstr"])
-        self.assertTrue(o1.GetFld("pool_filename")==data2_1["pool_filename"])
-        self.assertTrue(o1.GetFile("file1").filename==file2_1["filename"])
+        self.assertTrue(o1.GetFld("fstr")==db_app.data2_1["fstr"])
+        self.assertTrue(o1.GetFld("pool_filename")==db_app.data2_1["pool_filename"])
+        self.assertTrue(o1.GetFile("file1").filename==db_app.file2_1["filename"])
         r.Delete(o1.GetID(), user=user)
         self.assertEqual(ccc, a.db.GetCountEntries())
         a.Close()
@@ -295,7 +300,7 @@ class groupsTest_db:
         self.remove=[]
 
     def tearDown(self):
-        u = User("test")
+        u = db_app.User("test")
         root = self.app.root
         for r in self.remove:
             root.Delete(r, u)
@@ -303,10 +308,10 @@ class groupsTest_db:
 
     def test_objectgroups(self):
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         # create
-        user = User("test")
-        o = createObj1(r)
+        user = db_app.User("test")
+        o = db_app.createObj1(r)
         id = o.id
         
         userid = "test"

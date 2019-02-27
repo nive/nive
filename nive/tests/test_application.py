@@ -2,10 +2,10 @@ import time
 import unittest
 
 from nive.application import *
-from nive.definitions import *
+from nive.definitions import Conf, GroupConf, DatabaseConf, ObjectConf, FieldConf, RootConf, ToolConf, AppConf, \
+    ViewConf, ViewModuleConf, ModuleConf
+from nive.definitions import IObject, IRootConf, IToolConf
 from nive.workflow import WfProcessConf
-from nive.helper import *
-from nive.events import Events
 from nive.portal import Portal
 from nive.security import User
 
@@ -18,7 +18,7 @@ from nive.tests import __local
 mApp = AppConf(id="app", 
                groups=[GroupConf(id="g1",name="G1")], 
                categories=[Conf(id="c1",name="C1")],
-               modules = [DatabaseConf(dbName="test")],
+               modules = [DatabaseConf(dbName=__local.ROOT+"nive3-testapp.db")],
                translations="nive:locale/")
 
 mObject = ObjectConf(id="object", dbparam="object", name="Object",
@@ -30,7 +30,7 @@ mTool = ToolConf(id="tool", context="nive.tools.example.tool")
 mViewm = ViewModuleConf(id="vm")
 mView = ViewConf(id="v",context=mApp,view=mApp)
 mMod = ModuleConf(id="mod", context=mApp)
-mDb = DatabaseConf(dbName="test")
+mDb = DatabaseConf(dbName=__local.ROOT+"nive3-testapp2.db")
 
 mWfObj = WfProcessConf("nive.tests.test_workflow.wf1", id="wf", apply=(IObject,))
 mToolObj = ToolConf("nive.tools.example", id="tool", apply=(IObject,))
@@ -58,6 +58,7 @@ class testapp(Application):
     """
     
 def app():
+    # uses sqlite
     app = testapp()
     app.Register(mApp2)
     app.Startup(None)
@@ -68,7 +69,7 @@ def app():
 
 # todo [3] move to registration_tests.py
 class modTest(unittest.TestCase):
-    
+
     def setUp(self):
         self.app = testapp()
 
@@ -103,13 +104,14 @@ class modTest(unittest.TestCase):
 
     def test_startup1(self):
         self.app.Register(mApp)
-        self.app.Startup(None, True)
+        self.app.Startup(None, debug=True)
         self.assertTrue(self.app.db)
+        self.app.db.Execute("select id from pool_meta")
         self.app.Close()
 
     def test_startup2(self):
         self.app.Register(mApp)
-        self.app.Setup(True)
+        self.app.Setup()
         self.app.StartRegistration(None)
         self.app.FinishRegistration(None)
         self.app.Run()
@@ -133,14 +135,14 @@ class simpleAppTest(unittest.TestCase):
     def test_debug(self):
         app = testapp()
         app.Register(mApp2)
-        app.Startup(None, debug=True)
+        app.Startup(None)
         
     def test_nometa(self):
         app = testapp()
         c=AppConf(mApp2)
         c.meta=[]
         app.Register(c)
-        app.Startup(None, debug=True)
+        app.Startup(None)
 
     def test_db(self):
         app = testapp()

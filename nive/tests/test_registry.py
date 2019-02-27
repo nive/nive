@@ -2,9 +2,10 @@
 import time
 import unittest
 
-from nive.definitions import *
-from zope.interface.registry import * 
+from zope.interface.registry import Components
 from zope.interface import Interface, implementer, alsoProvides, Provides
+
+from nive.definitions import ObjectConf, Conf, IObjectConf, IConf
 
 
 

@@ -3,9 +3,8 @@ import time
 import unittest
 import datetime
 
-from nive.definitions import ObjectConf, FieldConf, Conf, ViewModuleConf
+from nive.definitions import ObjectConf, FieldConf, ViewModuleConf
 from nive.utils.path import DvPath
-from nive.utils.dataPool2.files import File
 from nive.helper import *
 
 # -----------------------------------------------------------------
@@ -187,7 +186,7 @@ class ListItemTest_db:
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"countries"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"types"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"meta"}), app=self.app))
-        self.assert_(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"})))
+        self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"type:type1"}), app=self.app))
 
 
 class ListItemTest_db_sqlite(ListItemTest_db, __local.SqliteTestCase):

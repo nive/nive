@@ -2,11 +2,13 @@
 import time
 import unittest
 
-from nive.definitions import *
-from nive.tool import *
-from nive.security import User 
+from nive.definitions import ToolConf, FieldConf, IApplication
+from nive.security import User
 
 from nive.tools.example import configuration
+
+from nive.tool import *
+
 from nive.tests import db_app
 from nive.tests import __local
 

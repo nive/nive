@@ -294,7 +294,7 @@ class Application(Events):
             if result:
                 self.log.info('Database test result: %s %s', str(result), report)
             else:
-                self.log.error('Database test result: %s %s', str(result), report)
+                self.log.error('Database test failure: (%s) %s', str(result), report)
 
         self._Lock()
 
@@ -442,7 +442,7 @@ class Application(Events):
                 db.connection.connect()
                 if not db.connection.IsConnected():
                     return False, "No connection"
-            self.Query("select id from pool_meta where id =1")
+            self.db.Execute("select id from pool_meta where id=1")
             return True, "OK"
 
         except Exception as err:
