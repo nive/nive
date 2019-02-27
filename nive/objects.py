@@ -75,14 +75,14 @@ class ObjectRead(Events):
         return self.dbEntry.files
 
     @property
-    def dataroot(self):
+    def root(self):
         """ returns the current root object in parent chain """
-        return self.parent.dataroot
+        return self.parent.root
 
     @property
     def app(self):
         """ returns the cms application itself """
-        return self.dataroot.app
+        return self.root.app
 
     @property
     def parent(self):

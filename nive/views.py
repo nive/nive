@@ -284,7 +284,7 @@ class BaseView(object):
         """
         try:
             i = int(link)
-            o = self.context.dataroot.obj(i)
+            o = self.context.root.obj(i)
             if not o:
                 return link
             try:

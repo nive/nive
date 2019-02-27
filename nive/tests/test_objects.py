@@ -31,7 +31,7 @@ class objTest_db:
         o = r.obj(id)
         self.assertTrue(o)
         self.assertTrue(o.app)
-        self.assertTrue(o.dataroot)
+        self.assertTrue(o.root)
         self.assertTrue(o.db)
         self.assertTrue(o.IsRoot()==False)
         self.assertTrue(o.GetParents())

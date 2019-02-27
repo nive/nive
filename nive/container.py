@@ -97,7 +97,7 @@ class ContainerRead(Events):
         parameter["pool_unitref"] = self.id
         sort = kw.get("sort", self.defaultSort)
         fields = ["id", "pool_datatbl", "pool_dataref", "pool_type"]
-        root = self.dataroot
+        root = self.root
         if kw.get("queryRestraints") != False:
             parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
         objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
@@ -154,7 +154,7 @@ class ContainerRead(Events):
         if not fields:
             # lookup meta list default fields
             fields = self.app.configuration.listDefault
-        root = self.dataroot
+        root = self.root
         parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
         objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
                                          sort=sort)
@@ -177,7 +177,7 @@ class ContainerRead(Events):
         parameter["id"] = ids
         parameter["pool_unitref"] = self.id
         operators["id"] = "IN"
-        root = self.dataroot
+        root = self.root
         parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
         objects = root.search.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
         ids = [c["id"] for c in objects]
@@ -705,7 +705,7 @@ class Root(ContainerRead, ContainerWrite):
     # Properties -----------------------------------------------------------
 
     @property
-    def dataroot(self):
+    def root(self):
         """ this will return itself. Used for object compatibility. """
         return self
 
@@ -939,7 +939,7 @@ class ContainerFactory(object):
             # check restraints
             qr = kw.get("queryRestraints", None)
             if qr != False:
-                root = obj.dataroot
+                root = obj.root
                 p, o = root.ObjQueryRestraints(obj)
                 p["id"] = id
                 p["pool_unitref"] = obj.id

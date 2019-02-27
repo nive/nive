@@ -35,7 +35,7 @@ class FilenameLookup(object):
             name = id
             id = 0
             if name:
-                id = self.dataroot.search.FilenameToID(name, self.id)
+                id = self.root.search.FilenameToID(name, self.id)
             if not id:
                 raise KeyError(id)
         o = self.GetObj(id)

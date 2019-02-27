@@ -392,7 +392,7 @@ class containerTest_db:
         r.Close()
         r.app
         r.db
-        r.dataroot
+        r.root
         r.GetID()
         r.GetTypeID()
         r.GetTypeName()
@@ -420,7 +420,7 @@ class containerTest_db:
         #root
         o1.app
         o1.db
-        o1.dataroot
+        o1.root
         o1.GetID()
         o1.GetTypeID()
         o1.GetTypeName()

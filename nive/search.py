@@ -118,7 +118,7 @@ class Search(object):
             
             fields = ["id", "title", "pool_type"]
             parameter["pool_unitref"] = self.id
-            records = self.dataroot.search.Select(parameter=parameter, fields=fields)
+            records = self.root.search.Select(parameter=parameter, fields=fields)
         
         returns records as list
         """
@@ -182,7 +182,7 @@ class Search(object):
             fields = ["id", "title", "pool_type"]
             parameter = {"pool_unitref": self.id}
             operators = {"pool_type": "!="}
-            records = self.dataroot.search.SelectDict("image",
+            records = self.root.search.SelectDict("image",
                                                parameter=parameter, 
                                                fields=fields, 
                                                operators=operators)
