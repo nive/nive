@@ -1,3 +1,15 @@
+1.3.1
+-----
+- object and container class hirarchy, imports and subclassing refactored (removed nive.components.baseobjects)
+- seperated factory, search and workflow code. Acceess functions via properties .factory, .search, .workflow
+- seperated application configuration and registry code. Access via .registration and .configurationQuery
+- moved nive.forms to nive.components.reform.forms
+- app.root() changed to property app.root
+- nive.adminview moved to nive.components.adminview
+
+----------------------------------------------------------------------------------------
+Python 3.7 refactor. removed python 2 compatibility
+----------------------------------------------------------------------------------------
 
 1.0rc1
 ------
