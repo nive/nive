@@ -15,7 +15,7 @@ except:
 
 requires = [
     'zope.interface==4.6',
-    'pyramid==1.10',
+    'pyramid>=1.10.1',
     'pyramid_chameleon',
     'iso8601',
     'pytz',

@@ -66,9 +66,9 @@ class Invalid(Exception):
         ``msg`` attribute is iterable, it is returned.  If it is not
         iterable, a single-element list containing the ``msg`` value
         is returned."""
-        if hasattr(self.msg, '__iter__'):
-            return self.msg
-        return [self.msg]
+        if isinstance(self.msg, str):
+            return [self.msg]
+        return self.msg
 
     def add(self, exc, pos=None):
         """ Add a child exception; ``exc`` must be an instance of
