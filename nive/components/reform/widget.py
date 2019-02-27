@@ -607,12 +607,12 @@ class RichTextWidget(TextInputWidget):
 
         # Style formats
         "style_formats" : [
-            {"title" : _(u"Header 1"), "block" : "h1"},
-            {"title" : _(u"Header 2"), "block" : "h2"},
-            {"title" : _(u"Header 3"), "block" : "h3"},
-            {"title" : _(u"Header 4"), "block" : "h4"},
-            {"title" : _(u"Text (p)"), "block" : "p"},
-            {"title" : _(u"Formatted (pre)"), "block" : "pre"},
+            {"title" : _("Header 1"), "block" : "h1"},
+            {"title" : _("Header 2"), "block" : "h2"},
+            {"title" : _("Header 3"), "block" : "h3"},
+            {"title" : _("Header 4"), "block" : "h4"},
+            {"title" : _("Text (p)"), "block" : "p"},
+            {"title" : _("Formatted (pre)"), "block" : "pre"},
         ],
 
         # Content CSS (should be your site CSS)
@@ -651,7 +651,7 @@ class RichTextWidget(TextInputWidget):
                 if isinstance(opt, dict):
                     opt["elements"] = field.oid
                     return json.dumps(opt)
-                return opt % {u"oid": field.oid}
+                return opt % {"oid": field.oid}
 
         # set editor width and height for default options
         opt = copy.deepcopy(self.options)
@@ -1493,7 +1493,7 @@ class ResourceRegistry(object):
         :meth:`reform.Field.get_widget_requirements`).  The dictionary
         will be a mapping from resource type (``js`` and ``css`` are
         both keys in the dictionary) to a list of relative resource
-        paths.  Each path is relative to wherever you've mounted
+        paths.  Each path is relative to wherever yo've mounted
         Deform's ``static`` directory in your web server.  You can use
         the paths for each resource type to inject CSS and Javascript
         on-demand into the head of dynamic pages that render Deform

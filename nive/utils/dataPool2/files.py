@@ -188,7 +188,7 @@ class File(object):
         
         newPath = DvPath(self._CreatePath(self.filekey, self.filename))
         tempPath = DvPath(str(newPath))
-        tempPath.SetName(u"_temp_" + str(uuid.uuid4()))
+        tempPath.SetName("_temp_" + str(uuid.uuid4()))
         tempPath.SetExtension(newPath.GetExtension())
 
         if tempPath.Exists():
@@ -284,7 +284,7 @@ class File(object):
         Get the physical path of the file. Checks the database.
         """
         if self.tempfile or not self.path:
-            return u""
+            return ""
         root = str(self.fileentry().pool.root)
         if absolute and self.path[:len(root)] != root:
             path = DvPath(root)
@@ -305,7 +305,7 @@ class File(object):
         aP.AppendDirectory(self.fileentry().pool._GetDirectory(self.fileentry().id))
         aP.AppendSeperator()
 
-        aP.SetName(u"%06d_%s_" % (self.fileentry().id, key))
+        aP.SetName("%06d_%s_" % (self.fileentry().id, key))
         aP.SetExtension(DvPath(filename).GetExtension())
         return aP.GetStr()
 
@@ -335,9 +335,9 @@ class FileManager(object):
     """
 
     DirectoryCnt = -4                 # directory id range limit
-    FileTable = u"pool_files"    # file table name
-    FileTableFields = (u"id", u"fileid", u"filekey", u"path", u"filename", u"size", u"extension", u"version")
-    Trashcan = u"_trashcan"
+    FileTable = "pool_files"    # file table name
+    FileTableFields = ("id", "fileid", "filekey", "path", "filename", "size", "extension", "version")
+    Trashcan = "_trashcan"
     
     def GetFileClass(self):
         """
@@ -351,7 +351,7 @@ class FileManager(object):
         """
         self.root = DvPath()
         self.root.SetStr(root)
-        if root == u"":
+        if root == "":
             return
         self.root.AppendSeperator()
         self.root.CreateDirectoriesExcp()
@@ -361,10 +361,10 @@ class FileManager(object):
         """
         search for filename
         """
-        return self.SearchFiles({u"filename": filename})
+        return self.SearchFiles({"filename": filename})
 
 
-    def SearchFiles(self, parameter, sort=u"filename", start=0, max=100, ascending = 1, **kw):
+    def SearchFiles(self, parameter, sort="filename", start=0, max=100, ascending = 1, **kw):
         """
         search files
         """
@@ -382,7 +382,7 @@ class FileManager(object):
         """
         Delete the file with the prop description
         """
-        files = self.SearchFiles({u"id":id}, sort=u"id")
+        files = self.SearchFiles({"id":id}, sort="id")
         if not files:
             return True
         entry = self.GetEntry(id, version=version)
@@ -390,7 +390,7 @@ class FileManager(object):
             file = self.GetFileClass()(filedict=f,fileentry=entry)
             file.delete()
         if len(files):
-            sql = u"delete from %s where id = %d" % (self.FileTable, id)
+            sql = "delete from %s where id = %d" % (self.FileTable, id)
             self.Query(sql, cursor=cursor, getResult=False)
         return True
 
@@ -401,7 +401,7 @@ class FileManager(object):
         """
         construct directory path without root
         """
-        return (u"%06d" % (id))[self.DirectoryCnt:-2] + u"00/" + (u"%06d" % (id))[self.DirectoryCnt+2:]
+        return ("%06d" % (id))[self.DirectoryCnt:-2] + "00/" + ("%06d" % (id))[self.DirectoryCnt+2:]
 
 
     def _MoveToTrashcan(self, path, id):
@@ -445,8 +445,8 @@ class FileEntry(object):
         """
         if not parameter:
             parameter = {}
-        parameter[u"id"] = self.id
-        operators={u"filekey":u"=", "filename": u"="}
+        parameter["id"] = self.id
+        operators={"filekey":"=", "filename": "="}
         sql, values = self.pool.FmtSQLSelect(self.pool.FileTableFields, 
                                              parameter, 
                                              dataTable=self.pool.FileTable, 
@@ -467,7 +467,7 @@ class FileEntry(object):
         """
         return all existing file keys as list
         """
-        sql = u"select filekey from %s where id = %d group by filekey" % (self.pool.FileTable, self.id)
+        sql = "select filekey from %s where id = %d group by filekey" % (self.pool.FileTable, self.id)
         keys = self.pool.Query(sql)
         return [i[0] for i in keys]
 
@@ -480,9 +480,9 @@ class FileEntry(object):
         if not key:
             return None
         if fileid!=None:
-            parameter = {u"fileid":fileid}
+            parameter = {"fileid":fileid}
         else:
-            parameter = {u"filekey": key}
+            parameter = {"filekey": key}
         files = self.Files(parameter, loadFileData=loadFileData)
         if not files:
             return None
@@ -504,7 +504,7 @@ class FileEntry(object):
         Store the file under key. File can either be a path, dictionary with file informations 
         or a File object.
         """
-        if key in (u"", None):
+        if key in ("", None):
             raise ValueError("File key invalid")
 
         # convert to File object
@@ -579,7 +579,7 @@ class FileEntry(object):
             return False
         if not file.delete():
             return False
-        sql = u"delete from %s where fileid = %d" % (self.pool.FileTable, file.fileid)
+        sql = "delete from %s where fileid = %d" % (self.pool.FileTable, file.fileid)
         self.pool.Query(sql, getResult=False)
         return True
 
@@ -593,7 +593,7 @@ class FileEntry(object):
         if not file:
             return False
         data = {"filename": filename}
-        return self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, idColumn=u"fileid")
+        return self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, idColumn="fileid")
 
 
     # internal --------------------------------------------------------------------
@@ -610,10 +610,10 @@ class FileEntry(object):
             "size": file.size
         }
         if file.fileid:
-            file.fileid = self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, cursor=cursor, idColumn=u"fileid")
+            file.fileid = self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, cursor=cursor, idColumn="fileid")
         else:
             data["id"] = self.id
-            data, file.fileid = self.pool.InsertFields(self.pool.FileTable, data, cursor=cursor, idColumn=u"fileid")
+            data, file.fileid = self.pool.InsertFields(self.pool.FileTable, data, cursor=cursor, idColumn="fileid")
         return True
 
 
@@ -632,7 +632,7 @@ class FileEntry(object):
 
     def _RelativePath(self, path):
         p = path[len(str(self.pool.root)):]
-        p = p.replace(u"\\", u"/")
+        p = p.replace("\\", "/")
         return p
 
 

@@ -24,7 +24,7 @@ import collections
 #@nive_module
 configuration = ModuleConf(
     id = "reformed",
-    name = u"Form widgets and resources",
+    name = "Form widgets and resources",
     context = "nive.components.reform.reformed",
     views = (ViewModuleConf(static="nive.components.reform:static",id="reform"),),
 )
@@ -118,7 +118,7 @@ def SchemaFactory(form, fields, actions, force=False):
     for action in actions:
         if action.get("hidden"):
             continue
-        buttons.append(Button(name=u"%s%s"%(action.get("id"), form.actionPostfix), 
+        buttons.append(Button(name="%s%s"%(action.get("id"), form.actionPostfix), 
                               title=action.get("name"), 
                               action=action, 
                               cls=action.get("cls", "btn submit")))
@@ -209,7 +209,7 @@ def list_node(field, kw, kwWidget, form):
     if field.settings and field.settings.get("addempty"):
         # copy the list and add empty entry
         v = list(v)
-        v.insert(0,{"id":u"","name":u""})
+        v.insert(0,{"id":"","name":""})
     if not "widget" in kw:
         values = [(a["id"],a["name"]) for a in v]
         kw["widget"] = SelectWidget(values=values, **kwWidget)

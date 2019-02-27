@@ -42,7 +42,7 @@ class registryTest(unittest.TestCase):
 
     def test_init1(self):
         registry = Components()
-        #registerUtility(self, component=None, provided=None, name=u'', info=u'', event=True, factory=None)
+        #registerUtility(self, component=None, provided=None, name='', info='', event=True, factory=None)
 
         t2 = Test2()
         alsoProvides(t2, ITest2)
@@ -54,7 +54,7 @@ class registryTest(unittest.TestCase):
         registry.registerUtility(Test2(), name='testconf2')
         
         self.assertTrue(registry.queryUtility(ITestaaaa)==None)
-        self.assertTrue(registry.queryUtility(ITest, name=u'testconf'))
+        self.assertTrue(registry.queryUtility(ITest, name='testconf'))
         for u in registry.getUtilitiesFor(ITest):
             self.assertTrue(u)
         self.assertTrue(registry.getAllUtilitiesRegisteredFor(ITest))

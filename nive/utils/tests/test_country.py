@@ -30,9 +30,9 @@ class Country_data(unittest.TestCase):
             
             
     def test_get(self):
-        self.assertTrue(country_data.GetConf(u"DEU").get(u"code2")==u"DE")
-        self.assertTrue(country_data.GetConf(u"DE").get(u"code")==u"DEU")
-        self.assertTrue(country_data.GetConf(u"XX").get(u"code2")==None)
+        self.assertTrue(country_data.GetConf("DEU").get("code2")=="DE")
+        self.assertTrue(country_data.GetConf("DE").get("code")=="DEU")
+        self.assertTrue(country_data.GetConf("XX").get("code2")==None)
                         
         
 

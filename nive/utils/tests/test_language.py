@@ -22,7 +22,7 @@ class Langugage_data(unittest.TestCase):
             self.assertTrue(conf.get("code2"), lang)
             self.assertTrue(conf.get("name"), lang)
         conf = language_data.GetConf("xxx")
-        self.assertTrue(conf.get("code")==u"")
+        self.assertTrue(conf.get("code")=="")
         
     def test_codes(self):
         for conf in language_data.GetLanguages():
@@ -31,8 +31,8 @@ class Langugage_data(unittest.TestCase):
             
             
     def test_get(self):
-        self.assertTrue(language_data.GetConf(u"ger").get(u"code2")==u"de")
-        self.assertTrue(language_data.GetConf(u"de").get(u"code")==u"ger")
+        self.assertTrue(language_data.GetConf("ger").get("code2")=="de")
+        self.assertTrue(language_data.GetConf("de").get("code")=="ger")
                         
         
 

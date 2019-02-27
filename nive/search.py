@@ -127,7 +127,7 @@ class Search(object):
         fields = fields or ["id"]
         db = kw.get("db") or self.db
         if pool_type is None:
-            dataTable=kw.get("dataTable") or u"pool_meta"
+            dataTable=kw.get("dataTable") or "pool_meta"
             sql, values = db.FmtSQLSelect(fields, 
                                           parameter, 
                                           dataTable=dataTable, 
@@ -144,7 +144,7 @@ class Search(object):
             if "pool_type" not in parameter and not kw.get("dontAddType"):
                 parameter["pool_type"] = pool_type
             if "pool_type" not in operators:
-                operators["pool_type"] = u"="
+                operators["pool_type"] = "="
             typeInf = self.app.configurationQuery.GetObjectConf(pool_type)
             if not typeInf:
                 raise ConfigurationError(pool_type + " type not found")
@@ -206,8 +206,8 @@ class Search(object):
             raise TypeError("Too many fields")
         for i in range(len(fields)):
             name = fields[i]
-            if name.find(u" as ")!=-1:
-                name = name.split(u" as ")[1]
+            if name.find(" as ")!=-1:
+                name = name.split(" as ")[1]
                 fields[i] = name
         return [dict(list(zip(fields, r))) for r in recs]
 
@@ -258,7 +258,7 @@ class Search(object):
             if "sort" in kw:
                 del kw["sort"]
             if not kw.get("groupby"):
-                sql2, values = db.FmtSQLSelect([u"-count(*)"], 
+                sql2, values = db.FmtSQLSelect(["-count(*)"], 
                                                parameter=parameter, 
                                                operators=operators, 
                                                start=None, 
@@ -267,7 +267,7 @@ class Search(object):
                 val = db.Query(sql2, values)
                 total = val[0][0] if val else 0
             else:
-                sql2, values = db.FmtSQLSelect([u"-count(DISTINCT %s)" % (kw.get("groupby"))], 
+                sql2, values = db.FmtSQLSelect(["-count(DISTINCT %s)" % (kw.get("groupby"))], 
                                                parameter=parameter, 
                                                operators=operators, 
                                                start=None, 
@@ -332,9 +332,9 @@ class Search(object):
             if "sort" in kw:
                 del kw["sort"]
             if not kw.get("groupby"):
-                cntflds = [u"-count(*) as cnt"]
+                cntflds = ["-count(*) as cnt"]
             else:
-                cntflds = [u"-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
+                cntflds = ["-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
@@ -402,9 +402,9 @@ class Search(object):
             if "sort" in kw:
                 del kw["sort"]
             if not kw.get("groupby"):
-                cntflds = [u"-count(*) as cnt"]
+                cntflds = ["-count(*) as cnt"]
             else:
-                cntflds = [u"-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
+                cntflds = ["-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
@@ -444,17 +444,17 @@ class Search(object):
         operators = operators or {}
         parameter = parameter or {}
         if phrase==None:
-            phrase = u""
+            phrase = ""
         searchFor = phrase
         start, max, kw = self._SearchKWs(kw)
         # lookup field definitions
         fields, fldList, groupcol = self._PrepareFields(fields)
         removeID = self._HandleGroupByQueries(fields, fldList, groupcol, kw)
 
-        if phrase.find(u"*") == -1:
-            phrase = u"%%%s%%" % phrase
+        if phrase.find("*") == -1:
+            phrase = "%%%s%%" % phrase
         else:
-            phrase = phrase.replace(u"*", u"%")
+            phrase = phrase.replace("*", "%")
 
         db = self.db
         if not db:
@@ -480,9 +480,9 @@ class Search(object):
             if "sort" in kw:
                 del kw["sort"]
             if not kw.get("groupby"):
-                cntflds = [u"-count(*) as cnt"]
+                cntflds = ["-count(*) as cnt"]
             else:
-                cntflds = [u"-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
+                cntflds = ["-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
@@ -523,7 +523,7 @@ class Search(object):
         operators = operators or {}
         parameter = parameter or {}
         if phrase is None:
-            phrase = u""
+            phrase = ""
         searchFor = phrase
         start, max, kw = self._SearchKWs(kw)
         # lookup field definitions
@@ -532,10 +532,10 @@ class Search(object):
         self._HandleTypeJoins(pool_type, parameter, operators, kw)
 
         # fulltext wildcard
-        if phrase.find(u"*") == -1:
-            phrase = u"%%%s%%" % phrase
+        if phrase.find("*") == -1:
+            phrase = "%%%s%%" % phrase
         else:
-            phrase = phrase.replace(u"*", u"%")
+            phrase = phrase.replace("*", "%")
 
         typeInf = self.app.configurationQuery.GetObjectConf(pool_type)
         if not typeInf:
@@ -566,9 +566,9 @@ class Search(object):
             if "sort" in kw:
                 del kw["sort"]
             if not kw.get("groupby"):
-                cntflds = [u"-count(*) as cnt"]
+                cntflds = ["-count(*) as cnt"]
             else:
-                cntflds = [u"-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
+                cntflds = ["-count(DISTINCT %s) as cnt" % (kw.get("groupby"))]
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
@@ -626,7 +626,7 @@ class Search(object):
             ids.append(0)
         
         parameter["id"] = ids
-        operators["id"] = u"IN"
+        operators["id"] = "IN"
         result = self.Search(parameter=parameter, fields=fields, operators=operators, **kw)
 
         # merge result and files
@@ -719,7 +719,7 @@ class Search(object):
     def _HandleTypeJoins(self, pool_type, parameter, operators, kws):
         # set join type
         default_join = 0
-        if "jointype" not in kws or kws.get("jointype")==u"inner":
+        if "jointype" not in kws or kws.get("jointype")=="inner":
             default_join = 1
             if not kws.get("skiptype"):
                 parameter["pool_type"] = pool_type
@@ -727,7 +727,7 @@ class Search(object):
         if not operators:
             operators = {}
         if "pool_type" not in operators:
-            operators["pool_type"] = u"="
+            operators["pool_type"] = "="
         if not default_join:
             operators["jointype"] = kws.get("jointype")
         return default_join
@@ -739,7 +739,7 @@ class Search(object):
         if skipRender == True:
             skipRender = fldList
         elif not skipRender:
-            skipRender = (u"pool_type", u"pool_wfa", u"pool_wfp")
+            skipRender = ("pool_type", "pool_wfa", "pool_wfp")
         converter = FieldRenderer(self, skip=skipRender)
         return converter
     
@@ -747,10 +747,10 @@ class Search(object):
         # parse alias field names used in sql query
         p = 0
         for f in fldList:
-            if f[0] == u"-" and f.find(u" as ") != -1:
-                a = f.split(u" as ")[-1]
-                a = a.replace(u" ", u"")
-                a = a.replace(u")", u"")
+            if f[0] == "-" and f.find(" as ") != -1:
+                a = f.split(" as ")[-1]
+                a = a.replace(" ", "")
+                a = a.replace(")", "")
                 fldList[p] = a
             p += 1
         return fldList
@@ -762,7 +762,7 @@ class Search(object):
         for rec in records:
             rec2 = []
             for p in range(len(fields)):
-                value = db.structure._de(rec[p], fields[p][u"datatype"], fields[p])
+                value = db.structure._de(rec[p], fields[p]["datatype"], fields[p])
                 rec2.append(converter.Render(fields[p], value, False, **kws))
             items.append(dict(list(zip(fldList, rec2))))
         return items, len(items)
@@ -775,10 +775,10 @@ class Search(object):
         cache = {}
         for r in relations:
             # special cases: user lookup pool_createdby, pool_changedby
-            if r in (u"pool_createdby", u"pool_changedby"):
+            if r in ("pool_createdby", "pool_changedby"):
                 GetUser = self.app.portal.userdb.root.GetUser
                 for i in items:
-                    ref = u"user:"+i[r]
+                    ref = "user:"+i[r]
                     if ref in cache:
                         user = cache[ref]
                     else:
@@ -820,12 +820,12 @@ class Search(object):
 
     # Tree structure -----------------------------------------------------------
 
-    def GetTree(self, flds=None, sort=u"id", base=0, parameter=u""):
+    def GetTree(self, flds=None, sort="id", base=0, parameter=""):
         """
         Select list of all folders from db.
         
         returns the subtree
-        {'items': [{u'id': 354956L, 'ref1': 354954L, 'ref2': 354952L, ..., 'ref10': None, 'items': [...]}]
+        {'items': [{'id': 354956L, 'ref1': 354954L, 'ref2': 354952L, ..., 'ref10': None, 'items': [...]}]
         """
         if not flds:
             # lookup meta list default fields
@@ -867,10 +867,10 @@ class Search(object):
         parameter = parameter or {}
         if not sort:
             sort = name_field
-        if u"pool_type" not in parameter:
-            parameter[u"pool_type"] = pool_type
+        if "pool_type" not in parameter:
+            parameter["pool_type"] = pool_type
         recs = self.SelectDict(pool_type=pool_type, parameter=parameter, 
-                               fields=[u"id", u"pool_unitref", name_field+u" as name"], 
+                               fields=["id", "pool_unitref", name_field+" as name"], 
                                operators=operators, sort = sort)
         return recs
 
@@ -887,7 +887,7 @@ class Search(object):
         parameter = parameter or {}
         if not sort:
             sort = name_field
-        recs = self.SelectDict(parameter=parameter, fields=[u"id", u"pool_unitref", name_field+u" as name"], 
+        recs = self.SelectDict(parameter=parameter, fields=["id", "pool_unitref", name_field+" as name"], 
                                operators=operators, sort = sort)
         return recs
 
@@ -908,11 +908,11 @@ class Search(object):
         parameter = parameter or {}
         if not sort:
             sort = name_field
-        if u"pool_type" not in parameter:
-            parameter[u"pool_type"] = pool_type
+        if "pool_type" not in parameter:
+            parameter["pool_type"] = pool_type
         recs = self.SelectDict(pool_type=pool_type, 
                                parameter=parameter, 
-                               fields=[u"id", u"pool_unitref", name_field+u" as name"], 
+                               fields=["id", "pool_unitref", name_field+" as name"], 
                                operators=operators, 
                                #groupby=name_field, 
                                sort=sort)
@@ -932,7 +932,7 @@ class Search(object):
         if not sort:
             sort = name_field
         recs = self.SelectDict(parameter=parameter, 
-                               fields=[u"id", u"pool_unitref", name_field+u" as name"], 
+                               fields=["id", "pool_unitref", name_field+" as name"], 
                                operators=operators, 
                                #groupby=name_field, 
                                sort=sort)
@@ -951,9 +951,9 @@ class Search(object):
         operators = operators or {}
         parameter = parameter or {}
         if unitref is not None:
-            parameter[u"pool_unitref"] = unitref
-        parameter[u"pool_filename"] = filename
-        operators[u"pool_filename"] = u"="
+            parameter["pool_unitref"] = unitref
+        parameter["pool_filename"] = filename
+        operators["pool_filename"] = "="
         # lookup meta list default fields
         flds = self.app.configuration.listDefault
         recs = self.Select(parameter=parameter, fields=flds, operators=operators)
@@ -973,9 +973,9 @@ class Search(object):
         returns string
         """
         parameter={"id": id}
-        recs = self.Select(parameter=parameter, fields=[u"pool_filename"])
+        recs = self.Select(parameter=parameter, fields=["pool_filename"])
         if len(recs) == 0:
-            return u""
+            return ""
         return recs[0][0]
 
 
@@ -985,8 +985,8 @@ class Search(object):
 
         returns id
         """
-        parameter={u"pool_type": pool_type, u"pool_dataref": dataref}
-        recs = self.Select(parameter=parameter, fields=[u"id"])
+        parameter={"pool_type": pool_type, "pool_dataref": dataref}
+        recs = self.Select(parameter=parameter, fields=["id"])
         if len(recs) == 0:
             return 0
         return recs[0][0]
@@ -998,7 +998,7 @@ class Search(object):
 
         returns id
         """
-        recs = self.Select(fields=[u"-max(id)"])
+        recs = self.Select(fields=["-max(id)"])
         if len(recs) == 0:
             return 0
         return recs[0][0]
@@ -1006,7 +1006,7 @@ class Search(object):
 
     # References --------------------------------------------------------------------
 
-    def GetReferences(self, unitID, types=None, sort=u"id"):
+    def GetReferences(self, unitID, types=None, sort="id"):
         """
         Search for references in unit or unitlist fields of all objects.
         

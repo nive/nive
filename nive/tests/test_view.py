@@ -21,9 +21,9 @@ def getRequest():
 
 class viewModule(object):
     template = "nive.tests:index.pt"
-    templates = u"nive.tests:"
+    templates = "nive.tests:"
     parent = None
-    static = u"nive.tests:"
+    static = "nive.tests:"
     assets = (("jquery.js", "nive.components.adminview:static/mods/jquery.min.js"), ("another.css", "nive.components.adminview:static/adminview.css"))
 
 
@@ -179,7 +179,7 @@ class viewTest_db:
         self._loadApp(["nive.components.adminview.view"])
         self.app.Startup(self.config)
         #self.request = getRequest()
-        user = User(u"test")
+        user = User("test")
         r = self.app.root
         self.context = db_app.createObj1(r)
         self.context2 = db_app.createObj2(r)
@@ -187,7 +187,7 @@ class viewTest_db:
         self.context2.StoreFile("file2", db_app.file2_2, user=user)
 
     def tearDown(self):
-        user = User(u"test")
+        user = User("test")
         r = self.app.root
         r.Delete(self.context.id, user=user)
         r.Delete(self.context2.id, user=user)
@@ -253,12 +253,12 @@ class viewTest_db:
         view = BaseView(self.context2, self.request)
         
         self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=None, slot="")
-        self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=[u"aaa",u"bbb"], slot="")
-        self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=[u"aaa",u"bbb"], slot="test")
+        self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=["aaa","bbb"], slot="")
+        self.assertRaises(HTTPFound, view.Redirect, "nowhere", messages=["aaa","bbb"], slot="test")
         self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=None, slot="", raiseException=True)
-        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="", raiseException=True)
-        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=True)
-        self.assertTrue(view.Relocate("nowhere", messages=[u"aaa",u"bbb"], slot="test", raiseException=False)!=u"")
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=["aaa","bbb"], slot="", raiseException=True)
+        self.assertRaises(ExceptionalResponse, view.Relocate, "nowhere", messages=["aaa","bbb"], slot="test", raiseException=True)
+        self.assertTrue(view.Relocate("nowhere", messages=["aaa","bbb"], slot="test", raiseException=False)!="")
         view.ResetFlashMessages(slot="")
         view.ResetFlashMessages(slot="test")
 
@@ -389,8 +389,8 @@ class viewTest_db:
         view.GetFormValues()
         view.GetFormValues(method="POST")
         
-        self.assertTrue(view.FmtURLParam(**{u"aaa":123,u"bbb":u"qwertz"}))
-        self.assertTrue(view.FmtFormParam(**{u"aaa":123,u"bbb":u"qwertz"}))
+        self.assertTrue(view.FmtURLParam(**{"aaa":123,"bbb":"qwertz"}))
+        self.assertTrue(view.FmtFormParam(**{"aaa":123,"bbb":"qwertz"}))
 
 
 
@@ -425,10 +425,10 @@ class viewTest_db:
     def test_htmltag(self):
         view2 = BaseView(self.context, self.request)
         self.assertTrue(view2.FmtTag("div"))
-        self.assertTrue(view2.FmtTag("div")==u"<div></div>", view2.FmtTag("div"))
-        self.assertTrue(view2.FmtTag("div", id=0)==u"""<div id="0"></div>""")
-        self.assertTrue(view2.FmtTag("div", closeTag=None, id=0)==u"""<div id="0">""")
-        self.assertTrue(view2.FmtTag("div", closeTag="inline", id=0)==u"""<div id="0"/>""")
+        self.assertTrue(view2.FmtTag("div")=="<div></div>", view2.FmtTag("div"))
+        self.assertTrue(view2.FmtTag("div", id=0)=="""<div id="0"></div>""")
+        self.assertTrue(view2.FmtTag("div", closeTag=None, id=0)=="""<div id="0">""")
+        self.assertTrue(view2.FmtTag("div", closeTag="inline", id=0)=="""<div id="0"/>""")
         
 
 

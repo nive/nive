@@ -19,7 +19,7 @@ def sqlquery4(n):
     print("SQL Query filename (text index) result=all, sort=filename, operator=like: ",)
     t = time.time()
     for i in range(0,n):
-        files = pool.SearchFiles({u"filename": u"file1.txt"}, sort=u"filename", operators={u"fielname":u"like"})
+        files = pool.SearchFiles({"filename": "file1.txt"}, sort="filename", operators={"fielname":"like"})
     t2 = time.time()
 
     pool.Close()
@@ -35,7 +35,7 @@ def sqlquery5(n):
     print("SQL Query filename (text index), result=all, sort=id, operator==: ",)
     t = time.time()
     for i in range(0,n):
-        files = pool.SearchFiles({u"filename": u"file1.txt"}, sort=u"id", operators={u"fielname":u"="})
+        files = pool.SearchFiles({"filename": "file1.txt"}, sort="id", operators={"fielname":"="})
     t2 = time.time()
 
     pool.Close()
@@ -51,7 +51,7 @@ def sqlquery6(n):
     print("SQL Query filename (text index) no result: ",)
     t = time.time()
     for i in range(0,n):
-        files = pool.SearchFiles({u"filename": u"filexxx.txt"}, sort=u"filename", operators={u"fielname":u"like"})
+        files = pool.SearchFiles({"filename": "filexxx.txt"}, sort="filename", operators={"fielname":"like"})
     t2 = time.time()
 
     pool.Close()

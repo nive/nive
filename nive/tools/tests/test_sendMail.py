@@ -89,24 +89,24 @@ class SendMailTest2_db(__local.DefaultTestCase):
     def test_message(self):
         t = self.app.GetTool("sendMail")
         values = dict(contentType="text/html;charset=utf-8",
-                      body=u"aaaaa",
-                      fromName=u"uuuuu",
-                      fromMail=u"uuu@aaa.dd",
-                      to=[u"ooo", u"ggg"],
-                      cc=[u"ooo", u"ggg"],
-                      bcc=[u"ooo", u"ggg"],
-                      sender=u"mmmm",
-                      replyTo=u"uoah",
-                      subject=u"My mail")
+                      body="aaaaa",
+                      fromName="uuuu",
+                      fromMail="uuu@aaa.dd",
+                      to=["ooo", "ggg"],
+                      cc=["ooo", "ggg"],
+                      bcc=["ooo", "ggg"],
+                      sender="mmmm",
+                      replyTo="uoah",
+                      subject="My mail")
         m = t._PrepareMessage(**values)
         self.assertTrue(str(m))
 
         values = dict(contentType="text/html;charset=utf-8",
-                      body=u"aaaaa",
-                      fromMail=u"uuu@aaa.dd",
-                      to=u"ooo",
-                      cc=u"ooo",
-                      bcc=u"ooo",
-                      subject=u"My mail")
+                      body="aaaaa",
+                      fromMail="uuu@aaa.dd",
+                      to="ooo",
+                      cc="ooo",
+                      bcc="ooo",
+                      subject="My mail")
         m = t._PrepareMessage(**values)
         self.assertTrue(str(m))

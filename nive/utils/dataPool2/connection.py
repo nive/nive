@@ -30,7 +30,7 @@ class Connection(object):
     dbName = database name
     """
     
-    placeholder = u"%s"
+    placeholder = "%s"
 
     def __init__(self, config = None, connectNow = True):
         self.configuration=config
@@ -129,9 +129,9 @@ class Connection(object):
         if isinstance(param, (int, float)):
             return str(param)
         d = str(param)
-        if d.find(u'"')!=-1:
-            d = d.replace(u'"',u'\\"')
-        return u'"%s"'%d
+        if d.find('"')!=-1:
+            d = d.replace('"','\\"')
+        return '"%s"'%d
 
 
     def GetDBManager(self):

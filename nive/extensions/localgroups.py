@@ -18,7 +18,7 @@ from nive.definitions import implementer, ILocalGroups
 class LocalGroups(object):
     """
     """
-    _owner = u"group:owner"
+    _owner = "group:owner"
     _secid = None
 
     def Init(self):
@@ -148,7 +148,7 @@ def SetupLocalGroups(app, pyramidConfig):
     
 configuration = ModuleConf(
     id = "localGroups",
-    name = u"Local Group assignment for objects and roots",
+    name = "Local Group assignment for objects and roots",
     context = "nive.extensions.localgroups",
     events = (Conf(event="startRegistration", callback=SetupLocalGroups),),
 )

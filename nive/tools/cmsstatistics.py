@@ -16,7 +16,7 @@ from nive.utils.utils import FormatBytesForDisplay
 configuration = ToolConf(
     id = "cmsstatistics",
     context = "nive.tools.cmsstatistics.cmsstatistics",
-    name = _(u"CMS Statistics"),
+    name = _("CMS Statistics"),
     description = _("This function provides a short summary of elements and data contained in the website."),
     apply = (IApplication,),
     mimetype = "text/html",
@@ -43,30 +43,30 @@ class cmsstatistics(Tool):
         conn = datapool.connection
         c = conn.cursor()
 
-        self.stream.write(u"<table class='table table-bordered'>\n")
+        self.stream.write("<table class='table table-bordered'>\n")
 
         sql = "select count(*) from pool_meta"
         c.execute(sql)
         rec = c.fetchall()
-        self.stream.write(localizer.translate(_(u"<tr><th>Elements in total</th><td>${value}</td></tr>\n", mapping={u"value": rec[0][0]})))
+        self.stream.write(localizer.translate(_("<tr><th>Elements in total</th><td>${value}</td></tr>\n", mapping={"value": rec[0][0]})))
 
         sql = "select count(*) from pool_files"
         c.execute(sql)
         rec = c.fetchall()
-        self.stream.write(localizer.translate(_(u"<tr><th>Physical files</th><td>${value}</td></tr>\n", mapping={u"value": rec[0][0]})))
+        self.stream.write(localizer.translate(_("<tr><th>Physical files</th><td>${value}</td></tr>\n", mapping={"value": rec[0][0]})))
 
         sql = "select sum(size) from pool_files"
         c.execute(sql)
         rec = c.fetchall()
-        self.stream.write(localizer.translate(_(u"<tr><th>Physical files size</th><td>${value}</td></tr>\n", mapping={u"value": FormatBytesForDisplay(rec[0][0])})))
+        self.stream.write(localizer.translate(_("<tr><th>Physical files size</th><td>${value}</td></tr>\n", mapping={"value": FormatBytesForDisplay(rec[0][0])})))
 
         for t in app.configurationQuery.GetAllObjectConfs():
             sql = "select count(*) from pool_meta where pool_type='%s'" % t.id
             c.execute(sql)
             rec = c.fetchall()
-            self.stream.write(localizer.translate(_(u"<tr><th>${name}</th><td>${value}</td></tr>\n", mapping={u"name": t.name, u"value": rec[0][0]})))
+            self.stream.write(localizer.translate(_("<tr><th>${name}</th><td>${value}</td></tr>\n", mapping={"name": t.name, "value": rec[0][0]})))
         
-        self.stream.write(u"</table>\n")
+        self.stream.write("</table>\n")
 
         c.close()
         return 1

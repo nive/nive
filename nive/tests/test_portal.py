@@ -62,8 +62,8 @@ class portalTest(unittest.TestCase):
         except OperationalError:
             pass
         self.assertTrue(len(self.portal.GetApps())==2)
-        self.assertTrue(self.portal.GetGroups(sort=u"id", visibleOnly=False))
-        self.assertTrue(self.portal.GetGroups(sort=u"name", visibleOnly=True))
+        self.assertTrue(self.portal.GetGroups(sort="id", visibleOnly=False))
+        self.assertTrue(self.portal.GetGroups(sort="name", visibleOnly=True))
         self.assertTrue(self.portal.portal)
 
 

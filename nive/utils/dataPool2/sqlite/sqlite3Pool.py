@@ -44,7 +44,7 @@ class Sqlite3Connection(Connection):
         self.db = None
         self.configuration = config
         
-        self.placeholder = u"?"
+        self.placeholder = "?"
         self.check_same_thread = False
         if connectNow:
             self.connect()
@@ -96,9 +96,9 @@ class Sqlite3Connection(Connection):
         if isinstance(param, (int, float)):
             return str(param)
         d = str(param)
-        if d.find(u'"')!=-1:
-            d = d.replace(u'"',u'\\"')
-        return u'"%s"'%d
+        if d.find('"')!=-1:
+            d = d.replace('"','\\"')
+        return '"%s"'%d
 
 
     def PrivateConnection(self):
@@ -148,7 +148,7 @@ class Sqlite3(FileManager, Base):
     _EmptyValues = []
 
 
-    def GetContainedIDs(self, base=0, sort=u"title", parameter=u""):
+    def GetContainedIDs(self, base=0, sort="title", parameter=""):
         """
         select list of all entries
         id needs to be first field, pool_unitref second
@@ -160,21 +160,21 @@ class Sqlite3(FileManager, Base):
                 ids.append(e[0])
                 ids = _SelectIDs(e[0], ids, sql, cursor)
             return ids
-        parameter = u"where pool_unitref=%d " + parameter
-        sql = u"""select id from %s %s order by %s""" % (self.MetaTable, parameter, sort)
+        parameter = "where pool_unitref=%d " + parameter
+        sql = """select id from %s %s order by %s""" % (self.MetaTable, parameter, sort)
         cursor = self.connection.cursor()
         ids = _SelectIDs(base, [], sql, cursor)
         cursor.close()
         return ids
 
 
-    def GetTree(self, flds=None, sort=u"title", base=0, parameter=u""):
+    def GetTree(self, flds=None, sort="title", base=0, parameter=""):
         """
         select list of all entries
         id needs to be first field if flds
         """
         if flds is None:
-            flds = [u"id"]
+            flds = ["id"]
         def _Select(base, tree, flds, sql, cursor):
             cursor.execute(sql%(base))
             entries = cursor.fetchall()
@@ -185,10 +185,10 @@ class Sqlite3(FileManager, Base):
                 data = _Select(e[0], data, flds, sql, cursor)
             return tree
 
-        if parameter != u"":
-            parameter = u"and " + parameter
-        parameter = u"where pool_unitref=%d " + parameter
-        sql = u"""select %s from %s %s order by %s""" % (ConvertListToStr(flds), self.MetaTable, parameter, sort)
+        if parameter != "":
+            parameter = "and " + parameter
+        parameter = "where pool_unitref=%d " + parameter
+        sql = """select %s from %s %s order by %s""" % (ConvertListToStr(flds), self.MetaTable, parameter, sort)
         cursor = self.connection.cursor()
         tree = {"id":base, "items":[]}
         tree = _Select(base, tree, flds, sql, cursor)
@@ -197,11 +197,11 @@ class Sqlite3(FileManager, Base):
 
 
     def _GetInsertIDValue(self, cursor):
-        cursor.execute(u"SELECT last_insert_rowid()")
+        cursor.execute("SELECT last_insert_rowid()")
         return cursor.fetchone()[0]
 
                
-    def _CreateNewID(self, table = u"", dataTbl = None):
+    def _CreateNewID(self, table = "", dataTbl = None):
         #
         aC = self.connection.cursor()
         if table == "":
@@ -212,32 +212,32 @@ class Sqlite3(FileManager, Base):
 
             # sql insert empty rec in data table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s (id) VALUES(null)" % (dataTbl)+"\r\n", self._debug, self._log, name=self.name)
-            aC.execute(u"INSERT INTO %s (id) VALUES(null)" % (dataTbl))
+                STACKF(0,"INSERT INTO %s (id) VALUES(null)" % (dataTbl)+"\r\n", self._debug, self._log, name=self.name)
+            aC.execute("INSERT INTO %s (id) VALUES(null)" % (dataTbl))
             # sql get id of created rec
             if self._debug:
-                STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log, name=self.name)
-            aC.execute(u"SELECT last_insert_rowid()")
+                STACKF(0,"SELECT last_insert_rowid()\r\n",0, self._log, name=self.name)
+            aC.execute("SELECT last_insert_rowid()")
             dataref = aC.fetchone()[0]
             # sql insert empty rec in meta table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log, name=self.name)
-            aC.execute(u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
+                STACKF(0,"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log, name=self.name)
+            aC.execute("INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
             if self._debug:
-                STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log, name=self.name)
-            aC.execute(u"SELECT last_insert_rowid()")
+                STACKF(0,"SELECT last_insert_rowid()\r\n",0, self._log, name=self.name)
+            aC.execute("SELECT last_insert_rowid()")
             aID = aC.fetchone()[0]
             aC.close()
             return aID, dataref
 
         # sql insert empty rec in meta table
         if self._debug:
-            STACKF(0,u"INSERT INTO %s (id) VALUES(null)" % (table)+"\r\n",self._debug, self._log,name=self.name)
-        aC.execute(u"INSERT INTO %s (id) VALUES(null)" % (table))
+            STACKF(0,"INSERT INTO %s (id) VALUES(null)" % (table)+"\r\n",self._debug, self._log,name=self.name)
+        aC.execute("INSERT INTO %s (id) VALUES(null)" % (table))
         # sql get id of created rec
         if self._debug:
-            STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
-        aC.execute(u"SELECT last_insert_rowid()")
+            STACKF(0,"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
+        aC.execute("SELECT last_insert_rowid()")
         aID = aC.fetchone()[0]
         aC.close()
         return aID, 0
@@ -253,20 +253,20 @@ class Sqlite3(FileManager, Base):
 
         # sql insert empty rec in data table
         if self._debug:
-            STACKF(0,u"INSERT INTO %s (id) VALUES(null)" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
-        aC.execute(u"INSERT INTO %s (id) VALUES(null)" % (dataTbl))
+            STACKF(0,"INSERT INTO %s (id) VALUES(null)" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
+        aC.execute("INSERT INTO %s (id) VALUES(null)" % (dataTbl))
         # sql get id of created rec
         if self._debug:
-            STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
-        aC.execute(u"SELECT last_insert_rowid()")
+            STACKF(0,"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
+        aC.execute("SELECT last_insert_rowid()")
         dataref = aC.fetchone()[0]
         # sql insert empty rec in meta table
         if self._debug:
-            STACKF(0,u"INSERT INTO %s (id, pool_datatbl, pool_dataref) VALUES (%d, '%s', %s)"% (self.MetaTable, id, dataTbl, dataref),0, self._log,name=self.name)
-        aC.execute(u"INSERT INTO %s (id, pool_datatbl, pool_dataref) VALUES (%d, '%s', %s)"% (self.MetaTable, id, dataTbl, dataref))
+            STACKF(0,"INSERT INTO %s (id, pool_datatbl, pool_dataref) VALUES (%d, '%s', %s)"% (self.MetaTable, id, dataTbl, dataref),0, self._log,name=self.name)
+        aC.execute("INSERT INTO %s (id, pool_datatbl, pool_dataref) VALUES (%d, '%s', %s)"% (self.MetaTable, id, dataTbl, dataref))
         if self._debug:
-            STACKF(0,u"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
-        aC.execute(u"SELECT last_insert_rowid()")
+            STACKF(0,"SELECT last_insert_rowid()\r\n",0, self._log,name=self.name)
+        aC.execute("SELECT last_insert_rowid()")
         aID = aC.fetchone()[0]
         aC.close()
         return id, dataref
@@ -275,7 +275,7 @@ class Sqlite3(FileManager, Base):
 
     def _FmtListForQuery(self, values):
         FmtParam = self.connection.FmtParam
-        return u",".join([FmtParam(v) for v in values])
+        return ",".join([FmtParam(v) for v in values])
 
     def _GetPoolEntry(self, id, **kw):
         try:

@@ -174,7 +174,7 @@ class DbPersistence(PersistentConf):
 
 dbPersistenceConfiguration = ModuleConf(
     id = "persistence",
-    name = u"Configuration persistence extension",
+    name = "Configuration persistence extension",
     context = DbPersistence,
     events = (Conf(event="finishRegistration", callback=LoadStoredConfValues),),
 )

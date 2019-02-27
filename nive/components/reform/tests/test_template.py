@@ -81,7 +81,7 @@ class TestZPTRendererFactory(unittest.TestCase):
         default_dir = resource_filename('nive.components.reform', 'tests/fixtures/')
         renderer = self._makeOne((default_dir,))
         result = renderer('test')
-        self.assertEqual(result.strip(), u'<div>Test</div>')
+        self.assertEqual(result.strip(), '<div>Test</div>')
 
     def test_it(self):
         import os
@@ -112,7 +112,7 @@ class Test_default_renderer(unittest.TestCase):
         result = re.sub(' />', '/>', result)
         result = result.strip()
         self.assertEqual(result,
-                         u'<input type="checkbox" name="name" value="true" '
+                         '<input type="checkbox" name="name" value="true" '
                          'id="oid"> <label for="oid">title</label>')
 
 class DummyWidget(object):

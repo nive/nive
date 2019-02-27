@@ -55,7 +55,7 @@ class ToolTest_db:
         self.assertTrue(r)
 
     def test_toolobj(self):
-        user = User(u"test")
+        user = User("test")
         r = self.app.root
         o = db_app.createObj1(r)
         t = o.GetTool("nive.tools.example")

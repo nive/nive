@@ -191,8 +191,8 @@ class ConfTest(unittest.TestCase):
 
     def test_obj5(self, **kw):
         testconf = ViewModuleConf(
-            id = u"viewing",
-            name = u"Oh",
+            id = "viewing",
+            name = "Oh",
             static = "here:static",
             containment = "nive.tests.test_definitions.ConfTest",
             widgets = (WidgetConf(apply=(IObject,),viewmapper="test",widgetType=IWidgetConf,id="test"),),
@@ -223,8 +223,8 @@ class ConfTest(unittest.TestCase):
 
     def test_obj7(self, **kw):
         testconf = ToolConf(
-            id = u"tool",
-            name = u"Tool",
+            id = "tool",
+            name = "Tool",
             context = "nive.tests.test_definitions.ConfTest",
         )
         self.assertTrue(testconf.id=="tool")
@@ -302,14 +302,14 @@ class ConfTest(unittest.TestCase):
             logoutUrl = "/userdb/udb/logout",
             accountUrl = "/userdb/udb/update",
             favicon = "",
-            robots = u""
+            robots = ""
         )
         self.assertTrue(testconf.portalDefaultUrl=="/website/")
         self.assertTrue(testconf.loginUrl == "/userdb/udb/login")
         self.assertTrue(testconf.forbiddenUrl == "/userdb/udb/login")
         self.assertTrue(testconf.logoutUrl == "/userdb/udb/logout")
         self.assertTrue(testconf.accountUrl == "/userdb/udb/update")
-        self.assertTrue(testconf.robots == u"")
+        self.assertTrue(testconf.robots == "")
         self.assertTrue(len(testconf.uid()))
         str(testconf) # may be empty
         self.assertTrue(repr(testconf))

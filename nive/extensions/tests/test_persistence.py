@@ -55,9 +55,9 @@ class tdbPersistence(__local.DefaultTestCase):
     def test_load(self):
         storage = self.app.NewModule(IModuleConf, "persistence")
         self.assertTrue(storage)
-        storage(self.app, Conf(id="test")).Save({"title":u"öäüß", "something": 123})
+        storage(self.app, Conf(id="test")).Save({"title":"öäüß", "something": 123})
 
         values = Conf(id="test")
         storage(self.app, values).Load()
         self.assertTrue(values["something"] == 123)
-        self.assertTrue(values["title"] == u"öäüß")
+        self.assertTrue(values["title"] == "öäüß")

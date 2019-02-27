@@ -9,7 +9,7 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "gcdump",
     context = "nive.tools.gcdump.gcdump",
-    name = _(u"Object dump"),
+    name = _("Object dump"),
     description = _("This function dumps a list of all objects found in memory."),
     apply = (IApplication,),
     data = [],
@@ -50,9 +50,9 @@ def DumpObjects(stream):
     # _getr does the real work.
     _getr(gcl, olist, seen)
 
-    stream.write(u"Number of objects found: ")
+    stream.write("Number of objects found: ")
     stream.write(str(len(olist)))
-    stream.write(u"<br>\n")
+    stream.write("<br>\n")
     #stream.write(olist[0].__dict__)
     trefs = {}
     for o in olist:#[100000:100200]:

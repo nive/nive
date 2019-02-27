@@ -35,7 +35,7 @@ class Wrapper(object):
         return ["_temp_", "_content_", "_entry_"]
     
     def __setitem__(self, key, value):
-        if key in (u"id", u"pool_datatbl", u"pool_dataref"):
+        if key in ("id", "pool_datatbl", "pool_dataref"):
             return
         self._temp_[key] = self._entry_().DeserializeValue(key, value, self.meta)
 
@@ -278,7 +278,7 @@ class PoolStructure(object):
     prefix.
 
     """
-    MetaTable = u"pool_meta"
+    MetaTable = "pool_meta"
     
     def __init__(self, structure=None, fieldtypes=None, stdMeta=None, codepage="utf-8", **kw):
         #
@@ -296,10 +296,10 @@ class PoolStructure(object):
         self.codepage = codepage
         meta = list(s[self.MetaTable])
         # add default fields
-        if not u"pool_dataref" in s[self.MetaTable]:
-            meta.append(u"pool_dataref")
-        if not u"pool_datatbl" in s[self.MetaTable]:
-            meta.append(u"pool_datatbl")
+        if not "pool_dataref" in s[self.MetaTable]:
+            meta.append("pool_dataref")
+        if not "pool_datatbl" in s[self.MetaTable]:
+            meta.append("pool_datatbl")
         s[self.MetaTable] = tuple(meta)
         for k in s:
             s[k] = tuple(s[k])
@@ -368,18 +368,18 @@ class PoolStructure(object):
         if not fieldtype:
             # no datatype information set
             if isinstance(value, datetime):
-                return value.strftime(u"%Y-%m-%d %H:%M:%S")
+                return value.strftime("%Y-%m-%d %H:%M:%S")
             elif isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:
                     value = [str(v, self.codepage) for v in value]
-                value = u"_json_"+json.dumps(value)
+                value = "_json_"+json.dumps(value)
             elif isinstance(value, bytes):
                 value = str(value, self.codepage)
             return value
         
         if isinstance(fieldtype, dict):
-            fieldtype = fieldtype[u"datatype"]
+            fieldtype = fieldtype["datatype"]
             
         # call serialize callback function
         if fieldtype in self.serializeCallbacks:
@@ -405,7 +405,7 @@ class PoolStructure(object):
         
         elif fieldtype == "time":
             if isinstance(value, (float,int)):
-                value = str(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
+                value = str(datetime.fromtimestamp(value).strftime("HH:MM:SS.%f"))
             elif value is None:
                 pass
             elif not isinstance(value, str):
@@ -423,12 +423,12 @@ class PoolStructure(object):
                 if value:
                     value = value[0]
                 else:
-                    value = u""
+                    value = ""
 
         elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
             # to json formatted list
             if not value:
-                value = u""
+                value = ""
             elif isinstance(value, str):
                 value = [value]
             if isinstance(value, (list, tuple)):
@@ -439,9 +439,9 @@ class PoolStructure(object):
 
         elif fieldtype in ("bool"):
             if isinstance(value, str):
-                if value.lower()==u"true":
+                if value.lower()=="true":
                     value = 1
-                elif value.lower()==u"false":
+                elif value.lower()=="false":
                     value = 0
             else:
                 try:
@@ -451,7 +451,7 @@ class PoolStructure(object):
 
         elif fieldtype == "json":
             if not value:
-                value = u""
+                value = ""
             elif not isinstance(value, str):
                 value = json.dumps(value)
             
@@ -465,14 +465,14 @@ class PoolStructure(object):
     def _de(self, value, fieldtype, field):
         if not fieldtype:
             # no datatype information set
-            if isinstance(value, str) and value.startswith(u"_json_"):
-                value = json.loads(value[len(u"_json_"):])
+            if isinstance(value, str) and value.startswith("_json_"):
+                value = json.loads(value[len("_json_"):])
             if isinstance(value, bytes):
                 value = str(value, self.codepage)
             return value
 
         if isinstance(fieldtype, dict):
-            fieldtype = fieldtype[u"datatype"]
+            fieldtype = fieldtype["datatype"]
 
         # call serialize callback function
         if fieldtype in self.deserializeCallbacks:
@@ -489,7 +489,7 @@ class PoolStructure(object):
             # -> to datetime.time
             if isinstance(value, str):
                 # misuse datetime parser
-                value2 = ConvertToDateTime(u"2015-01-01 "+str(value))
+                value2 = ConvertToDateTime("2015-01-01 "+str(value))
                 if value2:
                     value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
             elif isinstance(value, (float,int)):
@@ -504,10 +504,10 @@ class PoolStructure(object):
             # -> to string tuple
             # unitlist -> to number tuple
             if not value:
-                value = u""
+                value = ""
             elif isinstance(value, str):
-                if value.startswith(u"_json_"):
-                    value = json.loads(value[len(u"_json_"):])
+                if value.startswith("_json_"):
+                    value = json.loads(value[len("_json_"):])
                 else:
                     try:
                         value = tuple(json.loads(value))

@@ -208,7 +208,7 @@ class AppConfigurationQuery(object):
         """
         m = [d for d in self.app.configuration.meta if d["id"] == fldID]
         if not m:
-            return u""
+            return ""
         return m[0]["name"]
 
     # Tool -------------------------------------------------------------
@@ -254,7 +254,7 @@ class AppConfigurationQuery(object):
             return None
         return c[0]
 
-    def GetAllCategories(self, sort=u"name", visibleOnly=False):
+    def GetAllCategories(self, sort="name", visibleOnly=False):
         """
         Get all category configurations.
 
@@ -273,7 +273,7 @@ class AppConfigurationQuery(object):
         """
         c = [d for d in self.app.configuration.categories if d["id"] == categoryID]
         if not c:
-            return u""
+            return ""
         return c[0]["name"]
 
     # Workflow -------------------------------------------------------------

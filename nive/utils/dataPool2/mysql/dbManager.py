@@ -65,8 +65,8 @@ class MySQLManager(DatabaseManager):
         if not isinstance(date, datetime):
             date = ConvertToDateTime(date)
         if not date:
-            return u""
-        return date.strftime(u"%Y-%m-%d %H:%M:%S")
+            return ""
+        return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
     def UpdateStructure(self, tableName, structure, modify = None, createIdentity = True):
@@ -94,7 +94,7 @@ class MySQLManager(DatabaseManager):
             options = self.ConvertConfToColumnOptions(col)
 
             # skip id column
-            if createIdentity and name == u"id":
+            if createIdentity and name == "id":
                 continue
 
             if not self.IsColumn(tableName, name):
@@ -110,15 +110,15 @@ class MySQLManager(DatabaseManager):
 
             # modify column settings
             if name in columns and columns[name].get("db"):
-                if not self.ModifyColumn(tableName, name, u"", options):
+                if not self.ModifyColumn(tableName, name, "", options):
                     return False
             else:
                 if not self.CreateColumn(tableName, name, options):
                     return False
 
         if createIdentity:
-            if not self.IsColumn(tableName, u"id"):
-                if not self.CreateIdentityColumn(tableName, u"id"):
+            if not self.IsColumn(tableName, "id"):
+                if not self.CreateIdentityColumn(tableName, "id"):
                     return False
             
         return True
@@ -167,43 +167,43 @@ class MySQLManager(DatabaseManager):
 
         if datatype in ("string", "email", "password"):
             if conf.get("size", conf.get("maxLen",0)) <= 3:
-                aStr = u"CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                aStr = "CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
             else:
-                aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("number", "long", "int"):
             aN = conf["default"]
-            if aN in (u"", u" ", None):
+            if aN in ("", " ", None):
                 aN = 0
             if isinstance(aN, str):
                 aN = int(aN)
             if conf.get("size", conf.get("maxLen",0)) == 4:
-                aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
+                aStr = "TINYINT(4) NOT NULL DEFAULT %d" % (aN)
             elif conf.get("size", conf.get("maxLen",0)) >16:
-                aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
+                aStr = "BIGINT(20) NOT NULL DEFAULT %d" % (aN)
             else:
-                aStr = u"INT NOT NULL DEFAULT %d" % (aN)
+                aStr = "INT NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "float":
             aN = conf["default"]
-            if aN in (u"", u" ", None):
+            if aN in ("", " ", None):
                 aN = 0
             if isinstance(aN, str):
                 aN = float(aN)
-            aStr = u"FLOAT NOT NULL DEFAULT %d" % (aN)
+            aStr = "FLOAT NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "bool":
             aN = conf["default"]
-            if aN in (u"", u" ", None, u"False"):
+            if aN in ("", " ", None, "False"):
                 aN = 0
-            elif aN == u"True":
+            elif aN == "True":
                 aN = 1
             elif isinstance(aN, str):
                 aN = int(aN)
-            aStr = u"TINYINT(4) NOT NULL DEFAULT %d" % (aN)
+            aStr = "TINYINT(4) NOT NULL DEFAULT %d" % (aN)
 
         elif datatype in ("text", "htext", "url", "urllist", "json", "code"):
-            aStr = u"TEXT NOT NULL" # DEFAULT '%s'" % (conf["default"])
+            aStr = "TEXT NOT NULL" # DEFAULT '%s'" % (conf["default"])
 
         elif datatype == "unit":
             aN = conf["default"]
@@ -211,77 +211,77 @@ class MySQLManager(DatabaseManager):
                 aN = 0
             if isinstance(aN, str):
                 aN = int(aN)
-            aStr = u"INT UNSIGNED NOT NULL DEFAULT %d" % (aN)
+            aStr = "INT UNSIGNED NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "unitlist":
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "date":
             aD = conf["default"]
             if aD == () or aD == "()":
-                aD = u"NULL"
+                aD = "NULL"
             elif aD in ("now", "nowdate", "nowtime"):
-                aD = u""
+                aD = ""
             if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
-            if aD == u"":
-                aStr = u"DATE NULL"
+            if aD == "":
+                aStr = "DATE NULL"
             else:
-                aStr = u"DATE NULL DEFAULT '%s'" % (aD)
+                aStr = "DATE NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "datetime":
             aD = conf["default"]
             if aD == () or aD == "()":
-                aD = u"NULL"
+                aD = "NULL"
             elif aD in ("now", "nowdate", "nowtime"):
-                aD = u""
+                aD = ""
             if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
-            if aD == u"":
-                aStr = u"DATETIME NULL"
+            if aD == "":
+                aStr = "DATETIME NULL"
             else:
-                aStr = u"DATETIME NULL DEFAULT '%s'" % (aD)
+                aStr = "DATETIME NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "time":
             aD = conf["default"]
             if aD == () or aD == "()":
-                aD = u"NULL"
+                aD = "NULL"
             elif aD in ("now", "nowtime"):
-                aD = u""
+                aD = ""
             if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
-            if aD == u"":
-                aStr = u"TIME NULL"
+            if aD == "":
+                aStr = "TIME NULL"
             else:
-                aStr = u"TIME NULL DEFAULT '%s'" % (aD)
+                aStr = "TIME NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "timestamp":
-            aStr = u"TIMESTAMP"
+            aStr = "TIMESTAMP"
 
         elif datatype == "listt":
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "listn" or datatype == "codelist":
             aN = conf["default"]
-            if aN in (u"", u" ", None):
+            if aN in ("", " ", None):
                 aN = 0
             elif isinstance(aN, str):
                 aN = int(aN)
-            aStr = u"SMALLINT(6) NOT NULL DEFAULT %d" % (aN)
+            aStr = "SMALLINT(6) NOT NULL DEFAULT %d" % (aN)
 
         elif datatype in ("multilist", "mselection", "checkbox", "mcheckboxes", "radio"):
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "file":
-            aStr = u"BLOB"
+            aStr = "BLOB"
 
         elif datatype == "bytesize":
             aN = conf["default"]
-            if aN in (u"", u" ", None):
+            if aN in ("", " ", None):
                 aN = 0
             if isinstance(aN, str):
                 aN = int(aN)
-            aStr = u"BIGINT(20) NOT NULL DEFAULT %d" % (aN)
+            aStr = "BIGINT(20) NOT NULL DEFAULT %d" % (aN)
 
         if conf.get("unique"):
             aStr += " UNIQUE"
@@ -299,7 +299,7 @@ class MySQLManager(DatabaseManager):
     def CreateDatabase(self, databaseName):
         if not self.IsDB():
             return False
-        self.db.execute(u"create database " + databaseName)
+        self.db.execute("create database " + databaseName)
         self.dbConn.commit()
         return True
 
@@ -307,7 +307,7 @@ class MySQLManager(DatabaseManager):
     def UseDatabase(self, databaseName):
         if not self.IsDB():
             return False
-        #self.db.execute(u"use " + databaseName)
+        #self.db.execute("use " + databaseName)
         return True
 
 
@@ -336,32 +336,32 @@ class MySQLManager(DatabaseManager):
         if not tableName or tableName == "":
             return False
         assert(tableName != "user")
-        aSql = u""
+        aSql = ""
         if createIdentity:
-            aSql = u"CREATE TABLE %s(%s INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY" % (tableName, primaryKeyName)
+            aSql = "CREATE TABLE %s(%s INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY" % (tableName, primaryKeyName)
             if columns:
                 for c in columns:
                     if c.id == primaryKeyName:
                         continue
                     aSql += ","
-                    aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
-            aSql += u" AUTO_INCREMENT = 1 "
+                    aSql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            aSql += ")"
+            aSql += " AUTO_INCREMENT = 1 "
         else:
-            aSql = u"CREATE TABLE %s" % (tableName)
+            aSql = "CREATE TABLE %s" % (tableName)
             if not columns:
                 raise ConfigurationError("No database fields defined.")
             aCnt = 0
-            aSql += u"("
+            aSql += "("
             for c in columns:
                 if aCnt:
-                    aSql += u","
+                    aSql += ","
                 aCnt = 1
-                aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
-        aSql += u" ENGINE = %s" %(self.engine)
+                aSql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            aSql += ")"
+        aSql += " ENGINE = %s" %(self.engine)
         if self.useUtf8:
-            aSql += u" CHARACTER SET utf8 COLLATE utf8_general_ci"
+            aSql += " CHARACTER SET utf8 COLLATE utf8_general_ci"
 
         self.db.execute(aSql)
         # delay until table is created
@@ -377,14 +377,14 @@ class MySQLManager(DatabaseManager):
     def RenameTable(self, inTableName, inNewTableName):
         if not self.IsDB():
             return False
-        self.db.execute(u"alter table %s rename as %s" % (inTableName, inNewTableName))
+        self.db.execute("alter table %s rename as %s" % (inTableName, inNewTableName))
         return True
 
 
     def DeleteTable(self, inTableName):
         if not self.IsDB():
             return False
-        self.db.execute(u"drop table %s" % (inTableName))
+        self.db.execute("drop table %s" % (inTableName))
         return True
 
     # Columns --------------------------------------------------------------
@@ -411,14 +411,14 @@ class MySQLManager(DatabaseManager):
             return False
         if columnOptions == "identity":
             return self.CreateIdentityColumn(tableName, columnName)
-        self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
+        self.db.execute("alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True
 
 
     def CreateIdentityColumn(self, tableName, columnName):
         if not self.IsDB():
             return False
-        return self.CreateColumn(tableName, columnName, u"INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY")
+        return self.CreateColumn(tableName, columnName, "INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY")
 
 
     def ModifyColumn(self, tableName, columnName, inNewColumnName, columnOptions):
@@ -430,7 +430,7 @@ class MySQLManager(DatabaseManager):
         aN = inNewColumnName
         if aN == "":
             aN = columnName
-        self.db.execute(u"alter table %s change %s %s %s" % (tableName, columnName, aN, columnOptions))
+        self.db.execute("alter table %s change %s %s %s" % (tableName, columnName, aN, columnOptions))
         return True
 
 
@@ -439,14 +439,14 @@ class MySQLManager(DatabaseManager):
     def GetDatabases(self):
         if not self.IsDB():
             return ""
-        self.db.execute(u"show databases")
+        self.db.execute("show databases")
         return self.db.fetchall()
 
 
     def GetTables(self):
         if not self.IsDB():
             return ""
-        self.db.execute(u"show tables")
+        self.db.execute("show tables")
         return self.db.fetchall()
 
 
@@ -459,7 +459,7 @@ class MySQLManager(DatabaseManager):
             return []
         if not self.IsTable(tableName):
             return []
-        self.db.execute(u"show columns from %s" % (tableName))
+        self.db.execute("show columns from %s" % (tableName))
         table = {}
         for c in self.db.fetchall():
             table[c[0]] = {"db": {"id": c[0], "type": c[1], "identity": c[3]!="", "default": c[4], "null": ""}, 

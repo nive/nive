@@ -26,8 +26,8 @@ class Persistent(object):
     
     Requires: Events
     """
-    defaultKey = u".root.storage"
-    storagekey = u""
+    defaultKey = ".root.storage"
+    storagekey = ""
     notifyAllRoots = True
 
     def Init(self):
@@ -72,8 +72,8 @@ class Persistent(object):
             values.update(self.files)
         values.update(self.data)
         values.update(self.meta)
-        values[u"pool_change"] = datetime.now(self.app.pytimezone)
-        values[u"pool_changedby"] = str(user)
+        values["pool_change"] = datetime.now(self.app.pytimezone)
+        values["pool_changedby"] = str(user)
         vstr = DumpJSONConf(values)
         self.app.StoreSysValue(self.storagekey, vstr)
         if self.notifyAllRoots:

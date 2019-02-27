@@ -230,9 +230,9 @@ class appTest(unittest.TestCase):
         self.app.configuration.lock()
 
     def test_groups(self):
-        self.assertTrue(self.app.GetGroups(sort=u"name", visibleOnly=False))
-        self.assertTrue(self.app.GetGroups(sort=u"name", visibleOnly=True))
-        self.assertTrue(self.app.GetGroups(sort=u"id", visibleOnly=False))
+        self.assertTrue(self.app.GetGroups(sort="name", visibleOnly=False))
+        self.assertTrue(self.app.GetGroups(sort="name", visibleOnly=True))
+        self.assertTrue(self.app.GetGroups(sort="id", visibleOnly=False))
         self.assertTrue(self.app.GetGroupName("g1")=="G1")
         self.assertTrue(self.app.GetGroupName("no_group")=="")
 
@@ -345,7 +345,7 @@ class appConfigurationQueryTest(unittest.TestCase):
 
     def test_categoriesconf(self):
         self.assertTrue(self.app.configurationQuery.GetCategory(categoryID="c1"))
-        self.assertTrue(len(self.app.configurationQuery.GetAllCategories(sort=u"name", visibleOnly=False)) == 1)
+        self.assertTrue(len(self.app.configurationQuery.GetAllCategories(sort="name", visibleOnly=False)) == 1)
         self.assertTrue(self.app.configurationQuery.GetCategoryName("c1") == "C1")
         self.assertTrue(self.app.configurationQuery.GetCategoryName("no_cat") == "")
 
@@ -398,7 +398,7 @@ class appTest_db:
         self.oid = o.id
         
     def tearDown(self):
-        user = User(u"test")
+        user = User("test")
         if self.oid:
             self.app.root.Delete(self.oid, user=user)
         self.app.Close()

@@ -53,12 +53,12 @@ A custom HTMLForm example: ::
 
     form = HTMLForm(view=self)
     form.actions = [
-        Conf(id="default",    method="StartForm",             name=u"Initialize",          hidden=True),
-        Conf(id="create",     method="ReturnDataOnSuccess",   name=u"Create a new group",  hidden=False),
+        Conf(id="default",    method="StartForm",             name="Initialize",          hidden=True),
+        Conf(id="create",     method="ReturnDataOnSuccess",   name="Create a new group",  hidden=False),
     ]
     form.fields = [
-        FieldConf(id="id",   name=u"Group id",   datatype="string", size="20", required=True),
-        FieldConf(id="name", name=u"Group name", datatype="string", size="40", required=True)
+        FieldConf(id="id",   name="Group id",   datatype="string", size="20", required=True),
+        FieldConf(id="name", name="Group name", datatype="string", size="40", required=True)
     ]
     def onsuccess(data):
         data["id"] = "prefix:"+data["id"]
@@ -297,11 +297,11 @@ class Form(Events, ReForm):
             self.loadFromType = loadFromType
 
         # optional form parameters
-        self.title = u""
-        self.description = u""
-        self.formid = u""
+        self.title = ""
+        self.description = ""
+        self.formid = ""
         self.startEmpty = False
-        self.method = u"POST"
+        self.method = "POST"
         
         # reform setup
         self._c_form = None
@@ -459,13 +459,13 @@ class Form(Events, ReForm):
         :return: nothing
         """
         for k,v in list(settings.items()):
-            if k.startswith(u"widget."):
-                setattr(self.widget, k[len(u"widget."):], v)
+            if k.startswith("widget."):
+                setattr(self.widget, k[len("widget."):], v)
                 del settings[k]
-            if k == u"useAjax":
+            if k == "useAjax":
                 # rename
                 del settings[k]
-                settings[u"use_ajax"] = v
+                settings["use_ajax"] = v
 
         self.__dict__.update(settings)
 
@@ -563,7 +563,7 @@ class Form(Events, ReForm):
         if removeNull:
             data = dict([d for d in list(data.items()) if d[1] != null])
         if removeEmpty:
-            data = dict([d for d in list(data.items()) if d[1] not in (u"",[],())])
+            data = dict([d for d in list(data.items()) if d[1] not in ("",[],())])
         
         return result, data
     
@@ -586,7 +586,7 @@ class Form(Events, ReForm):
         if removeNull:
             data = dict([d for d in list(data.items()) if d[1] != null])
         if removeEmpty:
-            data = dict([d for d in list(data.items()) if d[1] not in (u"",[],())])
+            data = dict([d for d in list(data.items()) if d[1] not in ("",[],())])
 
         return result, data
 
@@ -610,7 +610,7 @@ class Form(Events, ReForm):
             if f.datatype == "file":
                 data[f.id] = obj.files[f.id]
             if f.datatype == "password":
-                data[f.id] = u""
+                data[f.id] = ""
             else:
                 if f.id in obj.data:
                     data[f.id] = obj.data[f.id]
@@ -780,14 +780,14 @@ class HTMLForm(Form):
     Basic HTML Form
     """
     # form setup: element id, css classes, url
-    formid = u"upload"
-    css_class = u"form"
-    actionPostfix = u"$"
-    action = u""
-    anchor = u""
+    formid = "upload"
+    css_class = "form"
+    actionPostfix = "$"
+    action = ""
+    anchor = ""
 
     # display options
-    uploadProgressBar = u"auto" # other possible values: none or always
+    uploadProgressBar = "auto" # other possible values: none or always
 
     # ajax forms
     use_ajax = False
@@ -799,17 +799,17 @@ class HTMLForm(Form):
     # success options
     renderSuccess = True
     successResponseBody = None   # either string or callback
-    redirectSuccess = u""        # either string or callback
+    redirectSuccess = ""        # either string or callback
 
     # redirect urls
-    redirectCancel = u""         # either string or callback
+    redirectCancel = ""         # either string or callback
 
     actions = [
-        Conf(id=u"default", method="StartForm",    name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
-        Conf(id=u"edit",    method="ProcessForm",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+        Conf(id="default", method="StartForm",    name="Initialize", hidden=True,  css_class="",                 html="", tag=""),
+        Conf(id="edit",    method="ProcessForm",  name="Save",       hidden=False, css_class="btn btn-primary",  html="", tag=""),
     ]
     subsets = {
-        "edit":   {"actions": [u"edit"],    "defaultAction": "default"}
+        "edit":   {"actions": ["edit"],    "defaultAction": "default"}
     }
 
 
@@ -975,7 +975,7 @@ class HTMLForm(Form):
         if result:
             if kw.get("success_message"):
                 msgs.append(kw.get("success_message"))
-            # disabled default message. msgs.append(_(u"OK."))
+            # disabled default message. msgs.append(_("OK."))
             errors = None
             result = data
             self.Signal("success", data=data)
@@ -997,7 +997,7 @@ class HTMLForm(Form):
         if result:
             if kw.get("success_message"):
                 msgs.append(kw.get("success_message"))
-            # disabled default message. msgs.append(_(u"OK."))
+            # disabled default message. msgs.append(_("OK."))
             errors = None
             result = data
             self.Signal("success", data=data)
@@ -1095,7 +1095,7 @@ class HTMLForm(Form):
         return html
 
     
-    def HTMLHead(self, ignore=(u"jquery.js",u"jquery-ui.js")):
+    def HTMLHead(self, ignore=("jquery.js","jquery-ui.js")):
         """
         Get necessary includes (js and css) for html header.
         Jquery and Jquery-ui are included by default in cmsview editor pages. So by default these two
@@ -1119,8 +1119,8 @@ class HTMLForm(Form):
                 css_links = [self.view.StaticUrl(r) for r in [v for v in css_resources if v not in ignore]]
             # seq
             if resources:
-                js_links.extend([self.view.StaticUrl(r[1]) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".js")]])
-                css_links.extend([self.view.StaticUrl(r[1]) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".css")]])
+                js_links.extend([self.view.StaticUrl(r[1]) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(".js")]])
+                css_links.extend([self.view.StaticUrl(r[1]) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(".css")]])
         else:
             if js_resources:
                 js_links = [static_url(r, req) for r in [v for v in js_resources if v not in ignore]]
@@ -1128,11 +1128,11 @@ class HTMLForm(Form):
                 css_links = [static_url(r, req) for r in [v for v in css_resources if v not in ignore]]
             # seq
             if resources:
-                js_links.extend([static_url(r[1], req) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".js")]])
-                css_links.extend([static_url(r[1], req) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(u".css")]])
-        js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
-        css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
-        return (u"\r\n").join(css_tags + js_tags)
+                js_links.extend([static_url(r[1], req) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(".js")]])
+                css_links.extend([static_url(r[1], req) for r in [v for v in resources if v[0] not in ignore and v[1].endswith(".css")]])
+        js_tags = ['<script src="%s" type="text/javascript"></script>' % link for link in js_links]
+        css_tags = ['<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
+        return ("\r\n").join(css_tags + js_tags)
     
         
     def _FinishFormProcessing(self, result, data, msgs, errors, **kw):
@@ -1178,17 +1178,17 @@ class HTMLForm(Form):
         err = values.get("errors")!=None or values.get("result")==False
         msgs = values.get("msgs")
         if not msgs:
-            return u""
+            return ""
         h = []
         if isinstance(msgs, str):
             msgs = [msgs]
         for m in msgs:
-            h.append(u"""<p>%s</p>""" % (translate(m, self.view.request)))
-        css = u"alert alert-success"
+            h.append("""<p>%s</p>""" % (translate(m, self.view.request)))
+        css = "alert alert-success"
         if err:
-            css = u"alert alert-warning"
-        return u"""<div class="%s">%s</div>
-        """ % (css, u"".join(h))
+            css = "alert alert-warning"
+        return """<div class="%s">%s</div>
+        """ % (css, "".join(h))
 
 
 
@@ -1202,15 +1202,15 @@ class ObjectForm(HTMLForm):
     Supports sort form parameter *pepos*.
     """
     actions = [
-        Conf(id=u"default",    method="StartFormRequest",  name=u"Initialize", hidden=True,  css_class=u"",            html=u"", tag=u""),
-        Conf(id=u"create",     method="CreateObj",  name=u"Create",     hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
-        Conf(id=u"defaultEdit",method="StartObject",name=u"Initialize", hidden=True,  css_class=u"",            html=u"", tag=u""),
-        Conf(id=u"edit",       method="UpdateObj",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
-        Conf(id=u"cancel",     method="Cancel",     name=u"Cancel",     hidden=False, css_class=u"buttonCancel",html=u"", tag=u"")
+        Conf(id="default",    method="StartFormRequest",  name="Initialize", hidden=True,  css_class="",            html="", tag=""),
+        Conf(id="create",     method="CreateObj",  name="Create",     hidden=False, css_class="btn btn-primary",  html="", tag=""),
+        Conf(id="defaultEdit",method="StartObject",name="Initialize", hidden=True,  css_class="",            html="", tag=""),
+        Conf(id="edit",       method="UpdateObj",  name="Save",       hidden=False, css_class="btn btn-primary",  html="", tag=""),
+        Conf(id="cancel",     method="Cancel",     name="Cancel",     hidden=False, css_class="buttonCancel",html="", tag="")
     ]
     subsets = {
-        "create": {"actions": [u"create"],  "defaultAction": "default"},
-        "edit":   {"actions": [u"edit"],    "defaultAction": "defaultEdit"}
+        "create": {"actions": ["create"],  "defaultAction": "default"},
+        "edit":   {"actions": ["edit"],    "defaultAction": "defaultEdit"}
     }
 
 
@@ -1244,7 +1244,7 @@ class ObjectForm(HTMLForm):
         # insert at position
         if ISort.providedBy(self.context):
             #if addPosField:
-            pepos = self.GetFormValue(u"pepos", method=u"ALL")
+            pepos = self.GetFormValue("pepos", method="ALL")
             if pepos:
                 pos_fld = FieldConf(id="pepos",datatype="string",hidden=1)
                 self._c_fields.append(pos_fld)
@@ -1275,7 +1275,7 @@ class ObjectForm(HTMLForm):
             data["pool_type"] = self.loadFromType.id
         # insert at position
         if ISort.providedBy(self.context):
-            pepos = self.GetFormValue(u"pepos", method=u"ALL")
+            pepos = self.GetFormValue("pepos", method="ALL")
             if pepos:
                 data["pepos"] = pepos
         return True, self.Render(data)
@@ -1299,7 +1299,7 @@ class ObjectForm(HTMLForm):
                 data = data(self)
         else:
             data = self.LoadDefaultData()
-            r, d = self.ExtractSchema(self.GetFormValues(method=u"ALL"), removeNull=True, removeEmpty=True)
+            r, d = self.ExtractSchema(self.GetFormValues(method="ALL"), removeNull=True, removeEmpty=True)
             data.update(d)
         if isinstance(self.loadFromType, str):
             data["pool_type"] = self.loadFromType
@@ -1307,7 +1307,7 @@ class ObjectForm(HTMLForm):
             data["pool_type"] = self.loadFromType.id
         # insert at position
         if ISort.providedBy(self.context):
-            pepos = self.GetFormValue(u"pepos", method=u"ALL")
+            pepos = self.GetFormValue("pepos", method="ALL")
             if pepos:
                 data["pepos"] = pepos
         return True, self.Render(data)
@@ -1349,7 +1349,7 @@ class ObjectForm(HTMLForm):
             result = obj.Update(data, user)
             if result:
                 #obj.Commit(user)
-                msgs.append(_(u"OK. Data saved."))
+                msgs.append(_("OK. Data saved."))
                 self.Signal("success", obj=obj)
                 result = obj
 
@@ -1390,10 +1390,10 @@ class ObjectForm(HTMLForm):
             if result:
                 if ISort.providedBy(self.context):
                     # insert at position
-                    pepos = self.GetFormValue(u"pepos")
+                    pepos = self.GetFormValue("pepos")
                     if pepos:
                         self.context.InsertAtPosition(result, pepos, user=user)
-                msgs.append(_(u"OK. Data saved."))
+                msgs.append(_("OK. Data saved."))
                 self.Signal("success", obj=result)
 
         return self._FinishFormProcessing(result, data, msgs, errors, **kw)
@@ -1413,8 +1413,8 @@ class ToolForm(HTMLForm):
     A simple example to render a tool form and execute it.
     """
     actions = [
-        Conf(id=u"default", method="StartForm", name=u"Initialize", hidden=True,  css_class=u"", html=u"", tag=u""),
-        Conf(id=u"run",     method="RunTool",   name=u"Start",      hidden=False, css_class=u"", html=u"", tag=u""),
+        Conf(id="default", method="StartForm", name="Initialize", hidden=True,  css_class="", html="", tag=""),
+        Conf(id="run",     method="RunTool",   name="Start",      hidden=False, css_class="", html="", tag=""),
     ]
 
     def Setup(self, subset=None):
@@ -1578,8 +1578,8 @@ class JsonMappingForm(HTMLForm):
     mergeContext = True
 
     actions = [
-        Conf(id=u"default",    method="StartObject",name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
-        Conf(id=u"edit",       method="UpdateObj",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+        Conf(id="default",    method="StartObject",name="Initialize", hidden=True,  css_class="",                 html="", tag=""),
+        Conf(id="edit",       method="UpdateObj",  name="Save",       hidden=False, css_class="btn btn-primary",  html="", tag=""),
     ]
 
     def Validate(self, data, removeNull=True):
@@ -1653,7 +1653,7 @@ class JsonMappingForm(HTMLForm):
             result = obj.Update({self.jsonDataField: data}, user)
             if result:
                 #obj.Commit(user)
-                msgs.append(_(u"OK. Data saved."))
+                msgs.append(_("OK. Data saved."))
                 result = data
                 self.Signal("success", data=data)
 
@@ -1678,16 +1678,16 @@ class JsonSequenceForm(HTMLForm):
     `Process()` returns the form data as dictionary on success.
     
     """
-    jsonDataField = u"data"
-    jsonUniqueID = u"name"
-    delKey = u"aa876352"
-    editKey = u"cc397785"
+    jsonDataField = "data"
+    jsonUniqueID = "name"
+    delKey = "aa876352"
+    editKey = "cc397785"
     
     actions = [
-        Conf(id=u"default",    method="StartObject",name=u"Initialize", hidden=True,  css_class=u"",                 html=u"", tag=u""),
-        Conf(id=u"edit",       method="UpdateObj",  name=u"Save",       hidden=False, css_class=u"btn btn-primary",  html=u"", tag=u""),
+        Conf(id="default",    method="StartObject",name="Initialize", hidden=True,  css_class="",                 html="", tag=""),
+        Conf(id="edit",       method="UpdateObj",  name="Save",       hidden=False, css_class="btn btn-primary",  html="", tag=""),
     ]
-    editKeyFld = FieldConf(id=editKey, name=u"indexKey", datatype="number", hidden=True, default=u"")
+    editKeyFld = FieldConf(id=editKey, name="indexKey", datatype="number", hidden=True, default="")
     
     def Init(self):
         self.ListenEvent("setup", "AddKeyFld")
@@ -1707,7 +1707,7 @@ class JsonSequenceForm(HTMLForm):
         returns bool, html
         """
         sequence = self.context.data.get(self.jsonDataField)
-        if sequence in (u"", None):
+        if sequence in ("", None):
             sequence = []
         # process action
         msgs = []
@@ -1727,7 +1727,7 @@ class JsonSequenceForm(HTMLForm):
                 self.context.data[self.jsonDataField] = sequence
                 self.context.Commit(kw.get("user") or self.view.User())
                 self.context.data[self.jsonDataField] = sequence
-                msgs=[_(u"Item deleted!")]
+                msgs=[_("Item deleted!")]
                 data = []
                 self.Signal("delete", data=sequence)
         else:
@@ -1750,7 +1750,7 @@ class JsonSequenceForm(HTMLForm):
             user = kw.get("user") or self.view.User()
             # merge sequence list with edited item
             sequence = self.context.data.get(self.jsonDataField)
-            if sequence in (u"", None):
+            if sequence in ("", None):
                 sequence = []
             elif isinstance(sequence, tuple):
                 sequence = list(sequence)
@@ -1760,7 +1760,7 @@ class JsonSequenceForm(HTMLForm):
                 seqindex = 0
             if seqindex == 0 and data[self.jsonUniqueID] in [i[self.jsonUniqueID] for i in sequence]:
                 # item already in list and not edit clicked before
-                msgs=[_(u"Item exists!")]
+                msgs=[_("Item exists!")]
                 return False, self.Render(data, msgs=msgs, errors=errors)
                 
             if self.editKey in data:
@@ -1781,7 +1781,7 @@ class JsonSequenceForm(HTMLForm):
             self.context.data[self.jsonDataField] = sequence
             self.context.Commit(user)
             self.context.data[self.jsonDataField] = sequence
-            msgs.append(_(u"OK. Data saved."))
+            msgs.append(_("OK. Data saved."))
             self.Signal("success", data=sequence)
             data = {}
 

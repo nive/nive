@@ -14,7 +14,7 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "exportJson",
     context = "nive.tools.exportJson.exportJson",
-    name = _(u"Json data export"),
+    name = _("Json data export"),
     description = _("This function exports all objects in json format. Optionally as flat list or tree structure. This is not a simple database table dump. Object events will be triggered before exporting data."),
     apply = (IApplication,),
     mimetype = "text/json",
@@ -23,16 +23,16 @@ configuration = ToolConf(
                   datatype="bool", 
                   default=1, 
                   listItems=[{"id":"true", "name":"Tree"},{"id":"false","name":"Flat list"}], 
-                  name=_(u"Export as tree"),
-                  description=_(u"Export objects as tree structure (contained objects are included as 'items')")),
+                  name=_("Export as tree"),
+                  description=_("Export objects as tree structure (contained objects are included as 'items')")),
         FieldConf(id="filedata", 
                   datatype="radio", 
                   default="none", 
                   listItems=[{"id":"none", "name":"Only file information (No file data)"},
                              {"id":"path", "name":"Only file information and local paths (No file data)"},
                              {"id":"data", "name":"Include all file data"},], 
-                  name=_(u"File data"),
-                  description=_(u"Include binary file data in json export (encoded as base64)"))
+                  name=_("File data"),
+                  description=_("Include binary file data in json export (encoded as base64)"))
     ],
     views = [
         ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.exportJson.exportJson"),
@@ -57,11 +57,11 @@ class exportJson(Tool):
         self.filename = app.configuration.id + ".json"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
             return 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
             return 0
         
         def mapfields(fields):

@@ -12,18 +12,18 @@ from nive.tests import db_app
 from nive.tests import __local
 
 
-data1_1 = { u"ftext": "this is text!",
-            u"fnumber": "123456",
-            u"fdate": "2008-06-23 16:55:20",#
-            u"flist": "item 2",
-            u"fmselect": "item 5",
-            u"funit": "35",
-            u"funitlist": "34\r\n35\r\n36",
-            u"pool_type": "type1"}
+data1_1 = { "ftext": "this is text!",
+            "fnumber": "123456",
+            "fdate": "2008-06-23 16:55:20",#
+            "flist": "item 2",
+            "fmselect": "item 5",
+            "funit": "35",
+            "funitlist": "34\r\n35\r\n36",
+            "pool_type": "type1"}
 
-data1_2 = { u"ftext": "this is a new text!",
-            u"funit": "0",
-            u"fdate": "2008-06-23 12:00:00"}
+data1_2 = { "ftext": "this is a new text!",
+            "funit": "0",
+            "fdate": "2008-06-23 12:00:00"}
 
 
 class Viewy(BaseView):
@@ -32,7 +32,7 @@ class Viewy(BaseView):
         self.context = None
     
     def User(self):
-        return UserO(u"test")
+        return UserO("test")
 
 # -----------------------------------------------------------------
 from pyramid import testing
@@ -102,16 +102,16 @@ class FormTest(unittest.TestCase):
 
     def test_values2(self, **kw):
         form = Form(loadFromType="type1", app=self.app, view=self.view)
-        subsets = {"test": {"fields": ["ftext",u"funit"]}}
+        subsets = {"test": {"fields": ["ftext","funit"]}}
         form.subsets = subsets
         form.Setup(subset="test")
         v,d,e = form.Validate(data1_2)
         self.assertTrue(v, e)
 
         form = Form(loadFromType="type1", app=self.app, view=self.view)
-        subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unit"})]}}
+        subsets = {"test": {"fields": ["ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unit"})]}}
         form.subsets = subsets
-        form.Setup(subset=u"test")
+        form.Setup(subset="test")
         v,d,e = form.Validate(data1_2)
         self.assertTrue(v, e)
 
@@ -123,9 +123,9 @@ class FormTest(unittest.TestCase):
 
     def test_values3(self, **kw):
         form = Form(loadFromType="type1", app=self.app, view=self.view)
-        subsets = {u"test": {"fields": [u"ftext", FieldConf(id="section1", name="Section 1", datatype="string", schema=schema.String())]}}
+        subsets = {"test": {"fields": ["ftext", FieldConf(id="section1", name="Section 1", datatype="string", schema=schema.String())]}}
         form.subsets = subsets
-        form.Setup(subset=u"test")
+        form.Setup(subset="test")
         v,d,e = form.Validate(data1_2)
         self.assertTrue(v, e)
 
@@ -138,8 +138,8 @@ class FormTest(unittest.TestCase):
     def test_html(self, **kw):
         form = HTMLForm(loadFromType="type1", app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
+        form.cssID = "upload"
+        form.css_class = "niveform"
         form.Setup()
 
         v,d,e = form.Validate(data1_1)
@@ -158,10 +158,10 @@ class FormTest(unittest.TestCase):
     def test_html2(self, **kw):
         form = HTMLForm(loadFromType="type1", app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
-        form.subsets = {u"test": {"fields": [u"ftext",u"funit"]}}
-        form.Setup(subset=u"test")
+        form.cssID = "upload"
+        form.css_class = "niveform"
+        form.subsets = {"test": {"fields": ["ftext","funit"]}}
+        form.Setup(subset="test")
         v,d,e = form.Validate(data1_2)
         self.assertTrue(v, e)
         form.Render(d, msgs=None, errors=None)
@@ -170,10 +170,10 @@ class FormTest(unittest.TestCase):
     def test_html3(self, **kw):
         form = HTMLForm(loadFromType="type1", app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "number"})]}}
-        form.Setup(subset=u"test")
+        form.cssID = "upload"
+        form.css_class = "niveform"
+        form.subsets = {"test": {"fields": ["ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "number"})]}}
+        form.Setup(subset="test")
         v,d,e = form.Validate(data1_2)
         self.assertTrue(v, e)
         form.Render(d, msgs=None, errors=None)
@@ -183,8 +183,8 @@ class FormTest(unittest.TestCase):
         tool = self.app.GetTool("nive.tools.example")
         form = ToolForm(loadFromType=tool.configuration, context=tool,app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
+        form.cssID = "upload"
+        form.css_class = "niveform"
         form.actions = [
             Conf(**{"id": "default", "name": "Speichern", "method": "StartForm", "description": "", "hidden":True, "css_class":"", "html":"", "tag":""}),
             Conf(**{"id": "run",       "name": "Speichern", "method": "RunTool",      "description": "", "css_class":"", "html":"", "tag":""}),
@@ -202,7 +202,7 @@ class FormTest(unittest.TestCase):
         form.request = req
         form.Process()
         
-        form.subsets = {u"test": {"fields": [u"parameter1"]}}
+        form.subsets = {"test": {"fields": ["parameter1"]}}
         form.Setup("test")
         form.Process()
         req = {"run$":1}
@@ -214,7 +214,7 @@ class FormTest(unittest.TestCase):
         form.Process()
 
         form.subset = "test"
-        form.subsets = {u"test": {"fields": [u"parameter1", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "lines"})]}}
+        form.subsets = {"test": {"fields": ["parameter1", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "lines"})]}}
         form.Setup("test")
         form.Process()
         req = {"run$":1}
@@ -247,8 +247,8 @@ class FormTest(unittest.TestCase):
     def test_actions(self, **kw):
         form = HTMLForm(loadFromType="type1", app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
+        form.cssID = "upload"
+        form.css_class = "niveform"
 
         # create
         form.actions = [
@@ -266,8 +266,8 @@ class FormTest(unittest.TestCase):
     def test_fields(self, **kw):
         form = HTMLForm(loadFromType="type1", app=self.app, view=self.view, request=Request())
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
+        form.cssID = "upload"
+        form.css_class = "niveform"
         # create
         form.Setup()
 
@@ -302,8 +302,8 @@ class FormTest_db:
         v = Viewy()
         form = ObjectForm(loadFromType="type1", context=root, view=v, request=Request(), app=self.app)
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
+        form.cssID = "upload"
+        form.css_class = "niveform"
 
         # create
         form.actions = [
@@ -336,8 +336,8 @@ class FormTest_db:
         self.assertEqual(count+1, self.app.db.GetCountEntries())
         
         form = ObjectForm(loadFromType="type1", context=root, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext",u"funit"], 
-                                  "actions": [u"default", u"create",u"cancel"]}}
+        form.subsets = {"test": {"fields": ["ftext","funit"], 
+                                  "actions": ["default", "create","cancel"]}}
         form.Setup(subset = "test", addTypeField = True)
         result, data, action=form.Process()
         self.assertTrue(result)
@@ -361,8 +361,8 @@ class FormTest_db:
         self.assertEqual(count+2, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=root, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "email"})], 
-                                  "actions": [u"default", u"create",u"cancel"]}}
+        form.subsets = {"test": {"fields": ["ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "email"})], 
+                                  "actions": ["default", "create","cancel"]}}
         form.Setup(subset = "test", addTypeField = True)
         result, data, action=form.Process()
         self.assertTrue(result)
@@ -387,7 +387,7 @@ class FormTest_db:
 
 
     def test_obj2(self, **kw):
-        user = UserO(u"test")
+        user = UserO("test")
         root = self.app.GetRoot()
         obj = root.Create("type1", data1_2, user)
         self.remove.append(obj.id)
@@ -395,8 +395,8 @@ class FormTest_db:
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
         form.formUrl = "form/url"
-        form.cssID = u"upload"
-        form.css_class = u"niveform"
+        form.cssID = "upload"
+        form.css_class = "niveform"
         count = self.app.db.GetCountEntries()
         # edit
         form.actions = [
@@ -417,8 +417,8 @@ class FormTest_db:
         self.assertEqual(count, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext",u"funit"], 
-                                  "actions": [u"defaultEdit",u"edit",u"cancel"]}}
+        form.subsets = {"test": {"fields": ["ftext","funit"], 
+                                  "actions": ["defaultEdit","edit","cancel"]}}
         form.Setup(subset = "test")
         form.Process()
         req = {"edit$":1}
@@ -431,8 +431,8 @@ class FormTest_db:
         self.assertEqual(count, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "url"})],
-                                  "actions": [u"defaultEdit",u"edit",u"cancel"]}}
+        form.subsets = {"test": {"fields": ["ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "url"})],
+                                  "actions": ["defaultEdit","edit","cancel"]}}
         form.subset = "test"
         form.Setup(subset = "test")
         form.Process()
@@ -446,8 +446,8 @@ class FormTest_db:
         self.assertEqual(count, self.app.db.GetCountEntries())
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
-        form.subsets = {u"test": {"fields": [u"ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unitlist"})],
-                                  "actions": [u"defaultEdit",u"edit",u"cancel"]}}
+        form.subsets = {"test": {"fields": ["ftext", FieldConf(**{"id": "section1", "name": "Section 1", "datatype": "unitlist"})],
+                                  "actions": ["defaultEdit","edit","cancel"]}}
         try:
             form.Setup(subset="test3")
             form.Process()
@@ -458,7 +458,7 @@ class FormTest_db:
 
 
     def test_json(self, **kw):
-        user = UserO(u"test")
+        user = UserO("test")
         root = self.app.GetRoot()
         obj = root.Create("type1", data1_2, user)
         obj.data["fjson"] = {}

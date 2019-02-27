@@ -61,11 +61,11 @@ class tViews(__local.DefaultTestCase):
         v = view.AdminBasics(context=self.app, request=self.request)
         form = view.ConfigurationForm(context=view.configuration, request=self.request, view=v, app=self.app)
         form.fields = (
-            FieldConf(id=u"title",           datatype="string", size=255,  required=0, name=u"Application title"),
-            FieldConf(id=u"description",     datatype="text",   size=5000, required=0, name=u"Application description"),
-            FieldConf(id=u"workflowEnabled", datatype="bool",   size=2,    required=0, name=u"Enable workflow engine"),
-            FieldConf(id=u"fulltextIndex",   datatype="bool",   size=2,    required=0, name=u"Enable fulltext index"),
-            FieldConf(id=u"frontendCodepage",datatype="string", size=10,   required=1, name=u"Codepage used in html frontend"),
+            FieldConf(id="title",           datatype="string", size=255,  required=0, name="Application title"),
+            FieldConf(id="description",     datatype="text",   size=5000, required=0, name="Application description"),
+            FieldConf(id="workflowEnabled", datatype="bool",   size=2,    required=0, name="Enable workflow engine"),
+            FieldConf(id="fulltextIndex",   datatype="bool",   size=2,    required=0, name="Enable fulltext index"),
+            FieldConf(id="frontendCodepage",datatype="string", size=10,   required=1, name="Codepage used in html frontend"),
         )
         form.Setup()
         self.request.POST = {"name": "testuser", "email": "testuser@domain.net"}

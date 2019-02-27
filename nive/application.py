@@ -107,7 +107,7 @@ class Application(Events):
             self.id = __name__
         self.uid = str(uuid.uuid4())
 
-        self.__name__ = u""
+        self.__name__ = ""
         self.__parent__ = None
         self.__acl__ = []
 
@@ -385,7 +385,7 @@ class Application(Events):
 
     # Groups -------------------------------------------------------------
 
-    def GetGroups(self, sort=u"name", visibleOnly=False):
+    def GetGroups(self, sort="name", visibleOnly=False):
         """
         Get a list of configured groups.
 
@@ -407,7 +407,7 @@ class Application(Events):
         """
         g = [d for d in self.app.configuration.groups if d["id"] == groupID]
         if not g:
-            return u""
+            return ""
         return g[0]["name"]
 
     # Data Pool and database connections -------------------------------------------------------------------
@@ -481,7 +481,7 @@ class Application(Events):
         Stores a value in `pool_sys` table. Value must be a string of any size.
         """
         db = self.db
-        db.UpdateFields(u"pool_sys", key, {u"id": key, u"value":value, u"ts":time()}, autoinsert=True)
+        db.UpdateFields("pool_sys", key, {"id": key, "value":value, "ts":time()}, autoinsert=True)
         db.Commit()
 
     def LoadSysValue(self, key):
@@ -489,7 +489,7 @@ class Application(Events):
         Loads the value stored as `key` from `pool_sys` table.
         """
         db = self.db
-        sql, values = db.FmtSQLSelect([u"value", u"ts"], parameter={"id":key}, dataTable=u"pool_sys", singleTable=1)
+        sql, values = db.FmtSQLSelect(["value", "ts"], parameter={"id":key}, dataTable="pool_sys", singleTable=1)
         r = db.Query(sql, values)
         if not r:
             return None
@@ -500,7 +500,7 @@ class Application(Events):
         Deletes a single system value
         """
         db = self.db
-        db.DeleteRecords(u"pool_sys", {u"id": key})
+        db.DeleteRecords("pool_sys", {"id": key})
         db.Commit()
 
 

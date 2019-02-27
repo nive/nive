@@ -21,7 +21,7 @@ class Sqlite3Test(test_db.dbTest, __local.SqliteTestCase):
     def setUp(self):
         conn = DatabaseConf(DB_CONF)
         p = Sqlite3(connParam=conn, **test_Base.conf)
-        p.structure.Init(structure=test_Base.struct, stdMeta=test_Base.struct[u"pool_meta"])
+        p.structure.Init(structure=test_Base.struct, stdMeta=test_Base.struct["pool_meta"])
         dbfile = DvPath(conn["dbName"])
         if not dbfile.IsFile():
             dbfile.CreateDirectories()

@@ -107,7 +107,7 @@ class AdminUser(object):
         if values.get("groups"):
             groups = tuple(values.get("groups"))
         else:
-            groups = (u"group:admin",)
+            groups = ("group:admin",)
         self.groups = self.data.groups = groups
 
     def __str__(self):

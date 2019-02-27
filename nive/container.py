@@ -32,7 +32,7 @@ class ContainerRead(Events):
 
     Requires: ContainerFactory
     """
-    defaultSort = u"id"
+    defaultSort = "id"
 
     def obj(self, id, **kw):
         """ shortcut for GetObj """
@@ -91,12 +91,12 @@ class ContainerRead(Events):
             operators = {}
 
         if containerOnly:
-            parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
-            operators[u"pool_stag"] = u"BETWEEN"
+            parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+            operators["pool_stag"] = "BETWEEN"
 
-        parameter[u"pool_unitref"] = self.id
+        parameter["pool_unitref"] = self.id
         sort = kw.get("sort", self.defaultSort)
-        fields = [u"id", u"pool_datatbl", u"pool_dataref", u"pool_type"]
+        fields = ["id", "pool_datatbl", "pool_dataref", "pool_type"]
         root = self.dataroot
         if kw.get("queryRestraints") != False:
             parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
@@ -112,10 +112,10 @@ class ContainerRead(Events):
         objs = []
         for c in objects:
             try:
-                kw[u"pool_datatbl"] = c[u"pool_datatbl"]
-                kw[u"pool_dataref"] = c[u"pool_dataref"]
+                kw["pool_datatbl"] = c["pool_datatbl"]
+                kw["pool_dataref"] = c["pool_dataref"]
                 try:
-                    obj = self.factory.GetObj(c[u"id"], queryRestraints=False, **kw)
+                    obj = self.factory.GetObj(c["id"], queryRestraints=False, **kw)
                 except PermissionError:
                     # ignore permission errors and continue
                     obj = None
@@ -146,10 +146,10 @@ class ContainerRead(Events):
             operators = {}
 
         if containerOnly:
-            parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
-            operators[u"pool_stag"] = u"BETWEEN"
+            parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+            operators["pool_stag"] = "BETWEEN"
 
-        parameter[u"pool_unitref"] = self.id
+        parameter["pool_unitref"] = self.id
         sort = kw.get("sort", self.defaultSort)
         if not fields:
             # lookup meta list default fields
@@ -172,11 +172,11 @@ class ContainerRead(Events):
         - loadObj(objs)
         """
         sort = kw.get("sort", self.defaultSort)
-        fields = [u"id", u"pool_datatbl", u"pool_dataref"]
+        fields = ["id", "pool_datatbl", "pool_dataref"]
         parameter, operators = {}, {}
-        parameter[u"id"] = ids
-        parameter[u"pool_unitref"] = self.id
-        operators[u"id"] = "IN"
+        parameter["id"] = ids
+        parameter["pool_unitref"] = self.id
+        operators["id"] = "IN"
         root = self.dataroot
         parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
         objects = root.search.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
@@ -214,8 +214,8 @@ class ContainerRead(Events):
             parameter = {}
         if operators is None:
             operators = {}
-        parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
-        operators[u"pool_stag"] = u"BETWEEN"
+        parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+        operators["pool_stag"] = "BETWEEN"
         objs = self.GetObjs(parameter, operators, **kw)
         return objs
 
@@ -224,8 +224,8 @@ class ContainerRead(Events):
             parameter = {}
         if operators is None:
             operators = {}
-        parameter[u"pool_stag"] = (StagContainer, StagRessource - 1)
-        operators[u"pool_stag"] = u"BETWEEN"
+        parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+        operators["pool_stag"] = "BETWEEN"
         return self.GetObjsList(fields, parameter, operators, **kw)
 
     def GetContainedIDs(self, sort=None):
@@ -687,11 +687,11 @@ class Root(ContainerRead, ContainerWrite):
                          title=translate(rootDef["name"]),
                          pool_state=1,
                          pool_filename=path,
-                         pool_wfa=u"",
+                         pool_wfa="",
                          pool_change=datetime.now(tz=app.pytimezone),
-                         pool_changedby=u"",
+                         pool_changedby="",
                          pool_create=datetime.now(tz=app.pytimezone),
-                         pool_createdby=u"")
+                         pool_createdby="")
         self.data = Conf()
         self.files = Conf()
 

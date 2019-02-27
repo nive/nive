@@ -21,11 +21,11 @@ def create_mysql(n):
     print("Create", n, "entries (data+meta+file): ",)
     t = time.time()
     for i in range(0,n):
-        e=pool.CreateEntry(u"data1")
+        e=pool.CreateEntry("data1")
         if i==0:  id = e.GetID()
         e.data.update(test_MySql.data1_1)
         e.meta.update(test_MySql.meta1)
-        e.CommitFile(u"file1", {"file":test_db.file1_1, "filename":"file1.txt"})
+        e.CommitFile("file1", {"file":test_db.file1_1, "filename":"file1.txt"})
         #e.Commit()
     t2 = time.time()
 
@@ -44,11 +44,11 @@ def create_sqlite3(n):
     print("Create", n, "entries (data+meta+file): ",)
     t = time.time()
     for i in range(0,n):
-        e=pool.CreateEntry(u"data1")
+        e=pool.CreateEntry("data1")
         if i==0:  id = e.GetID()
         e.data.update(test_db.data1_1)
         e.meta.update(test_db.meta1)
-        e.CommitFile(u"file1", {"file":test_db.file1_1, "filename":"file1.txt"})
+        e.CommitFile("file1", {"file":test_db.file1_1, "filename":"file1.txt"})
         e.Commit()
     t2 = time.time()
 

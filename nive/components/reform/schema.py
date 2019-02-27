@@ -256,7 +256,7 @@ class Email(Regex):
         if msg is None:
             msg = _("Invalid email address")
         super(Email, self).__init__(
-            u'(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', msg=msg)
+            '(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', msg=msg)
 
 class Literal(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .-_` charachters are allowed.
@@ -267,7 +267,7 @@ class Literal(Regex):
     def __init__(self, msg=None):
         if msg is None:
             msg = _("Invalid characters in string: Only 'a-zA-Z0-9.-_' allowed.")
-        super(Literal, self).__init__(u'^[a-zA-Z0-9\._\-]*$', msg=msg)
+        super(Literal, self).__init__('^[a-zA-Z0-9\._\-]*$', msg=msg)
 
 class LiteralWS(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .- _` charachters including whitespace are allowed.
@@ -278,7 +278,7 @@ class LiteralWS(Regex):
     def __init__(self, msg=None):
         if msg is None:
             msg = _("Invalid characters in string: Only 'a-zA-Z0-9.- _' allowed.")
-        super(Literal, self).__init__(u'^[a-zA-Z0-9\._\- ]*$', msg=msg)
+        super(Literal, self).__init__('^[a-zA-Z0-9\._\- ]*$', msg=msg)
 
 class Range(object):
     """ Validator which succeeds if the value it is passed is greater
@@ -1918,7 +1918,7 @@ class Lines(object):
     def deserialize(self, node, value, formstruct=None):
         if value in (null, None):
             return null
-        if value == u"":
+        if value == "":
             value = []
 
         elif isinstance(value, str):
@@ -1927,7 +1927,7 @@ class Lines(object):
                 try:
                     # remove empty lines
                     while True:
-                        value.remove(u"")
+                        value.remove("")
                 except:
                     pass
         elif not isinstance(value, (list, tuple)):

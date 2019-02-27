@@ -15,7 +15,7 @@ class containerTest_db:
         self.remove=[]
 
     def tearDown(self):
-        u = User(u"test")
+        u = User("test")
         root = self.app.root
         for r in self.remove:
             root.Delete(r, u)
@@ -25,7 +25,7 @@ class containerTest_db:
     def test_basics(self):
         #print "Testing shortcuts"
         a=self.app
-        user = User(u"test")
+        user = User("test")
         ccc = a.db.GetCountEntries()
         self.assertTrue(a.root)
         self.assertTrue(a.db)
@@ -61,7 +61,7 @@ class containerTest_db:
         a=self.app
         ccc = a.db.GetCountEntries()
         r=root(a)
-        user = User(u"test")
+        user = User("test")
         #rootValues()
         self.assertTrue(r.GetID()<=0)
         self.assertTrue(r.GetTypeID())
@@ -79,10 +79,10 @@ class containerTest_db:
         a=self.app
         r=root(a)
         # create
-        user = User(u"test")
-        type = u"type3"
+        user = User("test")
+        type = "type3"
         data = {}
-        user = User(u"test")
+        user = User("test")
         o = r.Create(type, data=data, user=user, custom=123)
         self.assertTrue(o.__kws_test__.get("custom")==123)
 
@@ -92,7 +92,7 @@ class containerTest_db:
         a=self.app
         r=root(a)
         # create
-        user = User(u"test")
+        user = User("test")
         ccc = a.db.GetCountEntries()
         o1 = createObj1(r)
         self.assertTrue(o1)
@@ -149,7 +149,7 @@ class containerTest_db:
         a=self.app
         r=root(a)
         # create
-        user = User(u"test")
+        user = User("test")
         ccc = a.db.GetCountEntries()
 
         typedef = a.configurationQuery.GetObjectConf("type1")
@@ -179,7 +179,7 @@ class containerTest_db:
         a=self.app
         r=root(a)
         ccc = a.db.GetCountEntries()
-        user = User(u"test")
+        user = User("test")
         # errors
         id = 9865898568444
         try:
@@ -196,8 +196,8 @@ class containerTest_db:
         self.assertTrue(r.defaultSort)
         ccontainer = len(r.GetObjs(containerOnly=1, batch=False))
         cobjs = len(r.GetObjs(batch=False))
-        ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))
-        cobjs2 = len(r.GetObjsList(parameter={u"pool_type":u"type2"}))
+        ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))
+        cobjs2 = len(r.GetObjsList(parameter={"pool_type":"type2"}))
         c=statdb(a)
         o1 = createObj1(r)
         self.assertTrue(o1)
@@ -239,17 +239,17 @@ class containerTest_db:
         self.assertTrue(len(r.GetObjs(containerOnly=1))==ccontainer+2)  # less failsafe than batch=False. On failure reset testdata.
         self.assertTrue(len(r.GetObjs())==cobjs+2)
         self.assertTrue(len(r.GetObjs(pool_type="type2")))
-        self.assertTrue(len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==ccontainer2+1)
-        self.assertTrue(len(r.GetObjsList(parameter={u"pool_type":u"type2"}))==cobjs2+1)
+        self.assertTrue(len(r.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))==ccontainer2+1)
+        self.assertTrue(len(r.GetObjsList(parameter={"pool_type":"type2"}))==cobjs2+1)
         self.assertTrue(len(o3.GetObjsBatch([o4.id,o5.id])))
         # object
         self.assertTrue(len(o3.GetObjs(containerOnly=1))==2)
         self.assertTrue(len(o3.GetObjs())==2)
         self.assertTrue(len(o3.GetObjs(pool_type="type2"))==2)
-        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==2)
-        self.assertTrue(len(o3.GetObjsList(parameter={u"pool_type":u"type2"}))==2)
-        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}, operators={"pool_type":u"<>"}))==0)
-        self.assertTrue(len(o3.GetObjsList(parameter={u"pool_type":u"type2"}, operators={u"pool_type":u"<>"}))==0)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))==2)
+        self.assertTrue(len(o3.GetObjsList(parameter={"pool_type":"type2"}))==2)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}, operators={"pool_type":"<>"}))==0)
+        self.assertTrue(len(o3.GetObjsList(parameter={"pool_type":"type2"}, operators={"pool_type":"<>"}))==0)
         self.assertTrue(len(o1.GetSubtreeIDs())==3)
         
         r.DeleteInternal(o1.GetID(), user=user)
@@ -292,7 +292,7 @@ class containerTest_db:
         a=self.app
         r=root(a)
         ccc = a.db.GetCountEntries()
-        user = User(u"test")
+        user = User("test")
         # errors
         id = 9865898568444
         try:
@@ -309,8 +309,8 @@ class containerTest_db:
         self.assertTrue(r.defaultSort)
         ccontainer = len(r.GetObjs(containerOnly=1, batch=False))
         cobjs = len(r.GetObjs(batch=False))
-        ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))
-        cobjs2 = len(r.GetObjsList(parameter={u"pool_type":u"type2"}))
+        ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))
+        cobjs2 = len(r.GetObjsList(parameter={"pool_type":"type2"}))
         c=statdb(a)
         o1 = createObj1(r)
         self.assertTrue(o1)
@@ -353,23 +353,23 @@ class containerTest_db:
         self.assertTrue(len(r.GetObjs(batch=False))==0)
         self.assertTrue(len(r.GetObjs(containerOnly=1))==0)
         self.assertTrue(len(r.GetObjs())==0)
-        self.assertTrue(len(r.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==0)
+        self.assertTrue(len(r.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))==0)
         p,o=r.ObjQueryRestraints(r)
-        p.update({u"pool_type":u"type2"})
+        p.update({"pool_type":"type2"})
         self.assertTrue(len(r.GetObjsList(parameter=p))==0)
         self.assertTrue(len(o3.GetObjsBatch([o4.id,o5.id]))==0)
         # object
         self.assertTrue(len(o3.GetObjs(containerOnly=1))==0)
         self.assertTrue(len(o3.GetObjs())==0)
-        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}))==0)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))==0)
         p,o=r.ObjQueryRestraints(self)
-        p.update({u"pool_type":u"type2"})
+        p.update({"pool_type":"type2"})
         self.assertTrue(len(o3.GetObjsList(parameter=p))==0)
         p,o=r.ObjQueryRestraints(self)
-        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={u"pool_type":u"type2"}, operators={u"pool_type":u"<>"}))==0)
+        self.assertTrue(len(o3.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}, operators={"pool_type":"<>"}))==0)
         p,o=r.ObjQueryRestraints(self)
-        p.update({u"pool_type":u"type2"})
-        o.update({u"pool_type":u"<>"})
+        p.update({"pool_type":"type2"})
+        o.update({"pool_type":"<>"})
         self.assertTrue(len(o3.GetObjsList(parameter=p, operators=o))==0)
         
         r.queryRestraints = {}, {}
@@ -383,7 +383,7 @@ class containerTest_db:
     def test_shortcuts(self):
         #print "Testing shortcuts"
         a=self.app
-        user = User(u"test")
+        user = User("test")
         ccc = a.db.GetCountEntries()
         self.assertTrue(a.root)
         self.assertTrue(a.db)
@@ -409,7 +409,7 @@ class containerTest_db:
     def test_shortcuts2(self):
         #print "Testing shortcuts"
         a=self.app
-        user = User(u"test")
+        user = User("test")
         ccc = a.db.GetCountEntries()
         self.assertTrue(a.root)
         self.assertTrue(a.db)
@@ -471,7 +471,7 @@ class groupsrootTest_db:
         self.remove=[]
 
     def tearDown(self):
-        u = User(u"test")
+        u = User("test")
         root = self.app.root
         for r in self.remove:
             root.Delete(r, u)
@@ -480,7 +480,7 @@ class groupsrootTest_db:
     def test_permissions(self):
         #print "Testing shortcuts"
         a=self.app
-        user = User(u"test")
+        user = User("test")
         ccc = a.db.GetCountEntries()
         self.assertTrue(a.root)
         self.assertTrue(a.db)
@@ -500,20 +500,20 @@ class groupsrootTest_db:
         a=self.app
         r=root(a)
 
-        userid = u"test"
+        userid = "test"
         r.RemoveLocalGroups(None, None)
         self.assertFalse(r.GetLocalGroups(userid))
-        r.AddLocalGroup(userid, u"group:local")
-        self.assertEqual(r.GetLocalGroups(userid), [u"group:local"])
-        r.RemoveLocalGroups(u"nouser", u"nogroup")
-        self.assertEqual(r.GetLocalGroups(userid), [u"group:local"])
-        r.RemoveLocalGroups(userid, u"nogroup")
-        self.assertEqual(r.GetLocalGroups(userid), [u"group:local"])
-        r.RemoveLocalGroups(u"nouser", u"group:local")
-        self.assertEqual(r.GetLocalGroups(userid), [u"group:local"])
-        r.RemoveLocalGroups(userid, u"group:local")
+        r.AddLocalGroup(userid, "group:local")
+        self.assertEqual(r.GetLocalGroups(userid), ["group:local"])
+        r.RemoveLocalGroups("nouser", "nogroup")
+        self.assertEqual(r.GetLocalGroups(userid), ["group:local"])
+        r.RemoveLocalGroups(userid, "nogroup")
+        self.assertEqual(r.GetLocalGroups(userid), ["group:local"])
+        r.RemoveLocalGroups("nouser", "group:local")
+        self.assertEqual(r.GetLocalGroups(userid), ["group:local"])
+        r.RemoveLocalGroups(userid, "group:local")
         self.assertFalse(r.GetLocalGroups(userid))
-        r.AddLocalGroup(userid, u"group:local")
+        r.AddLocalGroup(userid, "group:local")
         r.RemoveLocalGroups(userid, None)
         self.assertFalse(r.GetLocalGroups(userid))
         r.db.Undo()

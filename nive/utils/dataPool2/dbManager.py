@@ -55,8 +55,8 @@ class DatabaseManager(object):
         if not isinstance(date, datetime):
             date = ConvertToDateTime(date)
         if not date:
-            return u""
-        return date.strftime(u"%Y-%m-%d %H:%M:%S")
+            return ""
+        return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
     def UpdateStructure(self, tableName, structure, modify = None, createIdentity = True):
@@ -84,7 +84,7 @@ class DatabaseManager(object):
             options = self.ConvertConfToColumnOptions(col)
 
             # skip id column
-            if createIdentity and name == u"id":
+            if createIdentity and name == "id":
                 continue
 
             if not self.IsColumn(tableName, name):
@@ -100,15 +100,15 @@ class DatabaseManager(object):
 
             # modify column settings
             if name in columns and columns[name].get("db"):
-                if not self.ModifyColumn(tableName, name, u"", options):
+                if not self.ModifyColumn(tableName, name, "", options):
                     return False
             else:
                 if not self.CreateColumn(tableName, name, options):
                     return False
 
         if createIdentity:
-            if not self.IsColumn(tableName, u"id"):
-                if not self.CreateIdentityColumn(tableName, u"id"):
+            if not self.IsColumn(tableName, "id"):
+                if not self.CreateIdentityColumn(tableName, "id"):
                     return False
             
         return True
@@ -165,7 +165,7 @@ class DatabaseManager(object):
     def CreateDatabase(self, databaseName):
         if not self.IsDB():
             return False
-        self.db.execute(u"create database " + databaseName)
+        self.db.execute("create database " + databaseName)
         self.dbConn.commit()
         return True
 
@@ -173,7 +173,7 @@ class DatabaseManager(object):
     def UseDatabase(self, databaseName):
         if not self.IsDB():
             return False
-        #self.db.execute(u"use " + databaseName)
+        #self.db.execute("use " + databaseName)
         return True
 
 
@@ -202,32 +202,32 @@ class DatabaseManager(object):
         if not tableName or tableName == "":
             return False
         assert(tableName != "user")
-        aSql = u""
+        aSql = ""
         if createIdentity:
-            aSql = u"CREATE TABLE %s(%s INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY" % (tableName, primaryKeyName)
+            aSql = "CREATE TABLE %s(%s INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY" % (tableName, primaryKeyName)
             if columns:
                 for c in columns:
                     if c.id == primaryKeyName:
                         continue
                     aSql += ","
-                    aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
-            aSql += u" AUTO_INCREMENT = 1 "
+                    aSql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            aSql += ")"
+            aSql += " AUTO_INCREMENT = 1 "
         else:
-            aSql = u"CREATE TABLE %s" % (tableName)
+            aSql = "CREATE TABLE %s" % (tableName)
             if not columns:
                 raise ConfigurationError("No database fields defined.")
             aCnt = 0
-            aSql += u"("
+            aSql += "("
             for c in columns:
                 if aCnt:
-                    aSql += u","
+                    aSql += ","
                 aCnt = 1
-                aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
-        aSql += u" ENGINE = %s" %(self.engine)
+                aSql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            aSql += ")"
+        aSql += " ENGINE = %s" %(self.engine)
         if self.useUtf8:
-            aSql += u" CHARACTER SET utf8 COLLATE utf8_general_ci"
+            aSql += " CHARACTER SET utf8 COLLATE utf8_general_ci"
 
         self.db.execute(aSql)
         # delay until table is created
@@ -243,14 +243,14 @@ class DatabaseManager(object):
     def RenameTable(self, inTableName, inNewTableName):
         if not self.IsDB():
             return False
-        self.db.execute(u"alter table %s rename as %s" % (inTableName, inNewTableName))
+        self.db.execute("alter table %s rename as %s" % (inTableName, inNewTableName))
         return True
 
 
     def DeleteTable(self, inTableName):
         if not self.IsDB():
             return False
-        self.db.execute(u"drop table %s" % (inTableName))
+        self.db.execute("drop table %s" % (inTableName))
         return True
 
     # Columns --------------------------------------------------------------
@@ -277,14 +277,14 @@ class DatabaseManager(object):
             return False
         if columnOptions == "identity":
             return self.CreateIdentityColumn(tableName, columnName)
-        self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
+        self.db.execute("alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True
 
 
     def CreateIdentityColumn(self, tableName, columnName):
         if not self.IsDB():
             return False
-        return self.CreateColumn(tableName, columnName, u"INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY")
+        return self.CreateColumn(tableName, columnName, "INT UNSIGNED AUTO_INCREMENT UNIQUE NOT NULL PRIMARY KEY")
 
 
     def ModifyColumn(self, tableName, columnName, inNewColumnName, columnOptions):
@@ -296,7 +296,7 @@ class DatabaseManager(object):
         aN = inNewColumnName
         if aN == "":
             aN = columnName
-        self.db.execute(u"alter table %s change %s %s %s" % (tableName, columnName, aN, columnOptions))
+        self.db.execute("alter table %s change %s %s %s" % (tableName, columnName, aN, columnOptions))
         return True
 
 
@@ -305,14 +305,14 @@ class DatabaseManager(object):
     def GetDatabases(self):
         if not self.IsDB():
             return ""
-        self.db.execute(u"show databases")
+        self.db.execute("show databases")
         return self.db.fetchall()
 
 
     def GetTables(self):
         if not self.IsDB():
             return ""
-        self.db.execute(u"show tables")
+        self.db.execute("show tables")
         return self.db.fetchall()
 
 
@@ -325,7 +325,7 @@ class DatabaseManager(object):
             return []
         if not self.IsTable(tableName):
             return []
-        self.db.execute(u"show columns from %s" % (tableName))
+        self.db.execute("show columns from %s" % (tableName))
         table = {}
         for c in self.db.fetchall():
             table[c[0]] = {"db": {"id": c[0], "type": c[1], "identity": c[3]!="", "default": c[4], "null": ""}, 

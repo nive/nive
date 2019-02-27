@@ -134,7 +134,7 @@ class ObjectRead(Events):
 
         returns File object or None
         """
-        file = self.dbEntry.Files(parameter={u"filename": filename})
+        file = self.dbEntry.Files(parameter={"filename": filename})
         if not len(file):
             return None
         return file[0]
@@ -147,7 +147,7 @@ class ObjectRead(Events):
 
         returns File object or none
         """
-        file = self.dbEntry.Files(parameter={u"fileid": uid})
+        file = self.dbEntry.Files(parameter={"fileid": uid})
         if not len(file):
             return None
         return file[0]

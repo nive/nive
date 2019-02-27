@@ -327,8 +327,8 @@ class WfProcessConf(baseConf):
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
         self.states = []
         self.transitions = []
         self.entryPoint = "start"
@@ -398,8 +398,8 @@ class WfStateConf(baseConf):
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
         self.actions = []
         self.context = State
 
@@ -464,8 +464,8 @@ class WfTransitionConf(baseConf):
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
         self.fromstate = ""
         self.tostate = ""
         self.roles = []
@@ -485,27 +485,27 @@ class WfTransitionConf(baseConf):
         report = []
         #check id
         if not self.id:
-            report.append((ConfigurationError, u" WfTransitionConf.id is empty", self))
+            report.append((ConfigurationError, " WfTransitionConf.id is empty", self))
         # check context
         o = TryResolveName(self.context)
         if not o:
-            report.append((ImportError, u" for WfTransitionConf.context", self))
+            report.append((ImportError, " for WfTransitionConf.context", self))
         #check from state
         if not self.fromstate:
-            report.append((ConfigurationError, u" WfTransitionConf.fromstate is empty", self))
+            report.append((ConfigurationError, " WfTransitionConf.fromstate is empty", self))
         #check to state
         if not self.tostate:
-            report.append((ConfigurationError, u" WfTransitionConf.tostate is empty", self))
+            report.append((ConfigurationError, " WfTransitionConf.tostate is empty", self))
         for c in self.conditions:
             if isinstance(c, str):
                 o=TryResolveName(c)
                 if not o:
-                    report.append((ConfigurationError, u" WfTransitionConf.conditions not found: "+c, self))
+                    report.append((ConfigurationError, " WfTransitionConf.conditions not found: "+c, self))
         for c in self.execute:
             if isinstance(c, str):
                 o=TryResolveName(c)
                 if not o:
-                    report.append((ConfigurationError, u" WfTransitionConf.execute not found: "+c, self))
+                    report.append((ConfigurationError, " WfTransitionConf.execute not found: "+c, self))
         return report
 
 
@@ -527,7 +527,7 @@ class Process(object):
         self.configuration = configuration
         self.app_ = app
         self.renderTools = True
-        self.adminGroups = (u"group:admin",)  # always allowed
+        self.adminGroups = ("group:admin",)  # always allowed
         #for k in configuration:
         #    if k in ("states", "transitions"):
         #        continue
@@ -803,7 +803,7 @@ class Transition(object):
                     local = context.GetLocalGroups(str(user))
                     groups = list(groups)+list(local)
         else:
-            groups = (u"system.Everyone",)
+            groups = ("system.Everyone",)
         for r in groups:
             if r in self.process.adminGroups:
                 return True

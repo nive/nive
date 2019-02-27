@@ -187,7 +187,7 @@ class Field(object):
         """ Set the callable that will act as a default renderer for
         instances of the associated class when no ``renderer``
         argument is provided to the class' constructor.  Useful when
-        you'd like to use an alternate templating system.
+        yo'd like to use an alternate templating system.
 
         Calling this method resets the :term:`default renderer`.
         """
@@ -199,7 +199,7 @@ class Field(object):
         """ Set the callable that will act as a default
         :term:`resource registry` for instances of the associated
         class when no ``resource_registry`` argument is provided to
-        the class' constructor.  Useful when you'd like to use
+        the class' constructor.  Useful when yo'd like to use
         non-default requirement to resource path mappings for the
         entirety of a process.
 
@@ -450,7 +450,7 @@ class Field(object):
 
           request.POST.items()
 
-        Or, if you're using a ``cgi.FieldStorage`` object named
+        Or, if yo're using a ``cgi.FieldStorage`` object named
         ``fs``, you can compute a suitable value for ``controls``
         via::
 

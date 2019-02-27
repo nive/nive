@@ -58,7 +58,7 @@ class MySqlConnection(Connection):
         use_unicode = conf.unicode
         charset = None
         if use_unicode:
-            charset = u"utf8"
+            charset = "utf8"
         db = MySQLdb.connect(conf.host,
                              conf.user,
                              str(conf.password), 
@@ -107,7 +107,7 @@ class MySqlConnection(Connection):
         use_unicode = conf.unicode
         charset = None
         if use_unicode:
-            charset = u"utf8"
+            charset = "utf8"
         db = MySQLdb.connect(conf.host,
                              conf.user,
                              str(conf.password), 
@@ -152,14 +152,14 @@ class MySql(FileManager, Base):
 
 
     def _GetInsertIDValue(self, cursor):
-        cursor.execute(u"SELECT LAST_INSERT_ID()")
+        cursor.execute("SELECT LAST_INSERT_ID()")
         return cursor.fetchone()[0]
 
                
-    def _CreateNewID(self, table = u"", dataTbl = None):
+    def _CreateNewID(self, table = "", dataTbl = None):
         #
         aC = self.connection.cursor()
-        if table == u"":
+        if table == "":
             table = self.MetaTable
         if table == self.MetaTable:
             if not dataTbl:
@@ -167,35 +167,35 @@ class MySql(FileManager, Base):
 
             # sql insert empty rec in meta table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s () VALUES ()" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
+                STACKF(0,"INSERT INTO %s () VALUES ()" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
             try:
-                aC.execute(u"INSERT INTO %s () VALUES ()" % (dataTbl))
+                aC.execute("INSERT INTO %s () VALUES ()" % (dataTbl))
             except self._Warning:
                 pass
             # sql get id of created rec
             if self._debug:
-                STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
-            aC.execute(u"SELECT LAST_INSERT_ID()")
+                STACKF(0,"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+            aC.execute("SELECT LAST_INSERT_ID()")
             dataref = aC.fetchone()[0]
             # sql insert empty rec in meta table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log,name=self.name)
-            aC.execute(u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
+                STACKF(0,"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log,name=self.name)
+            aC.execute("INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
             if self._debug:
-                STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
-            aC.execute(u"SELECT LAST_INSERT_ID()")
+                STACKF(0,"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+            aC.execute("SELECT LAST_INSERT_ID()")
             aID = aC.fetchone()[0]
             aC.close()
             return aID, dataref
 
         # sql insert empty rec in meta table
         if self._debug:
-            STACKF(0,u"INSERT INTO %s () VALUES ()" % (table)+"\r\n",self._debug, self._log,name=self.name)
-        aC.execute(u"INSERT INTO %s () VALUES ()" % (table))
+            STACKF(0,"INSERT INTO %s () VALUES ()" % (table)+"\r\n",self._debug, self._log,name=self.name)
+        aC.execute("INSERT INTO %s () VALUES ()" % (table))
         # sql get id of created rec
         if self._debug:
-            STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
-        aC.execute(u"SELECT LAST_INSERT_ID()")
+            STACKF(0,"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+        aC.execute("SELECT LAST_INSERT_ID()")
         aID = aC.fetchone()[0]
         aC.close()
         return aID, 0
@@ -218,7 +218,7 @@ class MySql(FileManager, Base):
         MySql 4 version
         returns id references of parents for id.
         """
-        sql = u"""
+        sql = """
         SELECT p0.pool_unitref as ref1,p1.pool_unitref as ref2,p2.pool_unitref as ref3,p3.pool_unitref as ref4,p4.pool_unitref as ref5,p5.pool_unitref as ref6,p6.pool_unitref as ref7
         FROM %(meta)s p0, %(meta)s p1, %(meta)s p2, %(meta)s p3, %(meta)s p4, %(meta)s p5, %(meta)s p6
         WHERE  p0.id = %(id)d
@@ -247,7 +247,7 @@ class MySql(FileManager, Base):
         MySql 4 version
         returns titles of parents for id.
         """
-        sql = u"""
+        sql = """
         SELECT p0.pool_unitref as ref1,p0.title as t1,p1.pool_unitref as ref2,p1.title as t2,p2.pool_unitref as ref3,p2.title as t3,p3.pool_unitref as ref4,p3.title as t4,p4.pool_unitref as ref5,p4.title as t5,p5.pool_unitref as ref6,p5.title as t6,p6.pool_unitref as ref7,p6.title as t7
         FROM %(meta)s p0, %(meta)s p1, %(meta)s p2, %(meta)s p3, %(meta)s p4, %(meta)s p5, %(meta)s p6
         WHERE  p0.id = %(id)d
@@ -274,7 +274,7 @@ class MySql(FileManager, Base):
     def _FmtListForQuery(self, values):
         return values
         #FmtParam = self.connection.FmtParam
-        #return u",".join([FmtParam(v) for v in values])
+        #return ",".join([FmtParam(v) for v in values])
 
 
 class MySqlEntry(FileEntry, Entry):

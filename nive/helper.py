@@ -156,9 +156,9 @@ def FormatConfTestFailure(report, fmt="text"):
     import inspect
     v=[]
     for r in report:
-        v+= u"-----------------------------------------------------------------------------------\r\n"
+        v+= "-----------------------------------------------------------------------------------\r\n"
         v+= str(r[0]) + " " + r[1] + "\r\n"
-        v+= u"-----------------------------------------------------------------------------------\r\n"
+        v+= "-----------------------------------------------------------------------------------\r\n"
         for d in list(r[2].__dict__.items()):
             a = d[1]
             if a is None:
@@ -166,8 +166,8 @@ def FormatConfTestFailure(report, fmt="text"):
                     a = r[2].parent.get(d[0])
                 except:
                     pass
-            v+= str(d[0])+u":  "+str(a)+u"\r\n"
-        v+= u"\r\n"
+            v+= str(d[0])+":  "+str(a)+"\r\n"
+        v+= "\r\n"
     return "".join(v)
 
 
@@ -464,7 +464,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             portal = app.portal
             if portal is None:
                 portal = app
-            return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="id", visibleOnly=True)
+            return [Conf(id="authenticated", name=_("Authenticated"), visible=True)] + portal.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "types":
             return app.configurationQuery.GetAllObjectConfs()
         elif dyn == "categories":
@@ -547,7 +547,7 @@ class FakeLocalizer(object):
             if text.mapping:
                 v = str(text)
                 for k in text.mapping:
-                    v = v.replace(u"${%s}"%k, str(text.mapping[k]))
+                    v = v.replace("${%s}"%k, str(text.mapping[k]))
                 return v
         except:
             pass

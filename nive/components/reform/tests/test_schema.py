@@ -794,7 +794,7 @@ class TestString(unittest.TestCase):
         self.assertTrue(e.msg)
 
     def test_deserialize_unicode_from_None(self):
-        uni = u'\xf8'
+        uni = '\xf8'
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.deserialize(node, uni)
@@ -829,14 +829,14 @@ class TestString(unittest.TestCase):
         self.assertEqual(result, str(value))
 
     def test_serialize_unicode_to_None(self):
-        value = u'abc'
+        value = 'abc'
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.serialize(node, value)
         self.assertEqual(result, value)
 
     def test_serialize_to_utf8(self):
-        uni = u'\xf8'
+        uni = '\xf8'
         utf8 = uni.encode('utf-8')
         node = DummySchemaNode(None)
         typ = self._makeOne('utf-8')
@@ -844,7 +844,7 @@ class TestString(unittest.TestCase):
         self.assertEqual(result, utf8)
 
     def test_serialize_to_utf16(self):
-        uni = u'\xf8'
+        uni = '\xf8'
         utf16 = uni.encode('utf-16')
         node = DummySchemaNode(None)
         typ = self._makeOne('utf-16')
@@ -2083,21 +2083,21 @@ class TestLines(unittest.TestCase):
         self.assertTrue(e.msg)
 
     def test_deserialize_stringlist(self):
-        value = u'123\r\n456\r\n789\r\n'
+        value = '123\r\n456\r\n789\r\n'
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.deserialize(node, value)
         self.assertEqual(result, ["123","456","789"])
 
     def test_deserialize_stringlist_nobr(self):
-        value = u'123\r\n456\r\n789'
+        value = '123\r\n456\r\n789'
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.deserialize(node, value)
         self.assertEqual(result, ["123","456","789"])
 
     def test_deserialize_stringlist_sep(self):
-        value = u'123\r\n456\r\n789'
+        value = '123\r\n456\r\n789'
         node = DummySchemaNode(None)
         typ = self._makeOne()
         typ.lb="\n"

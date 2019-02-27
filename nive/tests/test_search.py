@@ -24,7 +24,7 @@ class SearchTest_db:
         c=r
         ids=[]
         n=0
-        user = User(u"test")
+        user = User("test")
         for i in range(0,level1):
             o=db_app.createObj1(c)
             n+=1
@@ -43,7 +43,7 @@ class SearchTest_db:
         self.lastid = id
 
     def tearDown(self):
-        user = User(u"test")
+        user = User("test")
         r=self.app.root
         for id in self.ids:
             r.Delete(id, user=user)

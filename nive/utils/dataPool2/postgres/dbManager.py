@@ -48,11 +48,11 @@ class PostgresManager(DatabaseManager):
         if not columnOptions or not columnName or not tableName:
             return False
         if newColumnName:
-            self.log.debug(u"alter table %s rename column %s to %s" % (tableName, columnName, newColumnName))
-            self.db.execute(u"alter table %s rename column %s to %s" % (tableName, columnName, newColumnName))
-        opt = columnOptions.split(u" ")
-        self.log.debug(u"alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
-        self.db.execute(u"alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
+            self.log.debug("alter table %s rename column %s to %s" % (tableName, columnName, newColumnName))
+            self.db.execute("alter table %s rename column %s to %s" % (tableName, columnName, newColumnName))
+        opt = columnOptions.split(" ")
+        self.log.debug("alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
+        self.db.execute("alter table %s alter column %s type %s" % (tableName, columnName, opt[0]))
         return True
 
 
@@ -88,7 +88,7 @@ class PostgresManager(DatabaseManager):
         url -> TEXT NOT NULL DEFAULT default
         """
         datatype = conf["datatype"]
-        col = u""
+        col = ""
 
         # convert datatype list
         if datatype == "list":
@@ -99,9 +99,9 @@ class PostgresManager(DatabaseManager):
 
         if datatype in ("string", "email", "password"):
             if conf.get("size", 150) <= 3:
-                col = u"CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                col = "CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
             else:
-                col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                col = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("number", "long", "int"):
             cval = conf["default"]
@@ -111,11 +111,11 @@ class PostgresManager(DatabaseManager):
                 cval = int(cval)
             size = conf.get("size", 4)
             if size == 2:
-                col = u"SMALLINT NOT NULL DEFAULT %d" % (cval)
+                col = "SMALLINT NOT NULL DEFAULT %d" % (cval)
             elif size == 8:
-                col = u"BIGINT NOT NULL DEFAULT %d" % (cval)
+                col = "BIGINT NOT NULL DEFAULT %d" % (cval)
             else:
-                col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
+                col = "INTEGER NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "float":
             cval = conf["default"]
@@ -123,7 +123,7 @@ class PostgresManager(DatabaseManager):
                 cval = 0
             if isinstance(cval, str):
                 cval = float(cval)
-            col = u"FLOAT NOT NULL DEFAULT %d" % (cval)
+            col = "FLOAT NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "bool":
             cval = conf["default"]
@@ -133,10 +133,10 @@ class PostgresManager(DatabaseManager):
                 cval = 1
             if isinstance(cval, str):
                 cval = int(cval)
-            col = u"SMALLINT NOT NULL DEFAULT %d" % (cval)
+            col = "SMALLINT NOT NULL DEFAULT %d" % (cval)
 
         elif datatype in ("text", "htext", "url", "urllist", "json", "code", "lines"):
-            col = u"TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
+            col = "TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
 
         elif datatype == "unit":
             cval = conf["default"]
@@ -144,10 +144,10 @@ class PostgresManager(DatabaseManager):
                 cval = 0
             if isinstance(cval, str):
                 cval = int(cval)
-            col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
+            col = "INTEGER NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "unitlist":
-            col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            col = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "date":
             cval = conf["default"]
@@ -158,9 +158,9 @@ class PostgresManager(DatabaseManager):
             if isinstance(cval, str) and not cval in ("NOW","NULL"):
                 cval = self.ConvertDate(cval)
             if not cval:
-                col = u"DATE NULL"
+                col = "DATE NULL"
             else:
-                col = u"DATE NULL DEFAULT '%s'" % (cval)
+                col = "DATE NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "datetime":
             cval = conf["default"]
@@ -171,9 +171,9 @@ class PostgresManager(DatabaseManager):
             if isinstance(cval, str) and not cval in ("NOW","NULL"):
                 cval = self.ConvertDate(cval)
             if not cval:
-                col = u"TIMESTAMP NULL"
+                col = "TIMESTAMP NULL"
             else:
-                col = u"TIMESTAMP NULL DEFAULT '%s'" % (cval)
+                col = "TIMESTAMP NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "time":
             cval = conf["default"]
@@ -184,15 +184,15 @@ class PostgresManager(DatabaseManager):
             if isinstance(cval, str) and not cval in ("NOW","NULL"):
                 cval = self.ConvertDate(cval)
             if cval == "":
-                col = u"TIME NULL"
+                col = "TIME NULL"
             else:
-                col = u"TIME NULL DEFAULT '%s'" % (cval)
+                col = "TIME NULL DEFAULT '%s'" % (cval)
 
         elif datatype == "timestamp":
-            col = u"TIMESTAMP DEFAULT NOW()"
+            col = "TIMESTAMP DEFAULT NOW()"
 
         elif datatype == "listt":
-            col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            col = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("listn", "codelist"):
             cval = conf["default"]
@@ -203,10 +203,10 @@ class PostgresManager(DatabaseManager):
             col = "SMALLINT NOT NULL DEFAULT %d" % (cval)
 
         elif datatype in ("multilist", "checkbox", "mselection", "mcheckboxes", "radio"):
-            col = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            col = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("binary", "file"):
-            col = u"BYTEA"
+            col = "BYTEA"
 
         elif datatype == "bytesize":
             cval = conf["default"]
@@ -214,7 +214,7 @@ class PostgresManager(DatabaseManager):
                 cval = 0
             if isinstance(cval, str):
                 cval = int(cval)
-            col = u"INTEGER NOT NULL DEFAULT %d" % (cval)
+            col = "INTEGER NOT NULL DEFAULT %d" % (cval)
 
         if conf.get("unique"):
             col += " UNIQUE"
@@ -227,7 +227,7 @@ class PostgresManager(DatabaseManager):
     def GetDatabases(self):
         if not self.IsDB():
             return []
-        sql = u"""SELECT datname FROM pg_database;"""
+        sql = """SELECT datname FROM pg_database;"""
         self.db.execute(sql)
         return self.db.fetchall()
 
@@ -235,7 +235,7 @@ class PostgresManager(DatabaseManager):
     def GetTables(self):
         if not self.IsDB():
             return []
-        sql = u"""SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"""
+        sql = """SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"""
         self.db.execute(sql)
         return self.db.fetchall()
 
@@ -249,11 +249,11 @@ class PostgresManager(DatabaseManager):
             return []
         if not self.IsTable(tableName):
             return []
-        self.db.execute(u"SELECT column_name, data_type, column_default, is_nullable, is_identity, character_maximum_length FROM information_schema.columns WHERE table_name ='%s';" % (tableName))
+        self.db.execute("SELECT column_name, data_type, column_default, is_nullable, is_identity, character_maximum_length FROM information_schema.columns WHERE table_name ='%s';" % (tableName))
         table = {}
         for c in self.db.fetchall():
             if c[2]:
-                default = c[2].replace(u"::character varying","")
+                default = c[2].replace("::character varying","")
             else:
                 default = ""
             if c[5]:
@@ -283,33 +283,33 @@ class PostgresManager(DatabaseManager):
         return False
 
 
-    def CreateTable(self, tableName, columns=None, createIdentity=True, primaryKeyName=u"id"):
+    def CreateTable(self, tableName, columns=None, createIdentity=True, primaryKeyName="id"):
         if not self.IsDB():
             return False
         if not tableName:
             return False
         assert(tableName != "user")
         if createIdentity:
-            sql = u"CREATE TABLE %s(%s SERIAL PRIMARY KEY" % (tableName, primaryKeyName)
+            sql = "CREATE TABLE %s(%s SERIAL PRIMARY KEY" % (tableName, primaryKeyName)
             if columns:
                 for c in columns:
                     if c.id == primaryKeyName:
                         continue
                     sql += ","
-                    sql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            sql += u")"
+                    sql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            sql += ")"
         else:
-            sql = u"CREATE TABLE %s" % (tableName)
+            sql = "CREATE TABLE %s" % (tableName)
             if not columns:
                 raise ConfigurationError("No database fields defined.")
             aCnt = 0
-            sql += u"("
+            sql += "("
             for c in columns:
                 if aCnt:
-                    sql += u","
+                    sql += ","
                 aCnt = 1
-                sql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            sql += u")"
+                sql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            sql += ")"
         self.log.debug(sql)
         self.db.execute(sql)
 
@@ -326,8 +326,8 @@ class PostgresManager(DatabaseManager):
     def RenameTable(self, inTableName, inNewTableName):
         if not self.IsDB():
             return False
-        self.log.debug(u"alter table %s rename to %s" % (inTableName, inNewTableName))
-        self.db.execute(u"alter table %s rename to %s" % (inTableName, inNewTableName))
+        self.log.debug("alter table %s rename to %s" % (inTableName, inNewTableName))
+        self.db.execute("alter table %s rename to %s" % (inTableName, inNewTableName))
         return True
 
 
@@ -348,21 +348,21 @@ class PostgresManager(DatabaseManager):
         return False
 
 
-    def CreateColumn(self, tableName, columnName, columnOptions=u""):
+    def CreateColumn(self, tableName, columnName, columnOptions=""):
         if not self.IsDB():
             return False
         if not columnName or not tableName:
             return False
-        if columnOptions == u"identity":
-            columnOptions = u"SERIAL PRIMARY KEY"
-        self.log.debug(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
-        self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
+        if columnOptions == "identity":
+            columnOptions = "SERIAL PRIMARY KEY"
+        self.log.debug("alter table %s add column %s %s" % (tableName, columnName, columnOptions))
+        self.db.execute("alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True
 
 
     def CreateIdentityColumn(self, tableName, columnName):
         if not self.IsDB():
             return False
-        return self.CreateColumn(tableName, columnName, u"SERIAL PRIMARY KEY")
+        return self.CreateColumn(tableName, columnName, "SERIAL PRIMARY KEY")
 
 

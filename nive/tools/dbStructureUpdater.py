@@ -17,13 +17,13 @@ from pyramid.threadlocal import get_current_request
 configuration = ToolConf(
     id = "dbStructureUpdater",
     context = "nive.tools.dbStructureUpdater.dbStructureUpdater",
-    name = _(u"Database Structure"),
-    description = _(u"Generate or update the database structure based on configuration settings."),
+    name = _("Database Structure"),
+    description = _("Generate or update the database structure based on configuration settings."),
     apply = (IApplication,),
     mimetype = "text/html",
     data = [
-        FieldConf(id="modify",     datatype="bool", default=0, name=_(u"Modify existing columns"),  description=_(u"Change existing database columns to new configuration. Depending on the changes, data may be lost!")),
-        FieldConf(id="showSystem", datatype="bool", default=0, name=_(u"Show system columns"),      description=u"")
+        FieldConf(id="modify",     datatype="bool", default=0, name=_("Modify existing columns"),  description=_("Change existing database columns to new configuration. Depending on the changes, data may be lost!")),
+        FieldConf(id="showSystem", datatype="bool", default=0, name=_("Show system columns"),      description="")
     ],
     views = [
         ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbStructureUpdater.dbStructureUpdater")
@@ -48,7 +48,7 @@ class dbStructureUpdater(Tool):
             localizer = FakeLocalizer()
         #localizer.translate(term) 
 
-        text = _(u""" <div class="well">
+        text = _(""" <div class="well">
 This tool compares the physically existing database structure (tables, columns) with the current configuration settings.
 The database structure is shown on the left, configuration settings on the right. <br><br>
 Existing database columns will only be altered if manually selected in the 'Modify' column. Modifying a table may destroy the data
@@ -57,7 +57,7 @@ By default this tool will only create new tables and columns and never delete an
  </div>       """)
         self.stream.write(localizer.translate(_(text)))
 
-        self.stream.write(u"""<form action="" method="post">
+        self.stream.write("""<form action="" method="post">
                      <input type="hidden" name="tag" value="dbStructureUpdater">
                      <input type="hidden" name="modify" value="1">""")
         app = self.app
@@ -65,25 +65,25 @@ By default this tool will only create new tables and columns and never delete an
             conf = app.dbConfiguration
             connection = app.NewConnection()
             if not connection:
-                self.stream.write(localizer.translate(_(u"""<div class="alert alert-error">No database connection configured</div>""")))
+                self.stream.write(localizer.translate(_("""<div class="alert alert-error">No database connection configured</div>""")))
                 return 0
         except OperationalError as e:
-            self.stream.write(localizer.translate(_(u"""<div class="alert alert-error">No database connection configured</div>""")))
+            self.stream.write(localizer.translate(_("""<div class="alert alert-error">No database connection configured</div>""")))
             return 0
 
         db = connection.GetDBManager()
-        self.stream.write(localizer.translate(_(u"<h4>Database '${name}' ${host} </h4><br>", mapping={"host":conf.host, "name":conf.dbName})))
+        self.stream.write(localizer.translate(_("<h4>Database '${name}' ${host} </h4><br>", mapping={"host":conf.host, "name":conf.dbName})))
 
         if not db:
-            self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Database connection error (${name})</div>", mapping={"name": app.dbConfiguration.context})))
+            self.stream.write(localizer.translate(_("<div class='alert alert-error'>Database connection error (${name})</div>", mapping={"name": app.dbConfiguration.context})))
             return 0
         
         # check database exists
         if not db.IsDatabase(conf.get("dbName")):
             db.CreateDatabase(conf.get("dbName"))
-            self.stream.write(u"")
-            self.stream.write(u"")
-            self.stream.write(localizer.translate(_(u"<div class='alert alert-success'>Database created: '${name}'</div>", mapping={"name": conf.dbName})))
+            self.stream.write("")
+            self.stream.write("")
+            self.stream.write(localizer.translate(_("<div class='alert alert-success'>Database created: '${name}'</div>", mapping={"name": conf.dbName})))
             db.dbConn.commit()
         db.UseDatabase(conf.get("dbName"))
 
@@ -104,8 +104,8 @@ By default this tool will only create new tables and columns and never delete an
                 if isinstance(m, str):
                     m = [m]
             if not db.UpdateStructure(aT["dbparam"], fmt, m):
-                self.stream.write(u"")
-                self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table update failed: ${dbparam} (type: ${name})</div>", mapping=aT)))
+                self.stream.write("")
+                self.stream.write(localizer.translate(_("<div class='alert alert-error'>Table update failed: ${dbparam} (type: ${name})</div>", mapping=aT)))
                 result = 0
                 continue
             db.dbConn.commit()
@@ -119,7 +119,7 @@ By default this tool will only create new tables and columns and never delete an
 
             if not db.IsTable(tableName):
                 if not db.CreateTable(tableName, columns=meta):
-                    self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table creation failed (pool_meta)</div>")))
+                    self.stream.write(localizer.translate(_("<div class='alert alert-error'>Table creation failed (pool_meta)</div>")))
                     return 0
                 db.dbConn.commit()
 
@@ -130,7 +130,7 @@ By default this tool will only create new tables and columns and never delete an
                 if isinstance(m, str):
                     m = [m]
             if not db.UpdateStructure(tableName, meta, m):
-                self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table update failed (pool_meta)</div>")))
+                self.stream.write(localizer.translate(_("<div class='alert alert-error'>Table update failed (pool_meta)</div>")))
                 result = 0
             db.dbConn.commit()
 
@@ -147,7 +147,7 @@ By default this tool will only create new tables and columns and never delete an
             identity = table[1]["identity"]
             if not db.IsTable(tableName):
                 if not db.CreateTable(tableName, columns=fields, createIdentity = bool(identity), primaryKeyName = identity):
-                    self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table creation failed (${name})</div>",mapping={"name":tableName})))
+                    self.stream.write(localizer.translate(_("<div class='alert alert-error'>Table creation failed (${name})</div>",mapping={"name":tableName})))
                     return 0
                 db.dbConn.commit()
         
@@ -158,7 +158,7 @@ By default this tool will only create new tables and columns and never delete an
                 if isinstance(m, str):
                     m = [m]
             if not db.UpdateStructure(tableName, fields, m, createIdentity = bool(identity)):
-                self.stream.write(localizer.translate(_(u"<div class='alert alert-error'>Table creation failed (${name})</div>",mapping={"name":tableName})))
+                self.stream.write(localizer.translate(_("<div class='alert alert-error'>Table creation failed (${name})</div>",mapping={"name":tableName})))
                 result = 0
             db.dbConn.commit()
 
@@ -168,39 +168,39 @@ By default this tool will only create new tables and columns and never delete an
 
 
         if db.modifyColumns:
-            self.stream.write(u"""<div class="alert alert-error"><input class="btn" type="submit" name="submit" value=" %s "><br>%s</div>""" % (
-                localizer.translate(_(u"Modify selected columns")), 
-                localizer.translate(_(u"Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"))))
-        self.stream.write(localizer.translate(u"</form>"))
+            self.stream.write("""<div class="alert alert-error"><input class="btn" type="submit" name="submit" value=" %s "><br>%s</div>""" % (
+                localizer.translate(_("Modify selected columns")), 
+                localizer.translate(_("Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"))))
+        self.stream.write(localizer.translate("</form>"))
         connection.close()
         return result
 
     
     def printStructure(self, structure, table, fmt, db, localizer):
-        header = u"""
+        header = """
 <h4>%(Table)s: %(tablename)s</h4>
 <table class="table"><tbody>
 <tr><td colspan="5">%(Db Columns)s</td>                                        <td colspan="2">%(Configuration settings)s</td></tr>
 <tr><td>%(ID)s</td><td>%(Type)s</td><td>%(Default)s</td><td>%(Settings)s</td>  <td>%(Modify?)s</td><td></td></tr>
 """  % {"tablename":table, 
-        "Table": localizer.translate(_(u"Table")), 
-        "Db Columns": localizer.translate(_(u"Database settings")), 
-        "Configuration settings": localizer.translate(_(u"Configuration settings")),
-        "ID":localizer.translate(_(u"ID")),
-        "Type":localizer.translate(_(u"Type")),
-        "Default":localizer.translate(_(u"Default")),
-        "Settings":localizer.translate(_(u"Settings")),
-        "Modify?":localizer.translate(_(u"Modify?"))
+        "Table": localizer.translate(_("Table")), 
+        "Db Columns": localizer.translate(_("Database settings")), 
+        "Configuration settings": localizer.translate(_("Configuration settings")),
+        "ID":localizer.translate(_("ID")),
+        "Type":localizer.translate(_("Type")),
+        "Default":localizer.translate(_("Default")),
+        "Settings":localizer.translate(_("Settings")),
+        "Modify?":localizer.translate(_("Modify?"))
        }
 
-        row = u"""
+        row = """
 <tr><td>%(id)s</td><td>%(type)s</td><td>%(default)s</td><td>Not null: %(null)s, Identity: %(identity)s</td>        <td>%(Modify)s</td><td>%(Conf)s</td></tr>
 """
 
-        cb = u"""
+        cb = """
 <input type="checkbox" name="%s" value="%s">""" 
 
-        footer = u"""
+        footer = """
 </tbody></table> <br>"""
 
 
@@ -209,8 +209,8 @@ By default this tool will only create new tables and columns and never delete an
             id = col
             col = structure[col].get("db")
             if not col:
-                col = {"id":id, "type": u"", "default": u"", "null": u"", "identity": u""}
-            conf = u""
+                col = {"id":id, "type": "", "default": "", "null": "", "identity": ""}
+            conf = ""
             for d in fmt:
                 if col and d["id"].upper() == col["id"].upper():
                     conf = db.ConvertConfToColumnOptions(d)

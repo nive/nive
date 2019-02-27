@@ -53,7 +53,7 @@ from nive.utils.utils import SortConfigurationList
 class Portal(Events):
     """ """
 
-    __name__ = u""
+    __name__ = ""
     __parent__ = None
     host = None
     port = None
@@ -235,7 +235,7 @@ class Portal(Events):
         self.Signal("finish", request)
         
 
-    def GetGroups(self, sort=u"id", visibleOnly=False):
+    def GetGroups(self, sort="id", visibleOnly=False):
         """
         returns all groups registered by components as list
         """
@@ -279,7 +279,7 @@ class Portal(Events):
         config.add_view(logout_view, name="logout", context="nive.portal.Portal")
         config.add_view(login_view,  name="login", context="nive.portal.Portal")
         config.add_view(account_view,name="account", context="nive.portal.Portal")
-        #config.add_view(favicon_view, name=u"favicon.txt", context=u"nive.portal.Portal", view=PortalViews)
+        #config.add_view(favicon_view, name="favicon.txt", context="nive.portal.Portal", view=PortalViews)
     
         # translations
         config.add_translation_dirs('nive:locale/')

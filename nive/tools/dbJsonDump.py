@@ -14,7 +14,7 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "dbJsonDump",
     context = "nive.tools.dbJsonDump.dbJsonDump",
-    name = _(u"Database json dump"),
+    name = _("Database json dump"),
     description = _("This function dumps table contents the way records are stored in json format."),
     apply = (IApplication,),
     mimetype = "text/json",
@@ -23,7 +23,7 @@ configuration = ToolConf(
                   datatype="checkbox",
                   default=[], 
                   listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
-                  name=_(u"Exclude system columns"))
+                  name=_("Exclude system columns"))
     ],
     views = [
         ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
@@ -47,11 +47,11 @@ class dbJsonDump(Tool):
         self.filename = app.configuration.id + ".json"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
             return 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
             return 0
         
         def mapfields(fields):

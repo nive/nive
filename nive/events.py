@@ -121,7 +121,7 @@ class Events(object):
            ((True, "MyEvent", "<class MyObject ...>"))
 
         """
-        if signal==u"init":
+        if signal=="init":
             self.InitEvents()
             #return
         if not self._eventdispatch or not signal in self._eventdispatch:

@@ -28,7 +28,7 @@ def test1():
     c=r
     ids=[]
     n=0
-    user = User(u"test")
+    user = User("test")
     for i in range(0,level1):
         o=db_app.createObj1(c)
         n+=1
@@ -86,7 +86,7 @@ def test2():
     print(time.time() - t2, "Creating", n, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         r.Delete(id, user=user)
     print(time.time() - t2, "Deleting objects recursively")
@@ -148,7 +148,7 @@ def test3():
     print(time.time() - t2, "Loading batch", cc, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         r.Delete(id, user=user)
     print(time.time() - t2, "Deleting objects recursively")
@@ -214,7 +214,7 @@ def test4():
     print(time.time() - t2, "Closing", cc, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         try:
             r.Delete(id, user=user)
@@ -286,7 +286,7 @@ def test5():
     print(time.time() - t2, "Loading after Close", cc, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         r.Delete(id, user=user)
         #try:

@@ -96,7 +96,7 @@ class BaseView(object):
         # add extension if it is not the virtual root
         if self.request.virtual_root == resource:
             return url
-        return u"%s.%s" % (url[:-1], resource.extension)
+        return "%s.%s" % (url[:-1], resource.extension)
 
     def FolderUrl(self, resource=None):
         """
@@ -133,17 +133,17 @@ class BaseView(object):
         returns url
         """
         if file is None:
-            return u""
-        if file.startswith((u"http://",u"https://",u"/")):
+            return ""
+        if file.startswith(("http://","https://","/")):
             return file
-        if not u":" in file:
+        if not ":" in file:
             conf = self.configuration
             if conf and conf.static:
-                if conf.static.endswith((u"/",u":")):
+                if conf.static.endswith(("/",":")):
                     file = conf.static + file
                 else:
-                    file = u"%s/%s" % (conf.static, file)
-                if file.startswith((u"http://",u"https://",u"/")):
+                    file = "%s/%s" % (conf.static, file)
+                if file.startswith(("http://","https://","/")):
                     return file
         return static_url(file, self.request)
 
@@ -160,8 +160,8 @@ class BaseView(object):
             resource=self.context
         file = resource.files.get(fieldID)
         if not file:
-            return u""
-        return u"%sfile/%s" % (self.Url(resource), file.filename)
+            return ""
+        return "%sfile/%s" % (self.Url(resource), file.filename)
 
     def PageUrl(self, resource=None, usePageLink=0, addAnchor=True):
         """
@@ -188,7 +188,7 @@ class BaseView(object):
         if hasattr(page, "extension") and page.extension:
             # add extension if it is not the virtual root
             if self.request.virtual_root != page:
-                url = u"%s.%s" % (url[:-1], page.extension)
+                url = "%s.%s" % (url[:-1], page.extension)
 
         if not addAnchor or resource == page:
             return url
@@ -205,7 +205,7 @@ class BaseView(object):
         if retainUrlParams:
             url = self.request.url
         else:
-            url = self.request.url.split(u"?")[0]
+            url = self.request.url.split("?")[0]
         if preserveHost:
             return url
         return "/"+"/".join(url.split("/")[3:])
@@ -239,7 +239,7 @@ class BaseView(object):
         returns url
         """
         if url is None:
-            return u""
+            return ""
         if not context:
             context = self.context
 
@@ -249,29 +249,29 @@ class BaseView(object):
         if isinstance(url, collections.abc.Callable):
             return url(context, self)
 
-        parts = url.split(u"/")
+        parts = url.split("/")
         url = parts[0]
-        if url == u"page_url":
+        if url == "page_url":
             url = self.PageUrl(context)
-        elif url == u"page_url_anchor":
+        elif url == "page_url_anchor":
             url = self.PageUrl(context, addAnchor=True)
-        elif url == u"obj_url":
+        elif url == "obj_url":
             url = self.Url(context)
-        elif url == u"obj_folder_url":
+        elif url == "obj_folder_url":
             url = self.FolderUrl(context)
-        elif url == u"parent_url":
+        elif url == "parent_url":
             url = self.Url(context.parent)
-        elif url == u"root_url":
+        elif url == "root_url":
             url = self.Url(context.root)
-        elif url == u"root_folder_url":
+        elif url == "root_folder_url":
             url = self.FolderUrl(context.root)
-        elif url == u"app_url":
+        elif url == "app_url":
             url = self.Url(context.app)
-        elif url == u"app_folder_url":
+        elif url == "app_folder_url":
             url = self.FolderUrl(context.app)
         if len(parts)>1:
             parts[0] = url[:-1]
-            return u"/".join(parts)
+            return "/".join(parts)
         return url
     
     
@@ -365,7 +365,7 @@ class BaseView(object):
         
         Adds the following values if not set ::
             
-            {u"context": self.context, u"view": self} 
+            {"context": self.context, "view": self} 
         
         Template lookup first searches the current view module and if not found
         the parent or extended view module. 
@@ -377,8 +377,8 @@ class BaseView(object):
         tmpl = self._LookupTemplate(templatename)
         if not tmpl:
             raise ConfigurationError("Template not found: %(name)s %(type)s." % {"name": templatename, "type": self.context.configuration.id})
-        if not "context" in values: values[u"context"] = self.context
-        if not "view" in values: values[u"view"] = self
+        if not "context" in values: values["context"] = self.context
+        if not "view" in values: values["view"] = self
         response = render_to_response(tmpl, values, request=self.request)
         self.CacheHeader(response, user=self.User())
         return response
@@ -387,11 +387,11 @@ class BaseView(object):
         conf = self.configuration
         if not tmplfile:
             raise TypeError("'tmplfile' is None. Need a template name to lookup the path.")
-        if not conf or u":" in tmplfile:
+        if not conf or ":" in tmplfile:
             return tmplfile
         path = conf.templates
-        if not path.endswith((u":",u"/")):
-            path += u"/"
+        if not path.endswith((":","/")):
+            path += "/"
         fn = path + tmplfile
         try:
             if get_renderer(fn):
@@ -401,8 +401,8 @@ class BaseView(object):
         if not conf.parent:
             return tmplfile
         path = conf.parent.templates
-        if not path.endswith((u":",u"/")):
-            path += u"/"
+        if not path.endswith((":","/")):
+            path += "/"
         fn = path + tmplfile
         return fn
 
@@ -473,24 +473,24 @@ class BaseView(object):
             app = self.context.app
             conf = app.QueryConfByName(IViewModuleConf, viewModuleConfID)
             if not conf:
-                return u""
+                return ""
             assets = conf.assets
         if assets is None and self.configuration:
             assets = self.configuration.assets
         if not assets:
-            return u""
+            return ""
         
         if ignore is None:
             ignore = []
         
         js_tags = css_tags = []
         if types in (None, "js"):
-            js_links = [self.StaticUrl(r[1]) for r in [v for v in assets if v[0] not in ignore and v[1].endswith(u".js")]]
-            js_tags = [u'<script src="%s" type="text/javascript"></script>' % link for link in js_links]
+            js_links = [self.StaticUrl(r[1]) for r in [v for v in assets if v[0] not in ignore and v[1].endswith(".js")]]
+            js_tags = ['<script src="%s" type="text/javascript"></script>' % link for link in js_links]
         if types in (None, "css"):
-            css_links = [self.StaticUrl(r[1]) for r in [v for v in assets if v[0] not in ignore and v[1].endswith(u".css")]]
-            css_tags = [u'<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
-        return (u"\r\n").join(js_tags + css_tags)
+            css_links = [self.StaticUrl(r[1]) for r in [v for v in assets if v[0] not in ignore and v[1].endswith(".css")]]
+            css_tags = ['<link href="%s" rel="stylesheet" type="text/css" media="all">' % link for link in css_links]
+        return ("\r\n").join(js_tags + css_tags)
         
 
     def tmpl(self):
@@ -571,7 +571,7 @@ class BaseView(object):
         
         returns response
         """
-        response.cache_control = u"no-cache"
+        response.cache_control = "no-cache"
         response.etag = '%s-%s' % (response.content_length, str(self.context.id))
         return response
 
@@ -675,14 +675,14 @@ class BaseView(object):
     def GetLocale(self):
         if hasattr(self, "_c_locale"):
             return self._c_locale
-        l = u"en"
+        l = "en"
         self._c_locale = l
         return l
     
     def GetTimezone(self):
         if hasattr(self, "_c_tz"):
             return self._c_tz
-        l = u"GMT"
+        l = "GMT"
         self._c_tz = l
         return l
     
@@ -700,17 +700,17 @@ class BaseView(object):
         if isinstance(fld, str):
             fld = context.GetFieldConf(fld)
         if not fld:
-            return _(u"<em>Unknown field</em>")
+            return _("<em>Unknown field</em>")
         if data is None:
             data = context.data.get(fld['id'], context.meta.get(fld['id']))
         if fld['datatype']=='file':
             url = self.FileUrl(fld['id'])
             if not url:
-                return u""
+                return ""
             url2 = url.lower()
-            if url2.find(u".jpg")!=-1 or url2.find(u".jpeg")!=-1 or url2.find(u".png")!=-1 or url2.find(u".gif")!=-1:
-                return u"""<img src="%s">""" % (url)
-            return u"""<a href="%s">download</a>""" % (url)
+            if url2.find(".jpg")!=-1 or url2.find(".jpeg")!=-1 or url2.find(".png")!=-1 or url2.find(".gif")!=-1:
+                return """<img src="%s">""" % (url)
+            return """<a href="%s">download</a>""" % (url)
         return FieldRenderer(context).Render(fld, data, context=context)
     
 
@@ -734,7 +734,7 @@ class BaseView(object):
 
             view_configuration = ViewModuleConf(
                 id = "views",
-                name = u"Views",
+                name = "Views",
                 # utilities
                 utilities = Conf(renderTime=renderTime)
                 ...
@@ -869,9 +869,9 @@ class BaseView(object):
         #opt
         for p in list(params.keys()):
             if len(url):
-                url.append(u"&")
-            url.append(u"%s=%s" % (p, params[p]))
-        return u"".join(url)    #urllib.quote_plus()
+                url.append("&")
+            url.append("%s=%s" % (p, params[p]))
+        return "".join(url)    #urllib.quote_plus()
     
 
     def FmtFormParam(self, **kw):
@@ -884,7 +884,7 @@ class BaseView(object):
         params = kw
         for p in list(params.keys()):
             value = ConvertToStr(params[p])
-            form.append(u"<input type='hidden' name='%s' value='%s'>" % (p, value))
+            form.append("<input type='hidden' name='%s' value='%s'>" % (p, value))
         return "".join(form)
 
 
@@ -895,11 +895,11 @@ class BaseView(object):
         returns string
         """
         if not text:
-            return u""
-        if text.find(u"\r\n")!=-1:
-            text = text.replace(u"\r\n",u"<br>\r\n")
+            return ""
+        if text.find("\r\n")!=-1:
+            text = text.replace("\r\n","<br>\r\n")
         else:
-            text = text.replace(u"\n",u"<br>\n")
+            text = text.replace("\n","<br>\n")
         return text
 
     def FmtDateText(self, date, language=None):
@@ -909,10 +909,10 @@ class BaseView(object):
         returns string
         """
         if not date:
-            return u""
+            return ""
         if not isinstance(date, datetime):
             date = ConvertToDateTime(date)
-        return date.strftime(u"%c")
+        return date.strftime("%c")
 
     def FmtDateNumbers(self, date, language=None):
         """
@@ -921,10 +921,10 @@ class BaseView(object):
         returns string
         """
         if not date:
-            return u""
+            return ""
         if not isinstance(date, datetime):
             date = ConvertToDateTime(date)
-        return date.strftime(u"%x")
+        return date.strftime("%x")
 
     def FmtSeconds(self, secs):
         """ seconds to readable text """
@@ -940,16 +940,16 @@ class BaseView(object):
         closeTag: 'tag', 'inline', 'no', 'only'
         """
         if closeTag=="only":
-            return u"</%s>" % (tag)
-        attrs = u""
+            return "</%s>" % (tag)
+        attrs = ""
         if attributes:
-            attrs = [u'%s="%s"'%(a[0],str(a[1])) for a in list(attributes.items())]
-            attrs = u" " + u" ".join(attrs)
+            attrs = ['%s="%s"'%(a[0],str(a[1])) for a in list(attributes.items())]
+            attrs = " " + " ".join(attrs)
         if closeTag=="inline":
-            return u"<%s%s/>" % (tag, attrs)
+            return "<%s%s/>" % (tag, attrs)
         elif closeTag in (None,'no'):
-            return u"<%s%s>" % (tag, attrs)
-        return u"<%s%s></%s>" % (tag, attrs, tag)
+            return "<%s%s>" % (tag, attrs)
+        return "<%s%s></%s>" % (tag, attrs, tag)
 
     def CutText(self, text, length):
         """ bytes to readable text """
@@ -961,13 +961,13 @@ class BaseView(object):
 
     def mark2(self):
         try:
-            return u"""<div class="mark">%.04f</div>""" % (time.time() - self.request.environ.get("START_TIME", self._t))
+            return """<div class="mark">%.04f</div>""" % (time.time() - self.request.environ.get("START_TIME", self._t))
         except:
-            return u""
+            return ""
 
 
     def HtmlTitle(self):
-        t = self.request.environ.get(u"htmltitle")
+        t = self.request.environ.get("htmltitle")
         if t:
             return t
         return self.context.GetTitle()
@@ -1066,7 +1066,7 @@ def Relocate(url, request, messages=None, slot="", raiseException=True, refresh=
                 request.session.flash(m, slot)
     #if isinstance(url, str): # todo [3] unicode ?
     #    url = url.encode("utf-8")
-    body = json.dumps({u"location": url, u"messages": messages, "refresh": refresh})
+    body = json.dumps({"location": url, "messages": messages, "refresh": refresh})
     headers = [('X-Relocate', url)]
     if hasattr(request.response, "headerlist"):
         for h in list(request.response.headerlist):
@@ -1225,7 +1225,7 @@ class FieldRenderer(object):
         **kw:
         static = static root path for images
         """
-        data = u""
+        data = ""
         if useDefault:
             data = fieldConf["default"]
         if value != None:
@@ -1250,19 +1250,19 @@ class FieldRenderer(object):
                 data = FormatBytesForDisplay(data)
                 return data
             elif fmt=="image":
-                tmpl = settings.get("path", u"")
-                path = tmpl % {"data":data, "static": kw.get("static",u"")}
+                tmpl = settings.get("path", "")
+                path = tmpl % {"data":data, "static": kw.get("static","")}
                 data = """<img src="%(path)s" title="%(name)s">""" % {"path":path, "name": fieldConf.name}
                 return data
         
         if fType == "bool":
             if data:
-                data = _(u"Yes")
+                data = _("Yes")
             else:
-                data = _(u"No")
+                data = _("No")
 
         elif fType == "string":
-            if settings.get("relation") == u"userid":
+            if settings.get("relation") == "userid":
                 # load user name from database
                 try:
                     udb = context.app.portal.userdb.root
@@ -1275,7 +1275,7 @@ class FieldRenderer(object):
         elif fType == "text":
             fmt = settings.get("format")
             if fmt=="newlineToBr":
-                data = data.replace(u"\r\n", u"\r\n<br>")
+                data = data.replace("\r\n", "\r\n<br>")
             elif fmt=="markdown":
                 import markdown2
                 data = markdown2.markdown(data)
@@ -1283,26 +1283,26 @@ class FieldRenderer(object):
         elif fType == "date":
             if not isinstance(data, datetime):
                 if not data:
-                    return u""
+                    return ""
                 data = ConvertToDateTime(data)
-            fmt = settings.get("strftime", u"%x")
+            fmt = settings.get("strftime", "%x")
             return data.strftime(fmt)
 
         elif fType in ("datetime", "timestamp"):
             fmt = settings.get("format")
             if not isinstance(data, datetime):
                 if not data:
-                    return u""
+                    return ""
                 data = ConvertToDateTime(data)
             # defaults
             fmt = settings.get("strftime")
             if not fmt:
-                fmt = u"%x %H:%M"
+                fmt = "%x %H:%M"
                 # hide hour and minutes if zero
                 if data.hour==0 and data.minute==0 and data.second==0:
-                    fmt = u"%x"
+                    fmt = "%x"
                 elif settings.get("seconds"):
-                    fmt = u"%x %X"
+                    fmt = "%x %X"
             return data.strftime(fmt)
 
         elif fType == "unit":
@@ -1337,7 +1337,7 @@ class FieldRenderer(object):
                     options = options(fieldConf, self.context)
 
             if isinstance(data, str):
-                data = tuple(data.split(u"\n"))
+                data = tuple(data.split("\n"))
             for ref in data:
                 if options:
                     for item in options:
@@ -1345,57 +1345,57 @@ class FieldRenderer(object):
                             values.append(item["name"])
                 else:
                     values.append(ref)
-            delimiter = u", "
-            if settings and u"delimiter" in settings:
-                delimiter = settings[u"delimiter"]
+            delimiter = ", "
+            if settings and "delimiter" in settings:
+                delimiter = settings["delimiter"]
             data = delimiter.join(values)
 
         elif fType == "url":
             if render:
-                if data != u"" and data.find(u"http://") == -1:
-                    data = u"http://" + data
+                if data != "" and data.find("http://") == -1:
+                    data = "http://" + data
                 l = data[7:50]
                 if len(data) > 50:
-                    l += u"..."
-                data = u"<a alt='%s' href='%s' target='_blank'>%s</a>" % (data, data, l)
+                    l += "..."
+                data = "<a alt='%s' href='%s' target='_blank'>%s</a>" % (data, data, l)
 
         elif fType == "urllist":
             urllist = data
             data = []
-            if len(urllist) and urllist[0] == u"[":
+            if len(urllist) and urllist[0] == "[":
                 urllist = urllist[1:-1]
-                ul = urllist.split(u"', u'")
+                ul = urllist.split("', '")
                 ul[0] = ul[0][1:]
                 ul[len(ul)-1] = ul[len(ul)-1][:-1]
             else:
-                ul = urllist.replace(u"\r",u"")
-                ul = ul.split(u"\n")
+                ul = urllist.replace("\r","")
+                ul = ul.split("\n")
             links = []
             for l in ul:
-                t = l.split(u"|||")
-                title = u""
+                t = l.split("|||")
+                title = ""
                 url = t[0]
                 if len(t) > 1:
                     title = t[1]
-                if title != u"":
-                    title = u'%s (%s)' % (title, url)
+                if title != "":
+                    title = '%s (%s)' % (title, url)
                 else:
                     title = url
                 links.append({"id": l, "name": title})
-                data.append(u"<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br>" % (title, title, url, title))
-            data = u"".join(data)
+                data.append("<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br>" % (title, title, url, title))
+            data = "".join(data)
 
         elif fType == "password":
-            data = u"*****"
+            data = "*****"
 
         elif fType == "lines":
             if data:
-                tmpl = u"%s<br>"
-                if settings and u"tmpl" in settings:
-                    tmpl = settings[u"tmpl"]
+                tmpl = "%s<br>"
+                if settings and "tmpl" in settings:
+                    tmpl = settings["tmpl"]
                 if isinstance(data, str):
                     data = data.split("\n")
-                data = u"".join([tmpl%ll for ll in data])
+                data = "".join([tmpl%ll for ll in data])
 
         return data
     
@@ -1412,10 +1412,10 @@ class Mail(object):
     the body of the mail is generated by calling the mail object. *kw* parameters
     are passed on in template.render()
     """
-    title = u""
+    title = ""
     tmpl = None     # 'mypackage:templates/foo.pt'
     
-    def __init__(self, title=u"", tmpl=None):
+    def __init__(self, title="", tmpl=None):
         self.title = title
         self.tmpl = tmpl
     

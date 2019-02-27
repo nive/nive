@@ -31,14 +31,14 @@ class dbTest(object):
     # entries ---------------------------------------------------------------------------
     def create1(self):
         #print "Create Entry",
-        e=self.pool.CreateEntry(u"data1", user="unittest")
+        e=self.pool.CreateEntry("data1", user="unittest")
         e.Commit(user="unittest")
         #print e.GetID(), "OK"
         return e.GetID()
 
     def create2(self):
         #print "Create Entry",
-        e=self.pool.CreateEntry(u"data2", user="unittest")
+        e=self.pool.CreateEntry("data2", user="unittest")
         e.Commit(user="unittest")
         #print e.GetID(), "OK"
         return e.GetID()
@@ -59,14 +59,14 @@ class dbTest(object):
         e.Commit(user="unittest")
         self.assertTrue(e.GetMeta())
         d=e.GetData()
-        self.assertTrue(d.get(u"ftext")    == data1_1.get(u"ftext")    )
-        self.assertTrue(d.get(u"fnumber")    == data1_1.get(u"fnumber")    )
-        self.assertTrue(self.pool.GetDBDate(str(d.get(u"fdate"))) == self.pool.GetDBDate(str(data1_1.get(u"fdate"))))
-        self.assertTrue(d.get(u"flist")    == data1_1.get(u"flist")    )
-        self.assertTrue(d.get(u"fmselect") == data1_1.get(u"fmselect") )
-        self.assertTrue(d.get(u"funit")    == data1_1.get(u"funit")    )
-        self.assertTrue(d.get(u"funitlist")== data1_1.get(u"funitlist"))
-        self.assertTrue(d.get(u"ftext"))
+        self.assertTrue(d.get("ftext")    == data1_1.get("ftext")    )
+        self.assertTrue(d.get("fnumber")    == data1_1.get("fnumber")    )
+        self.assertTrue(self.pool.GetDBDate(str(d.get("fdate"))) == self.pool.GetDBDate(str(data1_1.get("fdate"))))
+        self.assertTrue(d.get("flist")    == data1_1.get("flist")    )
+        self.assertTrue(d.get("fmselect") == data1_1.get("fmselect") )
+        self.assertTrue(d.get("funit")    == data1_1.get("funit")    )
+        self.assertTrue(d.get("funitlist")== data1_1.get("funitlist"))
+        self.assertTrue(d.get("ftext"))
         #print "OK"
 
     def set2(self, id):
@@ -78,27 +78,27 @@ class dbTest(object):
         e.Commit(user="unittest")
         self.assertTrue(e.GetMeta())
         d=e.GetData()
-        self.assertTrue(d.get(u"ftext")    == data2_1.get(u"ftext")    )
-        self.assertTrue(d.get(u"fstr")     == data2_1.get(u"fstr")    )
-        self.assertTrue(d.get(u"ftext"))
+        self.assertTrue(d.get("ftext")    == data2_1.get("ftext")    )
+        self.assertTrue(d.get("fstr")     == data2_1.get("fstr")    )
+        self.assertTrue(d.get("ftext"))
         #print "OK"
 
     def setfile1(self, id):
         #print "Store file", id,
         e=self.pool.GetEntry(id)
         self.assertTrue(e)
-        self.assertTrue(e.CommitFile(u"file1", {"file":file1_1, "filename":"file1.txt"}))
+        self.assertTrue(e.CommitFile("file1", {"file":file1_1, "filename":"file1.txt"}))
         e.Commit(user="unittest")
-        self.assertTrue(e.GetFile(u"file1").read() == file1_1)
+        self.assertTrue(e.GetFile("file1").read() == file1_1)
         #print "OK"
 
     def setfile2(self, id):
         #print "Store file", id,
         e=self.pool.GetEntry(id)
         self.assertTrue(e)
-        self.assertTrue(e.CommitFile(u"file2", {"file":file1_2, "filename":u"file2.txt"}))
+        self.assertTrue(e.CommitFile("file2", {"file":file1_2, "filename":"file2.txt"}))
         e.Commit(user="unittest")
-        self.assertTrue(e.GetFile(u"file2").read() == file1_2)
+        self.assertTrue(e.GetFile("file2").read() == file1_2)
         #print "OK"
 
 
@@ -107,48 +107,48 @@ class dbTest(object):
         #print "Check entry data", id,
         e=self.pool.GetEntry(id)
         d=e.GetData()
-        self.assertTrue(d.get(u"ftext")    == data1_1.get(u"ftext")    )
-        self.assertTrue(d.get(u"fnumber")    == data1_1.get(u"fnumber")    )
-        self.assertTrue(self.pool.GetDBDate(str(d.get(u"fdate"))) == self.pool.GetDBDate(str(data1_1.get(u"fdate"))))
-        self.assertTrue(d.get(u"flist")    == data1_1.get(u"flist")    )
-        self.assertTrue(d.get(u"fmselect") == data1_1.get(u"fmselect") )
-        self.assertTrue(d.get(u"funit")    == data1_1.get(u"funit")    )
-        self.assertTrue(d.get(u"funitlist")== data1_1.get(u"funitlist"))
-        self.assertTrue(d.get(u"ftext"))
+        self.assertTrue(d.get("ftext")    == data1_1.get("ftext")    )
+        self.assertTrue(d.get("fnumber")    == data1_1.get("fnumber")    )
+        self.assertTrue(self.pool.GetDBDate(str(d.get("fdate"))) == self.pool.GetDBDate(str(data1_1.get("fdate"))))
+        self.assertTrue(d.get("flist")    == data1_1.get("flist")    )
+        self.assertTrue(d.get("fmselect") == data1_1.get("fmselect") )
+        self.assertTrue(d.get("funit")    == data1_1.get("funit")    )
+        self.assertTrue(d.get("funitlist")== data1_1.get("funitlist"))
+        self.assertTrue(d.get("ftext"))
         #print "OK"
 
     def data2(self, id):
         #print "Check entry data", id,
         e=self.pool.GetEntry(id)
         d=e.GetData()
-        self.assertTrue(d.get(u"ftext")    == data2_1.get(u"ftext")    )
-        self.assertTrue(d.get(u"fstr")     == data2_1.get(u"fstr")    )
-        self.assertTrue(d.get(u"ftext"))
+        self.assertTrue(d.get("ftext")    == data2_1.get("ftext")    )
+        self.assertTrue(d.get("fstr")     == data2_1.get("fstr")    )
+        self.assertTrue(d.get("ftext"))
         #print "OK"
 
     def file1(self, id):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
-        self.assertTrue(e.GetFile(u"file1").read() == file1_1)
+        self.assertTrue(e.GetFile("file1").read() == file1_1)
         #print "OK"
 
     def file2(self, id):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
-        self.assertTrue(e.GetFile(u"file2").read() == file1_2)
+        self.assertTrue(e.GetFile("file2").read() == file1_2)
         #print "OK"
 
     def fileErr(self, id):
         #print "Load non existing file", id,
         e=self.pool.GetEntry(id)
-        self.assertTrue(e.GetFile(u"file1") == None)
+        self.assertTrue(e.GetFile("file1") == None)
         #print "OK"
 
     # getstream --------------------------------------------------------------------------
     def file1stream(self, id):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
-        s=e.GetFile(u"file1")
+        s=e.GetFile("file1")
         d = s.read()
         s.close()
         self.assertTrue(d == file1_1)
@@ -157,7 +157,7 @@ class dbTest(object):
     def file2stream(self, id):
         #print "Load file", id,
         e=self.pool.GetEntry(id)
-        s=e.GetFile(u"file2")
+        s=e.GetFile("file2")
         d=s.read()
         s.close()
         self.assertTrue(d == file1_2)
@@ -166,8 +166,8 @@ class dbTest(object):
     # functions ------------------------------------------------------------------------
     def stat(self, id):
         e=self.pool.GetEntry(id)
-        self.assertTrue(e.GetMetaField(u"pool_createdby")==u"unittest")
-        self.assertTrue(e.GetMetaField(u"pool_changedby")==u"unittest")
+        self.assertTrue(e.GetMetaField("pool_createdby")=="unittest")
+        self.assertTrue(e.GetMetaField("pool_changedby")=="unittest")
         #print "Create: %s by %s    Changed: %s by %s" % (e.GetMetaField("pool_create"), e.GetMetaField("pool_createdby"), e.GetMetaField("pool_change"), e.GetMetaField("pool_changedby"))
 
     def delete(self, id):
@@ -192,25 +192,25 @@ class dbTest(object):
         e=self.pool.GetEntry(id)
         self.assertTrue(e)
 
-        self.assertEqual(e.FileKeys(), [u"file1",u"file2"])
+        self.assertEqual(e.FileKeys(), ["file1","file2"])
 
-        self.assertTrue(e.GetFile(u"file1").filename==u"file1.txt")
-        self.assertTrue(e.GetFile(u"file2").filename==u"file2.txt")
-        self.assertTrue(e.GetFile(u"file1").filename)
-        self.assertTrue(e.GetFile(u"file2").filename)
+        self.assertTrue(e.GetFile("file1").filename=="file1.txt")
+        self.assertTrue(e.GetFile("file2").filename=="file2.txt")
+        self.assertTrue(e.GetFile("file1").filename)
+        self.assertTrue(e.GetFile("file2").filename)
 
-        self.assertTrue(e.GetFile(u"file1"))
-        self.assertTrue(e.GetFile(u"file2"))
-        self.assertTrue(e.GetFile(u"file3")==None)
-        self.assertTrue(e.GetFile(u"")==None)
+        self.assertTrue(e.GetFile("file1"))
+        self.assertTrue(e.GetFile("file2"))
+        self.assertTrue(e.GetFile("file3")==None)
+        self.assertTrue(e.GetFile("")==None)
 
         l=e.Files({})
         self.assertTrue(len(l)==2)
         l2=[]
         for f in l:
-            l2.append(f[u"filekey"])
-        self.assertTrue(u"file1" in l2)
-        self.assertTrue(u"file2" in l2)
+            l2.append(f["filekey"])
+        self.assertTrue("file1" in l2)
+        self.assertTrue("file2" in l2)
         #print "OK"
 
 
@@ -321,38 +321,38 @@ class dbTest(object):
         id=self.create1()
 
         #print "Preload Skip", id,
-        e = self.pool.GetEntry(id, preload=u"skip")
-        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        e = self.pool.GetEntry(id, preload="skip")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!="")
         del e
         #print "OK"
 
         #print "Preload Meta", id,
-        e = self.pool.GetEntry(id, preload=u"meta")
-        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        e = self.pool.GetEntry(id, preload="meta")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!="")
         del e
         #print "OK"
 
         #print "Preload All", id,
-        e = self.pool.GetEntry(id, preload=u"all")
-        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        e = self.pool.GetEntry(id, preload="all")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!="")
         del e
         #print "OK"
 
         #print "Preload MetaData", id,
-        e = self.pool.GetEntry(id, preload=u"metadata")
-        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        e = self.pool.GetEntry(id, preload="metadata")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!="")
         del e
         #print "OK"
 
         #print "Preload StdMeta", id,
-        e = self.pool.GetEntry(id, preload=u"stdmeta")
-        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        e = self.pool.GetEntry(id, preload="stdmeta")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!="")
         del e
         #print "OK"
 
         #print "Preload StdMetaData", id,
-        e = self.pool.GetEntry(id, preload=u"stdmetadata")
-        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!=u"")
+        e = self.pool.GetEntry(id, preload="stdmetadata")
+        self.assertTrue(e.GetDataRef()>0 and e.GetDataTbl()!="")
         del e
         #print "OK"
 
@@ -411,12 +411,12 @@ class dbTest(object):
     def test_sql(self):
 
         t = time()
-        sql, values=self.pool.FmtSQLSelect(list(stdMeta)+list(struct[u"data1"]),
-                        {u"pool_type": "data1", u"ftext": "123", u"fnumber": 300000},
-                        sort = u"title, id, fnumber",
+        sql, values=self.pool.FmtSQLSelect(list(stdMeta)+list(struct["data1"]),
+                        {"pool_type": "data1", "ftext": "123", "fnumber": 300000},
+                        sort = "title, id, fnumber",
                         ascending = 0,
-                        dataTable = u"data1",
-                        operators={u"pool_type":u"=", u"ftext": u"<>", u"fnumber": u"<"},
+                        dataTable = "data1",
+                        operators={"pool_type":"=", "ftext": "<>", "fnumber": "<"},
                         start=1,
                         max=123)
         self.pool.Query(sql, values)
@@ -424,12 +424,12 @@ class dbTest(object):
         c.close()
         #print "OK"
 
-        sql, values=self.pool.FmtSQLSelect(list(struct[u"data1"]),
-                                     {u"ftext": "", u"fnumber": 3},
-                                     dataTable=u"data1",
-                                     sort = u"id, fnumber",
+        sql, values=self.pool.FmtSQLSelect(list(struct["data1"]),
+                                     {"ftext": "", "fnumber": 3},
+                                     dataTable="data1",
+                                     sort = "id, fnumber",
                                      ascending = 1,
-                                     operators={u"ftext": u"=", u"fnumber": u"="},
+                                     operators={"ftext": "=", "fnumber": "="},
                                      start=1,
                                      max=123,
                                      singleTable=1)
@@ -439,12 +439,12 @@ class dbTest(object):
         #print "OK"
 
         #print "GetFulltextSQL",
-        sql, values=self.pool.GetFulltextSQL(u"is",
-                            list(stdMeta)+list(struct[u"data1"]),
+        sql, values=self.pool.GetFulltextSQL("is",
+                            list(stdMeta)+list(struct["data1"]),
                             {},
-                            sort = u"title",
+                            sort = "title",
                             ascending = 1,
-                            dataTable = u"data1")
+                            dataTable = "data1")
         self.pool.Query(sql, values)
         c=self.pool.Execute(sql, values)
         c.close()
@@ -454,36 +454,36 @@ class dbTest(object):
     def test_sql2(self):
 
         t = time()
-        sql1, values1=self.pool.FmtSQLSelect(list(stdMeta)+list(struct[u"data1"]),
-                        {u"pool_type": "data1", u"ftext": "", u"fnumber": 3},
-                        sort = u"title, id, fnumber",
+        sql1, values1=self.pool.FmtSQLSelect(list(stdMeta)+list(struct["data1"]),
+                        {"pool_type": "data1", "ftext": "", "fnumber": 3},
+                        sort = "title, id, fnumber",
                         ascending = 0,
-                        dataTable = u"data1",
-                        operators={u"pool_type":u"=", u"ftext": u"<>", u"fnumber": u">"},
+                        dataTable = "data1",
+                        operators={"pool_type":"=", "ftext": "<>", "fnumber": ">"},
                         start=1,
                         max=123)
-        sql2, values2=self.pool.FmtSQLSelect(list(struct[u"data1"]),
-                                     {u"ftext": u"", u"fnumber": 3},
-                                     dataTable=u"data1",
-                                     sort = u"id, fnumber",
+        sql2, values2=self.pool.FmtSQLSelect(list(struct["data1"]),
+                                     {"ftext": "", "fnumber": 3},
+                                     dataTable="data1",
+                                     sort = "id, fnumber",
                                      ascending = 1,
-                                     operators={u"ftext": u"<>", u"fnumber": u">"},
+                                     operators={"ftext": "<>", "fnumber": ">"},
                                      start=1,
                                      max=123,
                                      singleTable=1)
-        sql3, values3=self.pool.GetFulltextSQL(u"is",
-                            list(stdMeta)+list(struct[u"data1"]),
+        sql3, values3=self.pool.GetFulltextSQL("is",
+                            list(stdMeta)+list(struct["data1"]),
                             {},
-                            sort = u"title",
+                            sort = "title",
                             ascending = 1,
-                            dataTable = u"data1")
+                            dataTable = "data1")
         c=self.pool.connection.cursor()
         c.execute(sql1, values1)
         c.execute(sql2, values2)
         c.execute(sql3, values3)
         
-        self.pool.SelectFields(u"data1", fields=(u"id",), idValues=[0], idColumn=u"id")
-        self.pool.SelectFields(u"pool_meta", fields=(u"id",u"title",u"pool_type"), idValues=[1,2,3,4,5], idColumn=u"pool_unitref")
+        self.pool.SelectFields("data1", fields=("id",), idValues=[0], idColumn="id")
+        self.pool.SelectFields("pool_meta", fields=("id","title","pool_type"), idValues=[1,2,3,4,5], idColumn="pool_unitref")
 
 
     def test_insertdelete(self):
@@ -515,9 +515,9 @@ class dbTest(object):
 
     def test_groups(self):
         userid = "123"
-        group = u"group:test"
+        group = "group:test"
         id = 1
-        ref = u"o"
+        ref = "o"
         self.pool.RemoveGroups(id=id)
         self.assertFalse(self.pool.GetGroups(id, userid, group))
         self.assertFalse(self.pool.GetGroups(id))
@@ -558,30 +558,30 @@ class dbTest(object):
 
         dbfile = self.pool
         #print "SearchFilename",
-        f1 = dbfile.SearchFilename(u"file1.txt")
+        f1 = dbfile.SearchFilename("file1.txt")
         #print len(f1),
         self.assertTrue(len(f1)>=3)
-        f2 = dbfile.SearchFilename(u"file2.txt")
+        f2 = dbfile.SearchFilename("file2.txt")
         #print len(f2),
         self.assertTrue(len(f2)>=3)
-        f3 = dbfile.SearchFilename(u"fileXXX.txt")
+        f3 = dbfile.SearchFilename("fileXXX.txt")
         #print len(f3),
         self.assertTrue(len(f3)==0)
-        f4 = dbfile.SearchFilename(u"file%")
+        f4 = dbfile.SearchFilename("file%")
         #print len(f4),
         if self.countdb == 0:
             self.assertTrue(len(f4)>=len(f1)+len(f2))
         #print "OK"
 
         #print "SearchFiles",
-        parameter={u"id": (id1,id2,id3)}
-        operators={u"id": u"IN"}
+        parameter={"id": (id1,id2,id3)}
+        operators={"id": "IN"}
         f = dbfile.SearchFiles(parameter, operators=operators) #sort="filename",
         #print len(f),
         if self.countdb==0:
             self.assertTrue(len(f)==6)
-        parameter[u"filename"] = u"file2.txt"
-        operators[u"filename"] = u"="
+        parameter["filename"] = "file2.txt"
+        operators["filename"] = "="
         f = dbfile.SearchFiles(parameter, operators=operators) #sort="size",
         #print len(f),
         if self.countdb==0:
@@ -598,8 +598,8 @@ class dbTest(object):
 
     def test_tree(self):
         base = self.pool
-        #base.GetContainedIDs(base=0, sort=u"title", parameter=u"")
-        #base.GetTree(flds=[u"id"], sort=u"title", base=0, parameter=u"")
+        #base.GetContainedIDs(base=0, sort="title", parameter="")
+        #base.GetTree(flds=["id"], sort="title", base=0, parameter="")
         base.GetParentPath(1)
         base.GetParentTitles(1)
 
