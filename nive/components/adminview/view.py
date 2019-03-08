@@ -40,36 +40,35 @@ configuration = ViewModuleConf(
     templates = "nive.components.adminview:",
     template = "index.pt",
     permission = "administration",
-    adminLink = "app_folder_url/admin",
+    adminLink = "app_folder_url/system",
     static = "nive.components.adminview:static",
     assets = [
-        ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap/css/bootstrap.min.css'),
-        ('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
-        ('jquery.js', 'nive.components.adminview:static/mods/jquery.min.js'),
-        ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap/js/bootstrap.min.js'),
+        ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
+        #('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
+        ('jquery.js', 'nive.components.adminview:static/mods/jquery-3.3.1.slim.min.js'),
+        ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/js/bootstrap.bundle.js'),
     ],
 )
 t = configuration.templates
 configuration.views = [
     # User Management Views
-    ViewConf(name = "admin",    attr = "view",       renderer = t+"root.pt"),
-    ViewConf(name = "basics",   attr = "editbasics", renderer = t+"form.pt"),
-    #ViewConf(name = "rootsettings",attr = "editroot",    renderer = t+"form.pt"),
-    #ViewConf(name = "portal",   attr = "editportal", renderer = t+"form.pt"),
-    ViewConf(name = "tools",    attr = "tools",      renderer = t+"tools.pt"),
-    ViewConf(name = "modules",  attr = "view",       renderer = t+"modules.pt"),
-    ViewConf(name = "views",    attr = "view",       renderer = t+"views.pt"),
+    ViewConf(name = "system",       attr = "editbasics", renderer = t+"form.pt"),
+    ViewConf(name = "sys-tools",    attr = "tools",      renderer = t+"tools.pt"),
+    ViewConf(name = "sys-modules",  attr = "view",       renderer = t+"modules.pt"),
+    ViewConf(name = "sys-views",    attr = "view",       renderer = t+"views.pt"),
+    # ViewConf(name = "sys-rootsettings",attr = "editroot",    renderer = t+"form.pt"),
+    # ViewConf(name = "portal",   attr = "editportal", renderer = t+"form.pt"),
 ]
 
 configuration.widgets = [
-    WidgetConf(name=_("Basics"),    viewmapper="basics",     id="admin.basics",   sort=1000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    #WidgetConf(name=_("Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    #WidgetConf(name=_("Global"),    viewmapper="portal",     id="admin.portal",   sort=300,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    WidgetConf(name=_("Tools"),     viewmapper="tools",      id="admin.tools",    sort=5000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    WidgetConf(name=_("Modules"),   viewmapper="modules",    id="admin.modules",  sort=10000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
+    WidgetConf(name=_("Basics"),    viewmapper="system",         id="admin.system",       sort=1000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
+    WidgetConf(name=_("Tools"),     viewmapper="sys-tools",      id="admin.sys-tools",    sort=5000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
+    WidgetConf(name=_("Modules"),   viewmapper="sys-modules",    id="admin.sys-modules",  sort=10000,  apply=(IApplication,), widgetType=IAdminWidgetConf,
                description=_("Read only listing of all registered modules and settings.")),
-    WidgetConf(name=_("Views"),     viewmapper="views",      id="admin.views",    sort=15000,   apply=(IApplication,), widgetType=IAdminWidgetConf,
+    WidgetConf(name=_("Views"),     viewmapper="sys-views",      id="admin.sys-views",    sort=15000,  apply=(IApplication,), widgetType=IAdminWidgetConf,
                description=_("Read only listing of all registered views grouped by view modules.")),
+    # WidgetConf(name=_("Root"),      viewmapper="sys-rootsettings",id="admin.sys-rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
+    # WidgetConf(name=_("Global"),    viewmapper="sys-portal",     id="admin.sys-portal",   sort=300,    apply=(IApplication,), widgetType=IAdminWidgetConf),
 ]
 
 
@@ -281,6 +280,9 @@ class AdminBasics(BaseView):
                         a.append(str(i).replace("<", "&lt;").replace(">", "&gt;")+"<br>")
                 value = "".join(a)
             elif isinstance(value, dict):
+                if "password" in value:
+                    value = value.copy()
+                    value["password"] = "*****"
                 value = ConvertDictToStr(value, "<br>")
             else:
                 value = str(value).replace("<", "&lt;").replace(">", "&gt;")
@@ -290,7 +292,7 @@ class AdminBasics(BaseView):
 
 
     def AdministrationLinks(self, context=None):
-        if context:
+        if context is not None:
             apps = (context,)
         else:
             apps = self.context.app.portal.GetApps()
