@@ -1,62 +1,56 @@
-<tal:block i18n:domain="nive">
+<tal:block i18n:domain="nive"
+      tal:define="fieldw field.widget; formw field.widget.form.widget">
 
-<div tal:condition="field.widget.hidden"
-     tal:content="structure field.serialize(cstruct)">
-</div>
-
-<div tal:condition="not field.widget.hidden"
-     class="row">
-<div title="${field.description}"
-     id="item-${field.name}" 
-     class="${field.error and (field.widget.form.widget.error_class or field.widget.error_class)} control-group">
-
-  <tal:block tal:condition="field.widget.category!='full-width'">
-  <!-- mapping_item 3 column -->
-  <div class="${field.widget.form.widget.settings.get('column1_css', 'span2')}">
-    <label tal:condition="field.widget.category != 'structural'"
-           tal:content="field.title"
-           class="control-label ${'required' if field.required else ''} ${field.error and (field.widget.form.widget.error_class or field.widget.error_class)}"
-           title="${field.description}"
-           for="${field.oid}"></label>
-  </div>
-  <div class="${field.widget.form.widget.settings.get('column2_css', 'span7')}">
-    <div class="controls">
-      <span tal:replace="structure field.serialize(cstruct)"/>
-      <span tal:condition="field.error"
-            tal:repeat="msg field.error.messages()"
-            class="help-inline">${msg}</span>
+    <div tal:condition="fieldw.hidden"
+             tal:content="structure field.serialize(cstruct)">
     </div>
-  </div>
-  <div class="${field.widget.form.widget.settings.get('column3_css', 'span3')}">
-    <div tal:content="structure field.description" class="help-block"></div>
-  </div>
-  <!-- /mapping_item -->
-  </tal:block>
 
-  <tal:block tal:condition="field.widget.category=='full-width'">
-  <!-- mapping_item 3 full width -->
-  <div class="span12">
-    <label tal:condition="field.widget.category != 'structural'"
-           tal:content="field.title"
-           class="control-label ${'required' if field.required else ''} ${field.error and (field.widget.form.widget.error_class or field.widget.error_class)}"
-           title="${field.description}"
-           for="${field.oid}"></label>
-  </div>
-  <div class="span12">
-    <div class="controls">
-      <span tal:replace="structure field.serialize(cstruct)"/>
-      <span tal:condition="field.error"
-            tal:repeat="msg field.error.messages()"
-            class="help-inline">${msg}</span>
+    <div tal:condition="not fieldw.hidden"
+            title="${field.description}"
+            id="item-${field.name}"
+            class="row form-group ${field.error and (formw.error_class or fieldw.error_class)}">
+
+        <tal:block tal:condition="fieldw.category!='full-width'">
+            <!-- mapping_item 3 column -->
+            <label tal:condition="fieldw.category != 'structural'"
+                     tal:content="field.title"
+                    class="col-form-label ${formw.settings.get('column1_css', 'col-sm-2')} ${'required' if field.required else ''} ${field.error and (formw.error_class or fieldw.error_class)}"
+                    title="${field.description}"
+                    for="${field.oid}"></label>
+
+            <div class="${formw.settings.get('column2_css', 'col-sm-7')}">
+                <span tal:replace="structure field.serialize(cstruct)"/>
+                <span tal:condition="field.error"
+                         tal:repeat="msg field.error.messages()"
+                        class="help-inline">${msg}</span>
+            </div>
+            <div class="${formw.settings.get('column3_css', 'col-sm-3')}">
+                <div tal:content="structure field.description" class="help-block"></div>
+            </div>
+            <!-- /mapping_item -->
+        </tal:block>
+
+        <tal:block tal:condition="fieldw.category=='full-width'">
+            <!-- mapping_item 3 full width -->
+            <div class="col-sm">
+                <label tal:condition="fieldw.category != 'structural'"
+                         tal:content="field.title"
+                        class="col-form-label ${'required' if field.required else ''} ${field.error and (formw.error_class or fieldw.error_class)}"
+                        title="${field.description}"
+                        for="${field.oid}"></label>
+            </div>
+            <div class="col-sm">
+                <span tal:replace="structure field.serialize(cstruct)"/>
+                <span tal:condition="field.error"
+                         tal:repeat="msg field.error.messages()"
+                        class="help-inline">${msg}</span>
+            </div>
+            <div class="col-sm">
+                <div tal:content="structure field.description" class="help-block"></div>
+            </div>
+            <!-- /mapping_item -->
+        </tal:block>
+
     </div>
-  </div>
-  <div class="span12">
-    <div tal:content="structure field.description" class="help-block"></div>
-  </div>
-  <!-- /mapping_item -->
-  </tal:block>
-
-</div>
-</div>
 
 </tal:block>

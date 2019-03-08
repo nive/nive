@@ -794,6 +794,7 @@ class CheckboxWidget(Widget):
     true_val = 'true'
     false_val = 'false'
     title = ''
+    css_class = 'form-check-input'
     template = 'checkbox'
 
     def serialize(self, field, cstruct):
@@ -898,6 +899,8 @@ class RadioChoiceWidget(SelectWidget):
         Default: the empty string.
     """
     template = 'radio_choice'
+    css_class = 'form-check-input'
+
 
 class CheckboxChoiceWidget(Widget):
     """
@@ -924,6 +927,7 @@ class CheckboxChoiceWidget(Widget):
     """
     null_value = ()
     template = 'checkbox_choice'
+    css_class = 'form-check-input'
     values = ()
 
     def serialize(self, field, cstruct):
