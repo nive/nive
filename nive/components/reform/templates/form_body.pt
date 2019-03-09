@@ -1,11 +1,10 @@
 <tal:block i18n:domain="nive">
 
-<tal:block tal:define="rndr field.renderer;
-                       tmpl field.widget.item_template"
+<tal:block tal:define="rndr field.renderer; tmpl field.widget.item_template"
            tal:repeat="f field.children">
      <div tal:replace="structure rndr(tmpl,field=f,cstruct=cstruct.get(f.name, null))"></div>
 </tal:block>
-      
+
 <div class="form-actions">
     <tal:block repeat="button field.buttons">
       <button
@@ -13,7 +12,7 @@
           id="${field.formid+button.name}"
           name="${button.name}"
           type="${button.type}"
-          class="btn ${button.action.get('css_class')}"
+          class="${button.action.get('css_class', 'btn')}"
           value="${button.value}">
         <span>${button.title}</span>
       </button>

@@ -1,7 +1,7 @@
 <div class="form-actions">
 <div class="row">
-  <div class="${form.widget.settings.get('column1_css', 'col-sm-2')}"> </div>
-  <div class="${form.widget.settings.get('column2_css', 'col-sm-7')}">
+  <div class="${form.widget.settings.get('column1_css', 'col-md-2')}"> </div>
+  <div class="${form.widget.settings.get('column2_css', 'col-md-7')}">
     <tal:block repeat="button buttons">
       <button
         tal:attributes="disabled button.disabled"
