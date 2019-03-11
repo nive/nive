@@ -6,16 +6,15 @@
         <div class="row"><div class="col-sm">
             <tal:block tal:condition="tool">
                 <h3>${tool.name}</h3>
-                <div class="alert alert-success">${tool.description}</div>
+                <div class="alert alert-info">${tool.description}</div>
                 <span tal:replace="structure content"/>
             </tal:block>
 
             <tal:block tal:condition="not tool">
-                <div class="alert alert-success" i18n:translate="">This page lists all <em>administration tools</em>
+                <div class="alert alert-info" i18n:translate="">This page lists all <em>administration tools</em>
                     like database export or database schema manager. </div>
-                <h3 i18n:translate="">Administration tools</h3>
                 <tal:block tal:repeat="tool tools">
-                    <div class="well">
+                    <div class="alert alert-info">
                         <strong><a name="${tool.id}" href="?tag=${tool.id}">${tool.name}</a></strong><br>
                             ${tool.description}
                     </div>

@@ -257,7 +257,7 @@ class AdminBasics(BaseView):
         
         returns string
         """
-        v=["<table id='%s' style='display:none'>"%(ref)]
+        v=["<table id='%s' class='table table-sm' style='display:none'>"%(ref)]
         for d in list(conf.__dict__.items()):
             if d[0]=="_empty":
                 continue

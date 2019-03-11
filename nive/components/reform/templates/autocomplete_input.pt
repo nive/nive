@@ -2,8 +2,8 @@
     <input type="text"
            name="${field.name}"
            value="${cstruct}" 
-           tal:attributes="size field.widget.size;
-                           class field.widget.css_class"
+           tal:attributes="size field.widget.size"
+           class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
            id="${field.oid}">
     <script tal:condition="field.widget.values" type="text/javascript">
       reform.addCallback(

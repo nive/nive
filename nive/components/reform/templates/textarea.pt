@@ -1,5 +1,5 @@
 <textarea tal:attributes="rows field.widget.rows;
-                          cols field.widget.cols;
-                          class field.widget.css_class"
+                          cols field.widget.cols"
+          class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
           id="${field.oid}"
           name="${field.name}">${cstruct}</textarea>
