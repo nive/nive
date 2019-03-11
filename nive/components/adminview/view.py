@@ -34,7 +34,7 @@ class IAdminWidgetConf(Interface):
 #@nive_module
 configuration = ViewModuleConf(
     id = "administration",
-    name = _("Administration"),
+    name = _("System"),
     context = IApplication,
     view = "nive.components.adminview.view.AdminView",
     templates = "nive.components.adminview:",
@@ -44,7 +44,7 @@ configuration = ViewModuleConf(
     static = "nive.components.adminview:static",
     assets = [
         ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
-        #('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
+        ('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
         ('jquery.js', 'nive.components.adminview:static/mods/jquery-3.3.1.slim.min.js'),
         ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/js/bootstrap.bundle.js'),
     ],
@@ -104,8 +104,8 @@ dbAdminConfiguration = ViewModuleConf(
 class ConfigurationForm(HTMLForm):
     
     actions = [
-        Conf(id="default",    method="Start",   name="Initialize", hidden=True,  css_class="",            html="", tag=""),
-        Conf(id="edit",       method="Update",  name="Save",       hidden=False, css_class="btn btn-primary",  html="", tag=""),
+        Conf(id="default",    method="Start",   name="Initialize", hidden=True,  css_class="",                 html="", tag=""),
+        Conf(id="edit",       method="Update",  name=_("Save"),    hidden=False, css_class="btn btn-primary",  html="", tag=""),
     ]
     
     def Start(self, action, **kw):

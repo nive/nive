@@ -1202,11 +1202,11 @@ class ObjectForm(HTMLForm):
     Supports sort form parameter *pepos*.
     """
     actions = [
-        Conf(id="default",    method="StartFormRequest",  name="Initialize", hidden=True,  css_class="",            html="", tag=""),
-        Conf(id="create",     method="CreateObj",  name="Create",     hidden=False, css_class="btn btn-primary",  html="", tag=""),
-        Conf(id="defaultEdit",method="StartObject",name="Initialize", hidden=True,  css_class="",            html="", tag=""),
-        Conf(id="edit",       method="UpdateObj",  name="Save",       hidden=False, css_class="btn btn-primary",  html="", tag=""),
-        Conf(id="cancel",     method="Cancel",     name="Cancel",     hidden=False, css_class="buttonCancel",html="", tag="")
+        Conf(id="default",    method="StartFormRequest",  name="Initialize", hidden=True,  css_class="",             html="", tag=""),
+        Conf(id="create",     method="CreateObj",  name=_("Create"),     hidden=False, css_class="btn btn-primary",  html="", tag=""),
+        Conf(id="defaultEdit",method="StartObject",name="Initialize",    hidden=True,  css_class="",                 html="", tag=""),
+        Conf(id="edit",       method="UpdateObj",  name=_("Save"),       hidden=False, css_class="btn btn-primary",  html="", tag=""),
+        Conf(id="cancel",     method="Cancel",     name=_("Cancel"),     hidden=False, css_class="buttonCancel",     html="", tag="")
     ]
     subsets = {
         "create": {"actions": ["create"],  "defaultAction": "default"},

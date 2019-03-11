@@ -1,21 +1,20 @@
-<tal:block i18n:domain="nive">
-<div tal:condition="field.widget.hidden">
-  <span tal:replace="structure field.serialize(cstruct)"/>
-</div>
+<tal:block i18n:domain="nive"
+      tal:define="fieldw field.widget; formw field.widget.form.widget">
 
-<div tal:condition="not field.widget.hidden"
-     class="${field.error and field.widget.error_class} control-group"
-     i18n:domain="nive">
-  <div class="controls ${'required' if field.required else ''}">
-    <label tal:condition="field.widget.category != 'structural'"
-           tal:content="field.title"
-           class="control-label ${'required' if field.required else ''}"
-           title="${field.description}"
-           for="${field.oid}"></label>
-    <span tal:replace="structure field.serialize(cstruct)"/>
-    <span tal:condition="field.error"
-          tal:repeat="msg field.error.messages()"
-          class="help-inline" i18n:translate="">${msg}</span>
-  </div>
-</div>
+    <div tal:condition="fieldw.hidden"
+             tal:content="structure field.serialize(cstruct)">
+    </div>
+
+    <div tal:condition="not fieldw.hidden"
+            title="${field.description}"
+            id="item-${field.name}"
+            class="row form-group ${field.error and (formw.error_class or fieldw.error_class)}">
+
+            <div class="col-sm">
+                <span tal:replace="structure field.serialize(cstruct)"/>
+                <span tal:condition="field.error"
+                         tal:repeat="msg field.error.messages()"
+                        class="help-inline">${msg}</span>
+            </div>
+    </div>
 </tal:block>

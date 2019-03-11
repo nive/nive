@@ -168,7 +168,7 @@ By default this tool will only create new tables and columns and never delete an
 
 
         if db.modifyColumns:
-            self.stream.write("""<div class="alert alert-error"><input class="btn" type="submit" name="submit" value=" %s "><br>%s</div>""" % (
+            self.stream.write("""<div class="alert alert-error"><input class="btn btn-primary" type="submit" name="submit" value=" %s "><br>%s</div>""" % (
                 localizer.translate(_("Modify selected columns")), 
                 localizer.translate(_("Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"))))
         self.stream.write(localizer.translate("</form>"))
