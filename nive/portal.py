@@ -239,6 +239,10 @@ class Portal(Events):
         """
         returns all groups registered by components as list
         """
+        if not len(self.groups):
+            return ()
+        if not sort in self.groups[0]:
+            sort = "id"
         if not visibleOnly:
             return SortConfigurationList(self.groups, sort)
         c = [a for a in self.groups if not a.get("hidden")]

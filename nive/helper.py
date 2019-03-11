@@ -431,7 +431,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             return fieldconf.listItems(fieldconf, obj or app)
         return fieldconf.listItems
     
-    if not app:
+    if app is None:
         if fieldconf.settings:
             # settings dyn list
             dyn = fieldconf.settings.get("codelist")
@@ -457,7 +457,8 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             portal = app.portal
             if portal is None:
                 portal = app
-            return portal.GetGroups(sort="id", visibleOnly=True)
+            sort = fieldconf.settings.get("sort", "id")
+            return portal.GetGroups(sort=sort, visibleOnly=True)
         elif dyn == "localgroups":
             return app.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "groups+auth":
