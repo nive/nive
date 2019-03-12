@@ -747,9 +747,7 @@ msgstr ""
 
 #: ./nive/components/adminview/modules.pt:8
 msgid ""
-"This page lists all included <dynamic element> for browsing in readonly mode."
-" <dynamic element> Also this will help you to easily lookup object ids and "
-"database fields for developing."
+"This page lists all included modules for browsing in readonly mode."
 msgstr ""
 
 #: ./nive/components/adminview/modules.pt:11
@@ -778,7 +776,7 @@ msgstr ""
 
 #: ./nive/components/adminview/tools.pt:14
 msgid ""
-"This page lists all <dynamic element> like database export or database schema"
+"This page lists all administration tools like database export or database schema"
 " manager."
 msgstr ""
 
@@ -788,7 +786,7 @@ msgstr ""
 
 #: ./nive/components/adminview/views.pt:7
 msgid ""
-"This page lists all included <dynamic element> for browsing in readonly mode."
+"This page lists all included views for browsing in readonly mode."
 msgstr ""
 
 #: ./nive/components/adminview/views.pt:9

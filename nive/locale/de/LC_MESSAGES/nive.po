@@ -788,11 +788,9 @@ msgstr "Konto Url"
 
 #: nive/components/adminview/modules.pt:8
 msgid ""
-"This page lists all included <dynamic element> for browsing in readonly "
-"mode. <dynamic element> Also this will help you to easily lookup object ids "
-"and database fields for developing."
+"This page lists all included modules for browsing in readonly mode."
 msgstr ""
-"Auf dieser Seite werden alle <em>Module</em> mit Einstellungen im Lesemodus "
+"Auf dieser Seite werden alle Module mit Einstellungen im Lesemodus "
 "angezeigt. <br>Für die Entwicklung lassen sich hier die Objekt IDs und Feld "
 "IDs schnell und einfach nachschlagen."
 
@@ -822,7 +820,7 @@ msgstr "Andere"
 
 #: nive/components/adminview/tools.pt:14
 msgid ""
-"This page lists all <dynamic element> like database export or database "
+"This page lists all administration tools like database export or database "
 "schema manager."
 msgstr ""
 "Auf dieser Seite werden alle <em>Tools</em> wie der Datenbank Export oder "
@@ -834,7 +832,7 @@ msgstr "Verwaltungstools"
 
 #: nive/components/adminview/views.pt:7
 msgid ""
-"This page lists all included <dynamic element> for browsing in readonly mode."
+"This page lists all included views for browsing in readonly mode."
 msgstr "Listet alle <em>Views</em> im Lesemodus auf."
 
 #: nive/components/adminview/views.pt:9

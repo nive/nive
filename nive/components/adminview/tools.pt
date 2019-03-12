@@ -11,7 +11,7 @@
             </tal:block>
 
             <tal:block tal:condition="not tool">
-                <div class="alert alert-info" i18n:translate="">This page lists all <em>administration tools</em>
+                <div class="alert alert-info" i18n:translate="">This page lists all administration tools
                     like database export or database schema manager. </div>
                 <tal:block tal:repeat="tool tools">
                     <div class="alert alert-info">

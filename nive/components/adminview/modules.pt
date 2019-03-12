@@ -5,7 +5,7 @@
 
         <div class="row"><div class="col-sm">
 
-            <div class="alert alert-info" i18n:translate="">This page lists all included <em>modules</em> for browsing in readonly mode. <br>
+            <div class="alert alert-info" i18n:translate="">This page lists all included modules for browsing in readonly mode. <br>
                 Also this will help you to easily lookup object ids and database fields for developing.</div>
 
             <h3 i18n:translate="">CMS</h3>
