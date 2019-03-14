@@ -149,6 +149,14 @@ class ConfigurationTest(unittest.TestCase):
         self.assertTrue(new[1].value==999)
 
 
+    def test_update(self):
+        alist = [Conf(id="1", value=123),Conf(id="2", value=456),Conf(id="3", value=789)]
+        repl = Conf(id="2", value=999)
+        new = UpdateInListByID(alist, repl)
+        self.assertTrue(new==alist)
+        self.assertTrue(new[1].value==999)
+
+
     def test_decorator(self):
         class someclass(object):
             pass

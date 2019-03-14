@@ -181,6 +181,12 @@ def ReplaceInListByID(conflist, newconf, id=None):
             new.append(conf)
     return new
             
+def UpdateInListByID(conflist, updateconf, id=None):
+    id = id or updateconf.id
+    for conf in conflist:
+        if conf.id == id:
+            conf.update(updateconf)
+    return conflist
 
 
 class JsonDataEncoder(json.JSONEncoder):
