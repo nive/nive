@@ -871,7 +871,7 @@ class Search(object):
             parameter["pool_type"] = pool_type
         recs = self.SelectDict(pool_type=pool_type, parameter=parameter, 
                                fields=["id", "pool_unitref", name_field+" as name"], 
-                               operators=operators, sort = sort)
+                               operators=operators, sort=sort)
         return recs
 
 
@@ -888,7 +888,7 @@ class Search(object):
         if not sort:
             sort = name_field
         recs = self.SelectDict(parameter=parameter, fields=["id", "pool_unitref", name_field+" as name"], 
-                               operators=operators, sort = sort)
+                               operators=operators, sort=sort)
         return recs
 
 

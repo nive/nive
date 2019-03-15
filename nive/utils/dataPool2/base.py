@@ -395,7 +395,7 @@ class Base(object):
         sort = kw.get("sort", "")
         if sort is None:
             sort = ""
-        if sort != "" and not singleTable:
+        if sort and not singleTable:
             table = "meta__."
             s = sort.split(",")
             sort = []
@@ -416,7 +416,7 @@ class Base(object):
             sort = "".join(sort)
 
         customJoin = kw.get("join", "")
-        if customJoin == None:
+        if customJoin is None:
             customJoin = ""
 
         join = ""
