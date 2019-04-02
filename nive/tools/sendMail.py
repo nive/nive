@@ -97,6 +97,8 @@ class sendMail(Tool):
         maillog = values.get("maillog")
         log = logging.getLogger(maillog or "sendMail")
 
+        self.InitStream()
+
         # lookup receivers
         # `recvs` is the raw list of mails in the form of `(mail, name)` tuples
         recvs = []

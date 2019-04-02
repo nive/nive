@@ -36,14 +36,14 @@ class ToolTest_db:
     def test_toolapp(self):
         t = self.app.GetTool("nive.tools.example")
         self.assertTrue(t)
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 
     def test_toolapp2(self):
         self.app.Register("nive.tools.example")
         t = self.app.GetTool("exampletool")
         self.assertTrue(t)
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 
     def test_toolapp3(self):
@@ -53,7 +53,7 @@ class ToolTest_db:
         self.app.Register(c2)
         t = self.app.GetTool("exampletool2", self.app)
         self.assertTrue(t)
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 
     def test_toolobj(self):
@@ -61,7 +61,7 @@ class ToolTest_db:
         r = self.app.root
         o = db_app.createObj1(r)
         t = o.GetTool("nive.tools.example")
-        r1,v = t()
+        r1 = t()
         self.assertTrue(r1)
         r.Delete(o.GetID(), user=user)
 

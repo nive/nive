@@ -327,7 +327,6 @@ class ObjectWrite:
         
         Workflow action: edit
         """
-        app = self.app
         wf = self.workflow
         # check workflow
         if not wf.WfAllow("edit", user=user):

@@ -102,5 +102,6 @@ class gcdump(Tool):
 
     def _Run(self, **values):
         
+        self.InitStream()
         return DumpObjects(self.stream)
         

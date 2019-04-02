@@ -57,6 +57,7 @@ class sendMailTester(sendMail):
         maillog = values.get("maillog")
         log = logging.getLogger(maillog or "sendMail")
 
+        self.InitStream()
 
         # lookup receivers
         recvs = []

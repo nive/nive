@@ -52,7 +52,7 @@ class Tool(object):
     def __init__(self, configuration, app):
         self.configuration = configuration
         self.app_ = app
-        self.stream = False
+        self.stream = None
 
         self.__name__ = ""
         self.__parent__ = None
@@ -101,6 +101,10 @@ class Tool(object):
         return self.Run(**kw)
 
 
+    def InitStream(self):
+        self.stream = StringIO()
+
+
     def Run(self, **kw):
         """
         Execute the tool.
@@ -111,14 +115,11 @@ class Tool(object):
         
         returns bool, stream
         """
-        if not self.stream:
-            self.stream = StringIO()
-
         # call function
         values = self.ExtractValues(**kw)
         values["original"] = kw
         result = self._Run(**values)
-        return result, self.stream
+        return result
 
 
     def ExtractValues(self, **kw):
@@ -238,6 +239,7 @@ class ToolView(BaseView):
         tool = self.context
         values = self.GetFormValues(method="POST")
         values["request"] = self.request
+        values["user"] = self.User()
         result = tool.Run(**values)
         data = tool.stream
         if not isinstance(data, str):
@@ -245,6 +247,6 @@ class ToolView(BaseView):
                 data = data.getvalue()
             except:
                 data = str(data)
-        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False)     
+        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False)
     
            

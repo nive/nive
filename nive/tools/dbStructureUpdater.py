@@ -41,6 +41,7 @@ class dbStructureUpdater(Tool):
         modify = values.get("modify")
         request = values["original"]
         ignoreTables = self.app.configuration.get("skipUpdateTables", ())
+        self.InitStream()
 
         try:
             localizer = get_localizer(get_current_request())

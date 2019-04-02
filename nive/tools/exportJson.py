@@ -48,6 +48,7 @@ class exportJson(Tool):
         result = 1
         codepage="utf-8"
     
+        self.InitStream()
         app = self.app
         datapool = app.db
         conf = app.dbConfiguration

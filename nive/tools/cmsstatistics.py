@@ -38,6 +38,7 @@ class cmsstatistics(Tool):
         except:
             localizer = FakeLocalizer()
 
+        self.InitStream()
         app = self.app
         datapool = app.db
         conn = datapool.connection
