@@ -37,26 +37,26 @@ class DBExportTest1_db(__local.DefaultTestCase):
         db_app.createObj3(o)
 
     def tearDown(self):
-        self.app.root.Delete(self.o.id, user=User("aaa"))
-        self.app.Close()
-    
+        self._closeApp(True)
+
+
     def test_toolrun1(self):
         t = self.app.GetTool("nive.tools.exportJson", self.app)
         self.assertTrue(t)
-        r,v = t(tree=1,filedata="none")
+        r = t(tree=1,filedata="none")
         self.assertTrue(r)
 
 
     def test_toolrun2(self):
         t = self.app.GetTool("exportJson", self.app)
         self.assertTrue(t)
-        r,v = t(tree=0,filedata="path")
+        r = t(tree=0,filedata="path")
         self.assertTrue(r)
 
 
     #def test_toolrun3(self):
     #    t = self.app.GetTool("exportJson", self.app)
     #    self.assertTrue(t)
-    #    r,v = t(tree=1,filedata="data")
+    #    r = t(tree=1,filedata="data")
     #    self.assertTrue(r)
 

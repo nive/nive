@@ -103,7 +103,7 @@ class Base(object):
         
 
     def Close(self):
-        if self._conn:
+        if self._conn is not None:
             self._conn.close()
 
     def __del__(self):
@@ -502,7 +502,7 @@ class Base(object):
     
     # database query execution -----------------------------------------------------------------------
 
-    def Execute(self, sql, values = None, cursor=None):
+    def Execute(self, sql, values = None, cursor = None):
         """
         Execute a query on the database. Returns the dbapi cursor. Use `cursor.fetchall()` or
         `cursor.fetchone()` to retrieve results. The cursor should be closed after usage.
@@ -526,16 +526,11 @@ class Base(object):
         return cursor
 
     
-    def Query(self, sql, values = None, cursor=None, getResult=True):
+    def Query(self, sql, values = None, getResult = True):
         """
         execute a query on the database. non unicode texts are converted according to codepage settings.
         """
-        cc=True
-        if cursor is not None:
-            c = cursor
-            cc=False
-        else:
-            c = self.connection.cursor()
+        c = self.connection.cursor()
         if self._debug:
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
         sql = self.DecodeText(sql)
@@ -569,16 +564,14 @@ class Base(object):
             logging.getLogger(self.name).error(str(e) + "  " + sql)
             raise ProgrammingError(e)
         if not getResult:
-            if cc:
-                c.close()
+            c.close()
             return
         result = c.fetchall()
-        if cc:
-            c.close()
+        c.close()
         return result
 
 
-    def SelectFields(self, table, fields, idValues, cursor = None, idColumn = None):
+    def SelectFields(self, table, fields, idValues, idColumn = None):
         """
         Select row with multiple fields in the table.
         Set `idColumn` to the column name of the unique id column
@@ -603,10 +596,7 @@ class Base(object):
         if self._debug:
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
 
-        cc = 0
-        if cursor is None:
-            cc = 1
-            cursor = self.connection.cursor()
+        cursor = self.connection.cursor()
         result = ()
         try:
             cursor.execute(sql, dataList)
@@ -616,12 +606,12 @@ class Base(object):
         except self._OperationalError as e:
             # map to nive.utils.dataPool2.base.OperationalError
             raise OperationalError(e)
-        if cc:
-            cursor.close()
+        #finally:
+        #    cursor.close()
         return result
 
     
-    def InsertFields(self, table, data, cursor = None, idColumn = None):
+    def InsertFields(self, table, data, idColumn = None):
         """
         Insert row with multiple fields in the table.
         Codepage and dates are converted automatically
@@ -645,10 +635,7 @@ class Base(object):
         if self._debug:
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
 
-        cc = 0
-        if cursor is None:
-            cc = 1
-            cursor = self.connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(sql, dataList)
         except self._Warning:
@@ -659,15 +646,16 @@ class Base(object):
         except:
             self.Undo()
             raise
+        #finally:
+        #    cursor.close()
+
         id = 0
         if idColumn:
             id = self._GetInsertIDValue(cursor)
-        if cc:
-            cursor.close()
         return data, id
 
 
-    def UpdateFields(self, table, id, data, cursor = None, idColumn = "id", autoinsert=False):
+    def UpdateFields(self, table, id, data, idColumn = "id", autoinsert=False):
         """
         Updates multiple fields in the table.
         If `autoinsert` is True the a new record is automatically inserted if it does not exist. Also
@@ -675,20 +663,15 @@ class Base(object):
         
         If `autoinsert` is False the function returns the converted data.
         """
-        cc = 0
-        if cursor is None:
-            cc = 1
-            cursor = self.connection.cursor()
         ph = self.placeholder
         if autoinsert:
             # if record does not exist, insert it
             sql = """select id from %s where %s=%s""" %(table, idColumn, ph)
-            self.Execute(sql, (id,), cursor=cursor)
+            cursor = self.Execute(sql, (id,))
             r = cursor.fetchone()
+            cursor.close()
             if not r:
-                data, id = self.InsertFields(table, data, cursor = cursor, idColumn = idColumn)
-                if cc:
-                    cursor.close()
+                data, id = self.InsertFields(table, data, idColumn = idColumn)
                 return data, id
             
         dataList = []
@@ -707,6 +690,7 @@ class Base(object):
         if self._debug:
             STACKF(0,sql+"\r\n",self._debug, self._log,name=self.name)
 
+        cursor = self.connection.cursor()
         try:
             cursor.execute(sql, dataList)
         except self._Warning:
@@ -717,14 +701,15 @@ class Base(object):
         except:
             self.Undo()
             raise
-        if cc:
+        finally:
             cursor.close()
+
         if autoinsert:
             return data, 0
         return data
 
 
-    def DeleteRecords(self, table, parameter, cursor=None):
+    def DeleteRecords(self, table, parameter):
         """
         Delete records referenced by parameters
         """
@@ -739,17 +724,13 @@ class Base(object):
         sql = "DELETE FROM %s WHERE %s" % (table, " AND ".join(p))
         if self._debug:
             STACKF(0,sql+"\r\n\r\n",self._debug, self._log,name=self.name)
-        cc=False
-        if cursor is None:
-            cc=True
-            cursor = self.connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(sql, v)
         except:
             self.Undo()
             raise
-        if cc:
-            cursor.close()
+        cursor.close()
 
 
     # Text conversion -----------------------------------------------------------------------
@@ -832,14 +813,14 @@ class Base(object):
             return 0
         dataref = r[0]
         datatbl = r[1]
+        cursor.close()
 
-        self.DeleteFiles(id, cursor, version)
+        self.DeleteFiles(id, version=version)
         tables = (self.MetaTable, self.FulltextTable, self.GroupsTable)
         for table in tables:
             self.DeleteRecords(table, parameter={"id":id})
         self.DeleteRecords(datatbl, parameter={"id":dataref})
 
-        cursor.close()
         return 1
 
 
@@ -1199,7 +1180,7 @@ class Base(object):
     def GetRoot(self):
         return str(self.root)
 
-    def DeleteFiles(self, id, cursor, version):
+    def DeleteFiles(self, id, version):
         # subclassed
         pass
 
@@ -1218,7 +1199,7 @@ class Base(object):
         # check if exists
         parameter = {}
         
-        if id!=None:
+        if id is not None:
             parameter["id"] = id
         else:
             raise TypeError("id must not be none")
@@ -1243,7 +1224,7 @@ class Base(object):
         Add a local group assignment for userid.
         """
         data = {"userid": userid, "groupid": group}
-        if id!=None:
+        if id is not None:
             data["id"] = id
         else:
             raise TypeError("id must not be none")
@@ -1417,19 +1398,17 @@ class Entry(object):
         """
         self.Touch(user)
         try:
-            cursor = self.pool.connection.cursor()
             # meta
             if self.meta.HasTemp():
-                self.pool.UpdateFields(self.pool.MetaTable, self.id, self.meta.GetTemp(), cursor)
+                self.pool.UpdateFields(self.pool.MetaTable, self.id, self.meta.GetTemp())
             # data
             if self.data.HasTemp():
-                self.pool.UpdateFields(self.GetDataTbl(), self.GetDataRef(), self.data.GetTemp(), cursor)
+                self.pool.UpdateFields(self.GetDataTbl(), self.GetDataRef(), self.data.GetTemp())
             # files
             if self.files.HasTemp():
-                self.CommitFiles(self.files.GetTemp(), cursor=cursor)
+                self.CommitFiles(self.files.GetTemp())
             if dbCommit:
                 self.pool.Commit()
-            cursor.close()
             # remove previous files
             self.Cleanup(self.files.GetTemp())
             self.data.SetContent(self.data.GetTemp())
@@ -1550,15 +1529,12 @@ class Entry(object):
         if fld == "id":
             return False
 
-        cursor = self.pool.connection.cursor()
         # check if data record already exists
         id = self.GetDataRef()
         if id <= 0:
-            cursor.close()
             return False
 
-        temp = self.pool.UpdateFields(self.GetDataTbl(), id, {fld:data}, cursor)
-        cursor.close()
+        temp = self.pool.UpdateFields(self.GetDataTbl(), id, {fld:data})
         self.pool.Commit()
 
         if cache:
@@ -1590,7 +1566,7 @@ class Entry(object):
         pass
 
 
-    def CommitFile(self, key, file, cursor=None):
+    def CommitFile(self, key, file):
         """
         """
         #BREAK("subclass")
@@ -1725,9 +1701,9 @@ class Entry(object):
         r = cursor.fetchone()
         text = self.pool.DecodeText(text)
         if not r:
-            self.pool.InsertFields(self.pool.FulltextTable, {"text": text, "id": self.id}, cursor = cursor)
+            self.pool.InsertFields(self.pool.FulltextTable, {"text": text, "id": self.id})
         else:
-            self.pool.UpdateFields(self.pool.FulltextTable, self.id, {"text": text}, cursor = cursor)
+            self.pool.UpdateFields(self.pool.FulltextTable, self.id, {"text": text})
         cursor.close()
 
 

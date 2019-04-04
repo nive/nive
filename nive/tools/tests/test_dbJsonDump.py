@@ -7,7 +7,6 @@ from nive.tools.dbJsonDump import *
 from nive.tests import db_app, __local
 
 from nive.helper import FormatConfTestFailure
-from nive.security import User
 
 # -----------------------------------------------------------------
 
@@ -30,21 +29,22 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
         self._loadApp()
         self.app.Register(configuration)
         root = self.app.root
-        self.o=o=db_app.createObj1(root)
+        o = db_app.createObj1(root)
         db_app.createObj1(o)
         db_app.createObj2(o)
         db_app.createObj3(o)
+        self.o = o
 
     def tearDown(self):
-        self.app.root.Delete(self.o.id, user=User("aaa"))
-        self.app.Close()
+        self._closeApp(True)
     
+
     def test_toolrun1(self):
         t = self.app.GetTool("nive.tools.dbJsonDump", self.app)
         self.assertTrue(t)
         t.importWf = 0
         t.importSecurity = 0
-        r,v = t()
+        r = t()
         #print v
         self.assertTrue(r)
 
@@ -54,6 +54,6 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
         self.assertTrue(t)
         t.importWf = 1
         t.importSecurity = 1
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 

@@ -4,7 +4,7 @@
 
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
 from nive.utils.utils import ConvertToDateTime
@@ -369,6 +369,9 @@ class PoolStructure(object):
             # no datatype information set
             if isinstance(value, datetime):
                 return value.strftime("%Y-%m-%d %H:%M:%S")
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                return n.strftime("%H:%M:%S")
             elif isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:
@@ -406,6 +409,9 @@ class PoolStructure(object):
         elif fieldtype == "time":
             if isinstance(value, (float,int)):
                 value = str(datetime.fromtimestamp(value).strftime("HH:MM:SS.%f"))
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                value = n.strftime("HH:MM:SS.%f")
             elif value is None:
                 pass
             elif not isinstance(value, str):
@@ -467,6 +473,9 @@ class PoolStructure(object):
             # no datatype information set
             if isinstance(value, str) and value.startswith("_json_"):
                 value = json.loads(value[len("_json_"):])
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                value = datetime_time(hour=n.hour, minute=n.minute, second=n.second, microsecond=n.microsecond)
             if isinstance(value, bytes):
                 value = str(value, self.codepage)
             return value
@@ -495,6 +504,9 @@ class PoolStructure(object):
             elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
                 value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                value = datetime_time(hour=n.hour, minute=n.minute, second=n.second, microsecond=n.microsecond)
 
         elif fieldtype == "timestamp":
             if isinstance(value, str):

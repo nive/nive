@@ -8,13 +8,7 @@ from nive.utils import language
 
 class Langugage_data(unittest.TestCase):
     
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
-    
+
     def test_defs(self):
         for lang in language_data.languages:
             conf = language_data.GetConf(lang)
@@ -38,13 +32,6 @@ class Langugage_data(unittest.TestCase):
 
 
 class Langugage(unittest.TestCase):
-    
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
     
     def test_lang(self):
         lext = language.LanguageExtension()

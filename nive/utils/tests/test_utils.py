@@ -10,13 +10,7 @@ from nive.utils.utils import MakeListItems, ConvertHTMLToText, ConvertToDateTime
 
 class UtilsTest(unittest.TestCase):
     
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
-    
+
     def test_makelistitems1(self):
         l = ["1","2","3"]
         li = MakeListItems(l)

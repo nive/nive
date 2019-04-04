@@ -3,9 +3,10 @@
 #
 
 import threading
+import logging
 from time import time
 
-# The following is used in *ConnectionRequest* classes to cahed the current db connection
+# The following is used in *ConnectionRequest* classes to cache the current db connection
 # for the time of a request. if pyramid is not available the thread local stack is used
 # as fallback
 try:
@@ -46,7 +47,7 @@ class Connection(object):
 
     def cursor(self):
         db = self._get()
-        if not db:
+        if db is None:
             raise OperationalError("Database is closed")
         return db.cursor()
     
@@ -72,7 +73,7 @@ class Connection(object):
     def close(self):
         """ Close database connection """
         db = self._get(connect=False)
-        if db:
+        if db is not None:
             # rollback uncommited values by default
             db.rollback()
             db.close()

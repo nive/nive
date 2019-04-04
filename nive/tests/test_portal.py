@@ -28,7 +28,8 @@ class portalTest(unittest.TestCase):
         self.app = testapp(mApp2)
 
     def tearDown(self):
-        pass
+        self.app.Close()
+        testing.tearDown()
 
 
     def test_register(self):
@@ -65,7 +66,6 @@ class portalTest(unittest.TestCase):
         self.assertTrue(self.portal.GetGroups(sort="id", visibleOnly=False))
         self.assertTrue(self.portal.GetGroups(sort="name", visibleOnly=True))
         self.assertTrue(self.portal.portal)
-
 
     def test_portal2(self):
         self.portal.StartConnection(Event(self.request))

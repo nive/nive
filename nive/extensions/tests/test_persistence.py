@@ -4,6 +4,7 @@ import unittest
 
 from nive.extensions.persistence import *
 from nive.definitions import Conf
+from nive.helper import FormatConfTestFailure
 
 from nive.tests import db_app
 from nive.tests import __local
@@ -14,12 +15,11 @@ class Persistence(unittest.TestCase):
     
     def setUp(self):
         self.app = db_app.app_nodb()
-        pass
-    
+
     def tearDown(self):
-        pass
-    
-    
+        self.app.Close()
+
+
     def test_1(self):
         p = PersistentConf(self.app, self.app.configuration)
         
@@ -34,9 +34,9 @@ class tdbPersistence(__local.DefaultTestCase):
     def setUp(self):
         self._loadApp(["nive.extensions.persistence.dbPersistenceConfiguration"])
 
-
     def tearDown(self):
-        pass
+        self._closeApp()
+
     
     def test_conf(self):
         r=dbPersistenceConfiguration.test()

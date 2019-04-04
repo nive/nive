@@ -442,7 +442,8 @@ class Application(Events):
                 db.connection.connect()
                 if not db.connection.IsConnected():
                     return False, "No connection"
-            self.db.Execute("select id from pool_meta where id=1")
+            c = self.db.Execute("select id from pool_meta where id=1")
+            c.close()
             return True, "OK"
 
         except Exception as err:

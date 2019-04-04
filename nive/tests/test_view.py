@@ -187,11 +187,7 @@ class viewTest_db:
         self.context2.StoreFile("file2", db_app.file2_2, user=user)
 
     def tearDown(self):
-        user = User("test")
-        r = self.app.root
-        r.Delete(self.context.id, user=user)
-        r.Delete(self.context2.id, user=user)
-        self.app.Close()
+        self._closeApp(True, True)
         testing.tearDown()
 
 

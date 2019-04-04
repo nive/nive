@@ -1,5 +1,4 @@
 
-import time
 import unittest
 
 from nive.definitions import ToolConf, FieldConf, IApplication
@@ -31,7 +30,8 @@ class ToolTest_db:
         self._loadApp()
 
     def tearDown(self):
-        self.app.Close()
+        self._closeApp(False)
+
 
     def test_toolapp(self):
         t = self.app.GetTool("nive.tools.example")

@@ -31,12 +31,12 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
         self.app.Register(configuration)
 
     def tearDown(self):
-        self.app.Close()
+        self._closeApp()
     
     def test_toolrun1(self):
         t = self.app.GetTool("cmsstatistics", self.app)
         self.assertTrue(t)
-        r,v = t()
+        r = t()
         #print v.getvalue()
         self.assertTrue(r)
 

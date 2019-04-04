@@ -8,13 +8,6 @@ from nive.utils import language
 
 class Country_data(unittest.TestCase):
     
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
-    
     def test_defs(self):
         for ccc in country_data.countries:
             self.assertTrue(ccc[0], ccc)
@@ -39,13 +32,7 @@ class Country_data(unittest.TestCase):
 
 class Country(unittest.TestCase):
     
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
-    
+
     def test_lang(self):
         cext = language.CountryExtension()
         for c in cext.Codelist():

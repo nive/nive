@@ -25,13 +25,6 @@ class fileentrytest(object):
 
 class FileTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-
     def test_create(self):
         #   File( filekey="", 
         #         filename="", 

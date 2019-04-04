@@ -460,11 +460,11 @@ class ContainerWrite:
         # check if id is object
         if IObject.providedBy(id):
             obj = id
-        if not obj:
+        if obj is None:
             obj = self.GetObj(id, queryRestraints=False, **kw)
             if obj is None:
                 return False
-        if obj.parent.id!=self.id:
+        if obj.parent.id != self.id:
             raise ContainmentError("Object is not a child (%s)" % (str(id)))
 
         # call workflow
@@ -522,7 +522,7 @@ class ContainerWrite:
         Deletes the object and additional data from wfdata, wflog, fulltext,
         security tables.
         """
-        if obj:
+        if obj is not None:
             id = obj.id
         obj.Close()
         if id > 0:

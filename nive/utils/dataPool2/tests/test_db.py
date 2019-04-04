@@ -1,32 +1,20 @@
 # -*- coding: latin-1 -*-
 
-import copy
-from time import time
 import unittest
 
-from nive.definitions import DatabaseConf
-from nive.utils.dataPool2.base import *
-from nive.utils.path import DvPath
+from time import time
 
-from sqlite3 import OperationalError
-
-from nive.utils.dataPool2.tests.test_Base import conf, stdMeta, struct, SystemFlds, Fulltext, Files, data1_1, data2_1, meta1, file1_1, file1_2
+from nive.utils.dataPool2.tests.test_Base import stdMeta, struct, data1_1, data2_1, meta1, file1_1, file1_2
 
 
 
 
 class dbTest(object):
-    countdb = 1
-
-    def tearDown(self):
-        self.pool.Close()
 
     def statdb(self):
         c = self.pool.GetCountEntries()
-        self.countdb = c
         #print "Count entries in DB:", c
         return c
-
 
     # entries ---------------------------------------------------------------------------
     def create1(self):
@@ -487,16 +475,16 @@ class dbTest(object):
 
 
     def test_insertdelete(self):
-        self.pool.DeleteRecords("pool_meta", {"pool_type": "notype", "title": "test entry"}, cursor=None)
+        self.pool.DeleteRecords("pool_meta", {"pool_type": "notype", "title": "test entry"})
         self.pool.Commit()
 
-        self.pool.InsertFields("pool_meta", {"pool_type": "notype", "title": "test entry"}, cursor = None)
+        self.pool.InsertFields("pool_meta", {"pool_type": "notype", "title": "test entry"})
         self.pool.Commit()
         sql, values = self.pool.FmtSQLSelect(["id"], {"pool_type": "notype", "title": "test entry"}, dataTable="pool_meta", singleTable=1) 
         id = self.pool.Query(sql, values)
         self.assertTrue(id)
         
-        self.pool.UpdateFields("pool_meta", id[0][0], {"pool_type": "notype 123", "title": "test entry 123"}, cursor = None)
+        self.pool.UpdateFields("pool_meta", id[0][0], {"pool_type": "notype 123", "title": "test entry 123"})
         self.pool.Commit()
         sql, values = self.pool.FmtSQLSelect(["id"], {"pool_type": "notype", "title": "test entry"}, dataTable="pool_meta", singleTable=1) 
         id = self.pool.Query(sql, values)
@@ -506,7 +494,7 @@ class dbTest(object):
         self.assertTrue(id)
         
         for i in id:
-            self.pool.DeleteRecords("pool_meta", {"id":i[0]}, cursor=None)
+            self.pool.DeleteRecords("pool_meta", {"id":i[0]})
         self.pool.Commit()
         sql, values = self.pool.FmtSQLSelect(["id"], {"pool_type": "notype 123", "title": "test entry 123"}, dataTable="pool_meta", singleTable=1) 
         id = self.pool.Query(sql, values)
@@ -529,8 +517,6 @@ class dbTest(object):
 
         self.pool.RemoveGroups(userid=userid, group=group, id=id)
         self.assertFalse(self.pool.GetGroups(id, userid, group))
-
-
 
 
     def test_search_files(self):
@@ -567,25 +553,18 @@ class dbTest(object):
         f3 = dbfile.SearchFilename("fileXXX.txt")
         #print len(f3),
         self.assertTrue(len(f3)==0)
-        f4 = dbfile.SearchFilename("file%")
-        #print len(f4),
-        if self.countdb == 0:
-            self.assertTrue(len(f4)>=len(f1)+len(f2))
-        #print "OK"
 
         #print "SearchFiles",
         parameter={"id": (id1,id2,id3)}
         operators={"id": "IN"}
         f = dbfile.SearchFiles(parameter, operators=operators) #sort="filename",
         #print len(f),
-        if self.countdb==0:
-            self.assertTrue(len(f)==6)
+        self.assertTrue(len(f)==6)
         parameter["filename"] = "file2.txt"
         operators["filename"] = "="
         f = dbfile.SearchFiles(parameter, operators=operators) #sort="size",
         #print len(f),
-        if self.countdb==0:
-            self.assertTrue(len(f)==3)
+        self.assertTrue(len(f)==3)
         #print "OK"
 
         # deleting

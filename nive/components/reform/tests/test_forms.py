@@ -50,8 +50,7 @@ class FormTest(unittest.TestCase):
     def tearDown(self):
         self.app.Close()
         testing.tearDown()
-        pass
-    
+
 
     def test_form(self, **kw):
         form = HTMLForm(loadFromType="type1", context=None, request=Request(), app=self.app, view=self.view)
@@ -289,12 +288,7 @@ class FormTest_db:
         self.remove=[]
     
     def tearDown(self):
-        v = Viewy()
-        u = v.User()
-        root = self.app.root
-        for r in self.remove:
-            root.Delete(r, u)
-        self.app.Close()
+        self._closeApp(True)
         testing.tearDown()
 
     def test_obj(self, **kw):

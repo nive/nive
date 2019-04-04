@@ -36,13 +36,12 @@ class Sqlite3Test(unittest.TestCase):
         p.Delete()
         self.db = Sqlite3Manager()
         self.db.Connect(dbpath)
-        pass
 
     def tearDown(self):
         self.db.Close()
         p=DvPath(dbpath)
         p.Delete()
-        pass
+
 
     def test_Connect(self):
         db = Sqlite3Manager()

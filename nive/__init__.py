@@ -2,10 +2,6 @@
 # Released under GPL3. See license.txt
 #
 
-__version__ = "0.0.1"
-
-# todo [3] str / unicode ?
-# todo 'Class advice impossible in Python3.  Use the @implementer class decorator instead.'
 
 """
 Use `nive.definitions` to import Interfaces or Configuration classes

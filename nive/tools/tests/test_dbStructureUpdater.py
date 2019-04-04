@@ -37,15 +37,15 @@ class DBStructureTest2(__local.DefaultTestCase):
         self.app.Register(configuration)
 
     def tearDown(self):
-        self.app.Close()
-        pass
+        self._closeApp(True)
+
 
     def test_toolrun1(self):
         t = self.app.GetTool("nive.tools.dbStructureUpdater")
         self.assertTrue(t)
         t.importWf = 0
         t.importSecurity = 0
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 
 
@@ -54,7 +54,7 @@ class DBStructureTest2(__local.DefaultTestCase):
         self.assertTrue(t)
         t.importWf = 1
         t.importSecurity = 1
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 
 
@@ -66,6 +66,6 @@ class DBStructureTest2(__local.DefaultTestCase):
         self.assertTrue(t)
         t.importWf = 1
         t.importSecurity = 1
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 

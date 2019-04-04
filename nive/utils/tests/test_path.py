@@ -15,10 +15,6 @@ class Path(unittest.TestCase):
         self.name = self.base+"nofile.txt"
         pass
     
-    def tearDown(self):
-        pass
-    
-    
     def test_Create(self):
         n = self.name
         p = DvPath(n)

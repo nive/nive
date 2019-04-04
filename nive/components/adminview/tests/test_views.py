@@ -30,7 +30,7 @@ class tViews(__local.DefaultTestCase):
     
 
     def tearDown(self):
-        self.app.Close()
+        self._closeApp()
         testing.tearDown()
 
 

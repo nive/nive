@@ -97,12 +97,6 @@ class baseConfTest(unittest.TestCase):
 
 class ConfTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
 
     def test_obj0(self, **kw):
         testconf = DatabaseConf(

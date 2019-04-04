@@ -74,8 +74,8 @@ class modTest(unittest.TestCase):
         self.app = testapp()
 
     def tearDown(self):
-        pass
-
+        #db_app.emptypool(self.app)
+        self.app.Close()
 
     def test_Register(self):
         self.app.Register(mApp)
@@ -106,7 +106,8 @@ class modTest(unittest.TestCase):
         self.app.Register(mApp)
         self.app.Startup(None, debug=True)
         self.assertTrue(self.app.db)
-        self.app.db.Execute("select id from pool_meta")
+        c = self.app.db.Execute("select id from pool_meta")
+        c.close()
         self.app.Close()
 
     def test_startup2(self):
@@ -136,6 +137,7 @@ class simpleAppTest(unittest.TestCase):
         app = testapp()
         app.Register(mApp2)
         app.Startup(None)
+        app.Close()
         
     def test_nometa(self):
         app = testapp()
@@ -143,12 +145,14 @@ class simpleAppTest(unittest.TestCase):
         c.meta=[]
         app.Register(c)
         app.Startup(None)
+        app.Close()
 
     def test_db(self):
         app = testapp()
         app.Register(mApp2)
         v,r=app.TestDB()
         self.assertFalse(v)
+        app.Close()
 
 
 class appTest(unittest.TestCase):
@@ -161,7 +165,8 @@ class appTest(unittest.TestCase):
         self.app.Startup(None)
 
     def tearDown(self):
-        pass
+        #db_app.emptypool(self.app)
+        self.app.Close()
 
 
     def test_include2(self):
@@ -249,7 +254,9 @@ class appFactoryTest(unittest.TestCase):
         self.app.Startup(None)
 
     def tearDown(self):
-        pass
+        #db_app.emptypool(self.app)
+        self.app.Close()
+
 
     def test_structure(self):
         self.app._LoadStructure(forceReload=False)
@@ -275,7 +282,9 @@ class appConfigurationQueryTest(unittest.TestCase):
         self.app.Startup(None)
 
     def tearDown(self):
-        pass
+        #db_app.emptypool(self.app)
+        self.app.Close()
+
 
     def test_include2(self):
         s = self.app._structure.structure
@@ -400,10 +409,7 @@ class appTest_db:
         self.oid = o.id
         
     def tearDown(self):
-        user = User("test")
-        if self.oid:
-            self.app.root.Delete(self.oid, user=user)
-        self.app.Close()
+        self._closeApp(True)
 
 
     def test_db(self):
@@ -499,7 +505,6 @@ class appTest_db_sqlite(appTest_db, __local.SqliteTestCase):
     """
     see tests.__local
     """
-
 
 class appTest_db_mysql(appTest_db, __local.MySqlTestCase):
     """

@@ -175,9 +175,6 @@ class WfTest(unittest.TestCase):
         self.user1 = TestU1()
         self.user2 = TestU2()
     
-    def tearDown(self):
-        pass
-    
 
     def test_proc1(self):
         self.assertTrue(self.wf.Allow("create", self.obj, self.user1, transition=None))
@@ -270,9 +267,6 @@ class TransisiotnTest(unittest.TestCase):
         self.user1 = TestU1()
         self.user2 = TestU2()
     
-    def tearDown(self):
-        pass
-    
     def test_calls1(self):
         trans = Transition("t", tx1, self.wf)
         trans.Allow(self.obj, self.user1)
@@ -297,12 +291,6 @@ class TransisiotnTest(unittest.TestCase):
 
 class ConfTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
 
     def test_conf(self):
         self.assertFalse(len(wf1.test()))

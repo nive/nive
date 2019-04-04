@@ -1,19 +1,15 @@
 # -*- coding: latin-1 -*-
 
-import copy
-from time import time
 import unittest
 
 from nive.definitions import DatabaseConf
 from nive.utils.dataPool2.connection import *
 
-from nive.tests.db_app import app_db
-
 from nive.tests import __local
 
 # configuration ---------------------------------------------------------------------------
 conn = DatabaseConf(
-    dbName = __local.ROOT+"nive.db"
+    dbName = __local.ROOT+"dummy.db"
 )
 
 

@@ -1,13 +1,9 @@
 
 
-import copy, time, io
 import unittest
-from datetime import datetime
 from datetime import date
 
 from nive.utils.dataPool2.structure import *
-
-from nive.tests import __local
 
 from nive.utils.dataPool2.tests import test_Base
 
@@ -28,12 +24,6 @@ for i in test_Base.SystemFlds:
     ftypes["pool_meta"][i["id"]] = i
 
 class StructureTest(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
 
     def test_set1(self):
         structure = PoolStructure(structure=test_Base.struct, 
@@ -100,9 +90,6 @@ class ConversionTest(unittest.TestCase):
         self.structure = PoolStructure(structure=test_Base.struct, 
                                        fieldtypes=ftypes, 
                                        stdMeta=["id","pool_type"])
-
-    def tearDown(self):
-        pass
 
 
     def test_serialize_notype(self):
@@ -225,10 +212,6 @@ class CallbackTest(unittest.TestCase):
                                        stdMeta=["id","pool_type"])
         self.structure.serializeCallbacks = {"string": seCallback}
         self.structure.deserializeCallbacks = {"string": deCallback}
-
-
-    def tearDown(self):
-        pass
 
 
     def test_serialize_callback(self):

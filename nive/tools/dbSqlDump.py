@@ -72,15 +72,19 @@ class dbSqlDump(Tool):
                 continue 
             #fields
             fields=table[1]
-            columns = (",").join(fields)
+            columns = ",".join(fields)
             sql="select %s from %s" % (columns, tablename)
             c = conn.cursor()
             c.execute(sql)
             for rec in c.fetchall():
                 data = []
                 for col in rec:
-                    data.append(conn.FmtParam(col))
-                data = (",").join(data)
+
+                    value = conn.FmtParam(col)
+                    if isinstance(value, bytes):
+                        value = value.decode('unicode_escape')
+                    data.append(value)
+                data = ",".join(data)
                 if not isinstance(data, str):
                     data = str(data, codepage)
                 value = "INSERT INTO %s (%s) VALUES (%s);\n"%(tablename, columns, data)

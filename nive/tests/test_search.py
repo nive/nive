@@ -1,8 +1,6 @@
 
 import unittest
 
-from nive.security import User
-
 from nive.tests import db_app
 from nive.tests import __local
 
@@ -14,40 +12,11 @@ class SearchTest_db:
 
     def setUp(self):
         self._loadApp()
-        r=self.app.root
-    
-        # create three levels of entries
-        level1 = 5
-        level2 = 5
-        level3_1 = 5
-        level3_2 = 5
-        c=r
-        ids=[]
-        n=0
-        user = User("test")
-        for i in range(0,level1):
-            o=db_app.createObj1(c)
-            n+=1
-            ids.append(o.id)
-            for i2 in range(0,level2):
-                o2=db_app.createObj1(o)
-                n+=1
-                for i3 in range(0,level3_1):
-                    db_app.createObj1(o2)
-                    n+=1
-                for i3 in range(0,level3_2):
-                    o4 = db_app.createObj2(o2)
-                    id = o4.id
-                    n+=1
-        self.ids = ids
-        self.lastid = id
+        db_app.populate(self)
+
 
     def tearDown(self):
-        user = User("test")
-        r=self.app.root
-        for id in self.ids:
-            r.Delete(id, user=user)
-        self.app.Close()
+        self._closeApp(True)
 
     
     def test_search(self):

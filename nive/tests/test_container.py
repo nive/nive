@@ -1,6 +1,9 @@
-from nive.tests.db_app import *
+
 
 from nive.tests import __local
+from nive.tests import db_app 
+
+from nive.security import User
 
 
 class TestSecurityContext(object):
@@ -15,11 +18,7 @@ class containerTest_db:
         self.remove=[]
 
     def tearDown(self):
-        u = User("test")
-        root = self.app.root
-        for r in self.remove:
-            root.Delete(r, u)
-        self.app.Close()
+        self._closeApp(True, True)
 
 
     def test_basics(self):
@@ -30,8 +29,8 @@ class containerTest_db:
         self.assertTrue(a.root)
         self.assertTrue(a.db)
         r = a.root
-        o1 = createObj1(r)
-        o2 = createObj2(o1)
+        o1 = db_app.createObj1(r)
+        o2 = db_app.createObj2(o1)
         id1 = o1.id
         id2 = o2.id
         self.remove.append(id1)
@@ -60,7 +59,7 @@ class containerTest_db:
         #print "Testing root basics"
         a=self.app
         ccc = a.db.GetCountEntries()
-        r=root(a)
+        r=db_app.root(a)
         user = User("test")
         #rootValues()
         self.assertTrue(r.GetID()<=0)
@@ -77,7 +76,7 @@ class containerTest_db:
     def test_createobjs_kws(self):
         #print "Testing new object creation, values and delete"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         # create
         user = User("test")
         type = "type3"
@@ -90,30 +89,25 @@ class containerTest_db:
     def test_createobjs(self):
         #print "Testing new object creation, values and delete"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         # create
         user = User("test")
         ccc = a.db.GetCountEntries()
-        o1 = createObj1(r)
-        self.assertTrue(o1)
-        self.remove.append(o1.id)
-        o2 = createObj2(r)
-        self.assertTrue(o2)
-        self.remove.append(o2.id)
-        o3 = createObj1(o1)
-        self.assertTrue(o3)
-        o4 = createObj1(o3)
-        self.assertTrue(o4)
-        
-        o5 = createObj3(o1)
-        self.assertTrue(o5)
-        o6 = createObj2(o5)
-        self.assertTrue(o6)
+
+        o1 = db_app.createObj1(r)
+        # -> o1
+        o3 = db_app.createObj1(o1)
+        o5 = db_app.createObj3(o1)
+        o4 = db_app.createObj1(o3)
+        o6 = db_app.createObj2(o5)
+
+        o2 = db_app.createObj2(r)
+        #import pdb
+        #pdb.set_trace()
+
         # todo [3] fix containment non container
         #self.assertRaises(ContainmentError, createObj1, o5)
         
-        self.assertTrue(ccc+6==statdb(a))
-        #Values()
         self.assertTrue(r.IsContainer())
         self.assertTrue(o1.IsContainer())
         self.assertTrue(o2.IsContainer()==False)
@@ -126,34 +120,54 @@ class containerTest_db:
         self.assertTrue(len(o1.GetParentIDs())==1)
         self.assertTrue(len(o1.GetParentTitles())==1)
         self.assertTrue(len(o1.GetParentPaths())==1)
+        self.assertTrue(len(o1.GetObjsList())==2)
 
         self.assertTrue(o4.parent==o3)
         self.assertTrue(len(o4.GetParents())==3)
         self.assertTrue(len(o4.GetParentIDs())==3)
         self.assertTrue(len(o4.GetParentTitles())==3)
         self.assertTrue(len(o4.GetParentPaths())==3)
+        self.assertTrue(len(o3.GetObjsList())==1)
         self.assertTrue(o3.GetObj(o4.GetID()))
-        
+
+        self.assertEqual(ccc+6, db_app.statdb(a))
+
         newO = r.Duplicate(o1, user)
         self.assertTrue(newO)
-        self.remove.append(newO.id)
-        
+        self.assertTrue(newO.IsContainer())
+        self.assertTrue(newO.GetID())
+        self.assertTrue(newO.GetTypeID()=="type1")
+        self.assertTrue(newO.GetTitle()=="")
+        self.assertTrue(newO.GetPath())
+        #Parents()
+        self.assertTrue(len(newO.GetParents())==1)
+        self.assertTrue(len(newO.GetParentIDs())==1)
+        self.assertTrue(len(newO.GetParentTitles())==1)
+        self.assertTrue(len(newO.GetParentPaths())==1)
+        self.assertTrue(len(newO.GetObjsList())==2, len(newO.GetObjsList()))
+
+        self.assertEqual(ccc+11, db_app.statdb(a))
+
+        o1.Close()
+        o2.Close()
         r.Delete(o1.GetID(), user=user)
         r.Delete(o2.GetID(), user=user)
-        self.assertEqual(ccc+5, a.db.GetCountEntries())
+        self.assertEqual(ccc+5, db_app.statdb(a))
+
+        newO.Close()
         r.Delete(newO.GetID(), user=user)
-        self.assertEqual(ccc, a.db.GetCountEntries())
+        self.assertEqual(ccc, db_app.statdb(a))
         
     def test_createobjs_simple(self):
         #print "Testing new object creation, values and delete"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         # create
         user = User("test")
         ccc = a.db.GetCountEntries()
 
         typedef = a.configurationQuery.GetObjectConf("type1")
-        data = data1_1
+        data = db_app.data1_1
 
         o1 = r.CreateWithoutEventsAndSecurity(typedef, data, user)
         self.assertTrue(o1)
@@ -177,7 +191,7 @@ class containerTest_db:
     def test_lists(self):
         #print "Testing objects and subobjects"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         ccc = a.db.GetCountEntries()
         user = User("test")
         # errors
@@ -198,27 +212,27 @@ class containerTest_db:
         cobjs = len(r.GetObjs(batch=False))
         ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))
         cobjs2 = len(r.GetObjsList(parameter={"pool_type":"type2"}))
-        c=statdb(a)
-        o1 = createObj1(r)
+        c=db_app.statdb(a)
+        o1 = db_app.createObj1(r)
         self.assertTrue(o1)
         self.remove.append(o1.id)
-        o2 = createObj2(r)
+        o2 = db_app.createObj2(r)
         self.assertTrue(o2)
         self.remove.append(o2.id)
-        o3 = createObj1(o1)
+        o3 = db_app.createObj1(o1)
         self.assertTrue(o3)
-        o4 = createObj2(o3)
+        o4 = db_app.createObj2(o3)
         self.assertTrue(o4)
-        o5 = createObj2(o3)
+        o5 = db_app.createObj2(o3)
         self.assertTrue(o5)
-        self.assertTrue(c+5==statdb(a))
+        self.assertEqual(c+5, db_app.statdb(a))
         try:
-            createObj1(o5)
+            db_app.createObj1(o5)
             self.assertTrue(False)
         except:
             pass
         try:
-            createObj2(o5)
+            db_app.createObj2(o5)
             self.assertTrue(False)
         except:
             pass
@@ -261,7 +275,7 @@ class containerTest_db:
     def test_restraintsConf(self):
         #print "Testing new object creation, values and delete"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         
         p,o=r.ObjQueryRestraints(self)
         p1,o1=r.queryRestraints
@@ -290,7 +304,7 @@ class containerTest_db:
     def test_restraintsLookup(self):
         #print "Testing objects and subobjects"
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
         ccc = a.db.GetCountEntries()
         user = User("test")
         # errors
@@ -311,27 +325,27 @@ class containerTest_db:
         cobjs = len(r.GetObjs(batch=False))
         ccontainer2 = len(r.GetObjsList(containerOnly=1, parameter={"pool_type":"type2"}))
         cobjs2 = len(r.GetObjsList(parameter={"pool_type":"type2"}))
-        c=statdb(a)
-        o1 = createObj1(r)
+        c=db_app.statdb(a)
+        o1 = db_app.createObj1(r)
         self.assertTrue(o1)
         self.remove.append(o1.id)
-        o2 = createObj2(r)
+        o2 = db_app.createObj2(r)
         self.assertTrue(o2)
         self.remove.append(o2.id)
-        o3 = createObj1(o1)
+        o3 = db_app.createObj1(o1)
         self.assertTrue(o3)
-        o4 = createObj2(o3)
+        o4 = db_app.createObj2(o3)
         self.assertTrue(o4)
-        o5 = createObj2(o3)
+        o5 = db_app.createObj2(o3)
         self.assertTrue(o5)
-        self.assertTrue(c+5==statdb(a))
+        self.assertTrue(c+5==db_app.statdb(a))
         try:
-            createObj1(o5)
+            db_app.createObj1(o5)
             self.assertTrue(False)
         except:
             pass
         try:
-            createObj2(o5)
+            db_app.createObj2(o5)
             self.assertTrue(False)
         except:
             pass
@@ -389,7 +403,6 @@ class containerTest_db:
         self.assertTrue(a.db)
         r = a.root
         #root
-        r.Close()
         r.app
         r.db
         r.root
@@ -404,6 +417,7 @@ class containerTest_db:
         r.GetParentTitles()
         r.GetParentPaths()
         r.GetTool("nive.tools.example")
+        r.Close()
 
 
     def test_shortcuts2(self):
@@ -414,7 +428,7 @@ class containerTest_db:
         self.assertTrue(a.root)
         self.assertTrue(a.db)
         r = a.root
-        o1 = createObj1(r)
+        o1 = db_app.createObj1(r)
         self.assertTrue(o1)
         self.remove.append(o1.id)
         #root
@@ -471,10 +485,7 @@ class groupsrootTest_db:
         self.remove=[]
 
     def tearDown(self):
-        u = User("test")
-        root = self.app.root
-        for r in self.remove:
-            root.Delete(r, u)
+        db_app.emptypool(self.app)
         self.app.Close()
 
     def test_permissions(self):
@@ -485,7 +496,7 @@ class groupsrootTest_db:
         self.assertTrue(a.root)
         self.assertTrue(a.db)
         r = a.root
-        o1 = createObj1(r)
+        o1 = db_app.createObj1(r)
         self.assertTrue(o1)
         self.remove.append(o1.id)
         #root
@@ -498,7 +509,7 @@ class groupsrootTest_db:
 
     def test_rootsGroups(self):
         a=self.app
-        r=root(a)
+        r=db_app.root(a)
 
         userid = "test"
         r.RemoveLocalGroups(None, None)
@@ -529,7 +540,7 @@ class groupsrootTest_db_mysql(groupsrootTest_db, __local.MySqlTestCase):
     """
     see tests.__local
     """
-    
+
 class groupsrootTest_db_pg(groupsrootTest_db, __local.PostgreSqlTestCase):
     """
     see tests.__local

@@ -2,7 +2,6 @@
 import time
 import unittest
 
-from nive.definitions import *
 from nive.tools.dbSqlDump import *
 
 from nive.tests import db_app, __local
@@ -37,15 +36,15 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
         db_app.createObj3(o)
 
     def tearDown(self):
-        self.app.root.Delete(self.o.id, user=User("aaa"))
-        self.app.Close()
+        self._closeApp(True)
             
+
     def test_toolrun1(self):
         t = self.app.GetTool("dbSqlDump", self.app)
         self.assertTrue(t)
         t.importWf = 0
         t.importSecurity = 0
-        r,v = t()
+        r = t()
         #print v
         self.assertTrue(r)
 
@@ -55,6 +54,6 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
         self.assertTrue(t)
         t.importWf = 1
         t.importSecurity = 1
-        r,v = t()
+        r = t()
         self.assertTrue(r)
 

@@ -5,7 +5,7 @@
 import weakref
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
 from pyramid.path import DottedNameResolver
@@ -195,6 +195,9 @@ class JsonDataEncoder(json.JSONEncoder):
             return str(obj)
         elif isinstance(obj, datetime_time):
             return str(obj)
+        elif isinstance(obj, timedelta):  # treat as time. py3 mysql bug?
+            n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + obj
+            return n.strftime("HH:MM:SS.%f")
         elif IFileStorage.providedBy(obj):
             file = {}
             file["filekey"] = obj.filekey
@@ -214,6 +217,8 @@ class ConfEncoder(json.JSONEncoder):
             return str(obj)
         elif isinstance(obj, datetime_time):
             return str(obj)
+        elif isinstance(obj, timedelta):
+            return obj.isoformat()
         return json.JSONEncoder.default(self, obj)
 
 class ConfDecoder(object):

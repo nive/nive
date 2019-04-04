@@ -1,10 +1,6 @@
 #-*- coding: utf-8 -*-
 
-import time
-import unittest
-
 from nive.utils.path import DvPath
-
 from nive.definitions import *
 from nive.portal import Portal
 from nive.security import User, Allow, Everyone
@@ -132,70 +128,72 @@ file2_2 = {"filename":"file2.txt", "file":file2_2_data}
 
 # empty -------------------------------------------------------------------------
 def app_db(modules=None):
-    a = Application()
-    a.Register(appconf)
+    app = Application()
+    app.Register(appconf)
     if modules:
         for m in modules:
-            a.Register(m)
+            app.Register(m)
     p = Portal()
-    p.Register(a, "nive")
-    a.SetupApplication()
-    dbfile = DvPath(a.dbConfiguration.dbName)
+    p.Register(app, "nive")
+    app.SetupApplication()
+    dbfile = DvPath(app.dbConfiguration.dbName)
     if not dbfile.IsFile():
         dbfile.CreateDirectories()
-    root = DvPath(a.dbConfiguration.fileRoot)
+    root = DvPath(app.dbConfiguration.fileRoot)
     if not root.IsDirectory():
         root.CreateDirectories()
 
     """
+    db = app.db
     try:
-        a.Query("select id from pool_meta where id=1")
-        a.Query("select id from data1 where id=1")
-        a.Query("select id from data2 where id=1")
-        a.Query("select id from data3 where id=1")
-        a.Query("select id from pool_files where id=1")
-        a.Query("select id from pool_sys where id=1")
-        a.Query("select id from pool_groups where id=1")
-        a.Query("select title from pool_meta where id=1")
+        cursor = db.Execute("select id from pool_meta where id=1")
+        db.Execute("select id from data1 where id=1", cursor=cursor)
+        db.Execute("select id from data2 where id=1", cursor=cursor)
+        db.Execute("select id from data3 where id=1", cursor=cursor)
+        db.Execute("select id from pool_files where id=1", cursor=cursor)
+        db.Execute("select id from pool_sys where id=1", cursor=cursor)
+        db.Execute("select id from pool_groups where id=1", cursor=cursor)
+        db.Execute("select title from pool_meta where id=1", cursor=cursor)
+        cursor.close()
     except:
-        a.GetTool("nive.tools.dbStructureUpdater")()
+        app.GetTool("nive.tools.dbStructureUpdater")()
     """
 
     # disable this to update test tables each time the tests are called
-    a.GetTool("nive.tools.dbStructureUpdater")()
-    a.Startup(None)
-    # this will reset all testdata
-    #emptypool(a)
-    return a
+    app.GetTool("nive.tools.dbStructureUpdater")()
+    app.Startup(None)
+    return app
 
 def app_nodb():
-    a = Application()
-    a.Register(appconf)
-    a.Register(DatabaseConf())
+    app = Application()
+    app.Register(appconf)
+    app.Register(DatabaseConf())
     p = Portal()
-    p.Register(a, "nive")
-    a.SetupApplication()
+    p.Register(app, "nive")
+    app.SetupApplication()
     try:
-        a.Startup(None)
+        app.Startup(None)
     except OperationalError:
         pass
-    return a
+    return app
 
-def emptypool(app):
+def emptypool(app, files=False):
     db = app.db
-    db.Query("delete FROM pool_meta")
-    db.Query("delete FROM pool_files")
-    db.Query("delete FROM pool_fulltext")
-    db.Query("delete FROM pool_groups")
-    db.Query("delete FROM pool_sys")
-    db.Query("delete FROM data2")
-    db.Query("delete FROM data1")
+    cursor = db.Execute("delete FROM pool_meta")
+    db.Execute("delete FROM pool_files", cursor=cursor)
+    db.Execute("delete FROM pool_fulltext", cursor=cursor)
+    db.Execute("delete FROM pool_groups", cursor=cursor)
+    db.Execute("delete FROM pool_sys", cursor=cursor)
+    db.Execute("delete FROM data3", cursor=cursor)
+    db.Execute("delete FROM data2", cursor=cursor)
+    db.Execute("delete FROM data1", cursor=cursor)
     db.Commit()
-    import shutil
-    shutil.rmtree(str(db.root), ignore_errors=True)
-    db.root.CreateDirectories()
+    if files:
+        import shutil
+        shutil.rmtree(str(db.root), ignore_errors=True)
+        db.root.CreateDirectories()
 
-def createpool(path,app):
+def createpool(path, app):
     path.CreateDirectories()
     app.GetTool("nive.tools.dbStructureUpdater")()
 
@@ -214,7 +212,6 @@ def createObj1(c):
     data = data1_1
     user = User("test")
     o = c.Create(type, data = data, user = user)
-    #o.Commit()
     return o
 
 def createObj2(c):
@@ -222,7 +219,6 @@ def createObj2(c):
     data = data2_1
     user = User("test")
     o = c.Create(type, data = data, user = user)
-    #o.Commit()
     return o
 
 def createObj3(c):
@@ -230,7 +226,6 @@ def createObj3(c):
     data = data3_1
     user = User("test")
     o = c.Create(type, data = data, user = user)
-    #o.Commit()
     return o
 
 def createObj1file(c):
@@ -240,7 +235,6 @@ def createObj1file(c):
     data["file2"] = File(**file2_2)
     user = User("test")
     o = c.Create(type, data = data, user = user)
-    #o.Commit()
     return o
 
 def createObj2file(c):
@@ -249,9 +243,36 @@ def createObj2file(c):
     data["file2"] = File(**file2_1)
     user = User("test")
     o = c.Create(type, data = data, user = user)
-    #o.Commit()
     return o
 
 def maxobj(r):
     id = r.GetMaxID()
     return r.obj(id)
+
+
+def populate(testobj):
+    # create three levels of entries
+    level1 = 5
+    level2 = 5
+    level3_1 = 5
+    level3_2 = 5
+    c = testobj.app.root
+    ids = []
+    n = 0
+    for i in range(0, level1):
+        o = createObj1(c)
+        n += 1
+        ids.append(o.id)
+        for i2 in range(0, level2):
+            o2 = createObj1(o)
+            n += 1
+            for i3 in range(0, level3_1):
+                createObj1(o2)
+                n += 1
+            for i3 in range(0, level3_2):
+                o4 = createObj2(o2)
+                id = o4.id
+                n += 1
+    testobj.ids = ids
+    testobj.lastid = id
+

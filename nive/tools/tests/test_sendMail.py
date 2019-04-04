@@ -38,7 +38,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
         logging.basicConfig()
     
     def tearDown(self):
-        self.app.Close()
+        self._closeApp(True)
 
 
     def test_tool(self):
@@ -50,7 +50,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
         t = self.app.GetTool("sendMail")
         self.assertTrue(t)
         try:
-            r,v = t()
+            r = t()
         except ConfigurationError:
             pass
 
@@ -59,7 +59,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
         t = self.app.GetTool("sendMail")
         self.assertTrue(t)
         try:
-            r,v = t(recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
+            r = t(recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
         except ConfigurationError:
             pass
 
@@ -68,7 +68,7 @@ class SendMailTest2_db(__local.DefaultTestCase):
         t = self.app.GetTool("sendMail")
         self.assertTrue(t)
         try:
-            r,v = t(debug=1, recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
+            r = t(debug=1, recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
         except ConfigurationError:
             pass
 

@@ -378,7 +378,7 @@ class FileManager(object):
         return f2
 
 
-    def DeleteFiles(self, id, cursor=None, version=None):
+    def DeleteFiles(self, id, version=None):
         """
         Delete the file with the prop description
         """
@@ -391,7 +391,7 @@ class FileManager(object):
             file.delete()
         if len(files):
             sql = "delete from %s where id = %d" % (self.FileTable, id)
-            self.Query(sql, cursor=cursor, getResult=False)
+            self.Query(sql, getResult=False)
         return True
 
 
@@ -491,15 +491,15 @@ class FileEntry(object):
 
     # Store File --------------------------------------------------------------------
 
-    def CommitFiles(self, files, cursor=None):
+    def CommitFiles(self, files):
         """
         Commit multiple files in a row
         """
         for key in files:
-            files[key] = self.CommitFile(key, files[key], cursor=cursor)
+            files[key] = self.CommitFile(key, files[key])
 
 
-    def CommitFile(self, key, file, cursor=None):
+    def CommitFile(self, key, file):
         """
         Store the file under key. File can either be a path, dictionary with file informations 
         or a File object.
@@ -520,14 +520,14 @@ class FileEntry(object):
 
         # lookup exiting file to replace
         if file.fileid == 0:
-            fileid = self._LookupFileID(file, cursor)
+            fileid = self._LookupFileID(file)
             file.fileid = fileid
         else:
             fileid = file.fileid
         
         # update file records
         file.commitTemp(self)
-        self._UpdateMeta(file, cursor=cursor)
+        self._UpdateMeta(file)
         return file
 
 
@@ -598,7 +598,7 @@ class FileEntry(object):
 
     # internal --------------------------------------------------------------------
 
-    def _UpdateMeta(self, file, cursor):
+    def _UpdateMeta(self, file):
         """
         store file meta information in database table
         """
@@ -610,14 +610,14 @@ class FileEntry(object):
             "size": file.size
         }
         if file.fileid:
-            file.fileid = self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, cursor=cursor, idColumn="fileid")
+            file.fileid = self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, idColumn="fileid")
         else:
             data["id"] = self.id
-            data, file.fileid = self.pool.InsertFields(self.pool.FileTable, data, cursor=cursor, idColumn="fileid")
+            data, file.fileid = self.pool.InsertFields(self.pool.FileTable, data, idColumn="fileid")
         return True
 
 
-    def _LookupFileID(self, file, cursor=None):
+    def _LookupFileID(self, file):
         """
         lookup unique fileid for file
         """

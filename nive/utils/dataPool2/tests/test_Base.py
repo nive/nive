@@ -83,12 +83,6 @@ file1_2 = "File 2 content, text text text text."
 
 class BaseTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_structure(self):
         base = Base()
         base.structure.Init(structure=struct, stdMeta=struct["pool_meta"])

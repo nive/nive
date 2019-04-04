@@ -61,7 +61,7 @@ class Sqlite3Connection(Connection):
         conf = self.configuration
         if not conf.dbName:
             raise OperationalError("Connection failed. Database name is empty.") 
-        db = sqlite3.connect(conf.dbName, check_same_thread=self.check_same_thread)
+        db = sqlite3.connect(conf.dbName, isolation_level=None, check_same_thread=self.check_same_thread)
         if not db:
             raise OperationalError("Cannot connect to database '%s'" % (conf.dbName))
         c = db.cursor()
