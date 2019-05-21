@@ -70,5 +70,5 @@ class cmsstatistics(Tool):
         self.stream.write("</table>\n")
 
         c.close()
-        return 1
+        return None, 1
 

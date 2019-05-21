@@ -421,7 +421,7 @@ def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
 from nive.security import GetUsers
 from nive.utils.language import LanguageExtension, CountryExtension
 
-def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
+def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, user=None):
     """
     Load field list items for the given fieldconf.
     If `force` is False and fieldconf already contains list items, the existing 
@@ -439,7 +439,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
     if fieldconf.listItems and not force:
         # skip loading if list filled
         if hasattr(fieldconf.listItems, '__call__'):
-            return fieldconf.listItems(fieldconf, obj or app)
+            return fieldconf.listItems(fieldconf, obj or app, user=user)
         return fieldconf.listItems
     
     if app is None:

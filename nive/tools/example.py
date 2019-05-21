@@ -27,5 +27,5 @@ class tool(Tool):
 
     def _Run(self, **values):
         result = "<h1>OK</h1>"
-        return result
+        return None, result
 

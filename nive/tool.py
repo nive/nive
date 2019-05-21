@@ -91,8 +91,9 @@ class Tool(object):
     # Subclass functions --------------------------------------------
 
     def _Run(self, **values):
-        result = True
-        return result
+        # returns values, result string
+        # if values is not None, the form will be rendered with the given values if activated
+        return None, "OK"
 
 
     # Execution --------------------------------------------------------------------------------------------
@@ -118,8 +119,8 @@ class Tool(object):
         # call function
         values = self.ExtractValues(**kw)
         values["original"] = kw
-        result = self._Run(**values)
-        return result
+        values, data = self._Run(**values)
+        return values, data
 
 
     def ExtractValues(self, **kw):
@@ -188,7 +189,7 @@ class _GlobalObject(object):
 
     
     
-class ToolView(BaseView):    
+class ToolView(BaseView):
     """
     Default tool views supporting a form renderer and direct execution
 
@@ -216,7 +217,7 @@ class ToolView(BaseView):
         form = ToolForm(view=self, loadFromType=self.context.configuration)
         form.Setup()
         result, data, action = form.Process()
-        if not isinstance(data, str):
+        if not isinstance(data, (str, bytes)):
             try:
                 data = data.getvalue()
             except:
@@ -225,7 +226,7 @@ class ToolView(BaseView):
             fn = None
             if hasattr(self.context, "filename"):
                 fn = self.context.filename
-            return self.SendResponse(data=data, mime=self.context.mimetype, raiseException=True, filename=fn)
+            return self.SendResponse(data, mime=self.context.mimetype, raiseException=True, filename=fn)
         return self.SendResponse(form.HTMLHead() + data, mime=self.context.mimetype, raiseException=False) 
     
     
@@ -240,13 +241,17 @@ class ToolView(BaseView):
         values = self.GetFormValues(method="POST")
         values["request"] = self.request
         values["user"] = self.User()
-        result = tool.Run(**values)
-        data = tool.stream
-        if not isinstance(data, str):
+        values, data = tool.Run(**values)
+        if self.stream is not None:
+            data = tool.stream
+        if not isinstance(data, (str, bytes)):
             try:
                 data = data.getvalue()
             except:
                 data = str(data)
-        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False)
+        fn = None
+        if hasattr(self.context, "filename"):
+            fn = self.context.filename
+        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False, filename=fn)
     
            

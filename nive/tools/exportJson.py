@@ -59,11 +59,11 @@ class exportJson(Tool):
 
         if not conn:
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return 0
+            return None, 0
         
         if not conn.IsConnected():
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return 0
+            return None, 0
         
         def mapfields(fields):
             return [f.id for f in fields]
@@ -110,5 +110,5 @@ class exportJson(Tool):
             
         self.stream.write(ConfEncoder().encode(data))
         
-        return 1
+        return None, 1
 

@@ -91,7 +91,7 @@ def DumpObjects(stream):
         stream.write("<tr><td>%s</td><th>%d</th></tr>\n"%(i[0].replace("<","").replace(">",""),i[1]))
     stream.write("</table>\n")            
 
-    return 1
+    return None, 1
 
 
 

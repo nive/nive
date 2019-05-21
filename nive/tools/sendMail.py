@@ -112,7 +112,7 @@ class sendMail(Tool):
 
         if len(recvs) == 0:
             self.stream.write(_("No receiver for the e-mail! Aborting."))
-            return 0
+            return None, 0
 
         # lookup copy and blindcopy receiver
         if cc:
@@ -171,7 +171,7 @@ class sendMail(Tool):
                 mailer.ehlo()
         except (SMTPServerDisconnected, SMTPHeloError, SMTPException) as e:
             log.error(" %s", repr(e))
-            return False
+            return None, False
 
         if user:
             mailer.login(user, str(pass_))
@@ -206,7 +206,7 @@ class sendMail(Tool):
                 break
 
         mailer.quit()
-        return result
+        return None, result
 
 
     def _PrepareMessage(self, **kw):

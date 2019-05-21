@@ -47,11 +47,11 @@ class dbSqlDump(Tool):
 
         if not conn:
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return 0
+            return None, 0
         
         if not conn.IsConnected():
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return 0
+            return None, 0
         
         def mapfields(fields):
             a=[]
@@ -91,5 +91,5 @@ class dbSqlDump(Tool):
                 #value = value.encode(codepage) # todo [3] unicode
                 self.stream.write(value)        
         
-        return 1
+        return None, 1
 

@@ -49,11 +49,11 @@ class dbJsonDump(Tool):
 
         if not conn:
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return 0
+            return None, 0
         
         if not conn.IsConnected():
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return 0
+            return None, 0
         
         def mapfields(fields):
             a=[]
@@ -91,5 +91,5 @@ class dbJsonDump(Tool):
         
         self.stream.write(JsonDataEncoder().encode(data))        
         
-        return 1
+        return None, 1
 

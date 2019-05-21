@@ -79,7 +79,7 @@ class sendMailTester(sendMail):
         
         if len(recvs) == 0:
             self.stream.write(_("No receiver for the e-mail! Aborting."))
-            return 0
+            return None, 0
 
         temp = []
         for r in recvs:
@@ -123,7 +123,7 @@ class sendMailTester(sendMail):
                 if maillog:
                     logdata = "%s - %s - %s" % (recv[0], recv[1], title)
                     log.debug(" %s", logdata)
-        return result
+        return None, result
 
 
     def _GetMailStr(self, mail):
