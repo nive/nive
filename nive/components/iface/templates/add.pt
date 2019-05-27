@@ -1,0 +1,9 @@
+<tal:block metal:use-macro="view.index_tmpl().macros[view.configuration.tmpl_macro or 'main_object']" i18n:domain="nive">
+<tal:block metal:fill-slot="content">
+
+<span tal:replace="view.unitInfo('add')" />
+<span tal:replace="structure view.messages()" />
+<span tal:replace="structure content"/>
+
+</tal:block>
+</tal:block>

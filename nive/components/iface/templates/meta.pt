@@ -1,0 +1,14 @@
+<tal:block metal:use-macro="view.index_tmpl().macros[view.configuration.tmpl_macro or 'main_object']">
+<tal:block metal:fill-slot="content">
+
+<span tal:replace="structure view.unitInfo('view')" />
+<span tal:replace="structure view.messages()" />
+
+<table tal:define="fields view.GetFldsMetaView(context)" 
+       class="table table-striped">
+ <tr tal:repeat="fld fields">
+  <th tal:content="structure fld['name']"></th><td tal:content="structure view.RenderField(fld)"></td></tr>
+</table>
+
+</tal:block>
+</tal:block>

@@ -1,0 +1,7 @@
+<tal:block metal:use-macro="view.index_tmpl().macros['main']">
+<tal:block metal:fill-slot="content">
+
+Tool
+
+</tal:block>
+</tal:block>

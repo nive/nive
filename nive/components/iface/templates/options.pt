@@ -1,0 +1,33 @@
+<tal:block metal:use-macro="view.index_tmpl().macros[view.configuration.tmpl_macro or 'main_object']"  i18n:domain="nive">
+<tal:block metal:fill-slot="content">
+
+<span tal:replace="structure view.unitInfo('view')" />
+<span tal:replace="structure view.messages()" />
+
+<!-- add -->
+<div tal:condition="context.IsContainer()"
+     class="well">
+<h4>Add a new item</h4>
+<ul class="nav">
+  <li tal:repeat="element context.GetAllowedTypes('')"> 
+    <a tal:attributes="href 'add?'+view.FmtURLParam(pool_type=element['id'])"
+     ><i class="icon-plus-sign"></i> <span i18n:translate="">${element.name}</span></a>
+  </li>
+</ul>
+</div>
+
+<!-- tools -->
+<!--div class="well">
+<h4>Tools</h4>
+<ul class="nav">
+</ul>
+</div-->
+
+<!-- delete self -->
+<div class="well">
+<a href="deleteo"
+   class="btn btn-danger" i18n:translate="">Delete now, cannot be undone!</a>
+</div>
+
+</tal:block>
+</tal:block>
