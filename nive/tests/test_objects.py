@@ -366,7 +366,6 @@ class objToolTest_db:
     """
     def test_tools(self):
         GetTool(name)
-        GetTools(user)
     """
 
 

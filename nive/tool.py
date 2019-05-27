@@ -242,7 +242,7 @@ class ToolView(BaseView):
         values["request"] = self.request
         values["user"] = self.User()
         values, data = tool.Run(**values)
-        if self.stream is not None:
+        if tool.stream is not None:
             data = tool.stream
         if not isinstance(data, (str, bytes)):
             try:
