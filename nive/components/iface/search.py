@@ -8,7 +8,7 @@ from nive.definitions import Conf
 
 from nive import helper
 
-from nive.i18n import _, translator
+from nive.i18n import _, translate
 
 
 class Search:
@@ -50,7 +50,7 @@ class Search:
             form.method = searchconf.get("method")
             form.fields = searchFlds
             form.widget.item_template = "field_onecolumn"
-            form.actions = [Conf(id="search", method="Search", name=translator(_("Filter")), hidden=False)]
+            form.actions = [Conf(id="search", method="Search", name=translate(_("Filter"), self.request), hidden=False)]
             form.Setup()
             result, parameter = form.Extract(self.request, removeNull=True, removeEmpty=True)
         else:
@@ -159,7 +159,7 @@ class Search:
         fldTmpl = """<th>%s</th> """ 
         flds = []
         for fld in fldsList:
-            flds.append(fldTmpl % translator(_(fld.name)))
+            flds.append(fldTmpl % translate(fld.name, self.request))
         return header % "".join(flds)
     
     
@@ -270,8 +270,8 @@ class Search:
         """
         app = self.context.app
         fldTmpl = """<th class="list_header" id="list_%s" nowrap><div style="display:inline;float:right;padding-top: 2px;">%s</div><div style="padding-right:15px;">%s</div></th> """ 
-        up = translator(_("Sort ascending"))
-        down = translator(_("Sort descending"))
+        up = translate(_("Sort ascending"), self.request)
+        down = translate(_("Sort descending"), self.request)
         sortTmpl = """ <img class="asc" onclick="search_sort('%%s',1)" src="%sintern/images/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%sintern/images/ldown.gif" title="%s"/>""" % (self.static, up, self.static, down)
         action = ""
         if addAction:
@@ -281,7 +281,7 @@ class Search:
         for fld in fldsList:
             sort = ""
             if IFieldConf.providedBy(fld):
-                name = translator(fld["name"])
+                name = translate(fld["name"], self.request)
                 fldid = fld.get("settings",{}).get("sort_id", fld["id"])
                 if fldid:
                     sort = sortTmpl % (fldid, fldid)
@@ -289,10 +289,10 @@ class Search:
                 if addSort and fld[0]!="+":
                     sort = sortTmpl % (fld, fld)
                 if fld=="+folderpath":
-                    name = translator(_("Folder"))
+                    name = translate(_("Folder"), self.request)
                 else:
                     # ! iface2 update
-                    name = translator(app.configurationQuery.GetFldName(fld, pool_type))
+                    name = translate(app.configurationQuery.GetFldName(fld, pool_type), self.request)
                 fldid = fld
             flds.append(fldTmpl % (fldid, sort, name))
         
@@ -311,8 +311,8 @@ class Search:
         """
         app = self.context.app
         fldTmpl = """<th class="list_header" id="list_%s" nowrap>%s %s</th> """ 
-        up = translator(_("Sort ascending"))
-        down = translator(_("Sort descending"))
+        up = translate(_("Sort ascending"), self.request)
+        down = translate(_("Sort descending"), self.request)
         sortTmpl = """<div><img class="asc" onclick="search_sort('%%s',1)" src="%sintern/images/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%sintern/images/ldown.gif" title="%s"/></div>""" % (self.static, up, self.static, down)
         action = ""
         if addAction:
@@ -322,7 +322,7 @@ class Search:
         for fld in fldsList:
             sort = ""
             if IFieldConf.providedBy(fld):
-                name = translator(fld["name"])
+                name = translate(fld["name"], self.request)
                 fldid = fld.get("settings",{}).get("sort_id", fld["id"])
                 if fldid:
                     sort = sortTmpl % (fldid, fldid)
@@ -330,10 +330,10 @@ class Search:
                 if addSort and fld[0]!="+":
                     sort = sortTmpl % (fld, fld)
                 if fld=="+folderpath":
-                    name = translator(_("Folder"))
+                    name = translate(_("Folder"), self.request)
                 else:
                     # ! iface2 update
-                    name = translator(app.configurationQuery.GetFldName(fld, pool_type))
+                    name = translate(app.configurationQuery.GetFldName(fld, pool_type), self.request)
                 fldid = fld
             flds.append(fldTmpl % (fldid, sort, name))
         
@@ -431,7 +431,7 @@ class Search:
                     if ckey in cache:
                         data = cache[ckey]
                     else:
-                        data = translator(app.configurationQuery.GetObjectConf(t).get("name", t))
+                        data = translate(app.configurationQuery.GetObjectConf(t).get("name", t), self.request)
                         cache[ckey] = data
                     if wfa_icon:
                         data = """<img src="%sintern/images/types/%s.png" title="%s" />""" % (self.static, t, data)
@@ -463,7 +463,7 @@ class Search:
                     data = row.get(fldid)
                     for i in helper.LoadListItems(fld, app=app, obj=obj):
                         if i["id"]==str(data):
-                            data = translator(i["name"])
+                            data = translate(i["name"], self.request)
                             break
 
                 elif fld.datatype in ("multilist", "checkbox"):
@@ -472,7 +472,7 @@ class Search:
                     for value in data:
                         for i in helper.LoadListItems(fld, app=app, obj=obj):
                             if i["id"]==value:
-                                names.append(translator(i["name"]))
+                                names.append(translate(i["name"], self.request))
                                 break
                     if names:
                         data = ", ".join(names)
@@ -488,7 +488,7 @@ class Search:
             html.append("".join(rowStr))
         
         if len(recs) == 0:
-            html.append("""<tr class="listRow"><td></td><td colspan="%d"><br/><i>%s</i><br/><br/></td></tr>""" % (len(fldsList), translator(_("Empty result set!"))))
+            html.append("""<tr class="listRow"><td></td><td colspan="%d"><br/><i>%s</i><br/><br/></td></tr>""" % (len(fldsList), translate(_("Empty result set!"), self.request)))
         
         return "".join(html)    
 
@@ -580,7 +580,7 @@ class Search:
             delete = """
  <button onClick="del();return false" class="btn btn-warning">
     <i class="icon-trash"></i> %(Delete selected)s</button>
-        """ % {"static": self.static, "Delete selected": translator(_("Delete selected"))}
+        """ % {"static": self.static, "Delete selected": translate(_("Delete selected"), self.request)}
 
         html = """
 <script type="text/javascript">
@@ -596,7 +596,7 @@ function del() {
         onClick="search_toggleSelect(); return false">%(Select all)s</button>
 </div>
         """ % {"static": self.static, "ccp": ccp, "delete": delete, "base":self.FolderUrl(),
-               "Select all": translator(_("Select all"))}
+               "Select all": translate(_("Select all"), self.request)}
         return html
 
 

@@ -1,41 +1,36 @@
 
 <!-- main header navigation used for all layouts -->
-<div metal:define-macro="topnav" id="topnav" i18n:domain="nive">
-<header>
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <div type="button" class="btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <img src="/assets/intern/images/menu.png">
-        </div>
-        <a class="brand" href="${view.ToUrl('/workspace')}"><img src="${view.static}intern/images/logo.png" class="logo" alt="Nive" title="${view.ifaceConf.slogan}" /></a>
-        <div class="nav-collapse">
-          <ul metal:define-slot="sections" 
-              class="nav" 
-              tal:content="structure view.sections()">
-          </ul>
-          <ul tal:condition="view.UserName()"
-              tal:define="ho view.headoptions(); hl view.headlink();"
-              class="nav pull-right">
-            <li tal:condition="ho"
-                class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><span i18n:translate="">More</span> <b class="caret"></b></a>
-              <ul tal:content="structure ho" class="dropdown-menu"></ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li><span tal:condition="hl" tal:replace="structure hl"></span></li>
-          </ul>
-          <ul tal:condition="not view.UserName()"
-              tal:define="hl view.headlinkAnonymous();"
-              class="nav pull-right">
-            <li class="divider-vertical"></li>
-            <li><span tal:condition="hl" tal:replace="structure hl"></span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
-</div>
+<nav metal:define-macro="topnav" class="navbar fixed-top navbar-expand-lg" id="topnav" i18n:domain="nive">
+   <a class="navbar-brand" href="${view.backlink()}"><img src="${view.static}intern/images/logo.png" class="logo" alt="Nive" title="${view.ifaceConf.slogan}" /></a>
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+     <span class="navbar-toggler-icon"></span>
+     <img src="${view.static}intern/images/menu.png">
+   </button>
+   <div class="collapse navbar-collapse">
+     <ul metal:define-slot="sections"
+         class="navbar-nav mr-auto"
+         tal:content="structure view.sections()">
+     </ul>
+     <ul tal:condition="view.UserName()"
+         tal:define="ho view.headoptions();"
+         class="navbar-nav mr-right">
+       <li tal:condition="ho" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n:translate="">More</span> <b class="caret"></b></a>
+          <div tal:content="structure ho" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+          </div>
+       </li>
+       <li class="divider-vertical"></li>
+       <li class="nav-item" tal:define="hl view.headlink();"><span tal:condition="hl" tal:replace="structure hl"></span></li>
+     </ul>
+     <ul tal:condition="not view.UserName()"
+         tal:define="hl view.headlinkAnonymous();"
+         class="navbar-nav mr-right">
+       <li class="divider-vertical"></li>
+       <li class="nav-item"><span tal:condition="hl" tal:replace="structure hl"></span></li>
+     </ul>
+   </div>
+</nav>
 
 
 <!-- main navigation defines the header, content inside container/row including path -->
@@ -53,10 +48,10 @@
 <body>
   <tal:block metal:use-macro="template.topnav"> </tal:block>
 
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
       <tal:block metal:define-slot="path">
-          <div class="span12">
+          <div class="col-sm">
               <span tal:replace="structure view.path()"></span>
               <span tal:replace="structure view.settingsLinks()"></span>
           </div>
@@ -90,15 +85,15 @@
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
 
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
-      <div class="span2">
+      <div class="col-md-2">
         <div class="pathspacer">&nbsp;</div>
         <div class="sidebar-nav"
              tal:content="structure view.navigation()">
         </div><!--/.well -->
       </div><!--/span-->
-      <div class="span10">
+      <div class="col-md-10">
         <tal:block metal:define-slot="title"><h2 tal:condition="view.contentHeader()">${view.contentHeader()}</h2></tal:block>
         <tal:block metal:define-slot="tabs"><tal:block tal:replace="structure view.tabs()"/></tal:block>
         <tal:block metal:define-slot="content"></tal:block>
@@ -129,17 +124,17 @@
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
 
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
       <tal:block metal:define-slot="path">
-          <div class="span12">
+          <div class="col-sm">
               <span tal:replace="structure view.path()"></span>
               <span tal:replace="structure view.settingsLinks()"></span>
           </div>
       </tal:block>
     </div>
     <div class="row">
-      <div class="span12">
+      <div class="col-sm">
         <tal:block metal:define-slot="tabs"><tal:block tal:replace="structure view.tabs()"/></tal:block>
         <tal:block metal:define-slot="content"></tal:block>
       </div><!--/span-->

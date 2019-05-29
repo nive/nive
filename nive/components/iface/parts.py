@@ -1,7 +1,7 @@
 
 
 from nive.definitions import Conf
-from nive.i18n import translator, _
+from nive.i18n import translate, _
 
 
 class Hint(object):
@@ -75,7 +75,7 @@ class Parts:
         
         count: number of sections to be rendered. 
         """
-        tmpl = """<li class="%(class)s"><a href="%(url)s" title="%(description)s"> %(name)s </a></li>"""
+        tmpl = """<li class="nav-item %(class)s"><a class="nav-link" href="%(url)s" title="%(description)s"> %(name)s </a></li>"""
         html = []
         try:
             n = self.request.currentSection
@@ -118,11 +118,11 @@ class Parts:
         conf = self.ifaceConf.headlink
         if conf.get("icon"):
             return """
-<a href="%(url)s"><img src="%(static)sintern/%(icon)s" title="%(name)s"> %(name)s</a>
+<a href="%(url)s" class="nav-link"><img src="%(static)sintern/%(icon)s" title="%(name)s"> %(name)s</a>
         """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "icon": conf.icon}
         # no icon configured
         return """
-<a href="%(url)s">%(name)s</a>
+<a href="%(url)s" class="nav-link">%(name)s</a>
         """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static}
         
 
@@ -158,7 +158,7 @@ class Parts:
                 permission = u.get("permission")
                 if permission and not self.Allowed(permission, context):
                     continue
-                html.append(self.head_link(u))
+                html.append(self.head_link(u, cls="dropdown-item"))
         return "".join(html)
     
 
@@ -235,7 +235,7 @@ class Parts:
         tabs = self.GetTabs(self.context)
         if not tabs:
             return ""
-        tmpl = """<li class="%(class)s"><a href="%(url)s">%(name)s</a></li>"""
+        tmpl = """<li class="nav-item"><a class="nav-link %(cls)s" href="%(url)s">%(name)s</a></li>"""
         if active is None:
             try:
                 active = self.request.currentTab
@@ -249,7 +249,7 @@ class Parts:
             cls = ""
             if active == t["id"]:
                 cls = "active"
-            html.append(tmpl % {"url": self.ToUrl(t), "name": t["name"], "class": cls})
+            html.append(tmpl % {"url": self.ToUrl(t), "name": t["name"], "cls": cls})
         html.append("</ul>")
         return "".join(html)
 
@@ -263,18 +263,18 @@ class Parts:
         if not li:
             return ""
         return """
-<div class="btn-group pull-right unit_settings">
-  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+<div class="dropdown float-right unit-settings">
+  <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <i class="icon-cog"></i> %(Settings)s
     <span class="caret"></span>
-  </a>
-  <ul class="dropdown-men">
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     %(li)s
-  </ul>
-</div>  """% dict(li=li, Settings=translator(_("Settings")))
+  </div>
+</div>  """% dict(li=li, Settings=translate(_("Settings"), self.request))
 
 
-    def settingsStripped(self, active=None, base=None, addSlots=False):
+    def settingsStripped(self, active=None, base=None, addSlots=False, cls="dropdown-item"):
         """
         settings as <li> list
         """
@@ -309,18 +309,18 @@ class Parts:
                 return url
             return url.replace(base0, base)
 
-        tmpl = """<li class="%(class)s"><a href="%(url)s">%(icon)s %(name)s</a></li>"""
+        tmpl = """<a class="%(class)s" href="%(url)s">%(icon)s %(name)s</a>"""
         html = []
         for t in settings:
             permission = t.get("permission")
             if permission and not self.Allowed(permission):
                 continue
-            cls = ""
+            cc = cls
             if active == t["id"]:
-                cls = "active"
+                cc += " active"
             ic = t.get("icon","")
             icon = ("""<i class="%s"></i>"""%ic) if ic else ""
-            html.append(tmpl % {"url": rewriteBase(self.ToUrl(t)), "name": translator(t["name"]), "class": cls, "icon": icon})
+            html.append(tmpl % {"url": rewriteBase(self.ToUrl(t)), "name": translate(t["name"], self.request), "class": cc, "icon": icon})
 
         return "\r\n".join(html)
 
@@ -431,15 +431,15 @@ class Parts:
     html widgets called in headoptions, navigation, shortcuts
     """
     
-    def head_link(self, conf):
+    def head_link(self, conf, cls=""):
         if conf.get("icon"):
             return """
-<li><a href="%(url)s"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a></li>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "icon": conf.icon}
+<a href="%(url)s" class="%(cls)s"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a>
+        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "cls": cls, "icon": conf.icon}
         # no icon configured
         return """
-<li><a href="%(url)s">%(name)s</a></li>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static}
+<a href="%(url)s" class="%(cls)s">%(name)s</a>
+        """ % {"url": self.ToUrl(conf), "name": conf.name, "cls": cls, "static": self.static}
 
     def head_logout(self):
         """

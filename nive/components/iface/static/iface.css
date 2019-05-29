@@ -13,39 +13,37 @@ body {
   font-family: Arial, Verdana, sans-serif; 
   letter-spacing: 0.01em; 
   font-size: 0.9em;
-  padding-top: 80px; 
   position: relative;
+  padding-top:80px;
 }
 
-.navbar         { background-color:#0786D5; border:none; padding:0px; margin:0px; box-shadow:0 0 1em gray; }
-.navbar-inner   { border:none; padding:0px; margin:0px; background-color:transparent; box-shadow:none; background-image:none; }
-.navbar-inner .container-fluid { background-color:transparent; border:none; padding-left:0px; margin-left:0px; }  
-.navbar .divider-vertical { height:52px; }
-.navbar .nav li a { color:#dddddd; text-shadow: none; padding: 15px 20px 14px 20px; }
-.navbar .nav li a:hover, 
-.navbar .nav li a:focus {
+.navbar         { background-color:#0786D5; border:none; box-shadow:0 0 1em gray; padding: 0 1em 0 1em; }
+.navbar .divider-vertical { border-right: 1px solid white; height:auto; margin-right: 8px; }
+.navbar a.nav-link { color:#dddddd; text-shadow: none; padding: 15px 20px 14px 20px; }
+.navbar a.nav-link:hover,
+.navbar a.nav-link:focus {
   background-color:transparent;
   color: #ffffff;
   box-shadow: none;
   outline-color: #828282;
 }
-.navbar .nav .active a, 
-.navbar .nav .active a:focus {
+.navbar .active a.nav-link,
+.navbar .active a.nav-link:focus {
   background-color:transparent;
   color: #ffffff;
   box-shadow: none;
   border-bottom: 3px solid #dddddd;
 }
-.navbar .nav .active a:hover {
+.navbar .active a.nav-link:hover {
   background-color:transparent;
   color: #dddddd;
   box-shadow: none;
   border-bottom: 3px solid #dddddd;
 }
-.navbar .nav li.dropdown.open > .dropdown-toggle { background-color:transparent; color: white; }
-.navbar .nav ul.dropdown-menu a  { color:#333333; padding: 3px 12px 3px 12px; }
-.navbar .nav ul.dropdown-menu a:hover  { color:white; }
-.navbar .nav li.dropdown>.dropdown-toggle .caret { border-top-color: white; }
+.navbar li.dropdown.open > .dropdown-toggle { background-color:transparent; color: white; }
+.navbar ul.dropdown-menu a  { color:#333333; padding: 3px 12px 3px 12px; }
+.navbar ul.dropdown-menu a:hover  { color:white; }
+.navbar li.dropdown>.dropdown-toggle .caret { border-top-color: white; }
 
 .path {
   padding: 0 15px;
