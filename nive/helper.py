@@ -563,4 +563,4 @@ class FakeLocalizer(object):
                 return v
         except:
             pass
-        return text
+        return str(text)

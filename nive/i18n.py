@@ -2,12 +2,13 @@
 use as import:
 from nive.i18n import _
 """
-from translationstring import TranslationStringFactory
-_ = TranslationStringFactory('nive')
+#from translationstring import TranslationStringFactory
 
 
-from pyramid.i18n import get_localizer
+from pyramid.i18n import get_localizer, TranslationStringFactory
 from pyramid.threadlocal import get_current_request
+
+_ = TranslationStringFactory('nive')
 
 def translator(request=None):
     """
