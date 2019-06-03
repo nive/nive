@@ -46,9 +46,13 @@ class Search:
         
         #search form
         if searchFlds:
+            tmp = []
+            for f in searchFlds:
+                tmp.append(f.copy(readonly=False, required=False))
+            searchFlds = tmp
             form = HTMLForm(view=self)
             form.method = searchconf.get("method")
-            form.fields = searchFlds
+            form.fields = tmp
             form.widget.item_template = "field_onecolumn"
             form.actions = [Conf(id="search", method="Search", name=translate(_("Filter"), self.request), hidden=False)]
             form.Setup()
@@ -189,7 +193,7 @@ class Search:
             
     # search ----------------------------------------------
     
-    def search(self, searchconf="default", styling="list table-bordered", urlTmpl=None, showMessages=True):
+    def search(self, searchconf="default", styling="table table-striped", urlTmpl=None, showMessages=True):
         """
         main search function to be called from templates. if searchconf is none
         values are extracted from self.ifaceConf configuration object.
@@ -214,7 +218,26 @@ class Search:
         messages = ""
         box = ""
         if len(searchFlds):
-            formhtml = form.RenderBody(items["criteria"])
+            #formhtml = form.RenderBody(items["criteria"])
+            fl = []
+            form.Setup()
+            #result, formvalues = form.Extract(self.request, removeNull=True, removeEmpty=True)
+            for f in searchFlds:
+                form2 = HTMLForm(loadFromType=form.loadFromType, view=self)
+                form2.actions = []
+                form2.fields = [f]
+                form2.widget.item_template = "field_nolabel"
+                form2.Setup()
+                form2._c_fields[0].settings["css_class"] = "form-control form-control-sm"
+                fl.append("<th>"+form2.RenderBody(items["criteria"], msgs=None, errors=None, result=None)+"</th>")
+
+            formhtml = """
+            <tr>
+              %(fields)s
+              <th><button class="btn"><img src="%(static)sintern/images/icon_reload.svg"></button></th>
+            </tr>
+            """ % dict(fields=" ".join(fl), static=self.static)
+
         if showMessages:
             messages = self.messages()
         shortcuts = ""
@@ -222,49 +245,40 @@ class Search:
         if searchconf.get("folder"):
             shortcuts = self.shortcuts()
         options = self.listoptions(searchconf)
-        header = self.header2(fldsList=fldsList, pool_type=searchType, addSort=True, addAction=searchconf.get("listoptions"), searchconf=searchconf)
+        header = self.header2(fldsList=fldsList, pool_type=searchType, addSort=True, searchconf=searchconf)
         rows = self.rows(recs=items.get('items'), fldsList=fldsList, obj=self.context, checkbox=searchconf.get("listoptions"), urlTmpl=urlTmpl, searchconf=searchconf)
 
         if formhtml:
-            box = """
-    <div id="switch">
-      <a href="" id="switch_b" onClick="$('#formBody').toggle();return false;">
-       <img src="%(static)sintern/images/maximize.png" alt="Show/Hide" title="" /></a>
-    </div>
-    <div id="formBody"> %(form)s </div>
-    <span class="clear"></span>
-            """ % {"action":action, "form":formhtml, "messages": messages, "shortcuts": shortcuts, 
-                   "urls":urls, "options": options, "header": header, "rows":rows, "static": self.static,
-                   "start": sdict["start"], "sort": sdict["sort"], "ascending": sdict["ascending"]}
+            formhtml = """<tr> %(form)s </tr>""" % {"form":formhtml}
 
         html = """
-<div class="search">
+<form action="%(action)s" id="boxSearch" name="searchForm" method="post" enctype="multipart/form-data" class="search">
  %(messages)s
- <form action="%(action)s" id="boxSearch" name="searchForm" method="post" enctype="multipart/form-data">
+ %(urls)s
+ %(shortcuts)s
+ 
   <input type="hidden" name="start" value="%(start)d">
   <input type="hidden" name="sort" value="%(sort)s">
   <input type="hidden" name="ascending" value="%(ascending)s">
-  %(box)s
- </form>
- %(shortcuts)s
- %(urls)s
- <form action="%(action)s" id="searchList" name="searchList" method="post" enctype="multipart/form-data">
-  <table class="list">
-   %(header)s
-   %(rows)s
+
+  <table class="%(styling)s search">
+   <thead>%(header)s</thead>
+   <tbody>
+     %(formhtml)s
+     %(rows)s
+   <tbody>   
   </table>
  %(urls)s
  %(options)s
- </form>
-</div>
-        """ % {"action":action, "form":formhtml, "messages": messages, "shortcuts": shortcuts, 
+</form>
+        """ % {"action":action, "formhtml":formhtml, "messages": messages, "shortcuts": shortcuts,
                "urls":urls, "options": options, "header": header, "rows":rows, "static": self.static,
-               "start": sdict["start"], "sort": sdict["sort"], "ascending": sdict["ascending"], "box": box,
-               "tableclass": styling}
+               "start": sdict["start"], "sort": sdict["sort"], "ascending": sdict["ascending"],
+               "styling": styling}  # "header": form.HTMLHead()
         return html
 
   
-    def header(self, fldsList,pool_type,addSort=True,addAction=True):
+    def header(self, fldsList,pool_type,addSort=True):
         """
         list header row including titles and sort
         """
@@ -273,10 +287,7 @@ class Search:
         up = translate(_("Sort ascending"), self.request)
         down = translate(_("Sort descending"), self.request)
         sortTmpl = """ <img class="asc" onclick="search_sort('%%s',1)" src="%sintern/images/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%sintern/images/ldown.gif" title="%s"/>""" % (self.static, up, self.static, down)
-        action = ""
-        if addAction:
-            action = """<th class="listAction"><i class="icon-ok" onclick="search_toggleSelect();return false"></i></th>"""
-            
+
         flds = []
         for fld in fldsList:
             sort = ""
@@ -299,33 +310,35 @@ class Search:
         html = """
         <tr>
         %s
-        %s
+        <th></th>
         </tr>
-        """ % ("".join(flds), action)
+        """ % ("".join(flds))
         return html    
 
 
-    def header2(self, fldsList,pool_type,addSort=True,addAction=True, searchconf=None):
+    def header2(self, fldsList,pool_type,addSort=True,searchconf=None):
         """
         list header row including titles and sort
+
+                    <th tal:repeat="fld fields">
+                        <a tal:content="fld.name" id="sort-${fld.id}" class="sort" data-value="${fld.id}" href="#"></a>
+                    </th>
+                    <th></th>
+
         """
         app = self.context.app
-        fldTmpl = """<th class="list_header" id="list_%s" nowrap>%s %s</th> """ 
-        up = translate(_("Sort ascending"), self.request)
-        down = translate(_("Sort descending"), self.request)
-        sortTmpl = """<div><img class="asc" onclick="search_sort('%%s',1)" src="%sintern/images/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%sintern/images/ldown.gif" title="%s"/></div>""" % (self.static, up, self.static, down)
-        action = ""
-        if addAction:
-            action = """<th class="listAction"><i class="icon-ok" onclick="search_toggleSelect();return false"></i></th>"""
-            
+        fldTmpl = """<th class="list_header" id="list_%s" nowrap>%s</th> """
+        #up = translate(_("Sort ascending"), self.request)
+        #down = translate(_("Sort descending"), self.request)
+        sortTmpl = """<a id="sort-%(id)s" class="sort" data-value="%(id)s" href="#">%(name)s</a>"""
+
         flds = []
         for fld in fldsList:
             sort = ""
             if IFieldConf.providedBy(fld):
                 name = translate(fld["name"], self.request)
                 fldid = fld.get("settings",{}).get("sort_id", fld["id"])
-                if fldid:
-                    sort = sortTmpl % (fldid, fldid)
+                sort = sortTmpl % dict(id=fld["id"], name=translate(fld["name"], self.request))
             else:
                 if addSort and fld[0]!="+":
                     sort = sortTmpl % (fld, fld)
@@ -335,14 +348,14 @@ class Search:
                     # ! iface2 update
                     name = translate(app.configurationQuery.GetFldName(fld, pool_type), self.request)
                 fldid = fld
-            flds.append(fldTmpl % (fldid, sort, name))
+            flds.append(fldTmpl % (fldid, sort))
         
         html = """
         <tr>
         %s
-        %s
+        <th></th>
         </tr>
-        """ % ("".join(flds), action)
+        """ % ("".join(flds))
         return html    
 
     
@@ -568,31 +581,47 @@ class Search:
 
         if searchconf.get("container") and "ccp" in searchconf.get("listoptions",[]):
             ccp = """
- <input type="image" src="%(static)sintern/images/copy.png" name="copy"
-        title="Copy" />
- <input type="image" src="%(static)sintern/images/cut.png" name="cut"
-        title="Cut" />
- <input type="image" src="%(static)sintern/images/paste.png" name="paste"
-        title="Paste" />
-        """ % {"static": self.static}
+ <input type="image" src="%(static)sintern/images/copy.png" name="copy" title="%(Copy)s" />
+ <input type="image" src="%(static)sintern/images/cut.png" name="cut" title="%(Cut)s" />
+ <input type="image" src="%(static)sintern/images/paste.png" name="paste" title="%(Paste)s" />
+        """ % {"static": self.static,
+               "Copy": translate(_("Copy"), self.request),
+               "Cut": translate(_("Cut"), self.request),
+               "Paste": translate(_("Paste"), self.request)}
 
         if "delete" in searchconf.get("listoptions",[]):
-            delete = """
- <button onClick="del();return false" class="btn btn-warning">
-    <i class="icon-trash"></i> %(Delete selected)s</button>
-        """ % {"static": self.static, "Delete selected": translate(_("Delete selected"), self.request)}
+            delete = """<input type="submit" name="delete" id="delete" value="%(Delete)s" class="btn btn-warning" i18n:attributes="value">""" % \
+                     {"static": self.static,
+                      "Delete": translate(_("Delete selected"), self.request)}
 
         html = """
-<script type="text/javascript">
-function del() {
-  document.location.href='%(base)sdeletec?'+$('#searchList').serialize();
-}
+<script>
+    $(document).ready(function() {
+        $("#boxSearch #delete").on("click", function (e) {
+            e.preventDefault();
+            $("#boxSearch").attr("action", "${url}delete").submit();
+        });
+        $("#boxSearch .sort").on("click", function (e) {
+            e.preventDefault();
+            var fld = $(this);
+            if(fld.attr("data-value")==$("#boxSearch input[name=sort]").val()) {
+                var ac = $("#boxSearch input[name=ascending]").val();
+                ac = ac=="1"?"0":"1";
+                $("#boxSearch input[name=ascending]").val(ac);
+            } else {
+                $("#boxSearch input[name=sort]").val($(this).attr("data-value"));
+                $("#boxSearch input[name=ascending]").val("1");
+                $("#boxSearch input[name=start]").val("");
+            }
+            $("#boxSearch").submit();
+        });
+    });
 </script>
 
 <div id="listActionButtons">
  %(ccp)s &nbsp;
  %(delete)s &nbsp;
- <button type="button" name="selectButton" class="select btn"
+ <button type="button" name="selectButton" class="btn btn-info"
         onClick="search_toggleSelect(); return false">%(Select all)s</button>
 </div>
         """ % {"static": self.static, "ccp": ccp, "delete": delete, "base":self.FolderUrl(),
