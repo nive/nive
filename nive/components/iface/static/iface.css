@@ -119,7 +119,7 @@ form input.password        { display:block; }
 .control-group input,
 .control-group textarea,
 .control-group select           { width:93%; }
-.form .control-label { font-weight: bold; }
+.form .col-form-label { font-weight: bold; }
 .form .control-group input[type="radio"]     { width:auto; margin-bottom: 2px; display:block; }
 .form .control-group input[type="checkbox"]  { width:auto; margin-bottom: 2px; display:block; }
 .form .input-subset { padding: 0px 10px 5px 10px; margin-bottom: 10px; border: 1px solid lightgray; border-top: none; }
@@ -140,7 +140,7 @@ form.bigform { margin:0px; padding:0px; width:auto; }
 form .form-actions         { border: none; background-color: transparent; padding: 0px; }
 form .form-actions .go, button.go, .btn-primary, .btn-primary:hover, .btn-primary:active {
   padding: 8px 32px 8px 16px;
-  background: #0786D5 url(images/button.png) no-repeat 93% center;
+  background: #0786D5 url(intern/images/button.png) no-repeat 93% center;
   color: white;
   font-weight: bold;
   border: none;
@@ -148,7 +148,7 @@ form .form-actions .go, button.go, .btn-primary, .btn-primary:hover, .btn-primar
 form .form-actions .go:focus, .btn-primary:focus  { outline-width: thin; outline-style: dotted; outline-color: #333333; outline-offset: -2px; }
 button.go-sm     {
   padding: 4px 30px 4px 8px;
-  background: #0786D5 url(images/button.png) no-repeat 90% center;
+  background: #0786D5 url(intern/images/button.png) no-repeat 90% center;
   color: white;
   font-weight: bold;
   border: none;

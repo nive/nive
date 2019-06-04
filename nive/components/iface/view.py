@@ -41,7 +41,7 @@ configuration = ViewModuleConf(
         ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
         ('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
         ('iface.css', 'nive.components.adminview:static/iface.css'),
-        ('jquery.js', 'nive.components.adminview:static/mods/jquery-3.3.1.slim.min.js'),
+        ('jquery.js', 'nive.components.adminview:static/mods/jquery-3.3.1.min.js'),
         ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/js/bootstrap.bundle.js'),
         ('iface.js', 'nive.components.adminview:static/iface.js'),
     ]
@@ -293,7 +293,7 @@ class IFaceView(Parts, Search, BaseView):
         if isinstance(object, str):
             object = self.context.app.configurationQuery.GetObjectConf(object)
         if IObjectConf.providedBy(object):
-            object = self.context.root._GetVirtualObj(object)
+            object = self.context.root.factory.VirtualObj(object)
         if hasattr(conflist, "keys"):
             for k in list(conflist.keys()):
                 if not IConf.providedBy(conflist[k]):
@@ -413,6 +413,21 @@ class IFaceView(Parts, Search, BaseView):
                 flds.append(f)
         return self._LoadFldsConf(flds, container, listtype)
     
+
+    def _AddObject(self, typeID, title):
+        if not self.context.IsTypeAllowed(typeID, self.User()):
+            raise ValueError("Not allowed")
+
+        form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
+        form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default", "create"]}}
+        form.use_ajax = False
+        form.Setup(subset="create", addTypeField=True)
+        result, data, action = form.Process(redirectSuccess="view_url")
+        if result and not data:
+            self.Redirect(self.PageUrl(self.context))
+            return
+        return dict(content=data, result=result, view=self, head=form.HTMLHead(), title=title)
+
 
     # helper -----------------------------------------------------------
     
