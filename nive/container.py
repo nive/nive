@@ -65,7 +65,7 @@ class ContainerRead(Events):
             return None
         if not id:
             return None
-        obj = self.factory.GetObj(id, **kw)
+        obj = self.factory.DbObj(id, **kw)
         self.Signal("loadObj", obj)
         return obj
 
@@ -107,7 +107,7 @@ class ContainerRead(Events):
             ids = [c["id"] for c in objects]
             kw["meta"] = objects
             kw["sort"] = sort
-            objs = self.factory.GetObjBatch(ids, queryRestraint=False, **kw)
+            objs = self.factory.ObjBatch(ids, queryRestraint=False, **kw)
             return objs
         objs = []
         for c in objects:
@@ -115,7 +115,7 @@ class ContainerRead(Events):
                 kw["pool_datatbl"] = c["pool_datatbl"]
                 kw["pool_dataref"] = c["pool_dataref"]
                 try:
-                    obj = self.factory.GetObj(c["id"], queryRestraints=False, **kw)
+                    obj = self.factory.DbObj(c["id"], queryRestraints=False, **kw)
                 except PermissionError:
                     # ignore permission errors and continue
                     obj = None
@@ -182,7 +182,7 @@ class ContainerRead(Events):
         objects = root.search.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
         ids = [c["id"] for c in objects]
         kw["meta"] = objects
-        objs = self.factory.GetObjBatch(ids, **kw)
+        objs = self.factory.ObjBatch(ids, **kw)
         self.Signal("loadObj", objs)
         return objs
 
@@ -284,7 +284,7 @@ class ContainerWrite:
         db = app.db
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
-            obj = self.factory.GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj = self.factory.DbObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
             if typedef.events:
                 obj.SetupEventsFromConfiguration(typedef.events)
             obj.CreateSelf(data, user=user, **kw)
@@ -317,7 +317,7 @@ class ContainerWrite:
         dbEntry = None
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
-            obj = self.factory.GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj = self.factory.DbObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
             obj.UpdateInternal(data)
             obj.meta["pool_type"] = typedef.id
             obj.meta["pool_unitref"] = obj.parent.id
@@ -374,7 +374,7 @@ class ContainerWrite:
             id = newDataEntry.GetID()
             typedef = obj.configuration
     
-            newobj = self.factory.GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
+            newobj = self.factory.DbObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
             newobj.CreateSelf(data, user=user)
             newobj.Signal("duplicate", **kw)
             
@@ -422,7 +422,7 @@ class ContainerWrite:
         id = newDataEntry.GetID()
         typedef = obj.configuration
 
-        newobj = self.factory.GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
+        newobj = self.factory.DbObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
         newobj.CreateSelf({}, user=user)
         newobj.Signal("duplicate", **kw)
         
@@ -760,7 +760,7 @@ class Root(ContainerRead, ContainerWrite):
 
         # proxy object
         if "proxyObj" in kw and kw["proxyObj"]:
-            obj = self.factory.GetObj(id, parentObj=kw["proxyObj"], **kw)
+            obj = self.factory.DbObj(id, parentObj=kw["proxyObj"], **kw)
             if not obj:
                 raise ContainmentError("Proxy object not found")
             return obj
@@ -786,7 +786,7 @@ class Root(ContainerRead, ContainerWrite):
         for id in path:
             if id == self.id:
                 continue
-            obj = obj.factory.GetObj(id, **kw)
+            obj = obj.factory.DbObj(id, **kw)
             if not obj:
                 return None
                 # raise Exception, "NotFound"
@@ -917,7 +917,8 @@ class ContainerFactory(object):
         self.obj = obj
 
 
-    def GetObj(self, id, dbEntry=None, parentObj=None, configuration=None, **kw):
+
+    def DbObj(self, id, dbEntry=None, parentObj=None, configuration=None, **kw):
         """
         Loads and initializes the object. ::
 
@@ -979,7 +980,7 @@ class ContainerFactory(object):
             obj.Cache(newobj, newobj.id)
         return newobj
 
-    def GetObjBatch(self, ids, parentObj=None, **kw):
+    def ObjBatch(self, ids, parentObj=None, **kw):
         """
         Load multiple objects at once.
         """
@@ -1000,7 +1001,7 @@ class ContainerFactory(object):
                 return objs
             ids = load
 
-        app = self.obj.app
+        app = obj.app
         entries = app.db.GetBatch(ids, preload="all", **kw)
 
         # create object for type
@@ -1027,3 +1028,16 @@ class ContainerFactory(object):
                 obj.Cache(newobj, newobj.id)
             objs.append(newobj)
         return objs
+
+
+    def VirtualObj(self, configuration):
+        """
+        This loads an object for a non existing database entry.
+        """
+        if configuration is None:
+            raise ConfigurationError("Type not found")
+        app = self.obj.app
+        obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+        dbEntry = app.db.GetEntry(0, virtual=1)
+        obj = obj(0, dbEntry, parent=None, configuration=configuration)
+        return obj
