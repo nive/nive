@@ -464,7 +464,7 @@ class DateTimeInputWidget(DateInputWidget):
     """
     template = 'datetimeinput'
     size = None
-    requirements = ( ('jqueryui', None), ('datetimepicker', None), )
+    requirements = ( ) #deactivated! ('jqueryui', None), ('datetimepicker', None), )
     option_defaults = {'dateFormat': 'yy-mm-dd',
                        'timeFormat': 'hh:mm:ss',
                        'separator': ' '}
@@ -584,8 +584,8 @@ class RichTextWidget(TextInputWidget):
     template = 'richtext'
     skin = 'default'
     theme = 'simple'
-    category = 'full-width'
-    requirements = ( ('tinymce', None), )
+    category = 'default' #full-width'
+    requirements = ( ('trumbowyg', None), )
     options = {
         "mode" : "exact",
         "elements": "",  # element id is set in renderOptions() call
@@ -694,7 +694,7 @@ class CodeTextWidget(TextInputWidget):
     width = 500
     template = 'codetext'
     codetype = 'default'
-    category = 'full-width'
+    category = 'default' #full-width'
     theme = 'simple'
     requirements = ( ('codemirror', None), )
     options = { "mode": "text/html", "tabMode": "indent", "lineNumbers": True }
@@ -1196,13 +1196,13 @@ class FileUploadWidget2(Widget):
         Widget.__init__(self, **kw)
 
     def serialize(self, field, cstruct):
-        if cstruct in ("", null, None):
+        if cstruct in ("", b"", null, None):
             cstruct = {}
         template = self.template
         return field.renderer(template, field=field, cstruct=cstruct)
 
     def deserialize(self, field, pstruct, formstruct=None):
-        if pstruct in ("", null, None):
+        if pstruct in ("", b"", null, None):
             return null
         try:
             cls = self.form.app.db.GetFileClass()
@@ -1538,7 +1538,7 @@ default_resources = {
                    ('jquery-ui.css', 'nive.components.reform:static/css/ui-lightness/jquery-ui-1.8.11.custom.css'))
             },
         },
-    'jquery.form': {
+    'deactivated!jquery.form': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
                    ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form-3.50.js')),
@@ -1560,13 +1560,16 @@ default_resources = {
     'reform': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js'),
+                   #('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js'),
                    ('reform.js', 'nive.components.reform:static/scripts/reform.js')),
             },
         },
-    'tinymce': {
+    'trumbowyg': {
         None:{
-            'seq':(('tiny_mce.js', 'nive.components.reform:static/tinymce/jscripts/tiny_mce/tiny_mce.js'),),
+            'seq':(('trumbowyg.js', 'nive.components.reform:static/trumbowyg/trumbowyg.min.js'),
+                   ('trumbowyg.cleanpaste.js', 'nive.components.reform:static/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.js'),
+                   ('trumbowyg.de.js', 'nive.components.reform:static/trumbowyg/langs/de.min.js'),
+                   ('trumbowyg.css', 'nive.components.reform:static/trumbowyg/ui/trumbowyg.min.css')),
             },
         },
     'codemirror': {

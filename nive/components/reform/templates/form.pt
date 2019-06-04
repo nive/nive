@@ -105,7 +105,7 @@ function reform_ajaxify(response, status, xhr, form, oid, mthd) {
 reform.addCallback(
     '${field.formid}',
     function(oid) {
-        reform_ajaxify(null, null, null, null, oid);
+        //deactivated! reform_ajaxify(null, null, null, null, oid);
     }
 );
 ${'reform_loaded=false; reform.load();' if True else ''}

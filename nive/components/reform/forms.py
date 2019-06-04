@@ -1074,7 +1074,7 @@ class HTMLForm(Form):
         if errors:
             html = self._Msgs(msgs=msgs, result=result)
             return html + errors.render()
-            #return html + exception.ValidationFailure(self._form, data, errors).render()
+            #return html + ValidationFailure(self._form, data, errors).render()
 
         self.Signal("render", data=data)
         html = self.render(data, msgs=msgs, result=result)
