@@ -599,7 +599,7 @@ class Search:
     $(document).ready(function() {
         $("#boxSearch #delete").on("click", function (e) {
             e.preventDefault();
-            $("#boxSearch").attr("action", "${url}delete").submit();
+            $("#boxSearch").attr("action", "%(base)sdeletec").submit();
         });
         $("#boxSearch .sort").on("click", function (e) {
             e.preventDefault();
@@ -639,4 +639,4 @@ class Search:
              "sort": self.GetFormValue('sort',searchconf.get("sort",'title')), 
              "ascending": self.GetFormValue('ascending',searchconf.get('ascending',1))}
         return d
-        
+
