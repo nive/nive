@@ -65,7 +65,7 @@ class PathExtension(object):
             unitref = None
         cnt = 1
         root = self.root
-        while root.FilenameToID(self.AddExtesion(name), unitref, parameter=dict(id=self.id), operators=dict(id="!=")) != 0:
+        while root.search.FilenameToID(self.AddExtension(name), unitref, parameter=dict(id=self.id), operators=dict(id="!=")) != 0:
             if cnt>1:
                 name = name[:-1]+str(cnt)
             else:
@@ -97,7 +97,7 @@ class PathExtension(object):
         return path[:self.maxlength-cutlen+pos]
 
 
-    def AddExtesion(self, filename):
+    def AddExtension(self, filename):
         if not self.extension:
             return filename
         return "%s.%s" % (filename, self.extension)
@@ -127,7 +127,7 @@ class PathExtension(object):
             name = id
             id = 0
             if name:
-                id = self.root.FilenameToID(name, self.id)
+                id = self.root.search.FilenameToID(name, self.id)
             if not id:
                 raise KeyError(id)
 
@@ -175,7 +175,7 @@ class RootPathExtension(object):
             name = id
             id = 0
             if name:
-                id = self.FilenameToID(name, self.id)
+                id = self.search.FilenameToID(name, self.id)
             if not id:
                 raise KeyError(id)
 

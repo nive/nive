@@ -216,14 +216,14 @@ def list_node(field, kw, kwWidget, form):
         if field.settings.get("controlset"):
             kw["widget"].template = 'select_controlset'
             kw["widget"].css_class = ''
-    return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
+    return SchemaNode(CodeList(allowed=[str(e["id"]) for e in v]), **kw)
 
 def radio_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
-    return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
+    return SchemaNode(CodeList(allowed=[str(e["id"]) for e in v]), **kw)
 
 def multilist_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)

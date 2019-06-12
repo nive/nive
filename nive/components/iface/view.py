@@ -414,11 +414,11 @@ class IFaceView(Parts, Search, BaseView):
         return self._LoadFldsConf(flds, container, listtype)
     
 
-    def _AddObject(self, typeID, title):
+    def _AddObject(self, typeID, title, parent=None):
         if not self.context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
-        form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
+        form = ObjectForm(view=self, context=parent, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
         form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default", "create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
