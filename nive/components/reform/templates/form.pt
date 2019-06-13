@@ -15,8 +15,8 @@
 
     <div tal:condition="field.error" class="alert alert-warning">
       <h4 i18n:translate="">There was a problem with your submission</h4>
-      <p i18n:translate="">Errors have been highlighted below</p>
-      <p tal:condition="field.errormsg" class="errorMsg">${field.errormsg}</p>
+      <div i18n:translate="">Errors have been highlighted below</div>
+      <div tal:condition="field.errormsg" class="errorMsg">${field.errormsg}</div>
     </div>
 
     <tal:block tal:define="rndr field.renderer;

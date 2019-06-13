@@ -465,8 +465,8 @@ class DateTimeInputWidget(DateInputWidget):
     template = 'datetimeinput'
     size = None
     requirements = ( ) #deactivated! ('jqueryui', None), ('datetimepicker', None), )
-    option_defaults = {'dateFormat': 'yy-mm-dd',
-                       'timeFormat': 'hh:mm:ss',
+    option_defaults = {'dateFormat': 'yyyy-MM-dd',
+                       'timeFormat': 'hh:mm',
                        'separator': ' '}
     options = {}
 
@@ -482,7 +482,7 @@ class DateTimeInputWidget(DateInputWidget):
         options = self._options()
         if len(cstruct) == 25: # strip timezone if it's there
             cstruct = cstruct[:-6]
-        cstruct = options['separator'].join(cstruct.split('T'))
+        #cstruct = options['separator'].join(cstruct.split('T'))
         return field.renderer(
             template,
             field=field,
