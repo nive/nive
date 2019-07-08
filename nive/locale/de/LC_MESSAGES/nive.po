@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nive 0.9.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-03-11 14:36+0100\n"
+"POT-Creation-Date: 2019-07-08 16:36+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -261,7 +261,8 @@ msgid "Database json dump"
 msgstr "Datenbank JSON dump"
 
 #: nive/tools/dbJsonDump.py:18
-msgid "This function dumps table contents the way records are stored in json format."
+msgid ""
+"This function dumps table contents the way records are stored in json format."
 msgstr "Diese Funktion gibt ganze Tabellen Inhalte im JSON Format zurück."
 
 #: nive/tools/dbJsonDump.py:26 nive/tools/dbSqlDump.py:24
@@ -288,16 +289,26 @@ msgid "Json data export"
 msgstr "Json data export"
 
 #: nive/tools/exportJson.py:18
-msgid "This function exports all objects in json format. Optionally as flat list or tree structure. This is not a simple database table dump. Object events will be triggered before exporting data."
-msgstr "Diese Funktion exportiert alle Objekte im JSON Format. Optional als einfache Liste oder verschachtelt (Baumstruktur), wie in der Datenbank angelegt. Der Export läuft nicht auf Datenbank-Ebene, Objekt Events (laden, lesen) werden ausgeführt."
+msgid ""
+"This function exports all objects in json format. Optionally as flat list or "
+"tree structure. This is not a simple database table dump. Object events will "
+"be triggered before exporting data."
+msgstr ""
+"Diese Funktion exportiert alle Objekte im JSON Format. Optional als einfache "
+"Liste oder verschachtelt (Baumstruktur), wie in der Datenbank angelegt. Der "
+"Export läuft nicht auf Datenbank-Ebene, Objekt Events (laden, lesen) werden "
+"ausgeführt."
 
 #: nive/tools/exportJson.py:26
 msgid "Export as tree"
 msgstr "Mit Baumstruktur exportieren"
 
 #: nive/tools/exportJson.py:27
-msgid "Export objects as tree structure (contained objects are included as 'items')"
-msgstr "Objekte in Baumstrultur exportieren (Container Objekte haben ein zusätzliches Feld 'items')"
+msgid ""
+"Export objects as tree structure (contained objects are included as 'items')"
+msgstr ""
+"Objekte in Baumstrultur exportieren (Container Objekte haben ein "
+"zusätzliches Feld 'items')"
 
 #: nive/tools/exportJson.py:34
 msgid "File data"
@@ -313,23 +324,31 @@ msgstr "Objekt dump"
 
 #: nive/tools/gcdump.py:13
 msgid "This function dumps a list of all objects found in memory."
-msgstr "Diese Funktion listet alle im Speicher referenzierten Python(!) Objekte."
+msgstr ""
+"Diese Funktion listet alle im Speicher referenzierten Python(!) Objekte."
 
 #: nive/tools/dbStructureUpdater.py:20
 msgid "Database Structure"
 msgstr "Datenbankstruktur Update"
 
 #: nive/tools/dbStructureUpdater.py:21
-msgid "Generate or update the database structure based on configuration settings."
-msgstr "Erstellt oder aktualisiert die Datenbankstruktur basierend auf der Konfiguration."
+msgid ""
+"Generate or update the database structure based on configuration settings."
+msgstr ""
+"Erstellt oder aktualisiert die Datenbankstruktur basierend auf der "
+"Konfiguration."
 
 #: nive/tools/dbStructureUpdater.py:25
 msgid "Modify existing columns"
 msgstr "Vorhandene Felder abändern"
 
 #: nive/tools/dbStructureUpdater.py:25
-msgid "Change existing database columns to new configuration. Depending on the changes, data may be lost!"
-msgstr "Neue Konfiguration auf die Datenbank anwenden. Abhängig von den Änderungen können Daten verloren gehen!"
+msgid ""
+"Change existing database columns to new configuration. Depending on the "
+"changes, data may be lost!"
+msgstr ""
+"Neue Konfiguration auf die Datenbank anwenden. Abhängig von den Änderungen "
+"können Daten verloren gehen!"
 
 #: nive/tools/dbStructureUpdater.py:26
 msgid "Show system columns"
@@ -338,22 +357,36 @@ msgstr "System Spalten anzeigen"
 #: nive/tools/dbStructureUpdater.py:51
 msgid ""
 " <div class=\"well\">\n"
-"This tool compares the physically existing database structure (tables, columns) with the current configuration settings.\n"
-"The database structure is shown on the left, configuration settings on the right. <br><br>\n"
-"Existing database columns will only be altered if manually selected in the 'Modify' column. Modifying a table may destroy the data\n"
-"stored (e.g if converted from string to integer), so don't forget to create backups of the database before modifying anything.<br>\n"
-"By default this tool will only create new tables and columns and never delete any column.\n"
+"This tool compares the physically existing database structure (tables, "
+"columns) with the current configuration settings.\n"
+"The database structure is shown on the left, configuration settings on the "
+"right. <br><br>\n"
+"Existing database columns will only be altered if manually selected in the "
+"'Modify' column. Modifying a table may destroy the data\n"
+"stored (e.g if converted from string to integer), so don't forget to create "
+"backups of the database before modifying anything.<br>\n"
+"By default this tool will only create new tables and columns and never "
+"delete any column.\n"
 " </div>       "
 msgstr ""
 " <div class=\"well\">\n"
-"Dieses Tool vergleicht die physische Datenbankstruktur (Tables, Columns) mit den aktuellen Konfigurationseinstellungen.\n"
-"Die Datenbankstruktur wird auf der linken Seite angezeigt, die Konfiguration rechts.<br><br>\n"
-"Vorhandene Tabellenspalten werden nur bei manuell ausgewähltem 'Ändern' (Häkchen setzen) angepasst. Ändern einer Spalte kann die enthaltenen Daten unbrauchbar machen (werden Strings z.B. in eine Zahl umgewandelt), zur Sicherheit also vorher ein Backup der Datenbank anlegen.<br>\n"
-"Als Voreinstellung werden nur neue Tabellen und Spalten hinzugefügt. Das aber automatisch bei jedem ausführen des Tools. </div>      "
+"Dieses Tool vergleicht die physische Datenbankstruktur (Tables, Columns) mit "
+"den aktuellen Konfigurationseinstellungen.\n"
+"Die Datenbankstruktur wird auf der linken Seite angezeigt, die Konfiguration "
+"rechts.<br><br>\n"
+"Vorhandene Tabellenspalten werden nur bei manuell ausgewähltem "
+"'Ändern' (Häkchen setzen) angepasst. Ändern einer Spalte kann die "
+"enthaltenen Daten unbrauchbar machen (werden Strings z.B. in eine Zahl "
+"umgewandelt), zur Sicherheit also vorher ein Backup der Datenbank anlegen."
+"<br>\n"
+"Als Voreinstellung werden nur neue Tabellen und Spalten hinzugefügt. Das "
+"aber automatisch bei jedem ausführen des Tools. </div>      "
 
 #: nive/tools/dbStructureUpdater.py:68 nive/tools/dbStructureUpdater.py:71
-msgid "<div class=\"alert alert-error\">No database connection configured</div>"
-msgstr "<div class=\"alert alert-error\">Keine Datenbankverbindung konfiguriert</div>"
+msgid ""
+"<div class=\"alert alert-error\">No database connection configured</div>"
+msgstr ""
+"<div class=\"alert alert-error\">Keine Datenbankverbindung konfiguriert</div>"
 
 #: nive/tools/dbStructureUpdater.py:75
 #, python-format
@@ -362,8 +395,11 @@ msgstr "<h4>Datenbank '${name}' ${host} </h4><br>"
 
 #: nive/tools/dbStructureUpdater.py:78
 #, python-format
-msgid "<div class='alert alert-error'>Database connection error (${name})</div>"
-msgstr "<div class='alert alert-error'>Datenbankverbindug fehlgeschlagen (${name})</div>"
+msgid ""
+"<div class='alert alert-error'>Database connection error (${name})</div>"
+msgstr ""
+"<div class='alert alert-error'>Datenbankverbindug fehlgeschlagen (${name})</"
+"div>"
 
 #: nive/tools/dbStructureUpdater.py:86
 #, python-format
@@ -372,29 +408,46 @@ msgstr "<div class='alert alert-success'>Datenbank erstellt: '${name}'</div>"
 
 #: nive/tools/dbStructureUpdater.py:108
 #, python-format
-msgid "<div class='alert alert-error'>Table update failed: ${dbparam} (type: ${name})</div>"
-msgstr "<div class='alert alert-error'>Tabellen Update fehlgeschlagen: ${dbparam} (Typ: ${name})</div>"
+msgid ""
+"<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
+"${name})</div>"
+msgstr ""
+"<div class='alert alert-error'>Tabellen Update fehlgeschlagen: ${dbparam} "
+"(Typ: ${name})</div>"
 
 #: nive/tools/dbStructureUpdater.py:122
 msgid "<div class='alert alert-error'>Table creation failed (pool_meta)</div>"
-msgstr "<div class='alert alert-error'>Tabelle erstellen fehlgeschlagen (pool_meta)</div>"
+msgstr ""
+"<div class='alert alert-error'>Tabelle erstellen fehlgeschlagen (pool_meta)</"
+"div>"
 
 #: nive/tools/dbStructureUpdater.py:133
 msgid "<div class='alert alert-error'>Table update failed (pool_meta)</div>"
-msgstr "<div class='alert alert-error'>Tabelle update fehlgeschlagen (pool_meta)</div>"
+msgstr ""
+"<div class='alert alert-error'>Tabelle update fehlgeschlagen (pool_meta)</"
+"div>"
 
 #: nive/tools/dbStructureUpdater.py:150 nive/tools/dbStructureUpdater.py:161
 #, python-format
 msgid "<div class='alert alert-error'>Table creation failed (${name})</div>"
-msgstr "<div class='alert alert-error'>Tabelle erstellen fehlgeschlagen (${name})</div>"
+msgstr ""
+"<div class='alert alert-error'>Tabelle erstellen fehlgeschlagen (${name})</"
+"div>"
 
 #: nive/tools/dbStructureUpdater.py:172
 msgid "Modify selected columns"
 msgstr "Ausgewählte Spalten ändern"
 
 #: nive/tools/dbStructureUpdater.py:173
-msgid "Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"
-msgstr "Änderungen an vorhandenen Tabellen müssen manuell ausgewählt werden. Wenn ausgewählt werden die 'Konfigurations-Einstellungen' in die Datenbank übernommen.<br> <b>Vorsicht: Bei falschen Einstellung kann hierbei etwas kaputt gehen!</b>"
+msgid ""
+"Changes on existing columns have to be applied manually. This will write "
+"selected 'Configuration settings' to the database.<br> <b>Warning: This may "
+"destroy something!</b>"
+msgstr ""
+"Änderungen an vorhandenen Tabellen müssen manuell ausgewählt werden. Wenn "
+"ausgewählt werden die 'Konfigurations-Einstellungen' in die Datenbank "
+"übernommen.<br> <b>Vorsicht: Bei falschen Einstellung kann hierbei etwas "
+"kaputt gehen!</b>"
 
 #: nive/tools/dbStructureUpdater.py:186
 msgid "Table"
@@ -502,27 +555,39 @@ msgstr "Alle Empfänger im Header anzeigen"
 
 #: nive/tools/sendMail.py:60
 msgid "Debug mail receiver"
-msgstr ""
+msgstr "Debug mail receiver"
 
 #: nive/tools/sendMail.py:60
-msgid "If not empty all mails are sent to this address. The original mail receivers are ignored."
+msgid ""
+"If not empty all mails are sent to this address. The original mail receivers "
+"are ignored."
 msgstr ""
+"If not empty all mails are sent to this address. The original mail receivers "
+"are ignored."
 
 #: nive/tools/dbSqlDump.py:14
 msgid "Database sql dump"
 msgstr "Datenbank Sql dump"
 
 #: nive/tools/dbSqlDump.py:15
-msgid "This function dumps table contents as SQL INSERT statements. 'CREATE table' statements are not included."
-msgstr "Diese Funktion gibt Tabelleninhalte als SQL INSERT Statements aus. Alle 'create table' statements werden übersprungen. "
+msgid ""
+"This function dumps table contents as SQL INSERT statements. 'CREATE table' "
+"statements are not included."
+msgstr ""
+"Diese Funktion gibt Tabelleninhalte als SQL INSERT Statements aus. Alle "
+"'create table' statements werden übersprungen. "
 
 #: nive/tools/cmsstatistics.py:19
 msgid "CMS Statistics"
 msgstr "CMS Statistik"
 
 #: nive/tools/cmsstatistics.py:20
-msgid "This function provides a short summary of elements and data contained in the website."
-msgstr "Diese Funktion listet in der Webseite enthaltene Seiten, Elemente und Datenumfang auf. "
+msgid ""
+"This function provides a short summary of elements and data contained in the "
+"website."
+msgstr ""
+"Diese Funktion listet in der Webseite enthaltene Seiten, Elemente und "
+"Datenumfang auf. "
 
 #: nive/tools/cmsstatistics.py:51
 #, python-format
@@ -633,7 +698,7 @@ msgstr "Codepage des Html Frontends"
 
 #: nive/components/adminview/view.py:338
 msgid "The default root does not support persistent data storage."
-msgstr ""
+msgstr "The default root does not support persistent data storage."
 
 #: nive/components/adminview/view.py:340
 msgid "Root url name"
@@ -660,8 +725,12 @@ msgid "Database type to be used"
 msgstr "Verwendeter Datenbanktyp"
 
 #: nive/components/adminview/view.py:359
-msgid "Supports 'Sqlite3' and 'MySql' by default. MySql requires python-mysqldb installed."
-msgstr "Unterstützt Sqlite3 und MySql als default. Für MySql muss python-mysqldb installiert sein. "
+msgid ""
+"Supports 'Sqlite3' and 'MySql' by default. MySql requires python-mysqldb "
+"installed."
+msgstr ""
+"Unterstützt Sqlite3 und MySql als default. Für MySql muss python-mysqldb "
+"installiert sein. "
 
 #: nive/components/adminview/view.py:360
 msgid "Relative or absolute root directory for files"
@@ -721,7 +790,10 @@ msgstr "Konto Url"
 
 #: nive/components/adminview/modules.pt:8
 msgid "This page lists all included modules for browsing in readonly mode."
-msgstr "Auf dieser Seite werden alle Module mit Einstellungen im Lesemodus angezeigt. <br>Für die Entwicklung lassen sich hier die Objekt IDs und Feld IDs schnell und einfach nachschlagen."
+msgstr ""
+"Auf dieser Seite werden alle Module mit Einstellungen im Lesemodus "
+"angezeigt. <br>Für die Entwicklung lassen sich hier die Objekt IDs und Feld "
+"IDs schnell und einfach nachschlagen."
 
 #: nive/components/adminview/modules.pt:11
 msgid "CMS"
@@ -738,6 +810,50 @@ msgstr "Roots"
 #: nive/components/adminview/modules.pt:22
 msgid "Meta fields"
 msgstr "Meta Felder"
+
+#: nive/components/adminview/modules.pt:30
+msgid "Workflow processes"
+msgstr "Workflow Prozesse"
+
+#: nive/components/adminview/modules.pt:34
+msgid "Others"
+msgstr "Andere"
+
+#: nive/components/adminview/tools.pt:14
+msgid ""
+"This page lists all administration tools like database export or database "
+"schema manager."
+msgstr ""
+"Auf dieser Seite werden alle <em>Tools</em> wie der Datenbank Export oder "
+"Schema Verwaltung angezeigt."
+
+#: nive/components/adminview/tools.pt:16
+msgid "Administration tools"
+msgstr "Verwaltungstools"
+
+#: nive/components/adminview/views.pt:7
+msgid "This page lists all included views for browsing in readonly mode."
+msgstr "Listet alle <em>Views</em> im Lesemodus auf."
+
+#: nive/components/adminview/views.pt:9
+msgid "View Modules"
+msgstr "View Module"
+
+#: nive/components/adminview/views.pt:13
+msgid "Single Views"
+msgstr "Einzelne Views"
+
+#: nive/components/adminview/views.pt:17
+msgid "Widgets"
+msgstr "Interface Elemente (Widgets)"
+
+#: nive/components/adminview/views.pt:21
+msgid "Other modules"
+msgstr "Andere Module"
+
+#: nive/components/adminview/root.pt:6
+msgid "Administration sections"
+msgstr "Verwaltungssektionen"
 
 #: nive/components/iface/view.py:662
 msgid "OK. Deleted."
@@ -785,7 +901,8 @@ msgstr "Seite nicht gefunden (404)!"
 
 #: nive/components/iface/templates/error.pt:21 peak/engine/views/error.pt:21
 msgid "Sorry, the requested url does not exist on this server."
-msgstr "Entschuldigung, die angeforderte Seite gibt es auf diesem Server nicht."
+msgstr ""
+"Entschuldigung, die angeforderte Seite gibt es auf diesem Server nicht."
 
 #: nive/components/iface/templates/error.pt:25 peak/engine/views/error.pt:25
 #: peak/engine/views/error.pt:31
@@ -805,45 +922,13 @@ msgstr "Zurück zum Dashboard"
 msgid "More"
 msgstr "Weitere Optionen"
 
-#: nive/components/adminview/modules.pt:30
-msgid "Workflow processes"
-msgstr "Workflow Prozesse"
+#: nive/components/iface/view.py:93
+msgid "Nothing to delete"
+msgstr "Nichts zu löschen"
 
-#: nive/components/adminview/modules.pt:34
-msgid "Others"
-msgstr "Andere"
-
-#: nive/components/adminview/tools.pt:14
-msgid "This page lists all administration tools like database export or database schema manager."
-msgstr "Auf dieser Seite werden alle <em>Tools</em> wie der Datenbank Export oder Schema Verwaltung angezeigt."
-
-#: nive/components/adminview/tools.pt:16
-msgid "Administration tools"
-msgstr "Verwaltungstools"
-
-#: nive/components/adminview/views.pt:7
-msgid "This page lists all included views for browsing in readonly mode."
-msgstr "Listet alle <em>Views</em> im Lesemodus auf."
-
-#: nive/components/adminview/views.pt:9
-msgid "View Modules"
-msgstr "View Module"
-
-#: nive/components/adminview/views.pt:13
-msgid "Single Views"
-msgstr "Einzelne Views"
-
-#: nive/components/adminview/views.pt:17
-msgid "Widgets"
-msgstr "Interface Elemente (Widgets)"
-
-#: nive/components/adminview/views.pt:21
-msgid "Other modules"
-msgstr "Andere Module"
-
-#: nive/components/adminview/root.pt:6
-msgid "Administration sections"
-msgstr "Verwaltungssektionen"
+#: nive/components/iface/templates/view.py:98
+msgid "OK. Items deleted."
+msgstr "Ok. Elemente gelöscht."
 
 #: nive/components/reform/widget.py:610
 msgid "Header 1"
@@ -963,8 +1048,10 @@ msgstr "\"${val}\" ist keine Liste"
 
 #: nive/components/reform/schema.py:577
 #, python-format
-msgid "\"${val}\" has an incorrect number of elements (expected ${exp}, was ${was})"
-msgstr "\"${val}\" falsche Anzahl von Elementen (erwartet ${exp}, tatsächlich ${was})"
+msgid ""
+"\"${val}\" has an incorrect number of elements (expected ${exp}, was ${was})"
+msgstr ""
+"\"${val}\" falsche Anzahl von Elementen (erwartet ${exp}, tatsächlich ${was})"
 
 #: nive/components/reform/schema.py:759
 #, python-format
@@ -1113,8 +1200,12 @@ msgstr "Passwort bestätigen"
 #~ msgid "Debug mode"
 #~ msgstr "Debug Modus"
 
-#~ msgid "All mails are sent to 'Receiver role' or 'Receiver User IDs' field default value. No external mail address is used."
-#~ msgstr "Alle E-Mails werden an die im Default-Wert von 'Empfänger Rollen' und 'Empfänger User IDs' Feld eingetragenen Empfänger versand. "
+#~ msgid ""
+#~ "All mails are sent to 'Receiver role' or 'Receiver User IDs' field "
+#~ "default value. No external mail address is used."
+#~ msgstr ""
+#~ "Alle E-Mails werden an die im Default-Wert von 'Empfänger Rollen' und "
+#~ "'Empfänger User IDs' Feld eingetragenen Empfänger versand. "
 
 #~ msgid "Unique identifier"
 #~ msgstr "Eindeutige ID"
@@ -1128,8 +1219,13 @@ msgstr "Passwort bestätigen"
 #~ msgid "Box"
 #~ msgstr "Box"
 
-#~ msgid "A box is a container to group elements on a page. It can be used as anadvanced styling element for web pages. The box itself only stores a title and styling selector."
-#~ msgstr "Eine Box ist ein Container mit dem Elemente zusammengefasst werden können und kann als spezielles Styling-Element auf Webseiten verwendet werden. "
+#~ msgid ""
+#~ "A box is a container to group elements on a page. It can be used as "
+#~ "anadvanced styling element for web pages. The box itself only stores a "
+#~ "title and styling selector."
+#~ msgstr ""
+#~ "Eine Box ist ein Container mit dem Elemente zusammengefasst werden können "
+#~ "und kann als spezielles Styling-Element auf Webseiten verwendet werden. "
 
 #~ msgid "Span 1"
 #~ msgstr "Breite 1"
@@ -1222,32 +1318,51 @@ msgstr "Passwort bestätigen"
 #~ msgid "Block empty offset left"
 #~ msgstr "Leerer Abstand links in Spalten"
 
-#~ msgid "Please note: The blocksize and offset values added together can not be larger than 1. Adjust both fields accordingly."
-#~ msgstr "Bitte beachten: Abstand und Spalten zusammen können nicht mehr als 12 betragen."
+#~ msgid ""
+#~ "Please note: The blocksize and offset values added together can not be "
+#~ "larger than 1. Adjust both fields accordingly."
+#~ msgstr ""
+#~ "Bitte beachten: Abstand und Spalten zusammen können nicht mehr als 12 "
+#~ "betragen."
 
 #~ msgid "Highlight box contents"
 #~ msgstr "Box Inhalte hervorheben"
 
-#~ msgid "This option will add a colored background to highlight the box and its contents."
-#~ msgstr "Diese Option hinterlegt die Box mit einem farbigen Hintergrund und Rahmen."
+#~ msgid ""
+#~ "This option will add a colored background to highlight the box and its "
+#~ "contents."
+#~ msgstr ""
+#~ "Diese Option hinterlegt die Box mit einem farbigen Hintergrund und Rahmen."
 
 #~ msgid "Use as image gallery"
 #~ msgstr "Als Bilder-Galerie anzeigen"
 
-#~ msgid "Use this setting if you want to add floating image teasers to this box."
+#~ msgid ""
+#~ "Use this setting if you want to add floating image teasers to this box."
 #~ msgstr "Mit dieser Option können fließende Bild-Galerien erstellt werden. "
 
 #~ msgid "Enable responsive layout"
 #~ msgstr "Responsive Layout aktivieren"
 
-#~ msgid "Show and hide the box and it contents. The setting takes effect based on viewport or browser window sizes. It does not check the hardware device. Please note: The responsive setting is ignored in edit mode."
-#~ msgstr "Automatisches anzeigen und ausblenden der Box-Inhalte. Die Einstellungen orientieren sich an der größe des Browser Fensters, nicht an der tatsächlichen Monitorgröße. Im Edit-Modus wird diese Einstellung ignoriert."
+#~ msgid ""
+#~ "Show and hide the box and it contents. The setting takes effect based on "
+#~ "viewport or browser window sizes. It does not check the hardware device. "
+#~ "Please note: The responsive setting is ignored in edit mode."
+#~ msgstr ""
+#~ "Automatisches anzeigen und ausblenden der Box-Inhalte. Die Einstellungen "
+#~ "orientieren sich an der größe des Browser Fensters, nicht an der "
+#~ "tatsächlichen Monitorgröße. Im Edit-Modus wird diese Einstellung "
+#~ "ignoriert."
 
 #~ msgid "Code"
 #~ msgstr "Code"
 
-#~ msgid "Text element to add code snippets to web pages. Supports Javascript, HTML and CSS."
-#~ msgstr "Text Element um Code Schnipsel in Webseiten einzufügen. Unterstützt Javascript, HTML und CSS."
+#~ msgid ""
+#~ "Text element to add code snippets to web pages. Supports Javascript, HTML "
+#~ "and CSS."
+#~ msgstr ""
+#~ "Text Element um Code Schnipsel in Webseiten einzufügen. Unterstützt "
+#~ "Javascript, HTML und CSS."
 
 #~ msgid "No format"
 #~ msgstr "Kein Format"
@@ -1261,14 +1376,24 @@ msgstr "Passwort bestätigen"
 #~ msgid "Column"
 #~ msgstr "Spalte"
 
-#~ msgid "A column is a container to group elements on a page. Columns are not added likenormal page elements but have to be defined manually in the main template. A column canbe inherited through a hierarchy of pages."
-#~ msgstr "Eine Spalte ist ein spezieller Container um Elemente auf einer Seite zusammenzufassen. Spalten werden nicht wie normale Elemente hinzugefügt, sondern müssen im Template definiert werden. Eine Spalte kann über eine Hirarchie vererbt werden."
+#~ msgid ""
+#~ "A column is a container to group elements on a page. Columns are not "
+#~ "added likenormal page elements but have to be defined manually in the "
+#~ "main template. A column canbe inherited through a hierarchy of pages."
+#~ msgstr ""
+#~ "Eine Spalte ist ein spezieller Container um Elemente auf einer Seite "
+#~ "zusammenzufassen. Spalten werden nicht wie normale Elemente hinzugefügt, "
+#~ "sondern müssen im Template definiert werden. Eine Spalte kann über eine "
+#~ "Hirarchie vererbt werden."
 
 #~ msgid "Show on subpages"
 #~ msgstr "Auf Unterseiten vererben"
 
-#~ msgid "If checked the column will be displayed on sub pages until overwritten."
-#~ msgstr "Wenn angekreutzt wird die Spalte auf Unterseiten angezeigt bis sie überschrieben wird."
+#~ msgid ""
+#~ "If checked the column will be displayed on sub pages until overwritten."
+#~ msgstr ""
+#~ "Wenn angekreutzt wird die Spalte auf Unterseiten angezeigt bis sie "
+#~ "überschrieben wird."
 
 #~ msgid "Left column"
 #~ msgstr "Linke Spalte"
@@ -1279,8 +1404,12 @@ msgstr "Passwort bestätigen"
 #~ msgid "Column type"
 #~ msgstr "Spalten Typ"
 
-#~ msgid "The file element provides a simple file download with title and optional description."
-#~ msgstr "Das Datei Element stellt einen einfachen Datei Download mit Titel und optionaler Beschreibung bereit."
+#~ msgid ""
+#~ "The file element provides a simple file download with title and optional "
+#~ "description."
+#~ msgstr ""
+#~ "Das Datei Element stellt einen einfachen Datei Download mit Titel und "
+#~ "optionaler Beschreibung bereit."
 
 #~ msgid "Image"
 #~ msgstr "Bild"
@@ -1316,8 +1445,12 @@ msgstr "Passwort bestätigen"
 #~ msgid "Link"
 #~ msgstr "Link"
 
-#~ msgid "With the link element you can add internal or external links into the web page."
-#~ msgstr "Mit dem Link Element lassen sich externe oder interne Links in die Webseite einfügen."
+#~ msgid ""
+#~ "With the link element you can add internal or external links into the web "
+#~ "page."
+#~ msgstr ""
+#~ "Mit dem Link Element lassen sich externe oder interne Links in die "
+#~ "Webseite einfügen."
 
 #~ msgid "Same window"
 #~ msgstr "Im selben Fenster"
@@ -1357,8 +1490,12 @@ msgstr "Passwort bestätigen"
 #~ msgid "Link url"
 #~ msgstr "Link Url"
 
-#~ msgid "External links must start with http:// or similar. Internal links can be referenced as page id (the number) and are resolved automatically."
-#~ msgstr "Externe Links müssen mit http:// beginnen. Interne Links können auch als Seiten ID (Zahl) angegeben werden."
+#~ msgid ""
+#~ "External links must start with http:// or similar. Internal links can be "
+#~ "referenced as page id (the number) and are resolved automatically."
+#~ msgstr ""
+#~ "Externe Links müssen mit http:// beginnen. Interne Links können auch als "
+#~ "Seiten ID (Zahl) angegeben werden."
 
 #~ msgid "Target window"
 #~ msgstr "Ziel Fenster"
@@ -1373,8 +1510,13 @@ msgstr "Passwort bestätigen"
 #~ msgid "Media"
 #~ msgstr "Media"
 
-#~ msgid "Element to insert audio or video files into the web page. Uses HTML 5 mediaand audio tags and the browser's default player."
-#~ msgstr "Mit dem Media Element lassen sich Audio und Video Dateien mitsamt Player in die Webseite einbinden. Verwendet HTML 5 video und audio Tags und den Default Player des Browsers."
+#~ msgid ""
+#~ "Element to insert audio or video files into the web page. Uses HTML 5 "
+#~ "mediaand audio tags and the browser's default player."
+#~ msgstr ""
+#~ "Mit dem Media Element lassen sich Audio und Video Dateien mitsamt Player "
+#~ "in die Webseite einbinden. Verwendet HTML 5 video und audio Tags und den "
+#~ "Default Player des Browsers."
 
 #~ msgid "Video player"
 #~ msgstr "Video Player"
@@ -1388,14 +1530,19 @@ msgstr "Passwort bestätigen"
 #~ msgid "Alternative format"
 #~ msgstr "Alternatives Format"
 
-#~ msgid "To support all browsers you need to provide two different file formats."
+#~ msgid ""
+#~ "To support all browsers you need to provide two different file formats."
 #~ msgstr "Um alle Browser zu unterstützen werden zwei Formate benötigt."
 
 #~ msgid "Navigation"
 #~ msgstr "Navigation"
 
-#~ msgid "Element to render navigation trees and linked table of contents. The menublock can be used as main navigation for the web page."
-#~ msgstr "Element um Navigationsbäume und Ihaltslisten anzuzeigen. Kann als Hauptnavigation der Webseite verwendet werden."
+#~ msgid ""
+#~ "Element to render navigation trees and linked table of contents. The "
+#~ "menublock can be used as main navigation for the web page."
+#~ msgstr ""
+#~ "Element um Navigationsbäume und Ihaltslisten anzuzeigen. Kann als "
+#~ "Hauptnavigation der Webseite verwendet werden."
 
 #~ msgid "50 % width left"
 #~ msgstr "50 % breit, links"
@@ -1445,14 +1592,19 @@ msgstr "Passwort bestätigen"
 #~ msgid "Used as publish date on the website."
 #~ msgstr "Wird als Veröffentlichungs-Datum auf der Webseite angezeigt."
 
-#~ msgid "Simple text note for authors. The note is only visible to cms authors and not published."
-#~ msgstr "Text Notiz für Autoren. Wird nur intern und im Bearbeitungsmodus angezeigt."
+#~ msgid ""
+#~ "Simple text note for authors. The note is only visible to cms authors and "
+#~ "not published."
+#~ msgstr ""
+#~ "Text Notiz für Autoren. Wird nur intern und im Bearbeitungsmodus "
+#~ "angezeigt."
 
 #~ msgid "Page"
 #~ msgstr "Seite"
 
 #~ msgid "Pages are rendered as html files and make up the website."
-#~ msgstr "Seiten werden als HTML Dateien gerendert und setzen die Webseite zusammen."
+#~ msgstr ""
+#~ "Seiten werden als HTML Dateien gerendert und setzen die Webseite zusammen."
 
 #~ msgid "Page header"
 #~ msgstr "Seitenüberschrift"
@@ -1475,38 +1627,58 @@ msgstr "Passwort bestätigen"
 #~ msgid "Hide in navigation"
 #~ msgstr "In Navigation ausblenden"
 
-#~ msgid "Hide the page in navigation. It will only be accessible by direct links."
-#~ msgstr "In der Navigation ausblenden. Wird nur noch durch direkte LInks aufzurufen sein."
+#~ msgid ""
+#~ "Hide the page in navigation. It will only be accessible by direct links."
+#~ msgstr ""
+#~ "In der Navigation ausblenden. Wird nur noch durch direkte LInks "
+#~ "aufzurufen sein."
 
 #~ msgid "Page is a menu"
 #~ msgstr "Seite ist ein Menu."
 
-#~ msgid "Used in some navigation lists. If checked the page is handled as menu."
-#~ msgstr "Wird in Navigationslisten verwendet. Wenn angekreutzt wird die Seite als Menu behandelt."
+#~ msgid ""
+#~ "Used in some navigation lists. If checked the page is handled as menu."
+#~ msgstr ""
+#~ "Wird in Navigationslisten verwendet. Wenn angekreutzt wird die Seite als "
+#~ "Menu behandelt."
 
 #~ msgid "Page is redirected to this link"
 #~ msgstr "Seite wird auf diesen Link umgeleitet"
 
-#~ msgid "Automatically redirect the page to the linked page. Only in view mode."
-#~ msgstr "Im Ansichtsmodus wird die Seite automatisch zu diesem Link weitergeleitet."
+#~ msgid ""
+#~ "Automatically redirect the page to the linked page. Only in view mode."
+#~ msgstr ""
+#~ "Im Ansichtsmodus wird die Seite automatisch zu diesem Link weitergeleitet."
 
 #~ msgid "Enter page filename manually"
 #~ msgstr "Url Name der Seite"
 
-#~ msgid "By default page URL-names are generated automatically by the title. Use this option to change the default behaviour."
-#~ msgstr "Per Default werden die Url Namen der Seite automatisch vom Titel generiert. Mit dieser Option kann das Default verhalten deaktiviert werden."
+#~ msgid ""
+#~ "By default page URL-names are generated automatically by the title. Use "
+#~ "this option to change the default behaviour."
+#~ msgstr ""
+#~ "Per Default werden die Url Namen der Seite automatisch vom Titel "
+#~ "generiert. Mit dieser Option kann das Default verhalten deaktiviert "
+#~ "werden."
 
 #~ msgid "Home"
 #~ msgstr "Hauptseite"
 
-#~ msgid "The root is the home page of the website. All contained pages and elements are stored in the database."
-#~ msgstr "Das Root ist die Hauptseite der Webseite. Alle enthaltenen Seiten und Elemente werden in der Datenbank gespeichert."
+#~ msgid ""
+#~ "The root is the home page of the website. All contained pages and "
+#~ "elements are stored in the database."
+#~ msgstr ""
+#~ "Das Root ist die Hauptseite der Webseite. Alle enthaltenen Seiten und "
+#~ "Elemente werden in der Datenbank gespeichert."
 
 #~ msgid "Spacer"
 #~ msgstr "Abstand"
 
-#~ msgid "Styling element to add line breaks and vertical space between elements."
-#~ msgstr "Styling Element um einen Zeilenumbruch und vertikalen Abstand in die Seite einzufügen."
+#~ msgid ""
+#~ "Styling element to add line breaks and vertical space between elements."
+#~ msgstr ""
+#~ "Styling Element um einen Zeilenumbruch und vertikalen Abstand in die "
+#~ "Seite einzufügen."
 
 #~ msgid "Border"
 #~ msgstr "Rahmen"
@@ -1523,8 +1695,12 @@ msgstr "Passwort bestätigen"
 #~ msgid "4 lines"
 #~ msgstr "4 Zeilen"
 
-#~ msgid "Text element for the web page. Can be used to add headers, preformatted text and paragraphs to the web page. "
-#~ msgstr "Text Element um Überschriften, vorformatierten Text und Absätze in die Seite einzufügen."
+#~ msgid ""
+#~ "Text element for the web page. Can be used to add headers, preformatted "
+#~ "text and paragraphs to the web page. "
+#~ msgstr ""
+#~ "Text Element um Überschriften, vorformatierten Text und Absätze in die "
+#~ "Seite einzufügen."
 
 #~ msgid "Add a new page?"
 #~ msgstr "Neue Seite hinzufügen?"
@@ -1548,7 +1724,9 @@ msgstr "Passwort bestätigen"
 #~ msgstr "Löschen bestätigen"
 
 #~ msgid "Warning: This will delete the element and all it's contents!"
-#~ msgstr "Warnung: Hiermit werden das Element und alle enthaltenen Elemente gelöscht!"
+#~ msgstr ""
+#~ "Warnung: Hiermit werden das Element und alle enthaltenen Elemente "
+#~ "gelöscht!"
 
 #~ msgid "Warning: This will delete the page and all sub pages!"
 #~ msgstr "Warnung: Hiermit werden die Seite und alle Unterseiten gelöscht!"
@@ -1590,9 +1768,6 @@ msgstr "Passwort bestätigen"
 #, fuzzy
 #~ msgid "<p><i>no sub pages</i></p>"
 #~ msgstr "<i>keine Unterseiten</i>"
-
-#~ msgid "Nothing to delete"
-#~ msgstr "Nichts zu löschen"
 
 #~ msgid "Object not found"
 #~ msgstr "Objekt nicht gefunden"
@@ -1776,13 +1951,16 @@ msgstr "Passwort bestätigen"
 #~ msgstr "Bitte den Login-Namen oder die E-Mail eingeben."
 
 #~ msgid "No account found with that email address. Please try again."
-#~ msgstr "Kein Konto mit dieser E-Mail gefunden. Bitte die Eingaben überpüfen."
+#~ msgstr ""
+#~ "Kein Konto mit dieser E-Mail gefunden. Bitte die Eingaben überpüfen."
 
 #~ msgid "No email address found."
 #~ msgstr "E-Mail Adresse nicht gefunden."
 
 #, fuzzy
-#~ msgid "The new password has been sent to your email address. Please sign in and change it."
+#~ msgid ""
+#~ "The new password has been sent to your email address. Please sign in and "
+#~ "change it."
 #~ msgstr "Das Passwort wurde an die eingetragene E-Mail verschickt."
 
 #~ msgid "Invalid username."
@@ -1801,8 +1979,11 @@ msgstr "Passwort bestätigen"
 #~ msgstr "Konto"
 
 #, fuzzy
-#~ msgid "Email '${name}' already in use. Please use the login form if you already have a account."
-#~ msgstr "Name '${name}' wird bereits verwendet. Bitte einen anderen auswählen."
+#~ msgid ""
+#~ "Email '${name}' already in use. Please use the login form if you already "
+#~ "have a account."
+#~ msgstr ""
+#~ "Name '${name}' wird bereits verwendet. Bitte einen anderen auswählen."
 
 #~ msgid "Update failed."
 #~ msgstr "Update fehlgeschlagen."
@@ -1844,9 +2025,6 @@ msgstr "Passwort bestätigen"
 #~ msgid "Delete failed: User '%(name)s'"
 #~ msgstr "Löschen fehlgeschlagen: '%(name)s'"
 
-#~ msgid "OK. Users deleted."
-#~ msgstr "Ok. BenutzerGelöscht."
-
 #~ msgid "OK. User deleted."
 #~ msgstr "Ok. BenutzerGelöscht."
 
@@ -1882,7 +2060,8 @@ msgstr "Passwort bestätigen"
 #~ msgstr "Einloggen"
 
 #~ msgid "Your current user can only be edited on file system level."
-#~ msgstr "Der aktuell eingeloggte Benutzer kann nur im Dateisystem geändert werden."
+#~ msgstr ""
+#~ "Der aktuell eingeloggte Benutzer kann nur im Dateisystem geändert werden."
 
 #~ msgid "User not found"
 #~ msgstr "User nicht gefunden"
@@ -1906,8 +2085,12 @@ msgstr "Passwort bestätigen"
 #~ msgid "The folder is a simple container to store resources."
 #~ msgstr "Der Ordner ist ein einfacher Container um Resourcen zu verwalten."
 
-#~ msgid "<div class='alert alert-error'>Table update failed: ${dbparam} (type: ${name}</div>"
-#~ msgstr "<div class='alert alert-error'>Table update failed: ${dbparam} (type: ${name}</div>"
+#~ msgid ""
+#~ "<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
+#~ "${name}</div>"
+#~ msgstr ""
+#~ "<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
+#~ "${name}</div>"
 
 #~ msgid "</form>"
 #~ msgstr "</form>"
@@ -1928,7 +2111,9 @@ msgstr "Passwort bestätigen"
 #~ msgstr "Tabelle erstellen fehlgeschlagen (pool_fulltext)"
 
 #~ msgid "<h3>Changes on existing columns have to be applied manually</h3>"
-#~ msgstr "<h3>Änderungen an vorhandenen Spalten müssen manuell ausgewählt werden</h3>"
+#~ msgstr ""
+#~ "<h3>Änderungen an vorhandenen Spalten müssen manuell ausgewählt werden</"
+#~ "h3>"
 
 #~ msgid "</form><h3>Update finished!</h3>"
 #~ msgstr "</form><h3>Update beendet!</h3>"

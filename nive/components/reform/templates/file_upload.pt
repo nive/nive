@@ -19,9 +19,12 @@
           id="${field.oid}-filename"></span>
   </div>
 
-  <input type="file" name="${field.name}" 
+  <div class="custom-file">
+    <input type="file" name="${field.name}"
          tal:attributes="size field.widget.size"
-           class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
-         id="${field.oid}">
-
+           class="custom-file-input ${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+           id="${field.oid}">
+    <label class="custom-file-label" for="${field.oid}" i18n:translate="">Choose file</label>
+  </div>
 </tal:block>
+

@@ -9,6 +9,27 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    $("#boxSearch #delete").on("click", function (e) {
+        e.preventDefault();
+        $("#boxSearch").attr("action", "deletec").submit();
+    });
+    $("#boxSearch .sort").on("click", function (e) {
+        e.preventDefault();
+        var fld = $(this);
+        if(fld.attr("data-value")==$("#boxSearch input[name=sort]").val()) {
+            var ac = $("#boxSearch input[name=ascending]").val();
+            ac = ac=="1"?"0":"1";
+            $("#boxSearch input[name=ascending]").val(ac);
+        } else {
+            $("#boxSearch input[name=sort]").val($(this).attr("data-value"));
+            $("#boxSearch input[name=ascending]").val("1");
+            $("#boxSearch input[name=start]").val("");
+        }
+        $("#boxSearch").submit();
+    });
+});
+
 
 function search_sort(fld, asc) {
    document.searchForm.sort.value = fld;

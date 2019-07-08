@@ -372,9 +372,9 @@ class Parts:
         """
         html body div.mainBoxContent ul
         displays messages if found in context or passed as msgs
-        class="alert alert-sucess"
+        class="alert alert-success"
         """
-        cls = "alert-sucess"
+        cls = "alert-success"
         if error:
             cls = "alert-error"
         if not msgs:

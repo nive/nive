@@ -877,6 +877,14 @@ msgstr ""
 msgid "More"
 msgstr ""
 
+#: ./nive/components/iface/view.py:93
+msgid "Nothing to delete"
+msgstr ""
+
+#: ./nive/components/iface/templates/view.py:98
+msgid "OK. Items deleted."
+msgstr ""
+
 #: ./nive/components/reform/widget.py:610
 msgid "Header 1"
 msgstr ""

@@ -595,29 +595,6 @@ class Search:
                       "Delete": translate(_("Delete selected"), self.request)}
 
         html = """
-<script>
-    $(document).ready(function() {
-        $("#boxSearch #delete").on("click", function (e) {
-            e.preventDefault();
-            $("#boxSearch").attr("action", "%(base)sdeletec").submit();
-        });
-        $("#boxSearch .sort").on("click", function (e) {
-            e.preventDefault();
-            var fld = $(this);
-            if(fld.attr("data-value")==$("#boxSearch input[name=sort]").val()) {
-                var ac = $("#boxSearch input[name=ascending]").val();
-                ac = ac=="1"?"0":"1";
-                $("#boxSearch input[name=ascending]").val(ac);
-            } else {
-                $("#boxSearch input[name=sort]").val($(this).attr("data-value"));
-                $("#boxSearch input[name=ascending]").val("1");
-                $("#boxSearch input[name=start]").val("");
-            }
-            $("#boxSearch").submit();
-        });
-    });
-</script>
-
 <div id="listActionButtons">
  %(ccp)s &nbsp;
  %(delete)s &nbsp;
@@ -634,7 +611,7 @@ class Search:
         extracts search parameters from request
         start, max, sort, ascending
         """
-        d = {"start": int(self.GetFormValue('start',0)), 
+        d = {"start": int(self.GetFormValue('start',0) or 0),
              "max": int(self.GetFormValue('max',searchconf.get("max",30))), 
              "sort": self.GetFormValue('sort',searchconf.get("sort",'title')), 
              "ascending": self.GetFormValue('ascending',searchconf.get('ascending',1))}

@@ -1146,7 +1146,7 @@ class HTMLForm(Form):
         - redirectSuccess
 
         """
-        if result is None:
+        if not result:
             if self.use_ajax:
                 # return only the rendered form back to the user. stops the request
                 # processing at this point

@@ -239,18 +239,18 @@ class IFaceView(Parts, Search, BaseView):
     # Redirects and navigation ------------------------------------------------------------
 
     def GetRedirect(self, action, view):
-        if action == u"default":
-            v = u"view"
+        if action == "default":
+            v = "view"
             for d in self.ifaceConf.defaultviews:
                 if self._ProvidesOne(view.context, d.get("interfaces")):
                     v = d["id"]
                     break
             return view.FolderUrl(view.context)+v
         
-        elif action == u"duplicate":
-            return view.FolderUrl(view.context)+u"edit"
+        elif action == "duplicate":
+            return view.FolderUrl(view.context)+"edit"
                 
-        return u"parent"
+        return "parent"
     
 
     # current url / section -------------------------------------------------------------------------
@@ -443,7 +443,7 @@ class IFaceView(Parts, Search, BaseView):
         - parent_url
         """
         if not url:
-            return u""
+            return ""
         if context is None:
             context = self.context
         if url == "view_url":
@@ -452,7 +452,7 @@ class IFaceView(Parts, Search, BaseView):
             try:
                 section = self.request.currentSection
             except:
-                section = u""
+                section = ""
             return self.FolderUrl(context) + section
         elif url == "page_url":
             url = self.PageUrl(context)
@@ -480,16 +480,16 @@ class IFaceView(Parts, Search, BaseView):
             u = item
         else:
             u = item["id"]
-        if u.find(u"context.")!=-1:
-            u = u.replace(u"context.", self.FolderUrl(context))
-        elif u.find(u"root.")!=-1:
-            u = u.replace(u"root.", self.FolderUrl(context.root))
-        elif u.find(u"parent.")!=-1:
-            u = u.replace(u"parent.", self.FolderUrl(context.parent))
-        elif u.find(u"app.")!=-1:
-            u = u.replace(u"app.", self.FolderUrl(context.app))
-        elif u.find(u"portal.")!=-1:
-            u = u.replace(u"portal.", self.FolderUrl(context.app.portal))
+        if u.find("context.")!=-1:
+            u = u.replace("context.", self.FolderUrl(context))
+        elif u.find("root.")!=-1:
+            u = u.replace("root.", self.FolderUrl(context.root))
+        elif u.find("parent.")!=-1:
+            u = u.replace("parent.", self.FolderUrl(context.parent))
+        elif u.find("app.")!=-1:
+            u = u.replace("app.", self.FolderUrl(context.app))
+        elif u.find("portal.")!=-1:
+            u = u.replace("portal.", self.FolderUrl(context.app.portal))
         return u
 
     def GetAction(self):
@@ -513,8 +513,8 @@ class IFaceView(Parts, Search, BaseView):
         form = HTMLForm(view=self, loadFromType=self.context.app.configurationQuery.GetObjectConf(typeID))
         form.fields = self.GetFlds(conf.fields, self.context, typeID)
         form.actions = [
-            Conf(id="default",    method="StartForm",             name=u"Initialize",   hidden=True),
-            Conf(id=tag,          method="ReturnDataOnSuccess",   name=u"Submit",       hidden=False),
+            Conf(id="default",    method="StartForm",             name="Initialize",   hidden=True),
+            Conf(id=tag,          method="ReturnDataOnSuccess",   name="Submit",       hidden=False),
         ]
         form.use_ajax = False
         form.ListenEvent("success", callback)
@@ -549,8 +549,8 @@ class IFaceView(Parts, Search, BaseView):
         self.Redirect(url)
 
     def open(self):
-        id = self.GetFormValue(u"id")
-        v = self.GetFormValue(u"v")
+        id = self.GetFormValue("id")
+        v = self.GetFormValue("v")
         obj = None
         if id:
             obj = self.context.GetObj(id)
@@ -563,19 +563,19 @@ class IFaceView(Parts, Search, BaseView):
         self.Redirect(url)
 
     def meta(self):
-        self.request.currentTab = u"context.meta"
+        self.request.currentTab = "context.meta"
         return {}
 
     def view(self):
-        self.request.currentTab = u"context.view"
+        self.request.currentTab = "context.view"
         return {"pageinfo": "view", "msgs": []}
 
     def options(self):
-        self.request.currentTab = u"context.options"
+        self.request.currentTab = "context.options"
         return {"pageinfo": "options"}
 
     def add(self):
-        self.request.currentTab = u"context.add"
+        self.request.currentTab = "context.add"
         typeID = self.GetAddType() or self.GetFormValue("pool_type")
         if not typeID:
             return {"content": self.selectType(), "result": True}
@@ -584,7 +584,7 @@ class IFaceView(Parts, Search, BaseView):
             raise ValueError("Not allowed")
 
         form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
-        form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": [u"default",u"create"]}}
+        form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default","create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
         result, data, action = form.Process(redirectSuccess="view_url")
@@ -594,15 +594,15 @@ class IFaceView(Parts, Search, BaseView):
         return {"content": data, "result": result, "view": self, "foot": form.HTMLHead(), "pageinfo": "add"}
 
     def edit(self):
-        self.request.currentTab = u"context.edit"
+        self.request.currentTab = "context.edit"
         form = ObjectForm(loadFromType = self.context.configuration, view=self)
-        form.subsets = {"edit": {"fields": self.GetFldsEdit(self.context), "actions": [u"edit"], "defaultAction": "defaultEdit"}}
+        form.subsets = {"edit": {"fields": self.GetFldsEdit(self.context), "actions": ["edit"], "defaultAction": "defaultEdit"}}
         form.Setup(subset="edit")
         result, data, action = form.Process(redirectSuccess="view_url")
         return {"content": data, "result": result, "foot": form.HTMLHead(), "pageinfo": "edit"}
 
     def form(self):
-        self.request.currentTab = u"context.options"
+        self.request.currentTab = "context.options"
         typeID = self.GetAddType()
         if not typeID:
             return {"content": self.selectType(), "result": True}
@@ -611,7 +611,7 @@ class IFaceView(Parts, Search, BaseView):
             raise ValueError("Not allowed")
 
         form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
-        form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": [u"default",u"create"]}}
+        form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default","create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
         result, data, action = form.Process(redirectSuccess="view_url")
@@ -621,20 +621,20 @@ class IFaceView(Parts, Search, BaseView):
         return {"content": data, "result": result, "view": self, "foot": form.HTMLHead(), "pageinfo": "add"}
 
     def duplicate(self):
-        url = self.GetRedirect(u"duplicate", self)
+        url = self.GetRedirect("duplicate", self)
         self.Redirect(url)
 
     def deletelist(self):
-        self.request.currentTab = u"context.options"
+        self.request.currentTab = "context.options"
         ids = self.GetFormValue("ids")
         if isinstance(ids, str):
-            if u"," in ids:
-                ids = ids.split(u",")
+            if "," in ids:
+                ids = ids.split(",")
             else:
                 ids = [ids]
-        result = {"msgs": [], "objsToDelete": [], "action": u"deletec", "result": False, "ids": ids, "pageinfo": "delete"}
+        result = {"msgs": [], "objsToDelete": [], "action": "deletec", "result": False, "ids": ids, "pageinfo": "delete"}
         if not ids:
-            result["msgs"] = [u"Nothing to delete"]
+            result["msgs"] = [translator()(_("Nothing to delete"))]
             return result
         delete = self.GetFormValue("delete")
         objs = []
@@ -642,14 +642,14 @@ class IFaceView(Parts, Search, BaseView):
             o = self.context.obj(i)
             if o:
                 objs.append(o)
-        if delete != u"1":
+        if delete != "1":
             result["objsToDelete"] = objs
             return result
         ok = False
         for o in objs:
             #check delete permission
             if not self.Allowed("delete", o):
-                result["msgs"].append(u"Unauthorized. Delete is not allowed.")
+                result["msgs"].append(translator()(_("Unauthorized. Delete is not allowed.")))
                 ok = False
                 continue
             try:
@@ -659,14 +659,14 @@ class IFaceView(Parts, Search, BaseView):
                 ok = False
         if not ok:
             return result
-        self.Redirect(self.PageUrl(self.context), messages=[u"OK"])
+        self.Redirect(self.PageUrl(self.context), messages=[_("OK")])
 
 
     def delete(self, url="view_url"):
-        self.request.currentTab = u"context.options"
+        self.request.currentTab = "context.options"
         delete = self.GetFormValue("delete")
-        result = {"msgs": [], "objsToDelete": [self.context], "action": u"deleteo", "result": False, "ids":None, "pageinfo": "delete"}
-        if delete != u"1":
+        result = {"msgs": [], "objsToDelete": [self.context], "action": "deleteo", "result": False, "ids":None, "pageinfo": "delete"}
+        if delete != "1":
             return result
         ok = False
         parent = self.context.parent
@@ -677,14 +677,14 @@ class IFaceView(Parts, Search, BaseView):
             ok = False
         if not ok:
             return result
-        self.Redirect(self.ResolveUrl(url, parent), messages=[translator(_(u"OK. Deleted."))])
+        self.Redirect(self.ResolveUrl(url, parent), messages=[translator()(_("OK. Deleted."))])
 
     def wf(self):
-        self.request.currentTab = u"context.options"
+        self.request.currentTab = "context.options"
         return {"pageinfo": "wf"}
 
     def tool(self):
-        self.request.currentTab = u"context.options"
+        self.request.currentTab = "context.options"
         return {"pageinfo": "tool"}
     
 
@@ -695,8 +695,8 @@ class IFaceView(Parts, Search, BaseView):
     def selectType(self):
         user = self.User()
         lt = self.context.GetAllowedTypes(user)
-        tmpl = u"""<a href="add.html?pool_type=%s" class="addlink">%s</a> """
-        html = u""
+        tmpl = """<a href="add.html?pool_type=%s" class="addlink">%s</a> """
+        html = ""
         for t in lt:
             html += tmpl % (t["id"], t["name"])
         return html
