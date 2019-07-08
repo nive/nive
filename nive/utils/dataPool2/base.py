@@ -7,7 +7,7 @@ __doc__ = "Data Pool 2 SQL Base Module"
 import weakref
 import logging
 
-from datetime import datetime
+from datetime import datetime, date
 
 from nive.utils.utils import ConvertToDateTime
 from nive.utils.utils import ConvertListToStr
@@ -238,10 +238,10 @@ class Base(object):
                             fields.append("IF(meta__.pool_datatbl='%s', %s, '')" % (dataTable, field))
                         continue
                     table = "data__."
-            if len(fields) > 0:
-                fields.append(", ")
+            #if len(fields) > 0:
+            #    fields.append(", ")
             fields.append(table + field)
-        fields = "".join(fields)
+        fields = ",".join(fields)
 
         aCombi = kw.get("logicalOperator")
         if not aCombi:
@@ -376,6 +376,16 @@ class Base(object):
                 if operator == "LIKE":
                     operator = "="
                 where.append("%s%s %s %s" % (table, paramname, operator, ph))
+                plist.append(value)
+                addCombi = True
+
+            # fmt datetime values
+            elif isinstance(value, date):
+                if addCombi:
+                    where.append(" %s " % aCombi)
+                if operator == "LIKE":
+                    operator = "="
+                where.append("DATE(%s%s) %s %s" % (table, paramname, operator, ph))
                 plist.append(value)
                 addCombi = True
 

@@ -309,7 +309,7 @@ class Search(object):
             raise ConfigurationError("Type not found (%s)" % (pool_type))
 
         db = self.db
-        if not db:
+        if db is None:
             raise ConnectionError("No database connection")
 
         sql, values = db.FmtSQLSelect(fldList, 
