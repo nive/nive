@@ -1228,7 +1228,7 @@ class FieldRenderer(object):
         data = ""
         if useDefault:
             data = fieldConf["default"]
-        if value != None:
+        if value is not None:
             data = value
         if fieldConf["id"] in self.skipRender:
             return data

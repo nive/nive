@@ -23,12 +23,12 @@ def MakeListItems(items):
     li = []
     for i in items:
         if isinstance(i,str):
-            li.append({"id":i, "name":i})
+            li.append(dict(id=i, name=i))
         elif isinstance(i,(list,tuple)):
-            li.append({"id":i[0], "name":i[1]})
+            li.append(dict(id=i[0], name=i[1]))
         else:
             i = str(i)
-            li.append({"id":i, "name":i})
+            li.append(dict(id=i, name=i))
     return li
 
 def ConvertHTMLToText(html, removeReST=True, url=""):

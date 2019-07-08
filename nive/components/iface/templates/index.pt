@@ -61,6 +61,7 @@
       <tal:block metal:define-slot="content"> </tal:block>
     </div>
   </div>
+  <br style="clear:both">
 
   <tal:block metal:define-slot="foot"> </tal:block>
   <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
