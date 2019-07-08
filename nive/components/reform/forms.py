@@ -110,6 +110,12 @@ renderSuccess        (bool) default = True. If True the whole form will be rende
 successResponseBody  (string/callback) This option enables you to overwrite the complete response body on
                      success. Use a callback to generate a dynamic response. The callback must take one
                      parameter: the form instance and return a unicode string.
+==================== ========================================================================================
+
+
+==================== ========================================================================================
+Form keywords        Form.Process(...)
+==================== ========================================================================================
 redirectSuccess      (string/callback) Redirect the browser to a new location on success. See below for a
                      list of options.
 redirectCancel       (string/callback) Redirect the browser to a new location on cancel. See below for a list
@@ -799,10 +805,6 @@ class HTMLForm(Form):
     # success options
     renderSuccess = True
     successResponseBody = None   # either string or callback
-    redirectSuccess = ""        # either string or callback
-
-    # redirect urls
-    redirectCancel = ""         # either string or callback
 
     actions = [
         Conf(id="default", method="StartForm",    name="Initialize", hidden=True,  css_class="",                 html="", tag=""),
@@ -1016,8 +1018,8 @@ class HTMLForm(Form):
         returns bool, string
         """
         self.Signal("success")
-        if self.view and self.redirectCancel:
-            redirectCancel = self.view.ResolveUrl(url=self.redirectCancel)
+        if self.view and kw.get("redirectCancel"):
+            redirectCancel = self.view.ResolveUrl(url=kw.get("redirectCancel"))
             return self.view.Redirect(redirectCancel, raiseException=True, refresh=True)
         return True, ""
 
@@ -1144,15 +1146,16 @@ class HTMLForm(Form):
         - redirectSuccess
 
         """
-        if not result:
+        if result is None:
             if self.use_ajax:
                 # return only the rendered form back to the user. stops the request
                 # processing at this point
                 return self.view.SendResponse(data=self.Render(data, msgs=msgs, errors=errors), headers=[("X-Result", "false")])
             return result, self.Render(data, msgs=msgs, errors=errors)
     
-        redirectSuccess = self.view.ResolveUrl(url=self.redirectSuccess)
-        if redirectSuccess:
+        redirectSuccess = kw.get("redirectSuccess")
+        if redirectSuccess and result is not None:
+            redirectSuccess = self.view.ResolveUrl(url=redirectSuccess, context=result)
             # raises HTTPFound
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
@@ -1387,7 +1390,7 @@ class ObjectForm(HTMLForm):
                 
             user=kw.get("user") or self.view.User()
             result = self.context.Create(objtype, data, user)
-            if result:
+            if result is not None:
                 if ISort.providedBy(self.context):
                     # insert at position
                     pepos = self.GetFormValue("pepos")

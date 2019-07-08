@@ -846,7 +846,7 @@ class SelectWidget(Widget):
         return field.renderer(template, field=field, cstruct=cstruct)
 
     def deserialize(self, field, pstruct, formstruct=None):
-        if pstruct in (null, self.null_value):
+        if pstruct in (null, self.null_value, ""):
             return null
         return pstruct
     

@@ -422,7 +422,7 @@ class IFaceView(Parts, Search, BaseView):
         form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default", "create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
-        result, data, action = form.Process(redirectSuccess="view_url")
+        result, data, action = form.Process(redirectSuccess="objid_url")
         if result and not data:
             self.Redirect(self.PageUrl(self.context))
             return
@@ -444,7 +444,7 @@ class IFaceView(Parts, Search, BaseView):
         """
         if not url:
             return u""
-        if not context:
+        if context is None:
             context = self.context
         if url == "view_url":
             return self.FolderUrl(context)
@@ -458,8 +458,12 @@ class IFaceView(Parts, Search, BaseView):
             url = self.PageUrl(context)
         elif url == "obj_url":
             url = self.Url(context)
+        elif url == "objid_url":
+            url = self.FolderUrl(context.parent) + str(context.id)
         elif url.find("obj_folder_url")!=-1:
             url = url.replace("obj_folder_url", self.FolderUrl(context))
+        elif url == "root_url":
+            url = self.FolderUrl(context.root)
         elif url == "parent_url":
             url = self.Url(context.parent)
         return self.ToUrl(url)
