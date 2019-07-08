@@ -809,6 +809,74 @@ msgstr ""
 msgid "Administration sections"
 msgstr ""
 
+#: ./nive/components/iface/view.py:662
+msgid "OK. Deleted."
+msgstr ""
+
+#: ./nive/components/iface/search.py:52
+msgid "Filter"
+msgstr ""
+
+#: ./nive/components/iface/search.py:272 ./nive/components/iface/search.py:313
+msgid "Sort ascending"
+msgstr ""
+
+#: ./nive/components/iface/search.py:273 ./nive/components/iface/search.py:314
+msgid "Sort descending"
+msgstr ""
+
+#: ./nive/components/iface/search.py:291 ./nive/components/iface/search.py:332
+msgid "Folder"
+msgstr ""
+
+#: ./nive/components/iface/search.py:493
+msgid "Empty result set!"
+msgstr ""
+
+#: ./nive/components/iface/search.py:585
+msgid "Delete selected"
+msgstr ""
+
+#: ./nive/components/iface/search.py:601
+msgid "Select all"
+msgstr ""
+
+#: ./nive/components/iface/templates/options.pt:29
+msgid "Delete now, cannot be undone!"
+msgstr ""
+
+#: ./nive/components/iface/templates/error.pt:4 ./peak/engine/views/error.pt:4
+msgid "Sorry"
+msgstr ""
+
+#: ./nive/components/iface/templates/error.pt:20
+#: ./peak/engine/views/error.pt:20
+msgid "Page not found (404)!"
+msgstr ""
+
+#: ./nive/components/iface/templates/error.pt:21
+#: ./peak/engine/views/error.pt:21
+msgid "Sorry, the requested url does not exist on this server."
+msgstr ""
+
+#: ./nive/components/iface/templates/error.pt:25
+#: ./peak/engine/views/error.pt:25 ./peak/engine/views/error.pt:31
+msgid "Something went wrong!"
+msgstr ""
+
+#: ./nive/components/iface/templates/error.pt:26
+#: ./peak/engine/views/error.pt:26 ./peak/engine/views/error.pt:32
+msgid "Sorry, the server failed to process your request."
+msgstr ""
+
+#: ./nive/components/iface/templates/error.pt:32
+msgid "Return to dashboard"
+msgstr ""
+
+#: ./nive/components/iface/templates/index.pt:23
+msgid "More"
+msgstr ""
+
 #: ./nive/components/reform/widget.py:610
 msgid "Header 1"
 msgstr ""
