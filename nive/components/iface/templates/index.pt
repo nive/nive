@@ -44,6 +44,7 @@
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
 <tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"> </tal:block>
@@ -82,6 +83,7 @@
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
 <tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
@@ -121,6 +123,7 @@
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
 <tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
@@ -160,6 +163,7 @@
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
 <tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
@@ -184,6 +188,7 @@
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
 <tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
 </head>
 <body>
 <tal:block metal:define-slot="content"></tal:block>
