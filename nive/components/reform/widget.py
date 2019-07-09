@@ -443,9 +443,8 @@ class DateInputWidget(Widget):
 
 class DateTimeInputWidget(DateInputWidget):
     """
-    Renders a a jQuery UI date picker with a JQuery Timepicker add-on
-    (http://trentrichardson.com/examples/timepicker/).  Used for
-    ``colander.DateTime`` schema nodes.
+    Renders a date picker with a JQuery Plugin tempusdominus add-on.
+    Used for ``colander.DateTime`` schema nodes.
 
     **Attributes/Arguments**
 
@@ -464,9 +463,9 @@ class DateTimeInputWidget(DateInputWidget):
     """
     template = 'datetimeinput'
     size = None
-    requirements = ( ) #deactivated! ('jqueryui', None), ('datetimepicker', None), )
-    option_defaults = {'dateFormat': 'yyyy-MM-dd',
-                       'timeFormat': 'hh:mm',
+    requirements = ( ('datetimepicker', None), )
+    option_defaults = {'dateFormat': '%Y-%m-%d',
+                       'timeFormat': '%H:%M',
                        'separator': ' '}
     options = {}
 
@@ -483,18 +482,48 @@ class DateTimeInputWidget(DateInputWidget):
         if len(cstruct) == 25: # strip timezone if it's there
             cstruct = cstruct[:-6]
         #cstruct = options['separator'].join(cstruct.split('T'))
+
+        temp = dict(date='', time='')
+        opt = self._options()
+        if cstruct:
+            try:
+                dt = datetime.datetime.strptime(cstruct, "%Y-%m-%dT%H:%M:%S")
+                if cstruct:
+                    temp['date'] = dt.strftime(opt['dateFormat'])
+                    temp['time'] = dt.strftime(opt['timeFormat'])
+                    test = datetime.datetime(year=2000,day=31,month=12)
+                    if temp['time']==test.strftime(opt['timeFormat']):
+                        temp['time'] = ''
+            except ValueError:
+                try:
+                    temp['date'], temp['time'] = cstruct.split(opt['separator'])
+                except ValueError:
+                    temp['date'] = field.widget.form.view.GetFormValue(field.name+'-dt')
+                    temp['time'] = field.widget.form.view.GetFormValue(field.name+'-tm')
+
+        cstruct = temp
+
         return field.renderer(
             template,
             field=field,
             cstruct=cstruct,
-            options=json.dumps(self._options()),
+            options=json.dumps(opt),
             )
 
     def deserialize(self, field, pstruct, formstruct=None):
+        pstruct = pstruct.strip()
         if pstruct in ('', null):
+            if not field.required and pstruct=='':
+                # empty value allowed
+                return ''
             return null
-        options = self._options()
-        return pstruct.replace(options['separator'], 'T')
+        opt = self._options()
+        try:
+            dt = datetime.datetime.strptime(pstruct, opt['dateFormat'] + opt['separator'] + opt['timeFormat'])
+            pstruct = dt.strftime("%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            pass
+        return pstruct
 
 class TextAreaWidget(TextInputWidget):
     """
@@ -1553,8 +1582,10 @@ default_resources = {
     'datetimepicker': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery-ui-timepicker.js', 'nive.components.reform:static/scripts/jquery-ui-timepicker-addon.js'),
-                   ('jquery-ui-timepicker.css', 'nive.components.reform:static/css/jquery-ui-timepicker-addon.css')),
+                   ('moment.js', 'nive.components.reform:static/tempusdominus/moment.min.js'),
+                   ('moment-de.js', 'nive.components.reform:static/tempusdominus/de.js'),
+                   ('tempusdominus.js', 'nive.components.reform:static/tempusdominus/tempusdominus-bootstrap-4.min.js'),
+                   ('tempusdominus.css', 'nive.components.reform:static/tempusdominus/tempusdominus-bootstrap-4.min.css')),
             },
         },
     'reform': {

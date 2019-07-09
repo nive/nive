@@ -153,6 +153,10 @@ button.go-sm     {
   font-weight: bold;
   border: none;
 }
+.invalid-feedback {
+    display: block;
+    font-size: 90%;
+}
 
 /* table list (ok) --------------------------------------------------- */
 #tableList tr.listRow { cursor:pointer; }

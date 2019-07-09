@@ -1,30 +1,49 @@
 <tal:block i18n:domain="nive">
 
-  <p tal:condition="cstruct.get('filename') and not field.widget.form.context.IsRoot()"
-       class="filepreview" id="filelink_${field.name}">
-    <a target="_blank" href="${field.widget.form.view.FileUrl(field.name)}">
-        ${cstruct.get('filename')}
-    </a>
-    (${field.widget.form.view.FmtBytes(cstruct.get('size'))})
-    <script i18n:translate="">var msg_file_upload='Delete file. Are you sure?';</script>
-    <a onclick="confirm(msg_file_upload) ? $('#filelink_${field.name}').load('@delfile?fid=${field.name}'):a=1"
-       href="#" class="filedelete btn" i18n:translate="">Delete this file</a>
-  </p>
+    <p tal:condition="cstruct.get('filename') and not field.widget.form.context.IsRoot()"
+            class="filepreview" id="filelink_${field.name}">
+        <a target="_blank" href="${field.widget.form.view.FileUrl(field.name)}">${cstruct.get('filename')}</a>
+        (${field.widget.form.view.FmtBytes(cstruct.get('size'))})
 
-  <div class="reformReplaces" tal:condition="0 and cstruct.get('uid')">
-    <span i18n:translate="">--disabled!--</span>
-    <input type="hidden" name="uid" value="${cstruct['uid']}"
-           id="${field.oid}-uid">
-    <span tal:content="cstruct.get('filename')"
-          id="${field.oid}-filename"></span>
-  </div>
+        <button type="button" class="btn" data-toggle="modal" data-target="#modal-${field.oid}"
+                 i18n:translate="">Delete this file
+        </button>
+    </p>
 
-  <div class="custom-file">
+    <div class="reformReplaces" tal:condition="0 and cstruct.get('uid')">
+        <span i18n:translate="">--disabled!--</span>
+        <input type="hidden" name="uid" value="${cstruct['uid']}"
+               id="${field.oid}-uid">
+        <span tal:content="cstruct.get('filename')"
+                id="${field.oid}-filename"></span>
+    </div>
+
     <input type="file" name="${field.name}"
-         tal:attributes="size field.widget.size"
-           class="custom-file-input ${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+           tal:attributes="size field.widget.size"
+           class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
            id="${field.oid}">
-    <label class="custom-file-label" for="${field.oid}" i18n:translate="">Choose file</label>
-  </div>
-</tal:block>
 
+    <div class="modal" id="modal-${field.oid}" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" i18n:translate="">Delete file. Are you sure?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal" i18n:translate="">Cancel</button>
+                    <button type="button" id="modal-go-${field.oid}" class="btn" i18n:translate="">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $("#modal-go-${field.oid}").on("click", function () {
+            $("#filelink_${field.name}").load("@delfile?fid=${field.name}");
+            $("#modal-${field.oid}").modal('hide');
+        });
+    </script>
+</tal:block>
