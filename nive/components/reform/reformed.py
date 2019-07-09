@@ -283,6 +283,26 @@ def password_node(field, kw, kwWidget, form):
     return SchemaNode(String(), **kw)
 
 def unit_node(field, kw, kwWidget, form):
+    """
+
+    field.settings:
+    :param obj_type: string or list. object type id.
+    :param name_field: string. Codelist name lookup field. default = title.
+    """
+    if not "validator" in kw:
+        kw["validator"] = ExistingObject(obj_type=field.settings.get("obj_type"))
+    if not "widget" in kw:
+        ot = field.settings.get("obj_type")
+        tf = field.settings.get("name_field", "title")
+        operators = dict()
+        parameter = dict()
+        if ot:
+            parameter["pool_type"] = ot
+        if isinstance(ot, (list, tuple)):
+            operators["pool_type"] = "IN"
+        values = form.app.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+        values = [(str(a["id"]),a["name"]) for a in values]
+        kw["widget"] = ChooseWidget(values=values, **kwWidget)
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):

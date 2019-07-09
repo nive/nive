@@ -902,7 +902,17 @@ class SelectWidget(Widget):
         if format=="html":
             return json.dumps(ids)
         return ids
-        
+
+
+class ChooseWidget(SelectWidget):
+    """
+    Extends SelectWidget for long select lists with search option
+    """
+    template = 'choose'
+    requirements = ( ('chosen', None), )
+    option_defaults = {}
+
+
 
 class RadioChoiceWidget(SelectWidget):
     """
@@ -1601,6 +1611,12 @@ default_resources = {
                    ('trumbowyg.cleanpaste.js', 'nive.components.reform:static/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.js'),
                    ('trumbowyg.de.js', 'nive.components.reform:static/trumbowyg/langs/de.min.js'),
                    ('trumbowyg.css', 'nive.components.reform:static/trumbowyg/ui/trumbowyg.min.css')),
+            },
+        },
+    'chosen': {
+        None:{
+            'seq':(('chosen.js', 'nive.components.reform:static/chosen/chosen.jquery.min.js'),
+                   ('chosen.css', 'nive.components.reform:static/chosen/chosen.min.css')),
             },
         },
     'codemirror': {

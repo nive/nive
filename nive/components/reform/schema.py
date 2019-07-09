@@ -361,6 +361,38 @@ class OneOf(object):
                     mapping={'val':value, 'choices':choices})
             raise Invalid(node, err)
 
+class ExistingObject(object):
+    """ Validator which succeeds if the value passed to it has a
+    length between a minimum and maximum.  The value is most often a
+    string."""
+    def __init__(self, obj_type=None):
+        if isinstance(obj_type, str):
+            self.obj_type = (obj_type,)
+        else:
+            self.obj_type = obj_type
+
+    def __call__(self, node, value):
+        if not value:
+            return
+        c = node.widget.form.context
+        from nive.definitions import IRoot
+        if not IRoot.providedBy(c):
+            root = c.root
+        else:
+            root = c
+        results = root.search.Select(parameter=dict(id=value), fields=["id","pool_type"], max=1)
+        if not results:
+            raise Invalid(node, _('Object does not exist.'))
+
+        if self.obj_type is not None:
+            if not results[0][1] in self.obj_type:
+                min_err = _('Object type not allowed.')
+                raise Invalid(node, min_err)
+
+
+
+
+
 class SchemaType(object):
     """ Base class for all schema types """
     def flatten(self, node, appstruct, prefix='', listitem=False):

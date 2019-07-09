@@ -113,7 +113,7 @@ pre.filepreview {
 }
 
 /*form styling --------------------------------------------------*/
-label, input, button, select, textarea, .btn { font-size: 1em; line-height: 1.2em; } 
+label, input, button, select, textarea, .btn { font-size: 1.1em; line-height: 1.2em; color: #495057; }
 form label.required:after  { content: "*"; }
 form input.password        { display:block; }
 .control-group input,
@@ -156,6 +156,15 @@ button.go-sm     {
 .invalid-feedback {
     display: block;
     font-size: 90%;
+}
+.chosen-container-single .chosen-single {
+    font-size: 1.1em;
+    background: none;
+    padding: 4px 0 4px 8px;
+    border-color: #ced4da;
+}
+.chosen-container-single .chosen-single span {
+    color: #495057;
 }
 
 /* table list (ok) --------------------------------------------------- */
