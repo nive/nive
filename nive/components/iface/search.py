@@ -237,7 +237,7 @@ class Search:
             formhtml = """
             <tr>
               %(fields)s
-              <th><button class="btn"><img src="%(static)sintern/images/icon_reload.svg"></button></th>
+              <th><button class="btn"><img src="%(static)simages/icon_reload.svg"></button></th>
             </tr>
             """ % dict(fields=" ".join(fl), static=self.static)
 
@@ -289,7 +289,7 @@ class Search:
         fldTmpl = """<th class="list_header" id="list_%s" nowrap><div style="display:inline;float:right;padding-top: 2px;">%s</div><div style="padding-right:15px;">%s</div></th> """ 
         up = translate(_("Sort ascending"), self.request)
         down = translate(_("Sort descending"), self.request)
-        sortTmpl = """ <img class="asc" onclick="search_sort('%%s',1)" src="%sintern/images/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%sintern/images/ldown.gif" title="%s"/>""" % (self.static, up, self.static, down)
+        sortTmpl = """ <img class="asc" onclick="search_sort('%%s',1)" src="%simages/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%simages/ldown.gif" title="%s"/>""" % (self.static, up, self.static, down)
 
         flds = []
         for fld in fldsList:
@@ -372,7 +372,7 @@ class Search:
         yOffset = "4"
         targetId = "list_ov"
         linkTitle = 1
-        cache = []
+        cache = dict()
         maxLinkCnt = 1
         
         html = []
@@ -408,15 +408,15 @@ class Search:
             # buttons
             if show and (view or edit or duplicate or commit or reject or ov):
                 rowStr.append("""<td class="listOptions" nowrap>""")
-                if view:       rowStr.append("""<a href="open?%s" class="text"><img src="%(static)sintern/images/docs.gif" border="0" align="top" title="View" /></a> """ % (vUrl, self.static))
-                if edit:       rowStr.append("""<a href="open?%s" class="text"><img src="%(static)sintern/images/edit.gif" border="0" align="top" title="Edit" /></a> """ % (app.GetURLParam(id, url='e'), self.static))
-                if duplicate:  rowStr.append("""<a href="open?%s" class="text"><img src="%(static)sintern/images/duplicate.gif" border="0" align="top" title="Duplicate" /></a> """ % (app.GetURLParam(id, url='d'), self.static))
-                if commit:     rowStr.append("""<a href="wfcall?%s" class="text"><img src="%(static)sintern/images/commit.gif" border="0" align="top" title="Commit" /></a> """ % (app.GetURLParam(id, action='commit', trans='commit'), self.static))
-                if reject:     rowStr.append("""<a href="wfcall?%s" class="text"><img src="%(static)sintern/images/reject.gif" border="0" align="top" title="Reject" /></a> """ % (app.GetURLParam(id, action='reject', trans='reject'), self.static))
+                if view:       rowStr.append("""<a href="open?%s" class="text"><img src="%(static)simages/docs.gif" border="0" align="top" title="View" /></a> """ % (vUrl, self.static))
+                if edit:       rowStr.append("""<a href="open?%s" class="text"><img src="%(static)simages/edit.gif" border="0" align="top" title="Edit" /></a> """ % (app.GetURLParam(id, url='e'), self.static))
+                if duplicate:  rowStr.append("""<a href="open?%s" class="text"><img src="%(static)simages/duplicate.gif" border="0" align="top" title="Duplicate" /></a> """ % (app.GetURLParam(id, url='d'), self.static))
+                if commit:     rowStr.append("""<a href="wfcall?%s" class="text"><img src="%(static)simages/commit.gif" border="0" align="top" title="Commit" /></a> """ % (app.GetURLParam(id, action='commit', trans='commit'), self.static))
+                if reject:     rowStr.append("""<a href="wfcall?%s" class="text"><img src="%(static)simages/reject.gif" border="0" align="top" title="Reject" /></a> """ % (app.GetURLParam(id, action='reject', trans='reject'), self.static))
                 if ov:
                     t = row.get("pool_wfa")
                     if not t:
-                        data = """<img src="%sintern/images/state%d.gif" title="State" />""" % (self.static, row.get('pool_state',1))
+                        data = """<img src="%simages/state%d.gif" title="State" />""" % (self.static, row.get('pool_state',1))
                         skipState=1
                     else:
                         ckey = "pool_wfa"+t
@@ -425,7 +425,7 @@ class Search:
                         else:
                             data = t # app.GetWfActivityName(t) # TODO lookup name
                             cache[ckey] = data
-                        data = """<img src="%(static)sintern/images/wf%s.gif" title="%s" border="0" />""" % (self.static, t, data)
+                        data = """<img src="%(static)simages/wf%s.gif" title="%s" border="0" />""" % (self.static, t, data)
                     target = targetId # + str(id)
                     url = "%s?%s&el=%s" % (unit_ov_url, self.FmtURLParam(id=id), target)
                     urlOv = "loadOvM(event, '%s', '%s', %s, %s, 'left')    " % (url, target, xOffset, yOffset)
@@ -450,7 +450,7 @@ class Search:
                         data = translate(app.configurationQuery.GetObjectConf(t).get("name", t), self.request)
                         cache[ckey] = data
                     if wfa_icon:
-                        data = """<img src="%sintern/images/types/%s.png" title="%s" />""" % (self.static, t, data)
+                        data = """<img src="%simages/types/%s.png" title="%s" />""" % (self.static, t, data)
                     if not select:
                         data = """<a href="open?%s" class="text">%s</a>""" % (vUrl, data)
                         rowIsLinked = True
@@ -461,19 +461,26 @@ class Search:
                     if show and ov:
                         continue
                     t = row.get("pool_wfa")
-                    ckey = "pool_type"+t
-                    if ckey in cache:
-                        data = cache[ckey]
-                    else:
-                        data = t # app.GetWfActivityName(t) # TODO lookup name
-                        cache[ckey] = data
-                    if wfa_icon:
-                        data = """<img src="%sintern/images/wf%s.gif" title="%s" />""" % (self.static, t, data)
+                    data = t
+                    if t:
+                        ckey = "pool_wfa"+t
+                        if ckey in cache:
+                            data = cache[ckey]
+                        elif fld.get("listItems"):
+                            for f in fld["listItems"]:
+                                if f["id"]==t:
+                                    data = f["name"]
+                                    cache[ckey] = data
+                        else:
+                            data = app.GetWfActivityName(t) # TODO lookup name
+                            cache[ckey] = data
+                        if wfa_icon:
+                            data = """<img src="%simages/wf%s.gif" title="%s" />""" % (self.static, t, data)
         
                 elif fldid == "pool_state":
                     if show and ov and skipState:
                         continue
-                    data = """<img src="%sintern/images/state%d.gif" title="State" />""" % (self.static, row.get('pool_state'))
+                    data = """<img src="%simages/state%d.gif" title="State" />""" % (self.static, row.get('pool_state'))
 
                 elif fld.datatype in ("list", "radio"):
                     data = row.get(fldid)
@@ -584,9 +591,9 @@ class Search:
 
         if searchconf.get("container") and "ccp" in searchconf.get("listoptions",[]):
             ccp = """
- <input type="image" src="%(static)sintern/images/copy.png" name="copy" title="%(Copy)s" />
- <input type="image" src="%(static)sintern/images/cut.png" name="cut" title="%(Cut)s" />
- <input type="image" src="%(static)sintern/images/paste.png" name="paste" title="%(Paste)s" />
+ <input type="image" src="%(static)simages/copy.png" name="copy" title="%(Copy)s" />
+ <input type="image" src="%(static)simages/cut.png" name="cut" title="%(Cut)s" />
+ <input type="image" src="%(static)simages/paste.png" name="paste" title="%(Paste)s" />
         """ % {"static": self.static,
                "Copy": translate(_("Copy"), self.request),
                "Cut": translate(_("Cut"), self.request),

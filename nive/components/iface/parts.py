@@ -61,9 +61,9 @@ class Parts:
         return """
 <link href="%(static)sbootstrap/css/bootstrap.min.css" rel="stylesheet" />
 <script src="%(static)sjquery.min.js" type="text/javascript"></script>
-<script src="%(static)sintern/iface.js" type="text/javascript"></script>
+<script src="%(static)siface.js" type="text/javascript"></script>
 <script src="%(static)sbootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<link href="%(static)sintern/iface.css" rel="stylesheet" type="text/css" media="all" />
+<link href="%(static)siface.css" rel="stylesheet" type="text/css" media="all" />
         """ % {"static": self.static}
     
 
@@ -118,7 +118,7 @@ class Parts:
         conf = self.ifaceConf.headlink
         if conf.get("icon"):
             return """
-<a href="%(url)s" class="nav-link"><img src="%(static)sintern/%(icon)s" title="%(name)s"> %(name)s</a>
+<a href="%(url)s" class="nav-link"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a>
         """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "icon": conf.icon}
         # no icon configured
         return """
@@ -135,7 +135,7 @@ class Parts:
         conf = self.ifaceConf.headlinkanonymous
         if conf.get("icon"):
             return """
-<a href="%(url)s"><img src="%(static)sintern/%(icon)s" title="%(name)s"> %(name)s</a>
+<a href="%(url)s"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a>
         """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "icon": conf.icon}
         # no icon configured
         return """
@@ -343,7 +343,7 @@ class Parts:
         html = """
 <div class="unit_info">
  <div class="blockOptions" style="float:right;margin:5px;">
-  Details <a href="" id="unitInfo_b" onClick="javascript:swBl('unitInfo',this);return false;"><img src="%(static)sintern/images/maximize.png" alt="Details ein-/ausblenden" style="vertical-align: bottom" /></a>
+  Details <a href="" id="unitInfo_b" onClick="javascript:swBl('unitInfo',this);return false;"><img src="%(static)simages/maximize.png" alt="Details ein-/ausblenden" style="vertical-align: bottom" /></a>
  </div>
  <table id="unitInfo" cellpadding="0" cellspacing="0">
   %(rows)s
@@ -446,7 +446,7 @@ class Parts:
         logout and help lilnk
         """
         return """
-<li><a href="%(logout)s"><img src="%(static)sintern/images/logout.png" title="Logout" align="top">%(username)s Logout</a></li>
+<li><a href="%(logout)s"><img src="%(static)simages/logout.png" title="Logout" align="top">%(username)s Logout</a></li>
         """ % {"logout": "/logout", "username": "", "static": self.static}
 
 
@@ -525,7 +525,7 @@ class Parts:
             return ""
         l = []
         for t in atypes:
-            l.append("""<a href="add?pool_type=%(type)s"><img alt="%(name)s erstellen" src="%(static)sintern/images/types/%(type)s_add.png" align="top" /> </a>""" % {"name": t["name"], "type": t["id"], "static": self.static})
+            l.append("""<a href="add?pool_type=%(type)s"><img alt="%(name)s erstellen" src="%(static)simages/types/%(type)s_add.png" align="top" /> </a>""" % {"name": t["name"], "type": t["id"], "static": self.static})
         return """<div class="unit_options_block">%s</div>""" % ("".join(l))
         
 
@@ -552,7 +552,7 @@ class Parts:
             if not a:
                 continue
             p = self.FmtURLParam(action=a, trans=t['id'], url=redirect)
-            l.append("""<a href="wf?%(param)s" class="tree"><img alt="%(name)s" src="%(static)sintern/images/publish.png" align="top" /></a> """ % {"name": t["name"], "param": p, "static": self.static})
+            l.append("""<a href="wf?%(param)s" class="tree"><img alt="%(name)s" src="%(static)simages/publish.png" align="top" /></a> """ % {"name": t["name"], "param": p, "static": self.static})
         return """<div class="unit_options_block">%s</div>""" % ("".join(l))
         
 
@@ -618,7 +618,7 @@ class Parts:
         in place duplicate button
         """
         param = self.FmtURLParam(ids=self.context.id)
-        l = """<a href="duplicate?%(param)s"><img src="%(static)sintern/images/duplicate.png" alt="Duplizieren" align="top" /> </a>""" % {"param": param, "static": self.static}
+        l = """<a href="duplicate?%(param)s"><img src="%(static)simages/duplicate.png" alt="Duplizieren" align="top" /> </a>""" % {"param": param, "static": self.static}
         return """<div class="unit_options_block">%s</div>""" % (l)
 
 
@@ -629,7 +629,7 @@ class Parts:
         if not self.Allowed("iface_delete"):
             return ""
         p = self.FmtURLParam(ids=self.context.id)
-        l = """<a href="../delete?%(param)s"><img src="%(static)sintern/images/delete.png" alt="L&ouml;schen" align="top" /> </a>""" % {"param": p, "static": self.static}
+        l = """<a href="../delete?%(param)s"><img src="%(static)simages/delete.png" alt="L&ouml;schen" align="top" /> </a>""" % {"param": p, "static": self.static}
         return """<div class="unit_options_block_del">%s</div>""" % (l)
 
 
