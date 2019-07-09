@@ -223,6 +223,9 @@ class Search:
             form.Setup()
             #result, formvalues = form.Extract(self.request, removeNull=True, removeEmpty=True)
             for f in searchFlds:
+                if f.datatype=="file":
+                    fl.append("<th></th>")
+                    continue
                 form2 = HTMLForm(loadFromType=form.loadFromType, view=self)
                 form2.actions = []
                 form2.fields = [f]
