@@ -414,7 +414,7 @@ class IFaceView(Parts, Search, BaseView):
         return self._LoadFldsConf(flds, container, listtype)
     
 
-    def _AddObject(self, typeID, title, parent=None):
+    def _AddObject(self, typeID, title, parent=None, url="objid_url"):
         if not self.context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
@@ -422,7 +422,7 @@ class IFaceView(Parts, Search, BaseView):
         form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default", "create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
-        result, data, action = form.Process(redirectSuccess="objid_url")
+        result, data, action = form.Process(redirectSuccess=url)
         if result and not data:
             self.Redirect(self.PageUrl(self.context))
             return
