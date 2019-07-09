@@ -34,11 +34,47 @@ from nive import File
 from nive.helper import ResolveName
 
 PILloaded = 1
-try:     from pillow import Image
+try:     from PIL import Image
 except:  PILloaded=0
 
 
-class ImageExtension(object):
+class ImageExtension:
+
+    def Init(self):
+        if PILloaded:
+            self.ListenEvent("commit", "ProcessImages")
+            self.ListenEvent("deleteFile", "CleanupImages")
+        elif self.configuration.imageProfiles:
+            self.app.log.error("Image Converter: PIL not imported!")
+
+
+    def ProcessImages(self, **kw):
+        images = []
+        keys = self.files.keys()
+        for p in self.configuration.imageProfiles:
+            if p.source in images:
+                continue
+            if not p.source in keys:
+                continue
+            f = self.files.get(p.source)
+            if not f or not f.tempfile:
+                continue
+            images.append(p.source)
+        self.Process(images=images)
+        self.Signal("imageprocessed", **kw)
+
+
+    def CleanupImages(self, **kw):
+        fldname = kw.get("fldname")
+        keys = self.files.keys()
+        if not fldname in keys:
+            return
+
+        for p in self.configuration.imageProfiles:
+            if p.source!=fldname or p.dest==fldname:
+                continue
+            self.dbEntry.DeleteFile(p.dest)
+
 
     def GetImgSize(self, image):
         """
@@ -141,7 +177,7 @@ class ImageExtension(object):
                 x, y = iObj.size
                 if x > size[0]: y = y * size[0] / x; x = size[0]
                 if y > size[1]: x = x * size[1] / y; y = size[1]
-                size = x, y
+                size = int(x), int(y)
             
             iObj = iObj.resize(size, Image.ANTIALIAS)
             iObj.save(destPath, profile.format)
@@ -151,7 +187,7 @@ class ImageExtension(object):
                 pass
             
             # file meta data
-            imgFile = open(destPath)
+            imgFile = open(destPath, 'rb')
             filename = DvPath(profile.dest+"_"+source.filename)
             filename.SetExtension(profile.extension)
             file = File(filekey=profile.dest, 
@@ -168,24 +204,6 @@ class ImageExtension(object):
         return True, []
         
 
-    def Init(self):
-        if PILloaded:
-            self.ListenEvent("commit", "ProcessImages")
-
-
-    def ProcessImages(self, **kw):
-        images = []
-        keys = self.files.keys()
-        for p in self.configuration.imageProfiles:
-            if p.source in images:
-                continue
-            if not p.source in keys:
-                continue
-            f = self.files.get(p.source)
-            if not f or not f.tempfile:
-                continue
-            images.append(p.source)
-        self.Process(images=images)
 
 
 
