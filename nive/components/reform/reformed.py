@@ -305,7 +305,7 @@ def unit_node(field, kw, kwWidget, form):
             pool = form.app.portal[field.settings.get("app")]
         values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
         values = [(str(a["id"]),a["name"]) for a in values]
-        kw["widget"] = ChooseWidget(values=values, **kwWidget)
+        kw["widget"] = UnitWidget(values=values, **kwWidget)
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):

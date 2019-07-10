@@ -915,6 +915,14 @@ class ChooseWidget(SelectWidget):
     option_defaults = {}
 
 
+class UnitWidget(SelectWidget):
+    """
+    Extends SelectWidget for long select lists with search option
+    """
+    template = 'unitselect'
+    requirements = ( ('chosen', None), )
+    option_defaults = {}
+
 
 class RadioChoiceWidget(SelectWidget):
     """

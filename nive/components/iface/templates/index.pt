@@ -190,7 +190,7 @@
 <tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
 <meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
 </head>
-<body>
+<body class="empty">
 <tal:block metal:define-slot="content"></tal:block>
 <tal:block metal:define-slot="foot"></tal:block>
 <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>

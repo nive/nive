@@ -263,6 +263,7 @@ class Search:
   <input type="hidden" name="start" value="%(start)d">
   <input type="hidden" name="sort" value="%(sort)s">
   <input type="hidden" name="ascending" value="%(ascending)s">
+  <input type="hidden" name="ref" value="%(ref)s">
 
   <table class="%(styling)s search">
    <thead>%(header)s</thead>
@@ -277,7 +278,7 @@ class Search:
         """ % {"action":action, "formhtml":formhtml, "messages": messages, "shortcuts": shortcuts,
                "urls":urls, "options": options, "header": header, "rows":rows, "static": self.static,
                "start": sdict["start"], "sort": sdict["sort"], "ascending": sdict["ascending"],
-               "styling": styling}  # "header": form.HTMLHead()
+               "styling": styling, "ref": self.CurrentUrl(preserveHost=False)}  # "header": form.HTMLHead()
         return html
 
 

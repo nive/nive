@@ -105,8 +105,6 @@ anchor               (string) default = empty. Adds an anchor to urls if set.
 uploadProgressBar    (string) default = auto. Either auto, none or always. Defines when the progress bar is
                      displayed.
 use_ajax             (bool) default = False. Enable or disable ajax form submissions.
-renderSuccess        (bool) default = True. If True the whole form will be rendered after successful
-                     submission. If False messages only will be returned.
 successResponseBody  (string/callback) This option enables you to overwrite the complete response body on
                      success. Use a callback to generate a dynamic response. The callback must take one
                      parameter: the form instance and return a unicode string.
@@ -116,6 +114,8 @@ successResponseBody  (string/callback) This option enables you to overwrite the 
 ==================== ========================================================================================
 Form keywords        Form.Process(...)
 ==================== ========================================================================================
+renderSuccess        (bool) default = True. If True the whole form will be rendered after successful
+                     submission. If False messages only will be returned.
 redirectSuccess      (string/callback) Redirect the browser to a new location on success. See below for a
                      list of options.
 redirectCancel       (string/callback) Redirect the browser to a new location on cancel. See below for a list
@@ -803,7 +803,6 @@ class HTMLForm(Form):
     defaultAction = None
 
     # success options
-    renderSuccess = True
     successResponseBody = None   # either string or callback
 
     actions = [
@@ -1167,7 +1166,7 @@ class HTMLForm(Form):
             return self.view.SendResponse(data=body, headers=[("X-Result", "true")])
 
         self.Signal("messages", messages=msgs, result=result)
-        if not self.renderSuccess:
+        if not kw.get("renderSuccess"):
             html = self._Msgs(msgs=msgs,result=result)
         else:
             html = self.Render(data, msgs=msgs, errors=errors, result=result)

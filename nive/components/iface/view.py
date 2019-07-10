@@ -249,7 +249,11 @@ class IFaceView(Parts, Search, BaseView):
         
         elif action == "duplicate":
             return view.FolderUrl(view.context)+"edit"
-                
+
+        elif action == "deletelist":
+            ref = self.GetFormValue("ref")
+            return ref or view.PageUrl(view.context)
+
         return "parent"
     
 
@@ -414,18 +418,40 @@ class IFaceView(Parts, Search, BaseView):
         return self._LoadFldsConf(flds, container, listtype)
     
 
-    def _AddObject(self, typeID, title, parent=None, url="objid_url"):
-        if not self.context.IsTypeAllowed(typeID, self.User()):
+    def _AddObject(self, typeID, title, context=None, url="objid_url"):
+        context = context or self.context
+        if not context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
-        form = ObjectForm(view=self, context=parent, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
-        form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default", "create"]}}
+        form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID))
+        form.subsets = {"create": {"fields": self.GetFldsAdd(context, typeID), "actions": ["default", "create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
         result, data, action = form.Process(redirectSuccess=url)
         if result and not data:
-            self.Redirect(self.PageUrl(self.context))
+            self.Redirect(self.PageUrl(context))
             return
+        return dict(content=data, result=result, view=self, head=form.HTMLHead(), title=title)
+
+
+    def _AddObjectIframe(self, typeID, title, context=None, url="objid_url"):
+        context = context or self.context
+        if not context.IsTypeAllowed(typeID, self.User()):
+            raise ValueError("Not allowed")
+
+        form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID))
+        form.subsets = {"create": {"fields": self.GetFldsAdd(context, typeID), "actions": ["default", "create"]}}
+        form.use_ajax = False
+        form.Setup(subset="create", addTypeField=True)
+        result, data, action = form.Process(renderSuccess=False)
+        if result and action.id=="create":
+            info = """
+            <input type="hidden" class="addformresult" name="id" value="%d">
+            <input type="hidden" class="addformresult" name="title" value="%s">
+            <br>
+            <p class="alert">Sie können den neuen Eintrag "%s" jetzt mit dem Button "Übernehmen" ins Formular übertragen.</p>
+            """ % (result.id, result.meta.title, result.meta.title)
+            return dict(content=data+info, result=result, view=self, head="", title=title)
         return dict(content=data, result=result, view=self, head=form.HTMLHead(), title=title)
 
 
@@ -649,7 +675,13 @@ class IFaceView(Parts, Search, BaseView):
         for o in objs:
             #check delete permission
             if not self.Allowed("delete", o):
-                result["msgs"].append(translator()(_("Unauthorized. Delete is not allowed.")))
+                result["msgs"].append(o.meta.title + " " + translator()(_("Unauthorized. Delete is not allowed.")))
+                ok = False
+                continue
+            # linked as unit/unitlist
+            linked = self.context.search.GetReferences(o.id, types=None, sort="id")
+            if linked:
+                result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked. Not deleted.")))
                 ok = False
                 continue
             try:
@@ -659,7 +691,8 @@ class IFaceView(Parts, Search, BaseView):
                 ok = False
         if not ok:
             return result
-        self.Redirect(self.PageUrl(self.context), messages=[_("OK")])
+        url = self.GetRedirect("deletelist", self)
+        self.Redirect(url, messages=[_("OK")])
 
 
     def delete(self, url="view_url"):

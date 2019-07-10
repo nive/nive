@@ -16,6 +16,10 @@ body {
   position: relative;
   padding-top:80px;
 }
+body.empty {
+  padding-top:10px;
+  width: 98%;
+}
 
 .navbar         { background-color:#0786D5; border:none; box-shadow:0 0 1em gray; padding: 0 1em 0 1em; }
 .navbar .divider-vertical { border-right: 1px solid white; height:auto; margin-right: 8px; }
@@ -153,15 +157,21 @@ button.go-sm     {
   font-weight: bold;
   border: none;
 }
+.form .help-block { color:#697077; }
 .invalid-feedback {
     display: block;
     font-size: 90%;
 }
 .chosen-container-single .chosen-single {
-    font-size: 1.1em;
     background: none;
-    padding: 4px 0 4px 8px;
+    padding: 6px 0 6px 8px;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
     border-color: #ced4da;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 .chosen-container-single .chosen-single span {
     color: #495057;
@@ -248,6 +258,19 @@ button.go-sm     {
 
 .search th.list_header {
 	white-space: nowrap;
+}
+
+/* modal */
+.addform .modal-dialog {
+    height:90%;
+}
+.addform .modal-content {
+    height:100%;
+}
+.addform iframe {
+    height:100%;
+    width:100%;
+    border:none;
 }
 
 /* dashboard */
