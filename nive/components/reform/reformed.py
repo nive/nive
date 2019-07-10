@@ -151,7 +151,7 @@ def float_node(field, kw, kwWidget, form):
 
 def bool_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        kw["widget"] = CheckboxWidget(**kwWidget)
+        kw["widget"] = RadioChoiceWidget(**kwWidget)
     return SchemaNode(Boolean(), **kw)
 
 def htext_node(field, kw, kwWidget, form):
@@ -284,12 +284,12 @@ def password_node(field, kw, kwWidget, form):
 
 def unit_node(field, kw, kwWidget, form):
     """
-
     field.settings:
     :param obj_type: string or list. object type id.
     :param name_field: string. Codelist name lookup field. default = title.
+    :param app: string. app id registered in portal.
     """
-    if not "validator" in kw:
+    if not "validator" in kw and field.settings.get("app"):
         kw["validator"] = ExistingObject(obj_type=field.settings.get("obj_type"))
     if not "widget" in kw:
         ot = field.settings.get("obj_type")
@@ -300,17 +300,31 @@ def unit_node(field, kw, kwWidget, form):
             parameter["pool_type"] = ot
         if isinstance(ot, (list, tuple)):
             operators["pool_type"] = "IN"
-        values = form.app.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+        pool = form.app
+        if field.settings.get("app"):
+            pool = form.app.portal[field.settings.get("app")]
+        values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
         values = [(str(a["id"]),a["name"]) for a in values]
         kw["widget"] = ChooseWidget(values=values, **kwWidget)
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):
-    if not "validator" in kw:
-        kw["validator"] = Length(max=field.get("size",255))
     if not "widget" in kw:
-        kw["widget"] = TextInputWidget(**kwWidget)
-    return SchemaNode(Lines(), **kw)
+        ot = field.settings.get("obj_type")
+        tf = field.settings.get("name_field", "title")
+        operators = dict()
+        parameter = dict()
+        if ot:
+            parameter["pool_type"] = ot
+        if isinstance(ot, (list, tuple)):
+            operators["pool_type"] = "IN"
+        pool = form.app
+        if field.settings.get("app"):
+            pool = form.app.portal[field.settings.get("app")]
+        values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+        values = [(str(a["id"]),a["name"]) for a in values]
+        kw["widget"] = ChooseWidget(values=values, **kwWidget)
+    return SchemaNode(List(), **kw)
 
 def timestamp_node(field, kw, kwWidget, form):
     # readonly

@@ -512,7 +512,7 @@ class PoolStructure(object):
             if isinstance(value, str):
                 value = float(value)
                     
-        elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
+        elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist"):
             # -> to string tuple
             # unitlist -> to number tuple
             if not value:
@@ -530,7 +530,28 @@ class PoolStructure(object):
                 value = tuple(value)
             if fieldtype == "unitlist":
                 value = tuple([int(v) for v in value])
-            
+
+        elif fieldtype in ("unitlist",):
+            # -> to string tuple
+            # unitlist -> to number tuple
+            if not value:
+                value = ""
+            elif isinstance(value, str):
+                if value.startswith("_json_"):
+                    value = json.loads(value[len("_json_"):])
+                else:
+                    try:
+                        value = tuple(json.loads(value))
+                    except ValueError:
+                        # use as single item text string
+                        value = (value,)
+                    except TypeError:
+                        # use as single item text string
+                        value = (value,)
+            elif isinstance(value, list):
+                value = [int(v) for v in value]
+                value = tuple(value)
+
         elif fieldtype == "json":
             # -> to python type
             if not value:

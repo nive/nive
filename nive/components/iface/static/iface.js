@@ -1,25 +1,23 @@
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-    /* search ---------------------------------------*/
-    $("a.search_start").on("click", function(e) {
-       document.searchForm.start.value = $(this).attr("data-value");
-       document.searchForm.submit();
+    $("#boxSearch a.search_start").on("click", function (e) {
+        document.searchForm.start.value = $(this).attr("data-value");
+        document.searchForm.submit();
     });
-});
 
-$(document).ready(function() {
     $("#boxSearch #delete").on("click", function (e) {
         e.preventDefault();
         $("#boxSearch").attr("action", "deletec").submit();
     });
+
     $("#boxSearch .sort").on("click", function (e) {
         e.preventDefault();
         var fld = $(this);
-        if(fld.attr("data-value")==$("#boxSearch input[name=sort]").val()) {
+        if (fld.attr("data-value") == $("#boxSearch input[name=sort]").val()) {
             var ac = $("#boxSearch input[name=ascending]").val();
-            ac = ac=="1"?"0":"1";
+            ac = ac == "1" ? "0" : "1";
             $("#boxSearch input[name=ascending]").val(ac);
         } else {
             $("#boxSearch input[name=sort]").val($(this).attr("data-value"));
@@ -28,43 +26,29 @@ $(document).ready(function() {
         }
         $("#boxSearch").submit();
     });
+
+    var isSelected = false;
+    $("#boxSearch #selectButton").on("click", function (e) {
+        e.preventDefault();
+        if (isSelected == false) {
+            isSelected = true;
+            $("input[name=ids]").prop("checked", true);
+            $("#selectButton").text("Auswahl aufheben");
+        } else {
+            isSelected = false;
+            $("input[name=ids]").prop("checked", false);
+            $("#selectButton").text("Alle auswählen");
+        }
+    });
+
 });
 
 
-function search_sort(fld, asc) {
-   document.searchForm.sort.value = fld;
-   document.searchForm.ascending.value = asc;
-   document.searchForm.submit();
-}
-
 function overlay(url) {
     $('#overlay-content').load(url);
-    $('#overlay').modal({show:true});
+    $('#overlay').modal({show: true});
 }
 
-var isSelected = false;
-function search_toggleSelect() {
-  if (isSelected == false) {
-    for (i = 0; i < document.searchList.length; i++) {
-      if(document.searchList.elements[i].name != "ids")
-          continue;
-      document.searchList.elements[i].checked = true ;
-      }
-      isSelected = true;
-      $("button.select").text("Select none");
-      return isSelected;
-  }
-  else {
-    for (i = 0; i < document.searchList.length; i++) {
-      if(document.searchList.elements[i].name != "ids")
-          continue;
-      document.searchList.elements[i].checked = false ;
-      }
-      isSelected = false;
-      $("button.select").text("Select all");
-      return isSelected;
-  }
-}
 
 
 

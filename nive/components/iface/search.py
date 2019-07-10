@@ -280,43 +280,12 @@ class Search:
                "styling": styling}  # "header": form.HTMLHead()
         return html
 
-  
+
     def header(self, fldsList,pool_type,addSort=True):
         """
         list header row including titles and sort
         """
-        app = self.context.app
-        fldTmpl = """<th class="list_header" id="list_%s" nowrap><div style="display:inline;float:right;padding-top: 2px;">%s</div><div style="padding-right:15px;">%s</div></th> """ 
-        up = translate(_("Sort ascending"), self.request)
-        down = translate(_("Sort descending"), self.request)
-        sortTmpl = """ <img class="asc" onclick="search_sort('%%s',1)" src="%simages/lup.gif" title="%s"/><br/><img class="desc" onclick="search_sort('%%s',0)" src="%simages/ldown.gif" title="%s"/>""" % (self.static, up, self.static, down)
-
-        flds = []
-        for fld in fldsList:
-            sort = ""
-            if IFieldConf.providedBy(fld):
-                name = translate(fld["name"], self.request)
-                fldid = fld.get("settings",{}).get("sort_id", fld["id"])
-                if fldid:
-                    sort = sortTmpl % (fldid, fldid)
-            else:
-                if addSort and fld[0]!="+":
-                    sort = sortTmpl % (fld, fld)
-                if fld=="+folderpath":
-                    name = translate(_("Folder"), self.request)
-                else:
-                    # ! iface2 update
-                    name = translate(app.configurationQuery.GetFldName(fld, pool_type), self.request)
-                fldid = fld
-            flds.append(fldTmpl % (fldid, sort, name))
-        
-        html = """
-        <tr>
-        %s
-        <th></th>
-        </tr>
-        """ % ("".join(flds))
-        return html    
+        raise TypeError("removed!")
 
 
     def header2(self, fldsList,pool_type,addSort=True,searchconf=None):
@@ -608,8 +577,7 @@ class Search:
 <div id="listActionButtons">
  %(ccp)s &nbsp;
  %(delete)s &nbsp;
- <button type="button" name="selectButton" class="btn btn-info"
-        onClick="search_toggleSelect(); return false">%(Select all)s</button>
+ <button type="button" name="selectButton" id="selectButton" class="btn btn-info">%(Select all)s</button>
 </div>
         """ % {"static": self.static, "ccp": ccp, "delete": delete, "base":self.FolderUrl(),
                "Select all": translate(_("Select all"), self.request)}

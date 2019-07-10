@@ -1,3 +1,4 @@
+<div class="form-check">
 <input type="checkbox"
        name="${field.name}"
        value="${field.widget.true_val}"
@@ -5,3 +6,4 @@
        class="${field.widget.css_class}${' is-invalid' if field.error else ''}"
        tal:attributes="checked cstruct==field.widget.true_val">
 <label tal:condition="field.widget.title" for="${field.oid}" tal:content="structure field.widget.title"></label>
+</div>
