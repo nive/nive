@@ -4,7 +4,5 @@
 <span tal:replace="view.unitInfo('edit')" />
 <span tal:replace="structure view.messages()" />
 
-
-
 </tal:block>
 </tal:block>

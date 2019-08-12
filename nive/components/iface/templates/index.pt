@@ -2,11 +2,11 @@
 <!-- main header navigation used for all layouts -->
 <nav metal:define-macro="topnav" class="navbar fixed-top navbar-expand-lg" id="topnav" i18n:domain="nive">
    <a class="navbar-brand" href="${view.backlink()}"><img src="${view.static}intern/images/logo.png" class="logo" alt="Nive" title="${view.ifaceConf.slogan}" /></a>
-   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
      <span class="navbar-toggler-icon"></span>
      <img src="${view.static}intern/images/menu.png">
    </button>
-   <div class="collapse navbar-collapse">
+   <div class="collapse navbar-collapse" id="navbarContent">
      <ul metal:define-slot="sections"
          class="navbar-nav mr-auto"
          tal:content="structure view.sections()">

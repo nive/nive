@@ -309,7 +309,7 @@ button.go-sm     {
   }
 }
 @media (max-width: 979px) {
-  body { padding-top: 0; }
+  body { } /*padding-top: 0; */
   .container { padding: 10px; }
   .navbar { box-shadow: none; }
   .navbar-fixed-top .navbar-inner { padding: 0; }
@@ -325,7 +325,17 @@ button.go-sm     {
       margin-top: 3px;
       padding-right: 2px;
   }
-  .navbar .dropdown-menu { display:block; }
+  .navbar .active a.nav-link,
+  .navbar .active a.nav-link:focus {
+    color:#fff;
+    border-bottom: none;
+    font-weight:bold;
+  }
+  .navbar .active a.nav-link:hover {
+    color: #dddddd;
+    border-bottom: none;
+  }
+  .navbar .dropdown-menu {  } /*display:block;*/
   .row #dashboard { width: 100%; }
 }
 @media (max-width: 767px) {
