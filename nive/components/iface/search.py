@@ -237,7 +237,7 @@ class Search:
             formhtml = """
             <tr>
               %(fields)s
-              <th><button class="btn"><img src="%(static)simages/icon_reload.svg"></button></th>
+              <th><button class="btn"><img src="%(static)simages/icon_reload.svg" alt="Liste aktualisieren" title="Liste aktualisieren"></button></th>
             </tr>
             """ % dict(fields=" ".join(fl), static=self.static)
 
@@ -249,7 +249,11 @@ class Search:
             shortcuts = self.shortcuts()
         options = self.listoptions(searchconf)
         header = self.header2(fldsList=fldsList, pool_type=searchType, addSort=True, searchconf=searchconf)
-        rows = self.rows(recs=items.get('items'), fldsList=fldsList, obj=self.context, checkbox=searchconf.get("listoptions"), urlTmpl=urlTmpl, searchconf=searchconf)
+        rows = self.rows(recs=items.get('items'), fldsList=fldsList, obj=self.context,
+                         checkbox=searchconf.get("listoptions"),
+                         urlTmpl=urlTmpl,
+                         linkCell=searchconf.get("linkcell") or True,
+                         searchconf=searchconf)
 
         if formhtml:
             formhtml = """<tr> %(form)s </tr>""" % {"form":formhtml}
@@ -265,7 +269,7 @@ class Search:
   <input type="hidden" name="ascending" value="%(ascending)s">
   <input type="hidden" name="ref" value="%(ref)s">
 
-  <table class="%(styling)s search">
+  <table class="%(styling)s list">
    <thead>%(header)s</thead>
    <tbody>
      %(formhtml)s
@@ -332,7 +336,7 @@ class Search:
         return html    
 
     
-    def rows(self, recs,fldsList,obj=None,view=0,edit=0,duplicate=0,commit=0,reject=0,checkbox=1,ov=0,select=0,urlTmpl=None,searchconf=None):
+    def rows(self, recs,fldsList,obj=None,view=0,edit=0,duplicate=0,commit=0,reject=0,checkbox=1,ov=0,select=0,urlTmpl=None,linkCell=True,searchconf=None):
         """
         list row and field rendering
         """
@@ -473,8 +477,11 @@ class Search:
                 else:
                     data = row.get(fldid)
 
-                rowStr.append("""<td onclick="%s">%s</td>""" % (url, data))
-        
+                if linkCell==True or (isinstance(linkCell, (list,tuple)) and fldid in linkCell):
+                    rowStr.append("""<td onclick="%s" class="pointer">%s</td>""" % (url, data))
+                else:
+                    rowStr.append("""<td>%s</td>""" % (data))
+
             if checkbox:
                 rowStr.append("""<td class="listAction" align="right"><input value="%s" type="checkbox" name="ids" /></td>""" % (id))
             rowStr.append("</tr>")

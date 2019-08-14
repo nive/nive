@@ -68,7 +68,7 @@ a               { color: #000000; }
 
 /* iface additions ---------------------------------------------------------- */
 
-.cursor         { cursor:pointer; }
+.pointer        { cursor:pointer; }
 .smaller        { font-size: 0.8em; color: #666666;}
 .mark           { display:none; position:absolute; top:50px; right:10px; width:40px; color:lightgray; }
 .clear          { clear:both; display:block; }
@@ -222,32 +222,32 @@ button.go-sm     {
 }
 .search table.list th {
 	background-color: #bacce2;
-	padding: 2px;
+	border: none;
 	padding-right: 6px;
+    padding-bottom: 0;
 	text-align: left;
 	font-weight: normal;
 	position:relative;
 }
 .search table.list th.listAction {
     text-align: right;
-    padding-right:2;
+    padding-right:2px;
 }
 
 .search table.list td {
-	padding: 3px;
-	padding-right: 6px;
-	font-weight: normal;
-	position:relative;
 }
 .search table.list .listOptions { background-color: #ffffff; }
 .search table.list .listRow2 { background-color: #ffffff; }
 .search table.list .listRow1 { background-color: #eaf5df; }
 .search table.list .listRow:hover { background-color: #44FFFF; }
 
+.search table.list  img.lv { width:100px; }
+
 .search #listActionButtons {
 	float: right;
 	text-align:right;
     clear: both;
+    margin-top:20px;
 }
 
 .search #listActionButtons span {
