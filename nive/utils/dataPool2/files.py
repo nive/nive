@@ -5,7 +5,7 @@
 import weakref
 import os
 import uuid
-from io import StringIO
+from io import BytesIO
 
 from nive.utils.path import DvPath
 from nive.definitions import IFileStorage, implementer
@@ -60,7 +60,7 @@ class File(object):
         if isinstance(self.file, str):
             # file data is set as string -> create string io and mark as tempfile
             self.size = len(self.file)
-            self.file = StringIO(self.file)
+            self.file = BytesIO(self.file)
             self.tempfile = True
     
         # get extension and file name if not set
@@ -102,8 +102,8 @@ class File(object):
         # 2) read blob file
         if not self.file:
             # read all
-            file = open(self._Path())
-            if size < 1 or size == None:
+            file = open(self._Path(), "rb")
+            if size < 1 or size is None:
                 data = file.read()
                 file.close()
                 return data
