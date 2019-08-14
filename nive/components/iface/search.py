@@ -184,7 +184,7 @@ class Search:
                 id = f.id
                 data = i[id]
                 if hasattr(searchconf, "renderer") and hasattr(searchconf.renderer, id):
-                    data = searchconf.renderer.get(id)(f, data, self)
+                    data = searchconf.renderer.get(id)(field=f, value=data, context=self, data=i)
                 html.append(fld %(data))
             i["value"] = "".join(html)
             body.append(row % i)
@@ -413,7 +413,7 @@ class Search:
                 
                 # load custom renderer fld
                 if hasattr(searchconf, "renderer") and hasattr(searchconf.renderer, fldid):
-                    data = searchconf.renderer.get(fldid)(fld, row.get(fldid), self)
+                    data = searchconf.renderer.get(fldid)(field=fld, value=row.get(fldid), context=self, data=row)
         
                 elif fldid == "pool_type":
                     t = row.get("pool_type")
