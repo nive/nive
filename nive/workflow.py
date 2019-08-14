@@ -56,7 +56,7 @@ class ObjectWorkflow(object):
     def __init__(self, obj):
         self.obj = obj
 
-    def WfAllow(self, action, user, transition=None):
+    def WfAllow(self, action, user, transition=None, process=None):
         """
         Check if action is allowed in current state in workflow. This functions returns True or False
         and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
@@ -66,13 +66,13 @@ class ObjectWorkflow(object):
 
         returns bool
         """
-        wf = self.GetWf()
+        wf = process or self.GetWf()
         if wf is None:
             return True
-        self.obj.Signal("wfAllow", name=action)
-        return wf.Allow(action, self, user=user, transition=transition)
+        self.obj.Signal("wfAllow", name=action, process=wf)
+        return wf.Allow(action, self.obj, user=user, transition=transition)
 
-    def WfAction(self, action, user, transition=None):
+    def WfAction(self, action, user, transition=None, process=None):
         """
         Trigger workflow action. If several transitions are possible for the action in the current state
         the first is used. In this case the transition id can be passed as parameter.
@@ -82,11 +82,11 @@ class ObjectWorkflow(object):
 
         raises WorkflowNotAllowed
         """
-        wf = self.GetWf()
+        wf = process or self.GetWf()
         if wf is None:
             return
-        wf.Action(action, self, user=user, transition=transition)
-        self.obj.Signal("wfAction", name=action)
+        wf.Action(action, self.obj, user=user, transition=transition)
+        self.obj.Signal("wfAction", name=action, process=wf)
 
     def WfInit(self, user):
         """
@@ -96,7 +96,7 @@ class ObjectWorkflow(object):
         wfProc = self.GetNewWf()
         if wfProc:
             self.obj.meta["pool_wfp"] = wfProc.id
-            self.obj.Signal("wfInit", processID=wfProc.id)
+            self.obj.Signal("wfInit", processID=wfProc.id, process=wfProc)
             if not self.WfAllow("create", user, transition=None):
                 raise WorkflowNotAllowed("Workflow: Not allowed (create)")
 
@@ -116,7 +116,7 @@ class ObjectWorkflow(object):
         if not wfTag:
             return None
         # load workflow
-        wf = app.GetWorkflow(wfTag, contextObject=self)
+        wf = app.GetWorkflow(wfTag) # use id only and not: contextObject=self
         # enable strict workflow checking
         if wf is None:
             raise ConfigurationError("Workflow process not found (%s)" % (wfTag))
@@ -149,14 +149,14 @@ class ObjectWorkflow(object):
                 "Workflow: More than one process for type found (%s)" % (self.obj.configuration.id))
         return wf[0]
 
-    def GetWfInfo(self, user):
+    def GetWfInfo(self, user, process=None):
         """
         returns the current workflow state as dictionary
         """
-        wf = self.GetWf()
+        wf = process or self.GetWf()
         if wf is None:
             return {}
-        return wf.GetObjInfo(self, user)
+        return wf.GetObjInfo(self.obj, user)
 
     def GetWfState(self):
         """
@@ -208,7 +208,7 @@ class RootWorkflow:
     def __init__(self, obj):
         self.obj = obj
 
-    def WfAllow(self, action, user, transition=None):
+    def WfAllow(self, action, user, transition=None, process=None):
         """
         Check if action is allowed in current state in workflow. This functions returns True or False
         and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
@@ -218,13 +218,13 @@ class RootWorkflow:
 
         returns bool
         """
-        wf = self.GetWf()
+        wf = process or self.GetWf()
         if not wf:
             return True
         self.obj.Signal("wfAllow", name=action)
         return wf.Allow(action, self.obj, user=user, transition=transition)
 
-    def WfAction(self, action, user, transition=None):
+    def WfAction(self, action, user, transition=None, process=None):
         """
         Trigger workflow action. If several transitions are possible for the action in the current state
         the first is used. In this case the transition id can be passed as parameter.
@@ -234,7 +234,7 @@ class RootWorkflow:
 
         raises WorkflowNotAllowed
         """
-        wf = self.GetWf()
+        wf = process or self.GetWf()
         if not wf:
             return
         wf.Action(action, self.obj, user=user, transition=transition)
@@ -273,11 +273,11 @@ class RootWorkflow:
             return ""
         return self.obj.configuration.workflowID
 
-    def GetWfInfo(self, user):
+    def GetWfInfo(self, user, process=None):
         """
         returns the current workflow state as dictionary
         """
-        wf = self.GetWf()
+        wf = process or self.GetWf()
         if not wf:
             return {}
         return wf.GetObjInfo(self.obj, user)
@@ -582,7 +582,7 @@ class Process(object):
         """
         # set start as default
         if action in WfEntryActions:
-            context.SetWfState(self.configuration.entryPoint)
+            context.meta["pool_wfa"] = self.configuration.entryPoint
 
         # get state
         state = self.GetObjState(context)
@@ -665,8 +665,11 @@ class Process(object):
         Returns workflow information for the current context. If extended = True state and
         transitions are included too. Otherwise they will be None.
         
-        Included values: id, name, process, context, user, state, transitions
-    
+        Included values: id, name, process, context, user, state, transitions, actions
+
+                <a tal:repeat="t wfinfo['transitions']"
+                        class="btn" href="wft?t=${t.id}">${t.name}</a>
+
         parameters ::
         
              context: the context object
@@ -675,15 +678,20 @@ class Process(object):
         
         returns dict
         """
-        state = transitions = None
+        state = transitions = actions = None
         if extended:
-            wfa = context.GetWfState()
+            wfa = context.meta.pool_wfa
             state = self.GetState(wfa)
             transitions = self.PossibleTransitions(wfa, user=user, context=context)
+            actions = list(state.actions)
+            for t in transitions:
+                if t.actions:
+                    actions.extend(t.actions)
         return {"id": self.configuration.id,
                 "name": self.configuration.name,
                 "state": state,
                 "transitions": transitions,
+                "actions": actions,
                 "process": self,
                 "context": weakref.ref(context)(),
                 "user": user}
@@ -695,7 +703,7 @@ class Process(object):
         """
         if not context:
             return self.GetState(self.configuration.entryPoint)
-        state = context.GetWfState()
+        state = context.meta.pool_wfa
         if not state:
             return self.GetState(self.configuration.entryPoint)
         return self.GetState(state)
@@ -769,7 +777,14 @@ class Transition(object):
         self.process = process
         #for k in list(configuration.keys()):
         #    setattr(self, k, configuration[k])
-        
+
+    @property
+    def name(self):
+        return self.configuration.name
+
+    @property
+    def actions(self):
+        return self.configuration.actions
         
     def Allow(self, context, user):
         """
@@ -819,7 +834,7 @@ class Transition(object):
         returns the new state id
         """
         nextState = self.configuration.tostate
-        context.SetWfState(nextState)
+        context.meta["pool_wfa"] = nextState
         return nextState
     
 

@@ -672,6 +672,7 @@ class IFaceView(Parts, Search, BaseView):
             result["objsToDelete"] = objs
             return result
         ok = False
+        user = self.User(sessionuser=False)
         for o in objs:
             #check delete permission
             if not self.Allowed("delete", o):
@@ -685,7 +686,7 @@ class IFaceView(Parts, Search, BaseView):
                 ok = False
                 continue
             try:
-                ok = self.context.Delete(o.id, user=self.User, obj=o)
+                ok = self.context.Delete(o.id, user=user, obj=o)
             except Exception as e:
                 result["msgs"].append(str(e))
                 ok = False
@@ -704,7 +705,7 @@ class IFaceView(Parts, Search, BaseView):
         ok = False
         parent = self.context.parent
         try:
-            ok = parent.Delete(self.context.id, user=self.User(), obj=self.context)
+            ok = parent.Delete(self.context.id, user=self.User(sessionuser=False), obj=self.context)
         except Exception as e:
             result["msgs"].append(str(e))
             ok = False
