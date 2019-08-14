@@ -881,7 +881,6 @@ class SelectWidget(Widget):
             return null
         return pstruct
     
-    
     def controlset_fields(self, field, value=None, format='html'):
         """
         Returns a list of controlset field ids. If `value` is None all controlled
@@ -913,6 +912,20 @@ class ChooseWidget(SelectWidget):
     template = 'choose'
     requirements = ( ('chosen', None), )
     option_defaults = {}
+    null_value = ''
+
+    def serialize(self, field, cstruct):
+        if cstruct in (null, None):
+            cstruct = self.null_value
+        template = self.template
+        if isinstance(cstruct, (list, tuple)):
+            cstruct = [str(a) for a in cstruct]
+        return field.renderer(template, field=field, cstruct=cstruct)
+
+    def deserialize(self, field, pstruct, formstruct=None):
+        if pstruct in (null, None, ""):
+            return self.null_value
+        return pstruct
 
 
 class UnitWidget(SelectWidget):

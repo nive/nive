@@ -1863,7 +1863,10 @@ class List(object):
         if value in (null, None):
             return null
         if isinstance(value, str):
-            value = [value]
+            if not value:
+                value = []
+            else:
+                value = [value]
         elif not isinstance(value, (list, tuple)):
             raise Invalid(
                 node,

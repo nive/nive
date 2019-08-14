@@ -324,7 +324,7 @@ def unitlist_node(field, kw, kwWidget, form):
         values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
         values = [(str(a["id"]),a["name"]) for a in values]
         kw["widget"] = ChooseWidget(values=values, **kwWidget)
-    return SchemaNode(List(), **kw)
+    return SchemaNode(List(allow_empty=True), **kw)
 
 def timestamp_node(field, kw, kwWidget, form):
     # readonly
