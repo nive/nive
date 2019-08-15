@@ -946,7 +946,7 @@ class HTMLForm(Form):
         
         returns bool, html
         """
-        data = self.GetFormValues(self.request, method="GET")
+        data = self.GetFormValues(self.request, method="ANY")
         return True, self.Render(data)
 
 
@@ -980,7 +980,8 @@ class HTMLForm(Form):
             errors = None
             result = data
             self.Signal("success", data=data)
-        return result, self.Render(data, msgs=msgs, errors=errors)
+
+        return self._FinishFormProcessing(result, data, msgs, errors, **kw)
 
 
     def ProcessForm(self, action, **kw):
@@ -1548,6 +1549,17 @@ class WorkflowForm(HTMLForm):
     Contains default actions for workflow transition form processing
     Requires Form, HTMLForm or TemplateForm
     """
+    actions = [
+        Conf(id="default", method="StartRequestGET",      name="Initialize",  hidden=True),
+        Conf(id="submit",  method="ReturnDataOnSuccess",  name=_("Continue"), hidden=False, css_class="btn btn-primary"),
+        Conf(id="cancel",  method="Cancel",               name=_("Cancel"),   hidden=False, css_class="btn btn-warning"),
+    ]
+    fields = [
+        FieldConf(id="action", datatype="string", size=50, name="action", required=True, hidden=True),
+        FieldConf(id="ref",    datatype="string", size=500, name="referring url", hidden=True),
+        FieldConf(id="message",datatype="text",   size=1000, name=_("Message"), required=True, hidden=False),
+        # ... extend/change on customization
+    ]
 
     def CallWf(self, action, **kw):
         """

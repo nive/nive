@@ -37,12 +37,12 @@ Default actions used in the cms are: add, remove, create, duplicate, edit, delet
 """
 
 import weakref
+from zope.interface import implementer
 
 from nive.definitions import baseConf, ConfigurationError, TryResolveName
 from nive.definitions import IWfProcessConf, IWfStateConf, IWfTransitionConf, IProcess, ILocalGroups
 from nive.helper import ResolveName, ResolveConfiguration, GetClassRef
 from nive.security import effective_principals 
-from zope.interface import implementer
 
 
 
@@ -72,7 +72,7 @@ class ObjectWorkflow(object):
         self.obj.Signal("wfAllow", name=action, process=wf)
         return wf.Allow(action, self.obj, user=user, transition=transition)
 
-    def WfAction(self, action, user, transition=None, process=None):
+    def WfAction(self, action, user, transition=None, process=None, values=None):
         """
         Trigger workflow action. If several transitions are possible for the action in the current state
         the first is used. In this case the transition id can be passed as parameter.
@@ -80,13 +80,16 @@ class ObjectWorkflow(object):
         Event:
         - wfAction(name)
 
+        returns transition
+
         raises WorkflowNotAllowed
         """
         wf = process or self.GetWf()
         if wf is None:
             return
-        wf.Action(action, self.obj, user=user, transition=transition)
+        t = wf.Action(action, self.obj, user=user, transition=transition, values=values)
         self.obj.Signal("wfAction", name=action, process=wf)
+        return t
 
     def WfInit(self, user):
         """
@@ -224,7 +227,7 @@ class RootWorkflow:
         self.obj.Signal("wfAllow", name=action)
         return wf.Allow(action, self.obj, user=user, transition=transition)
 
-    def WfAction(self, action, user, transition=None, process=None):
+    def WfAction(self, action, user, transition=None, process=None, values=None):
         """
         Trigger workflow action. If several transitions are possible for the action in the current state
         the first is used. In this case the transition id can be passed as parameter.
@@ -237,7 +240,7 @@ class RootWorkflow:
         wf = process or self.GetWf()
         if not wf:
             return
-        wf.Action(action, self.obj, user=user, transition=transition)
+        wf.Action(action, self.obj, user=user, transition=transition, values=values)
         self.obj.Signal("wfAction", name=action)
 
     def GetWf(self):
@@ -446,6 +449,7 @@ class WfTransitionConf(baseConf):
         values :       custom configuration values passed to callables
         name :         Title (optional).
         description :  Description (optional).
+        message :      Feedback message used in application (optional).
         
         
     Callables to be included as condition or execute use the following parameters:
@@ -466,6 +470,7 @@ class WfTransitionConf(baseConf):
         self.id = ""
         self.name = ""
         self.description = ""
+        self.message = ""
         self.fromstate = ""
         self.tostate = ""
         self.roles = []
@@ -517,7 +522,7 @@ class WorkflowNotAllowed(Exception):
 
 
 @implementer(IProcess)
-class Process(object):
+class Process:
     """
     Workflow process implementation
 
@@ -567,7 +572,7 @@ class Process(object):
         return False
 
 
-    def Action(self, action, context, user, transition=None):
+    def Action(self, action, context, user, transition=None, values=None):
         """
         Execute the action for current state, context and user. 
 
@@ -609,12 +614,12 @@ class Process(object):
             transition = ptrans[0]
 
         # execute transition
-        transition.Execute(context, user)
+        transition.Execute(context, user, values=values)
 
         # set next state
         transition.Finish(action, context, user)
 
-        return True
+        return transition
 
 
     def PossibleTransitions(self, state, action = "", transition = "", context = None, user = None):
@@ -786,6 +791,10 @@ class Transition(object):
     def actions(self):
         return self.configuration.actions
         
+    @property
+    def message(self):
+        return self.configuration.message
+
     def Allow(self, context, user):
         """
         Checks if the transition can be executed in the current context.
@@ -810,7 +819,7 @@ class Transition(object):
         if user:
             # call registered authentication policy
             groups = effective_principals()
-            if groups==None:
+            if groups is None:
                 # no pyramid authentication policy activated
                 # use custom user lookup
                 groups = user.GetGroups(context)
@@ -844,8 +853,9 @@ class Transition(object):
         """
         if not self.configuration.execute:
             return False
-        for c in self.configuration.execute:
-            if hasattr(c, "interactive"):
+        for f in self.configuration.execute:
+            f = ResolveName(f)
+            if hasattr(f, "interactive"):
                 return True
         return False
 
@@ -868,6 +878,8 @@ class Transition(object):
         # execute function
         for c in self.configuration.execute:
             func = ResolveName(c)
+            if hasattr(func, "__call__"):
+                func = func.__call__
             func(context=context, transition=self, user=user, values=values or self.configuration.values)
         return True
 
@@ -879,6 +891,8 @@ class Transition(object):
         returns callables
         """
         fncs = []
+        if not self.configuration.execute:
+            return fncs
         for f in self.configuration.execute:
             f = ResolveName(f)
             if hasattr(f, "interactive"):
@@ -895,3 +909,7 @@ class State(object):
         for k in configuration:
             setattr(self, k, configuration[k])
 
+
+class InteractiveTransition(Exception):
+    form = None
+    transition = None
