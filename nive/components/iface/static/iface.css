@@ -7,7 +7,8 @@
 .nav-list .nav-header { color: #ffffff; text-shadow:none; }
 .nav-list>li>a { color:#dddddd; text-shadow:none; }
 .nav-list>li>a:hover { color:#999999; text-shadow:none; }
-.btn-primary { background: none; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; border:none; text-shadow:none; }
+
+.xbtn-primary { background: none; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; border:none; text-shadow:none; }
 
 body {
   font-family: Arial, Verdana, sans-serif; 
@@ -117,7 +118,7 @@ pre.filepreview {
 }
 
 /*form styling --------------------------------------------------*/
-label, input, button, select, textarea, .btn { font-size: 1.1em; line-height: 1.2em; color: #495057; }
+label, input, button, select, textarea, .xbtn { font-size: 1.1em; line-height: 1.2em; color: #495057; }
 form label.required:after  { content: "*"; }
 form input.password        { display:block; }
 .control-group input,
@@ -142,14 +143,14 @@ h2.formheader { margin-left: 170px; margin-bottom:20px; }
 form.bigform { margin:0px; padding:0px; width:auto; }
 
 form .form-actions         { border: none; background-color: transparent; padding: 0px; }
-form .form-actions .go, button.go, .btn-primary, .btn-primary:hover, .btn-primary:active {
+form .form-actions .go, button.go {
   padding: 8px 32px 8px 16px;
   background: #0786D5 url(intern/images/button.png) no-repeat 93% center;
   color: white;
   font-weight: bold;
   border: none;
 }
-form .form-actions .go:focus, .btn-primary:focus  { outline-width: thin; outline-style: dotted; outline-color: #333333; outline-offset: -2px; }
+form .form-actions .go:focus  { outline-width: thin; outline-style: dotted; outline-color: #333333; outline-offset: -2px; }
 button.go-sm     {
   padding: 4px 30px 4px 8px;
   background: #0786D5 url(intern/images/button.png) no-repeat 90% center;
