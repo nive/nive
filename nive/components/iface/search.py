@@ -62,8 +62,16 @@ class Search:
             parameter = {}
         if searchconf.get("container"):
             parameter["pool_unitref"] = self.context.id
-        if searchconf.get("queryRestraints"):
-            parameter.update(searchconf.get("queryRestraints"))
+        qr = searchconf.get("queryRestraints")
+        if qr:
+            for p in qr:
+                ok = 0
+                if p in parameter:
+                    if isinstance(qr[p], (list,tuple)):
+                        if parameter[p] in qr[p]:
+                            ok = 1
+                if not ok:
+                    parameter[p] = qr[p]
         operators = searchconf.get("operators", {"pool_type":"="})
         sdict = self.getSearchDict(searchconf)
 
