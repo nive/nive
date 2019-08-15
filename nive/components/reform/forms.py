@@ -1209,7 +1209,7 @@ class ObjectForm(HTMLForm):
         Conf(id="create",     method="CreateObj",  name=_("Create"),     hidden=False, css_class="btn btn-primary",  html="", tag=""),
         Conf(id="defaultEdit",method="StartObject",name="Initialize",    hidden=True,  css_class="",                 html="", tag=""),
         Conf(id="edit",       method="UpdateObj",  name=_("Save"),       hidden=False, css_class="btn btn-primary",  html="", tag=""),
-        Conf(id="cancel",     method="Cancel",     name=_("Cancel"),     hidden=False, css_class="buttonCancel",     html="", tag="")
+        Conf(id="cancel",     method="Cancel",     name=_("Cancel"),     hidden=False, css_class="btn btn-warning",  html="", tag="")
     ]
     subsets = {
         "create": {"actions": ["create"],  "defaultAction": "default"},

@@ -424,12 +424,12 @@ class IFaceView(Parts, Search, BaseView):
             raise ValueError("Not allowed")
 
         form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID))
-        form.subsets = {"create": {"fields": self.GetFldsAdd(context, typeID), "actions": ["default", "create"]}}
+        form.subsets = {"create": {"fields": self.GetFldsAdd(context, typeID), "actions": ["default", "create", "cancel"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
-        result, data, action = form.Process(redirectSuccess=url)
+        result, data, action = form.Process(redirectSuccess=url, redirectCancel=self.FolderUrl(context))
         if result and not data:
-            self.Redirect(self.PageUrl(context))
+            self.Redirect(self.FolderUrl(context))
             return
         return dict(content=data, result=result, view=self, head=form.HTMLHead(), title=title)
 
