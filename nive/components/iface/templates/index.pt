@@ -58,9 +58,7 @@
           </div>
       </tal:block>
     </div>
-    <div class="row">
       <tal:block metal:define-slot="content"> </tal:block>
-    </div>
   </div>
   <br style="clear:both">
 

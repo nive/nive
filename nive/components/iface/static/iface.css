@@ -340,7 +340,7 @@ button.go-sm     {
   .row #dashboard { width: 100%; }
 }
 @media (max-width: 767px) {
-  body { padding: 0; }
+  body { }
   .navbar { box-shadow: none; }
   .navbar-fixed-top .navbar-inner { padding: 0; }
   td.cicon { display:none; }
