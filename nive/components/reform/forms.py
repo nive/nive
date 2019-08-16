@@ -1557,7 +1557,7 @@ class WorkflowForm(HTMLForm):
     fields = [
         FieldConf(id="action", datatype="string", size=50, name="action", required=True, hidden=True),
         FieldConf(id="ref",    datatype="string", size=500, name="referring url", hidden=True),
-        FieldConf(id="message",datatype="text",   size=1000, name=_("Message"), required=True, hidden=False),
+        FieldConf(id="message",datatype="text",   size=1000, name=_("Message"), required=False, hidden=False),
         # ... extend/change on customization
     ]
 
