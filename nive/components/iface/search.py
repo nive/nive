@@ -344,19 +344,18 @@ class Search:
         return html    
 
     
-    def rows(self, recs,fldsList,obj=None,view=0,edit=0,duplicate=0,commit=0,reject=0,checkbox=1,ov=0,select=0,urlTmpl=None,linkCell=True,searchconf=None):
+    def rows(self,recs,fldsList,obj=None,
+             view=0,edit=0,duplicate=0,commit=0,reject=0,checkbox=1,ov=0,select=0,
+             urlTmpl=None,linkCell=True,searchconf=None):
         """
         list row and field rendering
         """
         wfa_icon = 1
-        static = 0
         xOffset = "4"
         yOffset = "4"
         targetId = "list_ov"
-        linkTitle = 1
         cache = dict()
-        maxLinkCnt = 1
-        
+
         html = []
         app = self.context.app
         
@@ -492,6 +491,8 @@ class Search:
 
             if checkbox:
                 rowStr.append("""<td class="listAction" align="right"><input value="%s" type="checkbox" name="ids" /></td>""" % (id))
+            else:
+                rowStr.append("""<td class="listAction" align="right"></td>""")
             rowStr.append("</tr>")
             html.append("".join(rowStr))
         
