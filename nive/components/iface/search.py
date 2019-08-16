@@ -381,7 +381,7 @@ class Search:
             id = row["id"]
             vUrl = self.FmtURLParam(id=id)
             url = urlTmpl%(row)
-            html.append("""<tr class="listRow listRow%s">""" % (str((cnt % 2) +1)))
+            html.append("""<tr class="listRow listRow%s" id="row%d">""" % (str((cnt % 2) +1), id))
         
             rowStr = []
             rowIsLinked = False
@@ -585,7 +585,7 @@ class Search:
                "Paste": translate(_("Paste"), self.request)}
 
         if "delete" in searchconf.get("listoptions",[]):
-            delete = """<input type="submit" name="delete" id="delete" value="%(Delete)s" class="btn btn-warning" i18n:attributes="value">""" % \
+            delete = """<input type="submit" name="delete" id="delete" value="%(Delete)s" class="btn btn-light" i18n:attributes="value">""" % \
                      {"static": self.static,
                       "Delete": translate(_("Delete selected"), self.request)}
 
@@ -593,7 +593,7 @@ class Search:
 <div id="listActionButtons">
  %(ccp)s &nbsp;
  %(delete)s &nbsp;
- <button type="button" name="selectButton" id="selectButton" class="btn btn-info">%(Select all)s</button>
+ <button type="button" name="selectButton" id="selectButton" class="btn btn-light">%(Select all)s</button>
 </div>
         """ % {"static": self.static, "ccp": ccp, "delete": delete, "base":self.FolderUrl(),
                "Select all": translate(_("Select all"), self.request)}

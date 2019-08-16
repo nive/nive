@@ -1,10 +1,12 @@
 
 <!-- main header navigation used for all layouts -->
-<nav metal:define-macro="topnav" class="navbar fixed-top navbar-expand-lg" id="topnav" i18n:domain="nive">
-   <a class="navbar-brand" href="${view.backlink()}"><img src="${view.static}intern/images/logo.png" class="logo" alt="Nive" title="${view.ifaceConf.slogan}" /></a>
-   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav metal:define-macro="topnav" i18n:domain="nive">
+   <div class="navbar fixed-top navbar-expand-lg" id="topnav">
+   <div tal:condition="view.ifaceConf.slogan" class="slogan">${view.ifaceConf.slogan}</div>
+   <a class="navbar-brand" href="${view.backlink()}"><img src="${view.ifaceConf.logo}" class="logo" alt="${view.ifaceConf.slogan}" title="${view.ifaceConf.slogan}" /></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
      <span class="navbar-toggler-icon"></span>
-     <img src="${view.static}intern/images/menu.png">
+     <img src="${view.static}images/menu.png">
    </button>
    <div class="collapse navbar-collapse" id="navbarContent">
      <ul metal:define-slot="sections"
@@ -29,6 +31,7 @@
        <li class="divider-vertical"></li>
        <li class="nav-item"><span tal:condition="hl" tal:replace="structure hl"></span></li>
      </ul>
+   </div>
    </div>
 </nav>
 
