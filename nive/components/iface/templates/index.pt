@@ -6,7 +6,7 @@
    <a class="navbar-brand" href="${view.backlink()}"><img src="${view.ifaceConf.logo}" class="logo" alt="${view.ifaceConf.slogan}" title="${view.ifaceConf.slogan}" /></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
      <span class="navbar-toggler-icon"></span>
-     <img src="${view.static}images/menu.png">
+     <img src="${view.static}images/menu-black.png">
    </button>
    <div class="collapse navbar-collapse" id="navbarContent">
      <ul metal:define-slot="sections"
