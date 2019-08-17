@@ -78,6 +78,18 @@ def ConvertToDateTime(date):
         return datetime.datetime.strptime(date, "%Y/%m/%d %H:%M:%S")
     except ValueError:
         pass
+    try:
+        return datetime.datetime.strptime(date, "%d.%m.%Y %H:%M")
+    except ValueError:
+        pass
+    try:
+        return datetime.datetime.strptime(date, "%d.%m.%Y %H:%M:%S")
+    except ValueError:
+        pass
+    try:
+        return datetime.datetime.strptime(date, "%d.%m.%Y")
+    except ValueError:
+        pass
 
 
 def CutText(text, textlen, cutchars=" ;:,.\r\n", postfix=" ..."):
