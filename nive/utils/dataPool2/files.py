@@ -13,7 +13,7 @@ from nive.definitions import IFileStorage, implementer
 # FileManager Constants ---------------------------------------------------------------------------
 
 @implementer(IFileStorage)
-class File(object):
+class File:
     """
     File mapping object. The file attribute can be stored as data or readable stream object.
     This file class is used to map files stored and read from the storage system.
@@ -57,12 +57,12 @@ class File(object):
             # update attributes from dictionary
             self.update(filedict)
 
-        if isinstance(self.file, str):
+        if isinstance(self.file, (bytes,str)):
             # file data is set as string -> create string io and mark as tempfile
             self.size = len(self.file)
             self.file = BytesIO(self.file)
             self.tempfile = True
-    
+
         # get extension and file name if not set
         if self.filename == "" and self.path != "":
             self.filename = os.path.basename(path)
