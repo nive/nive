@@ -58,7 +58,7 @@ def ConvertToDateTime(date):
     elif not date:
         return None
     try:
-        return iso8601.parse_date(date)
+        return iso8601.parse_date(date, default_timezone=None)
     except (iso8601.ParseError, TypeError) as e:
         pass
     # try other string format versions
@@ -295,7 +295,7 @@ def ReplaceHTMLEntities(text, codepage = None):
     """
     Removes HTML or XML character references and entities from a text string.
     """
-    def _fixup(m):
+    def _fixup(m): #TODO py3
         text = m.group(0)
         if text[:2] == "&#":
             # character reference

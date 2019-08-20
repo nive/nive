@@ -13,7 +13,7 @@ from datetime import datetime
 from nive.definitions import implementer
 from nive.definitions import Conf, baseConf
 from nive.definitions import StagContainer, StagRessource, MetaTbl
-from nive.definitions import IContainer, IRoot, ICache, IObject, IConf
+from nive.definitions import IContainer, IRoot, ICache, IObject, IConf, IObjectConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
 from nive.security import has_permission, SetupRuntimeAcls
@@ -268,9 +268,12 @@ class ContainerWrite:
         - create (called in context of the new object)
         """
         app = self.app
-        typedef = app.configurationQuery.GetObjectConf(type)
-        if not typedef:
-            raise ConfigurationError("Type not found (%s)" % (str(type)))
+        if not IObjectConf.providedBy(type):
+            typedef = app.configurationQuery.GetObjectConf(type)
+            if not typedef:
+                raise ConfigurationError("Type not found (%s)" % (str(type)))
+        else:
+            typedef = type
 
         # allow subobject
         if not self.IsTypeAllowed(typedef, user):
