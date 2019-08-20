@@ -305,13 +305,13 @@ class DvPath(object):
         Copy file to copyPath. Directories are created if necessary
         """
         try:
-            aOldPath = self._pPath
-            self._pPath = copyPath
+            aOldPath = self._path
+            self._path = copyPath
             self.CreateDirectories()
-            shutil.copy2(aOldPath, copyPath)
+            shutil.copy2(aOldPath, str(copyPath))
             return True
         except Exception as e:
-            self._pPath = aOldPath
+            self._path = aOldPath
             return False
 
     def Pack(self, add=(), rootDir=""):
@@ -330,20 +330,24 @@ class DvPath(object):
             # ziph is zipfile handle
             for root, dirs, files in os.walk(path):
                 for file in files:
-                    ziph.write(os.path.join(root, file))
+                    fn = os.path.join(root, file)
+                    ziph.write(fn, arcname=fn[len(rootDir):])
 
-        files = ""
-        for f in add:
-            files += "'%s' " % (f)
-        zipf = zipfile.ZipFile(self._pPath, 'w', zipfile.ZIP_DEFLATED)
-        zipdir(str(files), zipf)
+        zipf = zipfile.ZipFile(self._path, 'w', zipfile.ZIP_DEFLATED)
+        for file in add:
+            if os.path.isdir(file):
+                zipdir(file, zipf)
+            else:
+                zipf.write(file, arcname=file[len(rootDir):])
         zipf.close()
+        return True
+
 
     def Tar(self, add=(), rootDir=""):
         files = ""
         for f in add:
             files += "'%s' " % (f)
-        cmd = """cvzf %(path)s %(files)s""" % {"path": self._pPath, "files": str(files)}
+        cmd = """cvzf %(path)s %(files)s""" % {"path": self._path, "files": str(files)}
         s = popen("tar " + cmd, "r")
         r = ""
         while 1:

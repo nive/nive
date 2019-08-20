@@ -479,7 +479,7 @@ class FileEntry(object):
         """
         if not key:
             return None
-        if fileid!=None:
+        if fileid is not None:
             parameter = {"fileid":fileid}
         else:
             parameter = {"filekey": key}
