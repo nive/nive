@@ -150,8 +150,10 @@ def float_node(field, kw, kwWidget, form):
     return SchemaNode(Float(), **kw)
 
 def bool_node(field, kw, kwWidget, form):
+    v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
-        kw["widget"] = RadioChoiceWidget(**kwWidget)
+        values=[(a["id"],a["name"]) for a in v]
+        kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
     return SchemaNode(Boolean(), **kw)
 
 def htext_node(field, kw, kwWidget, form):

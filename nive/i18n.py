@@ -5,7 +5,7 @@ from nive.i18n import _
 #from translationstring import TranslationStringFactory
 
 
-from pyramid.i18n import get_localizer, TranslationStringFactory
+from pyramid.i18n import get_localizer, TranslationStringFactory, TranslationString
 from pyramid.threadlocal import get_current_request
 
 _ = TranslationStringFactory('nive')

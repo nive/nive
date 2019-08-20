@@ -8,7 +8,7 @@ from nive.definitions import Conf
 
 from nive import helper
 
-from nive.i18n import _, translate
+from nive.i18n import _, translate, TranslationString
 
 
 class Search:
@@ -289,8 +289,8 @@ class Search:
 </form>
         """ % {"action":action, "formhtml":formhtml, "messages": messages, "shortcuts": shortcuts,
                "urls":urls, "options": options, "header": header, "rows":rows, "static": self.static,
-               "start": sdict["start"], "sort": sdict["sort"], "ascending": sdict["ascending"],
-               "styling": styling, "ref": self.CurrentUrl(preserveHost=False)}  # "header": form.HTMLHead()
+               "start": 0, "sort": sdict["sort"], "ascending": sdict["ascending"],
+               "styling": styling, "ref": self.CurrentUrl(preserveHost=False)}  # "header": form.HTMLHead()  #sdict["start"]
         return html
 
 
@@ -514,15 +514,14 @@ class Search:
         start = items.get("start")
         maxPage = items.get("max")
         total = items.get("total")
-        pageCount = total / maxPage + (total % maxPage != 0)
+        pageCount = int(total / maxPage) + (total % maxPage != 0)
         pageHtml = ""
         
         if total <= maxPage:
-            return ""
-        
-        cntstr = "%d to %d of %d"
-        
-        cnt = cntstr % (items.get('start')+1, items.get('start')+items.get('count'), items.get('total'))
+            cnt = translate(_("${total} of ${total}", mapping={'total': items.get('total')}))
+            return """<div class="paging"><div>%s</div></div>""" % (cnt)
+
+        cnt = translate(_("${start} to ${count} of ${total}", mapping={"start":items.get('start')+1, "count":items.get('start')+items.get('count'), 'total': items.get('total')}))
         prev = """<a class="search_start" data-value="%d">&laquo;</a>""" % (items.get("prev"))
         next = """<a class="search_start" data-value="%d">&raquo;</a>""" % (items.get("next"))
         pageTmpl = """ <a class="search_start" data-value="%d">%s</a> """
