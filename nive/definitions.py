@@ -1471,14 +1471,14 @@ FieldConf(id="pool_datatbl",   datatype="string",    size=35,    default="",   r
 UserFlds=(
 FieldConf(id="pool_create",    datatype="datetime",  size=30,    default="",   required=0,   readonly=1, name=_("Created")),
 FieldConf(id="pool_change",    datatype="datetime",  size=30,    default="",   required=0,   readonly=1, name=_("Changed")),
-FieldConf(id="pool_createdby", datatype="string",    size=35,    default="",   required=0,   readonly=1, name=_("Created by"), settings={"relation":"userid"}),
-FieldConf(id="pool_changedby", datatype="string",    size=35,    default="",   required=0,   readonly=1, name=_("Changed by"), settings={"relation":"userid"}),
+FieldConf(id="pool_createdby", datatype="string",    size=40,    default="",   required=0,   readonly=1, name=_("Created by"), settings={"relation":"userid"}),
+FieldConf(id="pool_changedby", datatype="string",    size=40,    default="",   required=0,   readonly=1, name=_("Changed by"), settings={"relation":"userid"}),
 )
 # utilities
 UtilityFlds=(
 FieldConf(id="title",          datatype="string",    size=255,   default="",   required=0,   readonly=0, name=_("Title"), fulltext=True),
 FieldConf(id="pool_sort",      datatype="number",    size=8,     default=0,     required=0,   readonly=0, name=_("Sort")),
-FieldConf(id="pool_category",  datatype="list",      size=35,    default="",   required=0,   readonly=0, name=_("Category")),
+FieldConf(id="pool_category",  datatype="list",      size=100,   default="",   required=0,   readonly=0, name=_("Category")),
 )
 # workflow
 WorkflowFlds=(
