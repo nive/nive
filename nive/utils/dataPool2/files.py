@@ -520,11 +520,8 @@ class FileEntry(object):
 
         # lookup exiting file to replace
         if file.fileid == 0:
-            fileid = self._LookupFileID(file)
-            file.fileid = fileid
-        else:
-            fileid = file.fileid
-        
+            file.fileid = self._LookupFileID(file)
+
         # update file records
         file.commitTemp(self)
         self._UpdateMeta(file)

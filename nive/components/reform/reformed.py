@@ -9,7 +9,7 @@ to schema nodes.
 from pkg_resources import resource_filename
 from nive.components.reform.template import ZPTRendererFactory
 
-from nive.i18n import translate
+from nive.i18n import translate, _
 from nive.definitions import ModuleConf, ViewModuleConf
 from nive.helper import LoadListItems, ResolveName
 
@@ -150,9 +150,12 @@ def float_node(field, kw, kwWidget, form):
     return SchemaNode(Float(), **kw)
 
 def bool_node(field, kw, kwWidget, form):
-    v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
-        values=[(a["id"],a["name"]) for a in v]
+        v = LoadListItems(field, app=form.app, obj=form.context)
+        if v:
+            values=[(a["id"],a["name"]) for a in v]
+        else:
+            values = (("true", _("Yes")), ("false", _("No")))
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
     return SchemaNode(Boolean(), **kw)
 
