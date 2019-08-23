@@ -81,10 +81,11 @@ class PathExtension(object):
         Path length between *self.maxlength-20* and *self.maxlength* chars. Tries to cut longer names at spaces.      
         (based on django's slugify)
         """
-        path = unicodedata.normalize("NFKD", path) #.encode("ascii", "ignore")
+        path = unicodedata.normalize("NFKD", path).encode("ascii", "ignore")
+        path = path.decode("utf-8")
         path = re.sub('[^\w\s-]', '', path).strip().lower()
         path = re.sub('[-\s]+', '_', path)
-        
+
         # cut long filenames
         cutlen = 20
         if len(path) <= self.maxlength:
@@ -209,4 +210,69 @@ class PersistentRootPath(object):
                 # unique root id generated from name . negative integer.
                 self.idhash = abs(hash(self.__name__))*-1
 
+
+
+from nive.tool import Tool, ToolView
+from nive.definitions import ToolConf, FieldConf, ViewConf, IApplication
+
+
+tool_configuration = ToolConf(
+    id = "rewriteFilename",
+    context = "nive.extensions.path.RewriteFilenamesTool",
+    name = "Rewrite pool_filename based on title",
+    description = "Rewrites all or empty filenames based on form selection.",
+    apply = (IApplication,),
+    mimetype = "text/html",
+    data = [
+        FieldConf(id="types", datatype="checkbox", default="", settings=dict(codelist="types"), name="Object types", description=""),
+        FieldConf(id="testrun", datatype="bool", default=1, name="Testrun, no commits", description=""),
+        FieldConf(id="resetall", datatype="string", default="", size=15, name="Reset all filenames", description="<b>Urls will change! Enter 'reset all'</b>"),
+        FieldConf(id="tag", datatype="string", default="rewriteFilename", hidden=1)
+    ],
+
+    views = [
+        ViewConf(name="", view=ToolView, attr="form", permission="admin", context="nive.extensions.path.RewriteFilenamesTool")
+    ]
+)
+
+class RewriteFilenamesTool(Tool):
+
+    def _Run(self, **values):
+
+        parameter = dict()
+        if values.get("resetall")!="reset all":
+            parameter["pool_filename"] = ""
+        if values.get("types"):
+            tt = values.get("types")
+            if not isinstance(tt, list):
+                tt = [tt]
+            parameter["pool_type"] = tt
+        operators = dict(pool_type="IN", pool_filename="=")
+        fields = ("id", "title", "pool_type", "pool_filename")
+        root = self.app.root
+        recs = root.search.Search(parameter, fields, max=10000, operators=operators, sort="id", ascending=0)
+
+        if len(recs["items"]) == 0:
+            return values, "<h2>None found!</h2>"
+
+        user = values["original"]["user"]
+        testrun = values["testrun"]
+        result = []
+        cnt = 0
+        for rec in recs["items"]:
+            obj = root.LookupObj(rec["id"])
+            if obj is None or not hasattr(obj, "TitleToFilename"):
+                continue
+
+            filename = obj.meta["pool_filename"]
+            obj.TitleToFilename()
+            if filename!=obj.meta["pool_filename"]:
+                result.append(filename+" <> "+obj.meta["pool_filename"])
+            if testrun==False:
+                obj.dbEntry.Commit(user=user)
+                #obj.CommitInternal(user=user)
+
+            cnt += 1
+
+        return None, "OK. %d filenames updated, %d different!<br>%s" % (cnt, len(result), "<br>".join(result))
 

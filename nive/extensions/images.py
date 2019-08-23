@@ -28,6 +28,7 @@ If either width or height is 0 the new image is scaled proportionally.
 See PIL documentation for possible format and quality values.
  
 """
+import logging
 
 from nive.utils.path import DvPath
 from nive import File
@@ -57,11 +58,11 @@ class ImageExtension:
             if not p.source in keys:
                 continue
             f = self.files.get(p.source)
-            if not f or not f.tempfile:
+            if f is None:
                 continue
             images.append(p.source)
-        self.Process(images=images)
-        self.Signal("imageprocessed", **kw)
+        r,m = self.Process(images=images, force=kw.get("force", False))
+        return r
 
 
     def CleanupImages(self, **kw):
@@ -90,7 +91,7 @@ class ImageExtension:
             return 0,0        
         
 
-    def Process(self, images=None, profiles=None):
+    def Process(self, images=None, profiles=None, force=False):
         """
         Process images and create versions from profiles. ::
         
@@ -98,7 +99,8 @@ class ImageExtension:
                      selected profiles are processed.
             profiles = list of profiles to process. if none all profiles are 
                        processed
-            returns result, messages
+            force = convert non temp files
+            returns result (count processed), messages
         
         Example: If `Process(images=['highres'], profiles=None)` all versions with
         `source=highres` are updated.
@@ -108,7 +110,7 @@ class ImageExtension:
 
         """
         if not PILloaded:
-            return False, ["Python image library (PIL) not installed."]
+            return 0, ["Python image library (PIL) not installed."]
         convert = []
         profiles = profiles or self.configuration.imageProfiles
         if not images:
@@ -123,17 +125,16 @@ class ImageExtension:
                 if p.source in images:
                     convert.append(p)
         if not convert:
-            return True
+            return 0, ["No match"]
         msgs = []
-        result = True
+        result = 0
         for profile in convert:
-            r, m = self._Convert(profile)
-            msgs += m
-            if not r:
-                result = False
-            else:
+            r = self._Convert(profile, force)
+            result += r
+            if r:
                 self.Signal("updateImage", profile=profile)
-        return result, msgs
+        self.Signal("imageprocessed")
+        return result, []
         
         
     def _CheckCondition(self, profile):
@@ -143,13 +144,14 @@ class ImageExtension:
         return c(self)
       
         
-    def _Convert(self, profile):
+    def _Convert(self, profile, force):
         source = self.files.get(profile.source)
-        if not source or not source.tempfile:
-            # convert only if tempfile
-            return False, ()
-        if not source:
-            return False, ["Image not found: " + profile.source]
+        dest = self.files.get(profile.dest)
+        if source is None:
+            return 0
+        if not source.tempfile and not force and dest:
+            # convert only if tempfile or dest does not exist or force=True
+            return 0
         p = DvPath()
         p.SetUniqueTempFileName()
         p.SetExtension(profile.extension)
@@ -182,7 +184,10 @@ class ImageExtension:
             iObj = iObj.resize(size, Image.ANTIALIAS)
             iObj.save(destPath, profile.format)
             try:
-                source.file.seek(0)
+                if source.file.closed:
+                    source.file = None
+                else:
+                    source.file.seek(0)
             except:
                 pass
             
@@ -201,8 +206,80 @@ class ImageExtension:
         finally:
             # clean temp file
             p.Delete()
-        return True, []
+        return 1
         
+
+
+
+from nive.tool import Tool, ToolView
+from nive.definitions import ToolConf, FieldConf, ViewConf, IApplication
+
+
+tool_configuration = ToolConf(
+    id = "processImages",
+    context = "nive.extensions.images.ProcessImagesTool",
+    name = "Process images based on conversion profiles",
+    description = "Rewrites all or empty images based on form selection.",
+    apply = (IApplication,),
+    mimetype = "text/html",
+    data = [
+        FieldConf(id="types", datatype="checkbox", default="", required=1, settings=dict(codelist="types"), name="Object types", description=""),
+        FieldConf(id="emptyonly", datatype="bool", default=1, name="Rewrite only empty images", description=""),
+        FieldConf(id="testrun", datatype="bool", default=1, name="Testrun, no commits", description=""),
+        FieldConf(id="tag", datatype="string", default="processImages", hidden=1)
+    ],
+
+    views = [
+        ViewConf(name="", view=ToolView, attr="form", permission="admin", context="nive.extensions.images.ProcessImagesTool")
+    ]
+)
+
+class ProcessImagesTool(Tool):
+
+    def _Run(self, **values):
+
+        parameter = dict()
+        if values.get("types"):
+            tt = values.get("types")
+            if not isinstance(tt, list):
+                tt = [tt]
+            parameter["pool_type"] = tt
+        operators = dict(pool_type="IN")
+        fields = ("id", "title", "pool_type", "pool_filename")
+        root = self.app.root
+        recs = root.search.Search(parameter, fields, max=1000000, operators=operators, sort="id")
+
+        if len(recs["items"]) == 0:
+            return values, "<h2>None found!</h2>"
+
+        user = values["original"]["user"]
+        testrun = values["testrun"]
+        emptyonly = values["emptyonly"]
+        result = []
+        cnt = 0
+        rcnt = 0
+        log = logging.getLogger("converter")
+        for rec in recs["items"]:
+            rcnt +=1
+            if rcnt%1000==0:
+                log.info("Processing Images: %d of %d ... %d processed."%(rcnt, recs["total"], cnt))
+            obj = root.LookupObj(rec["id"])
+            if obj is None or not hasattr(obj, "ProcessImages"):
+                continue
+            if testrun:
+                continue
+            try:
+                if emptyonly:
+                    cnt += obj.ProcessImages(user=user)
+                else:
+                    cnt += obj.ProcessImages(user=user, force=True)
+
+                obj.dbEntry.Commit(user=user)
+            except Exception as e:
+                err = str(rec["id"])+" Error: "+str(e)
+                log.error(err)
+                result.append(err)
+        return None, "OK. %d images processed!<br>%s" % (cnt, "<br>".join(result))
 
 
 
