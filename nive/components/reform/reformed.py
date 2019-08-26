@@ -210,7 +210,7 @@ def time_node(field, kw, kwWidget, form):
     return SchemaNode(Time(), **kw)
 
 def list_node(field, kw, kwWidget, form):
-    v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.user)
+    v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.User(sessionuser=False))
     if field.settings and field.settings.get("addempty"):
         # copy the list and add empty entry
         v = list(v)
