@@ -1820,7 +1820,7 @@ class Set(object):
        Boolean representing whether an empty set input to
        deserialize will be considered valid.  Default: ``False``.
     """
-    def __init__(self, allow_empty=False):
+    def __init__(self, allow_empty=True):
         self.allow_empty = allow_empty
         
     def serialize(self, node, value):
@@ -1852,7 +1852,7 @@ class List(object):
     ``allowed``
        List of strings defining the allowed values to be serialized.
     """
-    def __init__(self, allow_empty=False, allowed=None):
+    def __init__(self, allow_empty=True, allowed=None):
         self.allow_empty = allow_empty
         self.allowed = allowed
         
@@ -1895,7 +1895,7 @@ class CodeList(object):
     ``allowed``
        List of strings defining the allowed values to be serialized.
     """
-    def __init__(self, allow_empty=False, allowed=None):
+    def __init__(self, allow_empty=True, allowed=None):
         self.allow_empty = allow_empty
         self.allowed = set(allowed)
         
