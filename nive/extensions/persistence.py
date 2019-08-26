@@ -20,8 +20,6 @@ from nive.definitions import implementer, IPersistent, ModuleConf, Conf, IModule
 from nive.definitions import OperationalError, ProgrammingError
 
 
-
-
 @implementer(IPersistent)
 class PersistentConf(object):
     """
@@ -89,26 +87,23 @@ class DbPersistence(PersistentConf):
         """
         close = 0
         try:
-            if not db:
-                close = 1
-                db = self.app.NewDBApi()
+            if db is None:
+                db = self.app.db.connection
             sql = """select value,ts from pool_sys where id=%s""" % (self.app.NewConnection().placeholder)
             c=db.cursor()
             c.execute(sql, (self._GetUid(),))
             data = c.fetchall()
             c.close()
-        except db.OperationalError:
+        except OperationalError:
             data = None
             db.rollback()
-        except db.ProgrammingError:
+        except ProgrammingError:
             data = None
             db.rollback()
         except Exception as e:
             log = logging.getLogger(self.app.id)
             log.error("DbPersistence.Load() failed %s", str(e))
             return None
-        if close:
-            db.close()
         if data:
             values = json.loads(data[0][0])
             lock = 0
@@ -133,8 +128,7 @@ class DbPersistence(PersistentConf):
         ts = time.time()
         close = 0
         try:
-            if not db:
-                close = 1
+            if db is None:
                 db = self.app.db
             sql = """select ts from pool_sys where id=%s""" % (db.placeholder)
             r = db.Query(sql, (self._GetUid(),))
@@ -150,8 +144,6 @@ class DbPersistence(PersistentConf):
         except ProgrammingError: 
             data = None
             db.Undo()
-        if close:
-            db.Close()
         lock = 0
         if self.conf.locked:
             lock = 1
