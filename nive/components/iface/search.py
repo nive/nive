@@ -59,10 +59,18 @@ class Search:
             result, parameter = form.Extract(self.request, removeNull=True, removeEmpty=True)
         else:
             form = None
-            parameter = {}
+            parameter = dict()
+        operators = searchconf.get("operators", {"pool_type":"="})
+        qr = searchconf.get("queryRestraints")
         if searchconf.get("container"):
             parameter["pool_unitref"] = self.context.id
-        qr = searchconf.get("queryRestraints")
+
+        # callback
+        cb = searchconf.get("callback")
+        if cb is not None:
+            qr, parameter, operators, searchFlds = cb(view=self, qr=qr, parameter=parameter, operators=operators,
+                                                      searchFlds=searchFlds, searchconf=searchconf)
+
         if qr:
             for p in qr:
                 ok = 0
@@ -72,7 +80,6 @@ class Search:
                             ok = 1
                 if not ok:
                     parameter[p] = qr[p]
-        operators = searchconf.get("operators", {"pool_type":"="})
         sdict = self.getSearchDict(searchconf)
 
         options = searchconf.get("options") or {}
