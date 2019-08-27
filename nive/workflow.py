@@ -819,7 +819,7 @@ class Transition(object):
         if user:
             # call registered authentication policy
             groups = effective_principals()
-            if groups is None:
+            if groups is None or groups==["system.Everyone"]:
                 # no pyramid authentication policy activated
                 # use custom user lookup
                 groups = user.GetGroups(context)
