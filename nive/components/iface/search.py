@@ -543,7 +543,7 @@ class Search:
             current = int(start / maxPage)
             count = 10
             pages = [0]
-            first = current - count / 2 + 1
+            first = current - int(count / 2) + 1
             if first < 1:
                 first = 1
             elif pageCount < count:

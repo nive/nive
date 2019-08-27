@@ -31,3 +31,4 @@ form table.search .form-group { margin-bottom:0; }
     background-position: 20px 7px;
 }
 
+.invalid-feedback { display:block; }
