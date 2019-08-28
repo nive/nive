@@ -658,8 +658,18 @@ class BaseView(object):
         
         returns True / False
         """
+        # fix missing callback principals() context param
+        context = context or self.context
+        if context != self.request.context:
+            try:
+                originalContext = self.request.context
+                self.request.context = context
+                return has_permission(permission, context or self.context, self.request)
+            finally:
+                self.request.context = originalContext
+
         return has_permission(permission, context or self.context, self.request)
-    
+
     def InGroups(self, groups):
         """
         Check if current user is in one of the groups.
@@ -686,7 +696,7 @@ class BaseView(object):
         self._c_tz = l
         return l
     
-    def RenderField(self, fld, data=None, context=None):
+    def RenderField(self, fld, data=None, context=None, user=None):
         """
         Render the data field for html display. Rendering depends on the datatype defined
         in the field configuration.
@@ -711,7 +721,7 @@ class BaseView(object):
             if url2.find(".jpg")!=-1 or url2.find(".jpeg")!=-1 or url2.find(".png")!=-1 or url2.find(".gif")!=-1:
                 return """<img src="%s">""" % (url)
             return """<a href="%s">download</a>""" % (url)
-        return FieldRenderer(context).Render(fld, data, context=context)
+        return FieldRenderer(context).Render(fld, data, context=context, user=user or self.user)
     
 
     def Translate(self, text):
@@ -1233,11 +1243,11 @@ class FieldRenderer(object):
         if fieldConf["id"] in self.skipRender:
             return data
 
-        def loadListItems(fld, context):
+        def loadListItems(fld, context, user=None):
             if not context:
                 return []
             pool_type = context.GetTypeID() 
-            return helper.LoadListItems(fld, app=context.app, obj=context, pool_type=pool_type)
+            return helper.LoadListItems(fld, app=context.app, obj=context, pool_type=pool_type, user=user)
         
         # format for output
         fType = fieldConf["datatype"]
@@ -1316,11 +1326,11 @@ class FieldRenderer(object):
             return str(data)
 
         elif fType == "list" or fType == "radio":
-            options = listItems or loadListItems(fieldConf, context)
+            options = listItems or loadListItems(fieldConf, context, user=kw.get("user"))
             if not options:
                 options = fieldConf.get("listItems")
                 if hasattr(options, "__call__"):
-                    options = options(fieldConf, self.context)
+                    options = options(fieldConf, self.context, user=kw.get("user"))
 
             if options:
                 for item in options:
@@ -1330,11 +1340,11 @@ class FieldRenderer(object):
                 
         elif fType in("multilist", "checkbox", "mselection", "mcheckboxes"):
             values = []
-            options = listItems or loadListItems(fieldConf, context)
+            options = listItems or loadListItems(fieldConf, context, user=kw.get("user"))
             if not options:
                 options = fieldConf.get("listItems")
                 if hasattr(options, "__call__"):
-                    options = options(fieldConf, self.context)
+                    options = options(fieldConf, self.context, user=kw.get("user"))
 
             if isinstance(data, str):
                 data = tuple(data.split("\n"))

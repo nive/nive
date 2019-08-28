@@ -26,7 +26,7 @@ class Search:
     
     # search function ----------------------------------------------------------------------
     
-    def result(self, searchconf=None):
+    def result(self, searchconf=None, user=None):
         """
         main search function to be called from templates. if searchconf is none
         values are extracted from self.ifaceConf configuration object.
@@ -50,7 +50,7 @@ class Search:
             for f in searchFlds:
                 tmp.append(f.copy(readonly=False, required=False))
             searchFlds = tmp
-            form = HTMLForm(view=self)
+            form = HTMLForm(view=self, user=user)
             form.method = searchconf.get("method")
             form.fields = tmp
             form.widget.item_template = "field_onecolumn"
@@ -208,14 +208,14 @@ class Search:
             
     # search ----------------------------------------------
     
-    def search(self, searchconf="default", styling="table table-striped", urlTmpl=None, showMessages=True):
+    def search(self, searchconf="default", styling="table table-striped", urlTmpl=None, showMessages=True, user=None):
         """
         main search function to be called from templates. if searchconf is none
         values are extracted from self.ifaceConf configuration object.
         
         request based search parameters are "start, max, sort, ascending" for user sorts and paged results
         """
-        items, fldsList, searchFlds, form, searchconf, sdict = self.result(searchconf)
+        items, fldsList, searchFlds, form, searchconf, sdict = self.result(searchconf, user=user)
         urlTmpl = urlTmpl or searchconf.get("urlTmpl") or "location.href='open?id=%(id)d'"
         return self.searchBody(form, items, searchconf.get("type"), fldsList, searchFlds, sdict, searchconf, styling, urlTmpl, showMessages)
 
