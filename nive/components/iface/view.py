@@ -484,8 +484,8 @@ class IFaceView(Parts, Search, BaseView):
             url = self.PageUrl(context)
         elif url == "obj_url":
             url = self.Url(context)
-        elif url == "objid_url":
-            url = self.FolderUrl(context.parent) + str(context.id)
+        elif url.find("objid_url")!=-1:
+            url = url.replace("objid_url", self.FolderUrl(context.parent) + str(context.id))
         elif url.find("obj_folder_url")!=-1:
             url = url.replace("obj_folder_url", self.FolderUrl(context))
         elif url == "root_url":
@@ -666,19 +666,18 @@ class IFaceView(Parts, Search, BaseView):
         objs = []
         for i in ids:
             o = self.context.obj(i)
-            if o:
-                objs.append(o)
+            if o is not None:
+                # check delete permission
+                if self.Allowed("delete", o):
+                    objs.append(o)
+                else:
+                    result["msgs"].append(o.meta.title + " " + translator()(_("Unauthorized. Delete is not allowed.")))
         if delete != "1":
             result["objsToDelete"] = objs
             return result
         ok = False
         user = self.User()
         for o in objs:
-            #check delete permission
-            if not self.Allowed("delete", o):
-                result["msgs"].append(o.meta.title + " " + translator()(_("Unauthorized. Delete is not allowed.")))
-                ok = False
-                continue
             # linked as unit/unitlist
             linked = self.context.search.GetReferences(o.id, types=None, sort="id")
             if linked:
