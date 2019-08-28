@@ -297,37 +297,47 @@ def unit_node(field, kw, kwWidget, form):
     if not "validator" in kw and field.settings.get("app"):
         kw["validator"] = ExistingObject(obj_type=field.settings.get("obj_type"))
     if not "widget" in kw:
-        ot = field.settings.get("obj_type")
-        tf = field.settings.get("name_field", "title")
-        operators = dict()
-        parameter = dict()
-        if ot:
-            parameter["pool_type"] = ot
-        if isinstance(ot, (list, tuple)):
-            operators["pool_type"] = "IN"
-        pool = form.app
-        if field.settings.get("app"):
-            pool = form.app.portal[field.settings.get("app")]
-        values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
-        values = [(str(a["id"]),a["name"]) for a in values]
+        if field.get("listItems") is None:
+            ot = field.settings.get("obj_type")
+            tf = field.settings.get("name_field", "title")
+            operators = dict()
+            parameter = dict()
+            if ot:
+                parameter["pool_type"] = ot
+            if isinstance(ot, (list, tuple)):
+                operators["pool_type"] = "IN"
+            pool = form.app
+            if field.settings.get("app"):
+                pool = form.app.portal[field.settings.get("app")]
+            values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+            values = [(str(a["id"]),a["name"]) for a in values]
+        else:
+            v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.User(sessionuser=False))
+            values = [(str(a["id"]), a["name"]) for a in v]
+
         kw["widget"] = UnitWidget(values=values, **kwWidget)
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        ot = field.settings.get("obj_type")
-        tf = field.settings.get("name_field", "title")
-        operators = dict()
-        parameter = dict()
-        if ot:
-            parameter["pool_type"] = ot
-        if isinstance(ot, (list, tuple)):
-            operators["pool_type"] = "IN"
-        pool = form.app
-        if field.settings.get("app"):
-            pool = form.app.portal[field.settings.get("app")]
-        values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
-        values = [(str(a["id"]),a["name"]) for a in values]
+        if field.get("listItems") is None:
+            ot = field.settings.get("obj_type")
+            tf = field.settings.get("name_field", "title")
+            operators = dict()
+            parameter = dict()
+            if ot:
+                parameter["pool_type"] = ot
+            if isinstance(ot, (list, tuple)):
+                operators["pool_type"] = "IN"
+            pool = form.app
+            if field.settings.get("app"):
+                pool = form.app.portal[field.settings.get("app")]
+            values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+            values = [(str(a["id"]),a["name"]) for a in values]
+        else:
+            v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.User(sessionuser=False))
+            values = [(str(a["id"]), a["name"]) for a in v]
+
         kw["widget"] = ChooseWidget(values=values, **kwWidget)
     return SchemaNode(List(allow_empty=True), **kw)
 
