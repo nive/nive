@@ -6,7 +6,7 @@ import re
 
 
 
-class PathExtension(object):
+class PathExtension:
     """
     Enables readable url path names instead of ids for object traversal.
     Names are stored as meta.pool_filename and generated from
@@ -51,6 +51,7 @@ class PathExtension(object):
             # reset filename
             self.meta["pool_filename"] = ""
         self._SetName()
+        self.Signal("pathupdate", path=self.meta["pool_filename"])
         
         
     def UniqueFilename(self, name):
