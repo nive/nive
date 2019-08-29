@@ -201,7 +201,7 @@ class Base(object):
         condition = custom condition statement. default = empty
         join = custom join statement. default = empty
         groupby: add GROUP BY statement
-        sort: result sort order
+        sort: result sort order. sort prefix ! to skip auto table lookup
         ascending: result sort order ascending or descending
         """
         operators = kw.get("operators",{})
@@ -405,7 +405,9 @@ class Base(object):
         sort = kw.get("sort", "")
         if sort is None:
             sort = ""
-        if sort and not singleTable:
+        if sort and sort[0] == "!":
+            sort = sort[1:]
+        elif sort and not singleTable:
             table = "meta__."
             s = sort.split(",")
             sort = []
