@@ -50,7 +50,7 @@
                 // open modal
                 $("#modal-${field.oid}").modal('show');
                 // load add form
-                $("#placeholder-${field.oid}").attr("src", "@addform?fid=${field.name}");
+                $("#placeholder-${field.oid}").attr("src", "${field.widget.form.view.FolderUrl(field.widget.form.view.context.root)}@addform?fid=${field.name}");
             });
 
             $("#modal-go-${field.oid}").on("click", function () {
