@@ -152,11 +152,8 @@ class ImageExtension:
         if not source.tempfile and not force and dest:
             # convert only if tempfile or dest does not exist or force=True
             return 0
-        p = DvPath()
-        p.SetUniqueTempFileName()
-        p.SetExtension(profile.extension)
-        destPath = str(p)
-        
+
+        p=None
         try:
             try:
                 source.file.seek(0)
@@ -166,22 +163,39 @@ class ImageExtension:
                 iObj = Image.open(source)
             except IOError:
                 # no file to be converted
-                return False, ()
+                return 0
             iObj = iObj.convert("RGB")
             
             # resize
             size = [profile.width, profile.height]
             if size[0] != 0 or size[1] != 0:
-                if size[0] == 0:    
-                    size[0] = size[1]
-                elif size[1] == 0:    
-                    size[1] = size[0]
+                #if size[0] == 0:
+                #    size[0] = size[1]
+                #elif size[1] == 0:
+                #    size[1] = size[0]
+                resize = True
                 x, y = iObj.size
-                if x > size[0]: y = y * size[0] / x; x = size[0]
-                if y > size[1]: x = x * size[1] / y; y = size[1]
+                if size[0] and x > size[0]:
+                    y = y * size[0] / x
+                    x = size[0]
+                elif size[1] and y > size[1]:
+                    x = x * size[1] / y
+                    y = size[1]
+                else:
+                    # original is smaller
+                    resize = False
+                    if profile.source==profile.dest:
+                        # same image -> skip
+                        return 0
+
                 size = int(x), int(y)
-            
-            iObj = iObj.resize(size, Image.ANTIALIAS)
+                if resize:
+                    iObj = iObj.resize(size, Image.ANTIALIAS)
+
+            p = DvPath()
+            p.SetUniqueTempFileName()
+            p.SetExtension(profile.extension)
+            destPath = str(p)
             iObj.save(destPath, profile.format)
             try:
                 if source.file.closed:
@@ -205,7 +219,8 @@ class ImageExtension:
             self.files.set(profile.dest, file)
         finally:
             # clean temp file
-            p.Delete()
+            if p is not None:
+                p.Delete()
         return 1
         
 
@@ -267,6 +282,7 @@ class ProcessImagesTool(Tool):
             if obj is None or not hasattr(obj, "ProcessImages"):
                 continue
             if testrun:
+                cnt += 1
                 continue
             try:
                 if emptyonly:
