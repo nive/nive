@@ -1,19 +1,15 @@
 # -*- coding: latin-1 -*-
 
-import copy
-from time import time
 import unittest
 
 from nive.definitions import DatabaseConf
 from nive.utils.dataPool2.connection import *
 
-from nive.tests.db_app import app_db
-
 from nive.tests import __local
 
 # configuration ---------------------------------------------------------------------------
 conn = DatabaseConf(
-    dbName = __local.ROOT+"nive.db"
+    dbName = __local.ROOT+"dummy.db"
 )
 
 
@@ -21,13 +17,13 @@ class ConnectionTest(unittest.TestCase):
     """
     """
     def test_conn(self):
-        self.assert_(Connection(conn))
+        self.assertTrue(Connection(conn))
         
     def test_conntl(self):
-        self.assert_(ConnectionThreadLocal(conn))
+        self.assertTrue(ConnectionThreadLocal(conn))
     
     def test_connreq(self):
-        self.assert_(ConnectionRequest(conn))
+        self.assertTrue(ConnectionRequest(conn))
 
 
 

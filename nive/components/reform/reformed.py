@@ -9,13 +9,14 @@ to schema nodes.
 from pkg_resources import resource_filename
 from nive.components.reform.template import ZPTRendererFactory
 
-from nive.i18n import translate
+from nive.i18n import translate, _
 from nive.definitions import ModuleConf, ViewModuleConf
 from nive.helper import LoadListItems, ResolveName
 
 from nive.components.reform.schema import *
 from nive.components.reform.widget import *
 from nive.components.reform.form import Button
+import collections
 
 
 
@@ -23,7 +24,7 @@ from nive.components.reform.form import Button
 #@nive_module
 configuration = ModuleConf(
     id = "reformed",
-    name = u"Form widgets and resources",
+    name = "Form widgets and resources",
     context = "nive.components.reform.reformed",
     views = (ViewModuleConf(static="nive.components.reform:static",id="reform"),),
 )
@@ -65,15 +66,6 @@ def SchemaFactory(form, fields, actions, force=False):
         if field.settings and isinstance(field.settings, dict):
             kwWidget.update(field.settings)
 
-        # ----------------------------------------------------------
-        # bw 0.9.12 -> moved from `field.settings` to `field`
-        # to be removed in future. use field.widget and field.validator instead. 
-        if field.settings and field.settings.get("validator"):
-            kw["validator"] = field.settings["validator"]
-        if field.settings and field.settings.get("widget"):
-            kw["widget"] = field.settings["widget"]
-        # ----------------------------------------------------------
-
         # custom validator
         if field.get("validator"):
             kw["validator"] = field.validator
@@ -84,10 +76,10 @@ def SchemaFactory(form, fields, actions, force=False):
         # setup custom widgets
         if "widget" in kw and kw["widget"]:
             widget = kw["widget"]
-            if isinstance(widget, basestring):
+            if isinstance(widget, str):
                 widget = ResolveName(widget)
                 kw["widget"] = widget(**kwWidget)
-            elif callable(widget):
+            elif isinstance(widget, collections.abc.Callable):
                 kw["widget"] = widget(**kwWidget)
             else:
                 widget.form = form
@@ -97,7 +89,7 @@ def SchemaFactory(form, fields, actions, force=False):
         # setup custom validator
         if "validator" in kw and kw["validator"]:
             validator = kw["validator"]
-            if isinstance(validator, basestring):
+            if isinstance(validator, str):
                 validator = ResolveName(validator)
             kw["validator"] = validator
 
@@ -114,7 +106,7 @@ def SchemaFactory(form, fields, actions, force=False):
             n = hidden_node(field, kw, kwWidget, form)
 
         else:
-            n = apply(nodeMapping[field.datatype], (field, kw, kwWidget, form))
+            n = nodeMapping[field.datatype](*(field, kw, kwWidget, form))
             
         # add node to form
         if not n:
@@ -126,7 +118,7 @@ def SchemaFactory(form, fields, actions, force=False):
     for action in actions:
         if action.get("hidden"):
             continue
-        buttons.append(Button(name=u"%s%s"%(action.get("id"), form.actionPostfix), 
+        buttons.append(Button(name="%s%s"%(action.get("id"), form.actionPostfix), 
                               title=action.get("name"), 
                               action=action, 
                               cls=action.get("cls", "btn submit")))
@@ -159,7 +151,12 @@ def float_node(field, kw, kwWidget, form):
 
 def bool_node(field, kw, kwWidget, form):
     if not "widget" in kw:
-        kw["widget"] = CheckboxWidget(**kwWidget)
+        v = LoadListItems(field, app=form.app, obj=form.context)
+        if v:
+            values=[(a["id"],a["name"]) for a in v]
+        else:
+            values = (("true", _("Yes")), ("false", _("No")))
+        kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
     return SchemaNode(Boolean(), **kw)
 
 def htext_node(field, kw, kwWidget, form):
@@ -213,25 +210,25 @@ def time_node(field, kw, kwWidget, form):
     return SchemaNode(Time(), **kw)
 
 def list_node(field, kw, kwWidget, form):
-    v = LoadListItems(field, app=form.app, obj=form.context)
+    v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.User(sessionuser=False))
     if field.settings and field.settings.get("addempty"):
         # copy the list and add empty entry
         v = list(v)
-        v.insert(0,{"id":u"","name":u""})
+        v.insert(0,{"id":"","name":""})
     if not "widget" in kw:
         values = [(a["id"],a["name"]) for a in v]
         kw["widget"] = SelectWidget(values=values, **kwWidget)
         if field.settings.get("controlset"):
             kw["widget"].template = 'select_controlset'
             kw["widget"].css_class = ''
-    return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
+    return SchemaNode(CodeList(allowed=[str(e["id"]) for e in v]), **kw)
 
 def radio_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)
     if not "widget" in kw:
         values=[(a["id"],a["name"]) for a in v]
         kw["widget"] = RadioChoiceWidget(values=values, **kwWidget)
-    return SchemaNode(CodeList(allowed=[e["id"] for e in v]), **kw)
+    return SchemaNode(CodeList(allowed=[str(e["id"]) for e in v]), **kw)
 
 def multilist_node(field, kw, kwWidget, form):
     v = LoadListItems(field, app=form.app, obj=form.context)
@@ -291,14 +288,58 @@ def password_node(field, kw, kwWidget, form):
     return SchemaNode(String(), **kw)
 
 def unit_node(field, kw, kwWidget, form):
+    """
+    field.settings:
+    :param obj_type: string or list. object type id.
+    :param name_field: string. Codelist name lookup field. default = title.
+    :param app: string. app id registered in portal.
+    """
+    if not "validator" in kw and field.settings.get("app"):
+        kw["validator"] = ExistingObject(obj_type=field.settings.get("obj_type"))
+    if not "widget" in kw:
+        if field.get("listItems") is None:
+            ot = field.settings.get("obj_type")
+            tf = field.settings.get("name_field", "title")
+            operators = dict()
+            parameter = dict()
+            if ot:
+                parameter["pool_type"] = ot
+            if isinstance(ot, (list, tuple)):
+                operators["pool_type"] = "IN"
+            pool = form.app
+            if field.settings.get("app"):
+                pool = form.app.portal[field.settings.get("app")]
+            values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+            values = [(str(a["id"]),a["name"]) for a in values]
+        else:
+            v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.User(sessionuser=False))
+            values = [(str(a["id"]), a["name"]) for a in v]
+
+        kw["widget"] = UnitWidget(values=values, **kwWidget)
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):
-    if not "validator" in kw:
-        kw["validator"] = Length(max=field.get("size",255))
     if not "widget" in kw:
-        kw["widget"] = TextInputWidget(**kwWidget)
-    return SchemaNode(Lines(), **kw)
+        if field.get("listItems") is None:
+            ot = field.settings.get("obj_type")
+            tf = field.settings.get("name_field", "title")
+            operators = dict()
+            parameter = dict()
+            if ot:
+                parameter["pool_type"] = ot
+            if isinstance(ot, (list, tuple)):
+                operators["pool_type"] = "IN"
+            pool = form.app
+            if field.settings.get("app"):
+                pool = form.app.portal[field.settings.get("app")]
+            values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+            values = [(str(a["id"]),a["name"]) for a in values]
+        else:
+            v = LoadListItems(field, app=form.app, obj=form.context, user=form.view.User(sessionuser=False))
+            values = [(str(a["id"]), a["name"]) for a in v]
+
+        kw["widget"] = ChooseWidget(values=values, **kwWidget)
+    return SchemaNode(List(allow_empty=True), **kw)
 
 def timestamp_node(field, kw, kwWidget, form):
     # readonly
@@ -339,8 +380,5 @@ nodeMapping = {
     "timestamp": timestamp_node,
     "nlist": nlist_node,
     "binary": binary_node,
-    # bw 0.9.23
-    "mselection": multilist_node,
-    "mcheckboxes": checkbox_node,
 }
 

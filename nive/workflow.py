@@ -37,13 +37,265 @@ Default actions used in the cms are: add, remove, create, duplicate, edit, delet
 """
 
 import weakref
+from zope.interface import implementer
 
 from nive.definitions import baseConf, ConfigurationError, TryResolveName
 from nive.definitions import IWfProcessConf, IWfStateConf, IWfTransitionConf, IProcess, ILocalGroups
 from nive.helper import ResolveName, ResolveConfiguration, GetClassRef
 from nive.security import effective_principals 
-from zope.interface import implements
 
+
+
+class ObjectWorkflow(object):
+    """
+    Provides workflow functionality for objects.
+    Workflow process objects are handled and loaded by the application. Meta layer fields `pool_wfp` stores the
+    process id and `pool_wfa` the current state.
+    """
+
+    def __init__(self, obj):
+        self.obj = obj
+
+    def WfAllow(self, action, user, transition=None, process=None):
+        """
+        Check if action is allowed in current state in workflow. This functions returns True or False
+        and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
+
+        Event:
+        - wfAllow(name)
+
+        returns bool
+        """
+        wf = process or self.GetWf()
+        if wf is None:
+            return True
+        self.obj.Signal("wfAllow", name=action, process=wf)
+        return wf.Allow(action, self.obj, user=user, transition=transition)
+
+    def WfAction(self, action, user, transition=None, process=None, values=None):
+        """
+        Trigger workflow action. If several transitions are possible for the action in the current state
+        the first is used. In this case the transition id can be passed as parameter.
+
+        Event:
+        - wfAction(name)
+
+        returns transition
+
+        raises WorkflowNotAllowed
+        """
+        wf = process or self.GetWf()
+        if wf is None:
+            return
+        t = wf.Action(action, self.obj, user=user, transition=transition, values=values)
+        self.obj.Signal("wfAction", name=action, process=wf)
+        return t
+
+    def WfInit(self, user):
+        """
+        Called after object was created
+        """
+        # check for workflow process to use
+        wfProc = self.GetNewWf()
+        if wfProc:
+            self.obj.meta["pool_wfp"] = wfProc.id
+            self.obj.Signal("wfInit", processID=wfProc.id, process=wfProc)
+            if not self.WfAllow("create", user, transition=None):
+                raise WorkflowNotAllowed("Workflow: Not allowed (create)")
+
+    def GetWf(self):
+        """
+        Returns the workflow process for the object.
+
+        Event:
+        - wfLoad(workflow)
+
+        returns object
+        """
+        app = self.obj.app
+        if not app.configuration.workflowEnabled:
+            return None
+        wfTag = self.obj.meta.get("pool_wfp")
+        if not wfTag:
+            return None
+        # load workflow
+        wf = app.GetWorkflow(wfTag) # use id only and not: contextObject=self
+        # enable strict workflow checking
+        if wf is None:
+            raise ConfigurationError("Workflow process not found (%s)" % (wfTag))
+        self.obj.Signal("wfLoad", workflow=wf)
+        return wf
+
+    def GetNewWf(self):
+        """
+        Returns the new workflow process configuration for the object based on settings:
+
+        1) uses configuration.workflowID if defined
+        2) query application modules for workflow
+
+        returns conf object
+        """
+        app = self.obj.app
+        if not app.configuration.workflowEnabled:
+            return None
+        if not self.obj.configuration.workflowEnabled:
+            return None
+        wfID = self.obj.configuration.workflowID
+        if wfID:
+            wf = app.configurationQuery.GetWorkflowConf(wfID)
+            return wf
+        wf = app.configurationQuery.GetAllWorkflowConfs(contextObject=self)
+        if wf is None:
+            return None
+        if len(wf) > 1:
+            raise ConfigurationError(
+                "Workflow: More than one process for type found (%s)" % (self.obj.configuration.id))
+        return wf[0]
+
+    def GetWfInfo(self, user, process=None):
+        """
+        returns the current workflow state as dictionary
+        """
+        wf = process or self.GetWf()
+        if wf is None:
+            return {}
+        return wf.GetObjInfo(self.obj, user)
+
+    def GetWfState(self):
+        """
+        """
+        return self.obj.meta.pool_wfa
+
+    # Manual Workflow changes ---------------------------------------------------------------
+
+    def SetWfState(self, stateID):
+        """
+        Sets the workflow state for the object. The new is state is set
+        regardless of transitions or calling any workflow actions.
+        """
+        self.obj.meta["pool_wfa"] = stateID
+
+    def SetWfProcess(self, processID, user, force=False):
+        """
+        Sets or changes the workflow process for the object. If force is false
+        either
+
+        1) no wfp must be set for the object or
+        2) the current workflow with action *change_wfprocess* is called
+
+        Workflow action: change_wfprocess
+        """
+        app = self.obj.app
+        wf = self.obj.meta.pool_wfp
+        if not wf or force:
+            self.obj.meta["pool_wfp"] = processID
+            if app.configuration.autocommit:
+                self.obj.Commit(user)
+            return True
+        if not self.WfAllow("change_wfprocess", user=user):
+            return False
+        self.WfAction("change_wfprocess", user=user)
+        self.obj.meta["pool_wfp"] = processID
+        if app.configuration.autocommit:
+            self.obj.Commit(user)
+        return True
+
+
+class RootWorkflow:
+    """
+    Provides workflow functionality for roots.
+    Workflow process objects are handled and loaded by the application. Meta layer fields `pool_wfp` stores the
+    process id and `pool_wfa` the current state.
+    """
+
+    def __init__(self, obj):
+        self.obj = obj
+
+    def WfAllow(self, action, user, transition=None, process=None):
+        """
+        Check if action is allowed in current state in workflow. This functions returns True or False
+        and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
+
+        Event:
+        - wfAllow(name)
+
+        returns bool
+        """
+        wf = process or self.GetWf()
+        if not wf:
+            return True
+        self.obj.Signal("wfAllow", name=action)
+        return wf.Allow(action, self.obj, user=user, transition=transition)
+
+    def WfAction(self, action, user, transition=None, process=None, values=None):
+        """
+        Trigger workflow action. If several transitions are possible for the action in the current state
+        the first is used. In this case the transition id can be passed as parameter.
+
+        Event:
+        - wfAction(name)
+
+        raises WorkflowNotAllowed
+        """
+        wf = process or self.GetWf()
+        if not wf:
+            return
+        wf.Action(action, self.obj, user=user, transition=transition, values=values)
+        self.obj.Signal("wfAction", name=action)
+
+    def GetWf(self):
+        """
+        Returns the workflow process for the object.
+
+        Event:
+        - wfLoad(workflow)
+
+        returns object
+        """
+        app = self.obj.app
+        if not app.configuration.workflowEnabled:
+            return None
+        wfTag = self.GetNewWf()
+        if not wfTag:
+            return None
+        # load workflow
+        wf = app.GetWorkflow(wfTag, contextObject=self.obj)
+        # enable strict workflow checking
+        if not wf:
+            raise ConfigurationError("Workflow process not found (%s)" % (wfTag))
+        self.obj.Signal("wfLoad", workflow=wf)
+        return wf
+
+    def GetNewWf(self):
+        """
+        Returns the workflow process id for the object based on configuration settings.
+
+        returns string
+        """
+        if not self.obj.configuration.workflowEnabled:
+            return ""
+        return self.obj.configuration.workflowID
+
+    def GetWfInfo(self, user, process=None):
+        """
+        returns the current workflow state as dictionary
+        """
+        wf = process or self.GetWf()
+        if not wf:
+            return {}
+        return wf.GetObjInfo(self.obj, user)
+
+    def GetWfState(self):
+        """
+        """
+        return self.obj.meta["pool_wfa"]
+
+    def SetWfState(self, stateID):
+        """
+        Sets the workflow state for the object. The new is state is set
+        regardless of transitions or calling any workflow actions.
+        """
+        self.obj.meta["pool_wfa"] = stateID
 
 
 WfAllRoles = "*"
@@ -51,6 +303,7 @@ WfAllActions = "*"
 wfAllStates = "*"
 WfEntryActions = ("create", "duplicate")
 
+@implementer(IWfProcessConf)
 class WfProcessConf(baseConf):
     """
     Workflow process configuration class. The workflow process configuration defines
@@ -73,12 +326,12 @@ class WfProcessConf(baseConf):
     
     Interface: IWfProcessConf
     """
-    implements(IWfProcessConf)
+
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
         self.states = []
         self.transitions = []
         self.entryPoint = "start"
@@ -119,7 +372,7 @@ class WfProcessConf(baseConf):
         return report
 
 
-
+@implementer(IWfStateConf)
 class WfStateConf(baseConf):
     """
     Workflow state configuration class. A workflow state defines the current elements 
@@ -144,12 +397,12 @@ class WfStateConf(baseConf):
     
     Interface: IWfStateConf
     """
-    implements(IWfStateConf)
+
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
         self.actions = []
         self.context = State
 
@@ -171,6 +424,7 @@ class WfStateConf(baseConf):
         return report
 
 
+@implementer(IWfTransitionConf)
 class WfTransitionConf(baseConf):
     """
     Workflow transition configuration class. Use transitions to define possible
@@ -195,6 +449,7 @@ class WfTransitionConf(baseConf):
         values :       custom configuration values passed to callables
         name :         Title (optional).
         description :  Description (optional).
+        message :      Feedback message used in application (optional).
         
         
     Callables to be included as condition or execute use the following parameters:
@@ -209,12 +464,13 @@ class WfTransitionConf(baseConf):
     
     Interface: IWfTransitionConf
     """
-    implements(IWfTransitionConf)
+
     
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
+        self.message = ""
         self.fromstate = ""
         self.tostate = ""
         self.roles = []
@@ -234,27 +490,27 @@ class WfTransitionConf(baseConf):
         report = []
         #check id
         if not self.id:
-            report.append((ConfigurationError, u" WfTransitionConf.id is empty", self))
+            report.append((ConfigurationError, " WfTransitionConf.id is empty", self))
         # check context
         o = TryResolveName(self.context)
         if not o:
-            report.append((ImportError, u" for WfTransitionConf.context", self))
+            report.append((ImportError, " for WfTransitionConf.context", self))
         #check from state
         if not self.fromstate:
-            report.append((ConfigurationError, u" WfTransitionConf.fromstate is empty", self))
+            report.append((ConfigurationError, " WfTransitionConf.fromstate is empty", self))
         #check to state
         if not self.tostate:
-            report.append((ConfigurationError, u" WfTransitionConf.tostate is empty", self))
+            report.append((ConfigurationError, " WfTransitionConf.tostate is empty", self))
         for c in self.conditions:
-            if isinstance(c, basestring):
+            if isinstance(c, str):
                 o=TryResolveName(c)
                 if not o:
-                    report.append((ConfigurationError, u" WfTransitionConf.conditions not found: "+c, self))
+                    report.append((ConfigurationError, " WfTransitionConf.conditions not found: "+c, self))
         for c in self.execute:
-            if isinstance(c, basestring):
+            if isinstance(c, str):
                 o=TryResolveName(c)
                 if not o:
-                    report.append((ConfigurationError, u" WfTransitionConf.execute not found: "+c, self))
+                    report.append((ConfigurationError, " WfTransitionConf.execute not found: "+c, self))
         return report
 
 
@@ -263,24 +519,24 @@ class WfTransitionConf(baseConf):
 class WorkflowNotAllowed(Exception):
     """
     """
-    
 
-class Process(object):
+
+@implementer(IProcess)
+class Process:
     """
     Workflow process implementation
 
     """
-    implements(IProcess)
 
     def __init__(self, configuration, app):
         self.configuration = configuration
         self.app_ = app
         self.renderTools = True
-        self.adminGroups = (u"group:admin",)  # always allowed
-        for k in configuration:
-            if k in ("states", "transitions"):
-                continue
-            setattr(self, k, configuration[k])
+        self.adminGroups = ("group:admin",)  # always allowed
+        #for k in configuration:
+        #    if k in ("states", "transitions"):
+        #        continue
+        #    setattr(self, k, configuration[k])
         self._LoadStates(configuration.states)
         self._LoadTransitions(configuration.transitions)
 
@@ -316,7 +572,7 @@ class Process(object):
         return False
 
 
-    def Action(self, action, context, user, transition=None):
+    def Action(self, action, context, user, transition=None, values=None):
         """
         Execute the action for current state, context and user. 
 
@@ -331,7 +587,7 @@ class Process(object):
         """
         # set start as default
         if action in WfEntryActions:
-            context.SetWfState(self.entryPoint)
+            context.meta["pool_wfa"] = self.configuration.entryPoint
 
         # get state
         state = self.GetObjState(context)
@@ -345,7 +601,7 @@ class Process(object):
             if not transition and (action in state.actions):
                 return True
 
-            raise WorkflowNotAllowed, "Workflow: Not allowed (%s)"%(action)
+            raise WorkflowNotAllowed("Workflow: Not allowed (%s)"%(action))
 
         if len(ptrans) > 1:
             transition = ptrans[0]
@@ -358,12 +614,12 @@ class Process(object):
             transition = ptrans[0]
 
         # execute transition
-        transition.Execute(context, user)
+        transition.Execute(context, user, values=values)
 
         # set next state
         transition.Finish(action, context, user)
 
-        return True
+        return transition
 
 
     def PossibleTransitions(self, state, action = "", transition = "", context = None, user = None):
@@ -387,20 +643,20 @@ class Process(object):
         trans = []
         wc = []
         for t in self.transitions:
-            if t.fromstate == wfAllStates:
+            if t.configuration.fromstate == wfAllStates:
                 # store wildcard transition. wildcard transitions come last in sequence
                 wc.append(t)
                 continue
-            if t.fromstate == state:
+            elif t.configuration.fromstate == state:
                 if user:
                     if not t.Allow(context, user):
                         continue
                 if action != "":
-                    if not action in t.actions:
+                    if not action in t.configuration.actions:
                         continue
                 if not transition:
                     trans.append(t)
-                elif t.id == transition:
+                elif t.configuration.id == transition:
                     trans.append(t)
         trans.extend(wc)
         return trans
@@ -414,8 +670,11 @@ class Process(object):
         Returns workflow information for the current context. If extended = True state and
         transitions are included too. Otherwise they will be None.
         
-        Included values: id, name, process, context, user, state, transitions
-    
+        Included values: id, name, process, context, user, state, transitions, actions
+
+                <a tal:repeat="t wfinfo['transitions']"
+                        class="btn" href="wft?t=${t.id}">${t.name}</a>
+
         parameters ::
         
              context: the context object
@@ -424,15 +683,20 @@ class Process(object):
         
         returns dict
         """
-        state = transitions = None
+        state = transitions = actions = None
         if extended:
-            wfa = context.GetWfState()
+            wfa = context.meta.pool_wfa
             state = self.GetState(wfa)
             transitions = self.PossibleTransitions(wfa, user=user, context=context)
+            actions = list(state.actions)
+            for t in transitions:
+                if t.actions:
+                    actions.extend(t.actions)
         return {"id": self.configuration.id,
                 "name": self.configuration.name,
                 "state": state,
                 "transitions": transitions,
+                "actions": actions,
                 "process": self,
                 "context": weakref.ref(context)(),
                 "user": user}
@@ -443,10 +707,10 @@ class Process(object):
         Returns contexts state as object.
         """
         if not context:
-            return self.GetState(self.entryPoint)
-        state = context.GetWfState()
+            return self.GetState(self.configuration.entryPoint)
+        state = context.meta.pool_wfa
         if not state:
-            return self.GetState(self.entryPoint)
+            return self.GetState(self.configuration.entryPoint)
         return self.GetState(state)
 
 
@@ -482,7 +746,7 @@ class Process(object):
         for s in stateConfs:
             iface, conf = ResolveConfiguration(s)
             if iface != IWfStateConf:
-                raise ConfigurationError, "Not a state configuration"
+                raise ConfigurationError("Not a state configuration")
             self.states.append(self._GetObj(conf))
 
 
@@ -494,7 +758,7 @@ class Process(object):
         for s in transistionConfs:
             iface, conf = ResolveConfiguration(s)
             if iface != IWfTransitionConf:
-                raise ConfigurationError, "Not a transition configuration"
+                raise ConfigurationError("Not a transition configuration")
             self.transitions.append(self._GetObj(conf))
 
 
@@ -516,10 +780,21 @@ class Transition(object):
         self.id = name
         self.configuration = configuration
         self.process = process
-        for k in configuration.keys():
-            setattr(self, k, configuration[k])
+        #for k in list(configuration.keys()):
+        #    setattr(self, k, configuration[k])
+
+    @property
+    def name(self):
+        return self.configuration.name
+
+    @property
+    def actions(self):
+        return self.configuration.actions
         
-        
+    @property
+    def message(self):
+        return self.configuration.message
+
     def Allow(self, context, user):
         """
         Checks if the transition can be executed in the current context.
@@ -532,31 +807,31 @@ class Transition(object):
         returns True/False        
         """
         # condition
-        if self.conditions:
-            for c in self.conditions:
-                if isinstance(c, basestring):
+        if self.configuration.conditions:
+            for c in self.configuration.conditions:
+                if isinstance(c, str):
                     c = ResolveName(c)
-                if not c(transition=self, context=context, user=user, values=self.values):
+                if not c(transition=self, context=context, user=user, values=self.configuration.values):
                     return False
         # roles
-        if self.roles == WfAllRoles:
+        if self.configuration.roles == WfAllRoles:
             return True
         if user:
             # call registered authentication policy
             groups = effective_principals()
-            if groups==None:
+            if groups is None or groups==["system.Everyone"]:
                 # no pyramid authentication policy activated
                 # use custom user lookup
                 groups = user.GetGroups(context)
                 if context and ILocalGroups.providedBy(context):
-                    local = context.GetLocalGroups(unicode(user))
+                    local = context.GetLocalGroups(str(user))
                     groups = list(groups)+list(local)
         else:
-            groups = (u"system.Everyone",)
+            groups = ("system.Everyone",)
         for r in groups:
             if r in self.process.adminGroups:
                 return True
-            if r in self.roles:
+            if r in self.configuration.roles:
                 return True
         return False
 
@@ -567,8 +842,8 @@ class Transition(object):
         
         returns the new state id
         """
-        nextState = self.tostate
-        context.SetWfState(nextState)
+        nextState = self.configuration.tostate
+        context.meta["pool_wfa"] = nextState
         return nextState
     
 
@@ -576,10 +851,11 @@ class Transition(object):
         """
         Returns if this transition has callables marked as interactive.
         """
-        if not self.execute:
+        if not self.configuration.execute:
             return False
-        for c in self.execute:
-            if hasattr(c, "interactive"):
+        for f in self.configuration.execute:
+            f = ResolveName(f)
+            if hasattr(f, "interactive"):
                 return True
         return False
 
@@ -596,12 +872,14 @@ class Transition(object):
                     transition.configuration.values is used.
             
         """
-        if not self.execute:
+        if not self.configuration.execute:
             return True
 
         # execute function
-        for c in self.execute:
+        for c in self.configuration.execute:
             func = ResolveName(c)
+            if hasattr(func, "__call__"):
+                func = func.__call__
             func(context=context, transition=self, user=user, values=values or self.configuration.values)
         return True
 
@@ -613,7 +891,9 @@ class Transition(object):
         returns callables
         """
         fncs = []
-        for f in self.execute:
+        if not self.configuration.execute:
+            return fncs
+        for f in self.configuration.execute:
             f = ResolveName(f)
             if hasattr(f, "interactive"):
                 fncs.append(f)
@@ -628,6 +908,8 @@ class State(object):
         self.process = process
         for k in configuration:
             setattr(self, k, configuration[k])
-            
-            
 
+
+class InteractiveTransition(Exception):
+    form = None
+    transition = None

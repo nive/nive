@@ -1,0 +1,69 @@
+<tal:block i18n:domain="nive">
+    <div class="input-group" id="unit-${field.oid}">
+        <select name="${field.name}"
+                id="${field.oid}"
+                 tal:attributes="size field.widget.size; multiple field.widget.size and field.widget.size>1"
+                class="chosen-select ${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+                data-placeholder="...">
+            <tal:block tal:condition="not (field.widget.size and field.widget.size>1)">
+            <option tal:repeat="(value, description) field.widget.values"
+                     tal:attributes="selected value == cstruct and 'selected';"
+                            value="${value}">${description}</option>
+            </tal:block>
+            <tal:block tal:condition="field.widget.size and field.widget.size>1">
+            <option tal:repeat="(value, description) field.widget.values"
+                     tal:attributes="selected value in cstruct and 'selected';"
+                            value="${value}">${description}</option>
+            </tal:block>
+        </select>
+        <div class="input-group-append" id="unitadd-${field.oid}" data-target="#unit-${field.oid}">
+            <label class="input-group-text" for="#unit-${field.oid}"> Neu erstellen</label>
+        </div>
+    </div>
+
+    <div class="modal addform" id="modal-${field.oid}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document" style="height:80%">
+            <div class="modal-content">
+                <!--div class="modal-header">
+                    <h5 class="modal-title" i18n:translate="">Add</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div-->
+                <div class="modal-body" style="height:80%">
+                    <iframe id="placeholder-${field.oid}" style="width:100%;height:100%"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <span id="msg-${field.oid}"></span>
+                    <button type="button" class="btn" data-dismiss="modal" i18n:translate="">Cancel</button>
+                    <button type="button" id="modal-go-${field.oid}" class="btn" i18n:translate="">Übernehmen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#${field.oid}").chosen({disable_search_threshold: 1, allow_single_deselect: true, no_results_text: "Nichts gefunden!"});
+
+            $("#unitadd-${field.oid}").on("click", function () {
+                // open modal
+                $("#modal-${field.oid}").modal('show');
+                // load add form
+                $("#placeholder-${field.oid}").attr("src", "${field.widget.form.view.FolderUrl(field.widget.form.view.context.root)}@addform?fid=${field.name}");
+            });
+
+            $("#modal-go-${field.oid}").on("click", function () {
+                var iframe = $("iframe#placeholder-${field.oid}").contents();
+                var id = iframe.find("input[name=id]").val();
+                var title = iframe.find("input[name=title]").val();
+                if(!id || !title) { $("#msg-${field.oid}").text("Bitte zuerst das Formular ausfüllen und speichern."); return; }
+                $('#${field.oid}').prepend($('<option>', { value: id, text: title }));
+                $("#${field.oid}").val(id);
+                $("#${field.oid}").trigger("chosen:updated");
+                // modal
+                $("#modal-${field.oid}").modal('hide');
+            });
+        });
+    </script>
+</tal:block>

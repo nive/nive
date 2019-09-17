@@ -8,7 +8,7 @@ try:
 except:
     pass
 
-import test_db
+from . import test_db
 from nive.utils.dataPool2.sqlite.sqlite3Pool import *
 
 
@@ -23,7 +23,7 @@ def print_(*kw):
     else:
         v = kw
     if v == "":
-        print ".",
+        print(".",)
         printed.append("")
     else:
         printed[-1] += v
@@ -35,7 +35,7 @@ def getConnection():
         print_( "MySQL        -")
     elif mode == "mysqlinno":
         c = test_MySql.conn
-        c["dbName"] = u"ut_dataPool2inno"
+        c["dbName"] = "ut_dataPool2inno"
         c = MySqlConn(c, 0)
         print_( "MySQL InnoDB -")
     else:
@@ -55,7 +55,7 @@ def getPool():
         pool.SetStdMeta(copy.copy(test_MySql.stdMeta))
         pool.GetPoolStructureObj().SetStructure(test_MySql.struct)
         c = test_MySql.conn
-        c["dbName"] = u"ut_dataPool2inno"
+        c["dbName"] = "ut_dataPool2inno"
         pool.CreateConnection(c)
         print_( "MySQL InnoDB -")
     else:
@@ -112,12 +112,12 @@ def createsql(n):
     print_( "Create SQL: ")
     t = time.time()
     for i in range(0,n):
-        sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta)+list(test_MySql.struct[u"data1"]),
-            {u"pool_type": u"data1", u"ftext": u"", u"fnumber": 3},
-            sort = u"title, id, fnumber",
+        sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta)+list(test_MySql.struct["data1"]),
+            {"pool_type": "data1", "ftext": "", "fnumber": 3},
+            sort = "title, id, fnumber",
             ascending = 0,
-            dataTable = u"data1",
-            operators={u"pool_type":u"=", u"ftext": u"<>", u"fnumber": u">"},
+            dataTable = "data1",
+            operators={"pool_type":"=", "ftext": "<>", "fnumber": ">"},
             start=1,
             max=123)
     t2 = time.time()
@@ -133,12 +133,12 @@ def sqlquery1(n, start):
     print_( "SQL Query data+meta (join no index): ")
     t = time.time()
     for i in range(0,n):
-        sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta)+list(test_MySql.struct[u"data1"]),
-            {u"pool_type": u"data1", u"ftext": u"123", u"fnumber": i+start},
-            sort = u"title, id, fnumber",
+        sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta)+list(test_MySql.struct["data1"]),
+            {"pool_type": "data1", "ftext": "123", "fnumber": i+start},
+            sort = "title, id, fnumber",
             ascending = 0,
-            dataTable = u"data1",
-            operators={u"pool_type":u"=", u"ftext": u"LIKE", u"fnumber": u"!="},
+            dataTable = "data1",
+            operators={"pool_type":"=", "ftext": "LIKE", "fnumber": "!="},
             start=1,
             max=123)
         pool.Query(sql, values)
@@ -155,11 +155,11 @@ def sqlquery2(n, start):
     print_( "SQL Query data+meta=id (join index): ")
     t = time.time()
     for i in range(0,n):
-        sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta)+list(test_MySql.struct[u"data1"]),
-            {u"id": i+start},
-            sort = u"title",
+        sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta)+list(test_MySql.struct["data1"]),
+            {"id": i+start},
+            sort = "title",
             ascending = 0,
-            dataTable = u"data1",
+            dataTable = "data1",
             operators={},
             start=1,
             max=123)
@@ -178,10 +178,10 @@ def sqlquery3(n, start):
     t = time.time()
     for i in range(0,n):
         sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta),
-            {u"id": start+i},
-            sort = u"id",
+            {"id": start+i},
+            sort = "id",
             ascending = 0,
-            dataTable = u"pool_meta",
+            dataTable = "pool_meta",
             singleTable = 1,
             operators={},
             start=1,
@@ -201,12 +201,12 @@ def sqlquery4(n, start):
     t = time.time()
     for i in range(0,n):
         sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta),
-            {u"id": start+i, u"pool_type": u"data1"},
-            sort = u"id",
+            {"id": start+i, "pool_type": "data1"},
+            sort = "id",
             ascending = 0,
-            dataTable = u"pool_meta",
+            dataTable = "pool_meta",
             singleTable = 1,
-            operators={u"pool_type": u"="},
+            operators={"pool_type": "="},
             start=1,
             max=123)
         pool.Query(sql, values)
@@ -224,11 +224,11 @@ def sqlquery5(n, start):
     t = time.time()
     for i in range(0,n):
         sql, values = pool.FmtSQLSelect(list(test_MySql.stdMeta),
-            {u"id": start+i, u"pool_type": u"data1", u"funit": 35},
-            sort = u"id",
+            {"id": start+i, "pool_type": "data1", "funit": 35},
+            sort = "id",
             ascending = 0,
-            dataTable = u"data1",
-            operators={u"pool_type": u"="},
+            dataTable = "data1",
+            operators={"pool_type": "="},
             start=1,
             max=123)
         pool.Query(sql, values)
@@ -259,7 +259,7 @@ def createentries(n):
     print_( "Create entries (nodb): ")
     t = time.time()
     for i in range(0,n):
-        e=pool._GetPoolEntry(i, version=None, datatbl=u"data1", preload=u"skip", virtual=True)
+        e=pool._GetPoolEntry(i, version=None, datatbl="data1", preload="skip", virtual=True)
     t2 = time.time()
 
     pool.Close()
@@ -273,7 +273,7 @@ def checkentries(n):
     print_( "Create entries (nodb) and check exists: ")
     t = time.time()
     for i in range(0,n):
-        e=pool._GetPoolEntry(i, version=None, datatbl=u"data1", preload=u"skip", virtual=True)
+        e=pool._GetPoolEntry(i, version=None, datatbl="data1", preload="skip", virtual=True)
         e.Exists()
     t2 = time.time()
 
@@ -287,7 +287,7 @@ def createentries2(n):
     print_( "Create entries (nodata): ")
     t = time.time()
     for i in range(0,n):
-        e=pool.CreateEntry(u"data1")
+        e=pool.CreateEntry("data1")
         #e.data.update(data1_1)
         #e.meta.update(meta1)
         e.Commit()
@@ -303,7 +303,7 @@ def createentries3(n):
     print_( "Create entries (data+meta): ")
     t = time.time()
     for i in range(0,n):
-        e=pool.CreateEntry(u"data1")
+        e=pool.CreateEntry("data1")
         if i==0:  id = e.GetID()
         e.data.update(test_MySql.data1_1)
         e.meta.update(test_MySql.meta1)
@@ -325,7 +325,7 @@ def createentries4(n):
         if i==0:  id = e.GetID()
         e.data.update(test_MySql.data1_1)
         e.meta.update(test_MySql.meta1)
-        e.CommitFile(u"file1", {"file":test_MySql.file1_1, "filename": "file1.txt"})
+        e.CommitFile("file1", {"file":test_MySql.file1_1, "filename": "file1.txt"})
         e.Commit()
     t2 = time.time()
 
@@ -354,8 +354,8 @@ def getentries2(n, start):
     print_( "Get entries (all+file): ")
     t = time.time()
     for i in range(0,n):
-        e=pool.GetEntry(i+start, preload=u"all")
-        f=e.GetFile(u"file1")
+        e=pool.GetEntry(i+start, preload="all")
+        f=e.GetFile("file1")
     t2 = time.time()
 
     pool.Close()
@@ -368,7 +368,7 @@ def getentries5(n, start):
     print_( "Get entries (all+filestream): ")
     t = time.time()
     for i in range(0,n):
-        e=pool.GetEntry(i+start, preload=u"all")
+        e=pool.GetEntry(i+start, preload="all")
         #f=e.GetFile("file1")
     t2 = time.time()
 
@@ -382,7 +382,7 @@ def getentries4(n, start):
     print_( "Get entries (meta): ")
     t = time.time()
     for i in range(0,n):
-        e=pool.GetEntry(i+start, preload=u"meta")
+        e=pool.GetEntry(i+start, preload="meta")
     t2 = time.time()
 
     pool.Close()
@@ -397,7 +397,7 @@ def getbatch1(n, start):
     ids = []
     for i in range(0,n):
         ids.append(i+start)
-    e=pool.GetBatch(ids, preload=u"skip")
+    e=pool.GetBatch(ids, preload="skip")
     t2 = time.time()
 
     del e
@@ -413,7 +413,7 @@ def getbatch2(n, start):
     ids = []
     for i in range(0,n):
         ids.append(i+start)
-    e=pool.GetBatch(ids, preload=u"meta")
+    e=pool.GetBatch(ids, preload="meta")
     t2 = time.time()
 
     del e
@@ -429,7 +429,7 @@ def getbatch3(n, start):
     ids = []
     for i in range(0,n):
         ids.append(i+start)
-    e=pool.GetBatch(ids, preload=u"all")
+    e=pool.GetBatch(ids, preload="all")
     t2 = time.time()
 
     del e
@@ -475,14 +475,14 @@ def report(modes, printed):
         for m in modes:
             rep.append(printed[p*c+n])
             p+=1
-    print 
-    print
+    print()
+    print()
     i=0
     for p in rep:
-        print p
+        print(p)
         i+=1
         if i==len(modes):
-            print
+            print()
             i=0
 
 
@@ -492,8 +492,8 @@ def run(modes):
     printed = [""]
     for m in modes:
         mode = m
-        print
-        print mode,
+        print()
+        print(mode,)
         empty()
         connects(n)
         cursors(n)

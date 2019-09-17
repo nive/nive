@@ -3,9 +3,10 @@
 #
 
 import threading
+import logging
 from time import time
 
-# The following is used in *ConnectionRequest* classes to cahed the current db connection
+# The following is used in *ConnectionRequest* classes to cache the current db connection
 # for the time of a request. if pyramid is not available the thread local stack is used
 # as fallback
 try:
@@ -30,7 +31,7 @@ class Connection(object):
     dbName = database name
     """
     
-    placeholder = u"%s"
+    placeholder = "%s"
 
     def __init__(self, config = None, connectNow = True):
         self.configuration=config
@@ -46,8 +47,8 @@ class Connection(object):
 
     def cursor(self):
         db = self._get()
-        if not db:
-            raise OperationalError, "Database is closed"
+        if db is None:
+            raise OperationalError("Database is closed")
         return db.cursor()
     
     def begin(self):
@@ -72,7 +73,7 @@ class Connection(object):
     def close(self):
         """ Close database connection """
         db = self._get(connect=False)
-        if db:
+        if db is not None:
             # rollback uncommited values by default
             db.rollback()
             db.close()
@@ -126,17 +127,17 @@ class Connection(object):
         Format a parameter for sql queries like literal for db. This function is not
         secure for any values. 
         """
-        if isinstance(param, (int, long, float)):
-            return unicode(param)
-        d = unicode(param)
-        if d.find(u'"')!=-1:
-            d = d.replace(u'"',u'\\"')
-        return u'"%s"'%d
+        if isinstance(param, (int, float)):
+            return str(param)
+        d = str(param)
+        if d.find('"')!=-1:
+            d = d.replace('"','\\"')
+        return '"%s"'%d
 
 
     def GetDBManager(self):
         """ returns the database manager obj """
-        raise TypeError, "please use a subclassed connection"
+        raise TypeError("please use a subclassed connection")
 
 
     def _get(self, connect=True):
@@ -198,7 +199,7 @@ class ConnectionCache(object):
         return self.connections[key]
     
     def close(self):
-        for key, conn in self.connections.iteritems():
+        for key, conn in self.connections.items():
             # rollback uncommited values by default
             conn.rollback()
             conn.close()
@@ -249,7 +250,7 @@ class ConnectionRequest(Connection):
             if not connect:
                 return db
             return db or self.connect()
-        except (AttributeError, TypeError, KeyError), e:
+        except (AttributeError, TypeError, KeyError) as e:
             if not connect:
                 return None
             return self.connect()

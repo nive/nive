@@ -1,15 +1,15 @@
 <tal:block i18n:domain="nive">
-<textarea id="${field.oid}"
-          name="${field.name}">${cstruct}</textarea>
+<textarea id="${field.oid}" name="${field.name}">${cstruct}</textarea>
 <script>
-reform.addCallback(
-      '${field.oid}',
-      function(oid) {
-          tinyMCE.init(${field.widget.renderOptions(field)});
-      }
-);
-$('form').bind('form-pre-serialize', function(e) {
-    tinyMCE.triggerSave();
+$(document).ready(function() {
+    $('#${field.oid}').trumbowyg({
+            btns: [['strong', 'em', 'viewHTML'], ['removeformat']],
+            plugins: {
+                allowTagsFromPaste: { allowedTags: ['strong', 'em', 'p', 'br'] }
+            },
+            autogrow: true,
+            lang: 'de'
+    });
 });
 </script>
 </tal:block>

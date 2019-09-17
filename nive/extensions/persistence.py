@@ -16,18 +16,15 @@ import json
 import time
 import logging 
 
-from nive.definitions import implements, IPersistent, ModuleConf, Conf, IModuleConf
+from nive.definitions import implementer, IPersistent, ModuleConf, Conf, IModuleConf
 from nive.definitions import OperationalError, ProgrammingError
 
 
-
-
-
+@implementer(IPersistent)
 class PersistentConf(object):
     """
     configuration persistence base class ---------------------------------------
     """
-    implements(IPersistent)
     
     def __init__(self, app, configuration):
         self.app = app
@@ -37,13 +34,13 @@ class PersistentConf(object):
         """
         Load configuration values from backend and map to configuration.
         """
-        raise TypeError, "subclass"
+        raise TypeError("subclass")
         
     def Save(self, values):
         """
         Store configuration values in backend.
         """
-        raise TypeError, "subclass"
+        raise TypeError("subclass")
         
     def Changed(self):
         """
@@ -60,7 +57,7 @@ class PersistentConf(object):
         
 def LoadStoredConfValues(app, pyramidConfig):
     # lookup persistent manager for configuration
-    storage = app.Factory(IModuleConf, "persistence")
+    storage = app.NewModule(IModuleConf, "persistence")
     if not storage:
         return
     try:
@@ -90,37 +87,25 @@ class DbPersistence(PersistentConf):
         """
         close = 0
         try:
-            if not db:
-                close = 1
-                db = self.app.NewDBApi()
+            if db is None:
+                db = self.app.db.connection
             sql = """select value,ts from pool_sys where id=%s""" % (self.app.NewConnection().placeholder)
             c=db.cursor()
             c.execute(sql, (self._GetUid(),))
             data = c.fetchall()
             c.close()
-        except db.OperationalError:
+        except OperationalError:
             data = None
             db.rollback()
-        except db.ProgrammingError:
+        except ProgrammingError:
             data = None
             db.rollback()
-        except Exception, e:
+        except Exception as e:
             log = logging.getLogger(self.app.id)
             log.error("DbPersistence.Load() failed %s", str(e))
             return None
-        if close:
-            db.close()
         if data:
-            try:
-                values = json.loads(data[0][0])
-            except ValueError:
-                # Invalid data
-                # bw 0.9.13 try previously used pickled data conversion
-                try:
-                    values = pickle.loads(data[0][0])
-                except KeyError:
-                    # Invalid data
-                    return None
+            values = json.loads(data[0][0])
             lock = 0
             if self.conf.locked:
                 lock = 1
@@ -143,8 +128,7 @@ class DbPersistence(PersistentConf):
         ts = time.time()
         close = 0
         try:
-            if not db:
-                close = 1
+            if db is None:
                 db = self.app.db
             sql = """select ts from pool_sys where id=%s""" % (db.placeholder)
             r = db.Query(sql, (self._GetUid(),))
@@ -160,8 +144,6 @@ class DbPersistence(PersistentConf):
         except ProgrammingError: 
             data = None
             db.Undo()
-        if close:
-            db.Close()
         lock = 0
         if self.conf.locked:
             lock = 1
@@ -184,7 +166,7 @@ class DbPersistence(PersistentConf):
 
 dbPersistenceConfiguration = ModuleConf(
     id = "persistence",
-    name = u"Configuration persistence extension",
+    name = "Configuration persistence extension",
     context = DbPersistence,
     events = (Conf(event="finishRegistration", callback=LoadStoredConfValues),),
 )

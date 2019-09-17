@@ -17,8 +17,8 @@ class DBSqlDataTest1(unittest.TestCase):
         r=configuration.test()
         if not r:
             return
-        print FormatConfTestFailure(r)
-        self.assert_(False, "Configuration Error")
+        print(FormatConfTestFailure(r))
+        self.assertTrue(False, "Configuration Error")
 
     def test_tool(self):
         cmsstatistics(configuration,None)
@@ -31,12 +31,12 @@ class DBSqlDataTest1_db(__local.DefaultTestCase):
         self.app.Register(configuration)
 
     def tearDown(self):
-        self.app.Close()
+        self._closeApp()
     
     def test_toolrun1(self):
         t = self.app.GetTool("cmsstatistics", self.app)
-        self.assert_(t)
-        r,v = t()
+        self.assertTrue(t)
+        r = t()
         #print v.getvalue()
-        self.assert_(r)
+        self.assertTrue(r)
 

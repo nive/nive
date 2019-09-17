@@ -22,25 +22,25 @@ class FilenameLookup(object):
         are ignored.
         `file` is a reserved name and used in the current object to map file downloads. 
         """
-        if id == u"file":
-            raise KeyError, id
-        id = id.split(u".")
+        if id == "file":
+            raise KeyError(id)
+        id = id.split(".")
         if len(id)>2:
-            id = (u".").join(id[:-1])
+            id = (".").join(id[:-1])
         else:
             id = id[0]
         try:
-            id = long(id)
+            id = int(id)
         except:
             name = id
             id = 0
             if name:
-                id = self.dataroot.FilenameToID(name, self.id)
+                id = self.root.search.FilenameToID(name, self.id)
             if not id:
-                raise KeyError, id
+                raise KeyError(id)
         o = self.GetObj(id)
         if not o:
-            raise KeyError, id
+            raise KeyError(id)
         return o
 
 
@@ -62,13 +62,13 @@ def SetupFilenameLookup(app, pyramidConfig):
             c.extensions = tuple(e)
             c.lock()
 
-    add(app.GetAllRootConfs())
-    add(app.GetAllObjectConfs())
+    add(app.configurationQuery.GetAllRootConfs())
+    add(app.configurationQuery.GetAllObjectConfs())
 
 
 configuration = ModuleConf(
     id = "filenameLookup",
-    name = u" Enables readable url path names instead of ids for object traversal",
+    name = " Enables readable url path names instead of ids for object traversal",
     context = "nive.extensions.filename",
     events = (Conf(event="startRegistration", callback=SetupFilenameLookup),),
 )

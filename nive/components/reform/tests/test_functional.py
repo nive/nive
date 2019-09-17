@@ -64,23 +64,24 @@ class TestFunctional(unittest.TestCase):
         form = self._makeForm(schema)
         try:
             form.validate([])
-        except ValidationFailure, ve:
+        except ValidationFailure as ve:
             e = ve.error
-        self.assertEqual(form.error, e)
-        self.assertEqual(form.children[0].error, e.children[0])
-        self.assertEqual(form.children[1].error, e.children[1])
-        #self.assertEqual(form.children[3].error, e.children[2])
-        #self.assertEqual(form.children[3].children[0].error,
-        #                 e.children[2].children[0])
-        self.assertEqual(
-            ve.cstruct,
-            {
-                'date': null, 
-                'cool': 'false',
-                'name': null,
-                'title': null,
-             }
-            )
+
+            self.assertEqual(form.error, e)
+            self.assertEqual(form.children[0].error, e.children[0])
+            self.assertEqual(form.children[1].error, e.children[1])
+            #self.assertEqual(form.children[3].error, e.children[2])
+            #self.assertEqual(form.children[3].children[0].error,
+            #                 e.children[2].children[0])
+            self.assertEqual(
+                ve.cstruct,
+                {
+                    'date': null,
+                    'cool': 'false',
+                    'name': null,
+                    'title': null,
+                 }
+                )
         
 @deferred
 def deferred_date_validator(node, kw):

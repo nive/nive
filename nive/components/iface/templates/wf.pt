@@ -1,0 +1,8 @@
+<tal:block metal:use-macro="view.index_tmpl().macros['main']">
+<tal:block metal:fill-slot="content">
+
+<span tal:replace="view.unitInfo('edit')" />
+<span tal:replace="structure view.messages()" />
+
+</tal:block>
+</tal:block>

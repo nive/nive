@@ -1,0 +1,10 @@
+<tal:block metal:use-macro="view.index_tmpl().macros['empty']" i18n:domain="nive">
+<tal:block metal:fill-slot="content">
+
+    <h5>${title}</h5>
+    <hr>
+    <span tal:replace="structure view.messages()" />
+    <span tal:replace="structure content"/>
+
+</tal:block>
+</tal:block>

@@ -70,41 +70,41 @@ class Sqlite3Manager(DatabaseManager):
         url -> TEXT NOT NULL DEFAULT default
         """
         datatype = conf["datatype"]
-        aStr = u""
+        aStr = ""
 
         # convert datatype list
         if(datatype == "list"):
-            if isinstance(conf["default"], basestring):
+            if isinstance(conf["default"], str):
                 datatype = "listt"
             else:
                 datatype = "listn"
 
         if datatype in ("string", "email", "password"):
             if conf.get("size", conf.get("maxLen",0)) <= 3:
-                aStr = u"CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                aStr = "CHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
             else:
-                aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+                aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("number", "long", "int"):
             aN = conf["default"]
             if aN == "" or aN == " " or aN == None:
                 aN = 0
-            if isinstance(aN, basestring):
-                aN = long(aN)
+            if isinstance(aN, str):
+                aN = int(aN)
             if conf.get("size", conf.get("maxLen",0)) == 4:
-                aStr = u"TINYINT NOT NULL DEFAULT %d" % (aN)
+                aStr = "TINYINT NOT NULL DEFAULT %d" % (aN)
             elif conf.get("size", conf.get("maxLen",0)) in (11,12):
-                aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+                aStr = "INTEGER NOT NULL DEFAULT %d" % (aN)
             else:
-                aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+                aStr = "INTEGER NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "float":
             aN = conf["default"]
             if aN == "" or aN == " " or aN == None:
                 aN = 0
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = float(aN)
-            aStr = u"FLOAT NOT NULL DEFAULT %d" % (aN)
+            aStr = "FLOAT NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "bool":
             aN = conf["default"]
@@ -112,23 +112,23 @@ class Sqlite3Manager(DatabaseManager):
                 aN = 0
             if aN == "True":
                 aN = 1
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = int(aN)
-            aStr = u"TINYINT NOT NULL DEFAULT %d" % (aN)
+            aStr = "TINYINT NOT NULL DEFAULT %d" % (aN)
 
         elif datatype in ("text", "htext", "url", "urllist", "json", "code"):
-            aStr = u"TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
+            aStr = "TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
 
         elif datatype == "unit":
             aN = conf["default"]
             if aN == "" or aN == " " or aN == None:
                 aN = 0
-            if isinstance(aN, basestring):
-                aN = long(aN)
-            aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+            if isinstance(aN, str):
+                aN = int(aN)
+            aStr = "INTEGER NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "unitlist":
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "date":
             aD = conf["default"]
@@ -136,12 +136,12 @@ class Sqlite3Manager(DatabaseManager):
                 aD = "NULL"
             if aD in ("now", "nowdate", "nowtime"):
                 aD = ""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+            if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == "":
-                aStr = u"TIMESTAMP NULL"
+                aStr = "TIMESTAMP NULL"
             else:
-                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+                aStr = "TIMESTAMP NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "datetime":
             aD = conf["default"]
@@ -149,12 +149,12 @@ class Sqlite3Manager(DatabaseManager):
                 aD = "NULL"
             if aD in ("now", "nowdate", "nowtime"):
                 aD = ""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+            if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == "":
-                aStr = u"TIMESTAMP NULL"
+                aStr = "TIMESTAMP NULL"
             else:
-                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+                aStr = "TIMESTAMP NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "time":
             aD = conf["default"]
@@ -162,40 +162,40 @@ class Sqlite3Manager(DatabaseManager):
                 aD = "NULL"
             if aD in ("now", "nowtime"):
                 aD = ""
-            if isinstance(aD, basestring) and not aD in ("NOW","NULL"):
+            if isinstance(aD, str) and not aD in ("NOW","NULL"):
                 aD = self.ConvertDate(aD)
             if aD == "":
-                aStr = u"TIMESTAMP NULL"
+                aStr = "TIMESTAMP NULL"
             else:
-                aStr = u"TIMESTAMP NULL DEFAULT '%s'" % (aD)
+                aStr = "TIMESTAMP NULL DEFAULT '%s'" % (aD)
 
         elif datatype == "timestamp":
-            aStr = u"TIMESTAMP DEFAULT (datetime('now','localtime'))"
+            aStr = "TIMESTAMP DEFAULT (datetime('now','localtime'))"
 
         elif datatype == "listt":
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype in ("listn", "codelist"):
             aN = conf["default"]
             if aN == "" or aN == " " or aN == None:
                 aN = 0
-            if isinstance(aN, basestring):
+            if isinstance(aN, str):
                 aN = int(aN)
             aStr = "SMALLINT NOT NULL DEFAULT %d" % (aN)
 
         elif datatype in ("multilist", "checkbox", "mselection", "mcheckboxes", "radio"):
-            aStr = u"VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
+            aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
         elif datatype == "file":
-            aStr = u"BLOB"
+            aStr = "BLOB"
 
         elif datatype == "bytesize":
             aN = conf["default"]
             if aN == "" or aN == " " or aN == None:
                 aN = 0
-            if isinstance(aN, basestring):
-                aN = long(aN)
-            aStr = u"INTEGER NOT NULL DEFAULT %d" % (aN)
+            if isinstance(aN, str):
+                aN = int(aN)
+            aStr = "INTEGER NOT NULL DEFAULT %d" % (aN)
 
         if conf.get("unique"):
             aStr += " UNIQUE"
@@ -212,7 +212,7 @@ class Sqlite3Manager(DatabaseManager):
     def GetTables(self):
         if not self.IsDB():
             return []
-        sql = u"""SELECT name FROM 
+        sql = """SELECT name FROM 
                    (SELECT * FROM sqlite_master UNION ALL
                     SELECT * FROM sqlite_temp_master)
                 WHERE type='table'
@@ -230,7 +230,7 @@ class Sqlite3Manager(DatabaseManager):
             return []
         if not self.IsTable(tableName):
             return []
-        self.db.execute(u"PRAGMA table_info(%s)" % (tableName))
+        self.db.execute("PRAGMA table_info(%s)" % (tableName))
         table = {}
         for c in self.db.fetchall():
             table[c[1]] = {"db": {"id": c[1], "type": c[2], "identity": c[5], "default": c[4], "null": c[3]}, 
@@ -252,38 +252,38 @@ class Sqlite3Manager(DatabaseManager):
 
     def IsTable(self, tableName):
         for aD in self.GetTables():
-            if string.lower(aD[0]) == string.lower(tableName):
+            if aD[0].lower() == tableName.lower():
                 return True
         return False
 
 
-    def CreateTable(self, tableName, columns=None, createIdentity=True, primaryKeyName=u"id"):
+    def CreateTable(self, tableName, columns=None, createIdentity=True, primaryKeyName="id"):
         if not self.IsDB():
             return False
-        if not tableName or tableName == u"":
+        if not tableName or tableName == "":
             return False
-        assert(tableName != u"user")
+        assert(tableName != "user")
         if createIdentity:
-            aSql = u"CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT" % (tableName, primaryKeyName)
+            aSql = "CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT" % (tableName, primaryKeyName)
             if columns:
                 for c in columns:
                     if c.id == primaryKeyName:
                         continue
                     aSql += ","
-                    aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
+                    aSql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            aSql += ")"
         else:
-            aSql = u"CREATE TABLE %s" % (tableName)
+            aSql = "CREATE TABLE %s" % (tableName)
             if not columns:
-                raise ConfigurationError, "No database fields defined."
+                raise ConfigurationError("No database fields defined.")
             aCnt = 0
-            aSql += u"("
+            aSql += "("
             for c in columns:
                 if aCnt:
-                    aSql += u","
+                    aSql += ","
                 aCnt = 1
-                aSql += c.id + u" " + self.ConvertConfToColumnOptions(c)
-            aSql += u")"
+                aSql += c.id + " " + self.ConvertConfToColumnOptions(c)
+            aSql += ")"
         self.db.execute(aSql)
         # delay until table is created
         time.sleep(0.3)
@@ -298,7 +298,7 @@ class Sqlite3Manager(DatabaseManager):
     def RenameTable(self, inTableName, inNewTableName):
         if not self.IsDB():
             return False
-        self.db.execute(u"alter table %s rename to %s" % (inTableName, inNewTableName))
+        self.db.execute("alter table %s rename to %s" % (inTableName, inNewTableName))
         return True
 
 
@@ -311,21 +311,21 @@ class Sqlite3Manager(DatabaseManager):
         ColumnList --> ColumnName1,ColumName2,...
     """
 
-    def CreateColumn(self, tableName, columnName, columnOptions=u""):
+    def CreateColumn(self, tableName, columnName, columnOptions=""):
         if not self.IsDB():
             return False
-        if columnName == u"" or tableName == u"":
+        if columnName == "" or tableName == "":
             return False
-        if columnOptions == u"identity":
+        if columnOptions == "identity":
             return self.CreateIdentityColumn(tableName, columnName)
-        self.db.execute(u"alter table %s add column %s %s" % (tableName, columnName, columnOptions))
+        self.db.execute("alter table %s add column %s %s" % (tableName, columnName, columnOptions))
         return True
 
 
     def CreateIdentityColumn(self, tableName, columnName):
         if not self.IsDB():
             return False
-        return self.CreateColumn(tableName, columnName, u"INTEGER PRIMARY KEY AUTOINCREMENT")
+        return self.CreateColumn(tableName, columnName, "INTEGER PRIMARY KEY AUTOINCREMENT")
 
 
     # Database Options ------------------------------------------------------------

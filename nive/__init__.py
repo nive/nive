@@ -2,8 +2,6 @@
 # Released under GPL3. See license.txt
 #
 
-__version__ = "1.0rc1"
-
 
 """
 Use `nive.definitions` to import Interfaces or Configuration classes

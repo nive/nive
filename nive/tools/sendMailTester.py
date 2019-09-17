@@ -18,7 +18,7 @@ from nive.i18n import _
 
 configuration = ToolConf("nive.tools.sendMail",
     context = "nive.tools.sendMailTester.sendMailTester",
-    name = _(u"Fake Mailer"),
+    name = _("Fake Mailer"),
     description = __doc__
 )
 
@@ -57,12 +57,13 @@ class sendMailTester(sendMail):
         maillog = values.get("maillog")
         log = logging.getLogger(maillog or "sendMail")
 
+        self.InitStream()
 
         # lookup receivers
         recvs = []
         if recvmails:
-            if isinstance(recvmails, basestring):
-                recvs.append((recvmails, u""))
+            if isinstance(recvmails, str):
+                recvs.append((recvmails, ""))
             else:
                 recvs.extend(recvmails)
         if recvids or recvrole:
@@ -77,8 +78,8 @@ class sendMailTester(sendMail):
                 recvs.extend(bcc)
         
         if len(recvs) == 0:
-            self.stream.write(_(u"No receiver for the e-mail! Aborting."))
-            return 0
+            self.stream.write(_("No receiver for the e-mail! Aborting."))
+            return None, 0
 
         temp = []
         for r in recvs:
@@ -93,42 +94,42 @@ class sendMailTester(sendMail):
             temp.append(self._GetMailStr(r))
         bcc = temp
 
-        if fromMail and fromMail != u"":
+        if fromMail and fromMail != "":
             senderMail = sender
         else:
             fromMail = sender
-            senderMail = u""
+            senderMail = ""
 
-        contentType = u"text/plain"
+        contentType = "text/plain"
         if html:
-            contentType = u"text/html"
+            contentType = "text/html"
         if utf8:
-            contentType += u"; charset=utf-8"
+            contentType += "; charset=utf-8"
 
         if debug:
-            mails_original = u""
+            mails_original = ""
             for m in recvs:
-                mails_original += m + u"\r\n<br>"
-            body += u"""\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
+                mails_original += m + "\r\n<br>"
+            body += """\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
             # in debug mode use default receiver mail as receiving address for all mails
-            recvs = [(recvmails, u"")]
+            recvs = [(recvmails, "")]
 
         result = 1
         if showToListInHeader:
-            self.stream.write((u", ").join(r))
+            self.stream.write((", ").join(r))
         else:
             for recv in recvs:
-                self.stream.write(recv[0] + u" ok, ")
+                self.stream.write(recv[0] + " ok, ")
                 if maillog:
-                    logdata = u"%s - %s - %s" % (recv[0], recv[1], title)
-                    log.debug(u" %s", logdata)
-        return result
+                    logdata = "%s - %s - %s" % (recv[0], recv[1], title)
+                    log.debug(" %s", logdata)
+        return None, result
 
 
     def _GetMailStr(self, mail):
-        if isinstance(mail, basestring):
+        if isinstance(mail, str):
             return mail
         if isinstance(mail, (list,tuple)) and len(mail) > 1:
-            return u'"%s" <%s>' % (mail[1], mail[0])
+            return '"%s" <%s>' % (mail[1], mail[0])
         return mail[0]
         

@@ -35,24 +35,24 @@ Subclass and overwrite ``def _Run()`` function. Use self.stream to write result 
 
 """
 
-from StringIO import StringIO
+from io import StringIO
 
-from nive.definitions import Interface, ITool, implements
+from nive.definitions import Interface, ITool, implementer
 from nive.definitions import ConfigurationError
 from nive.views import BaseView
-from nive.forms import ToolForm
+from nive.components.reform.forms import ToolForm
 
 
+@implementer(ITool)
 class Tool(object):
     """
 
     """
-    implements(ITool)
 
     def __init__(self, configuration, app):
         self.configuration = configuration
         self.app_ = app
-        self.stream = False
+        self.stream = None
 
         self.__name__ = ""
         self.__parent__ = None
@@ -68,10 +68,10 @@ class Tool(object):
         loads self.configuration 
         """
         if not self.configuration:
-            raise ConfigurationError, "Tool configuration is None. Please load the tool by referencing the tool configuration."
+            raise ConfigurationError("Tool configuration is None. Please load the tool by referencing the tool configuration.")
         
         c = self.configuration
-        for k in c.keys():
+        for k in list(c.keys()):
             # special values
             if k == "id" and c.id:
                 self.__name__ = c.id
@@ -91,14 +91,19 @@ class Tool(object):
     # Subclass functions --------------------------------------------
 
     def _Run(self, **values):
-        result = True
-        return result
+        # returns values, result string
+        # if values is not None, the form will be rendered with the given values if activated
+        return None, "OK"
 
 
     # Execution --------------------------------------------------------------------------------------------
 
     def __call__(self, **kw):
         return self.Run(**kw)
+
+
+    def InitStream(self):
+        self.stream = StringIO()
 
 
     def Run(self, **kw):
@@ -111,14 +116,11 @@ class Tool(object):
         
         returns bool, stream
         """
-        if not self.stream:
-            self.stream = StringIO()
-
         # call function
         values = self.ExtractValues(**kw)
         values["original"] = kw
-        result = self._Run(**values)
-        return result, self.stream
+        values, data = self._Run(**values)
+        return values, data
 
 
     def ExtractValues(self, **kw):
@@ -178,15 +180,16 @@ class _IGlobal(Interface):
     used for global tool registration as tool.apply
     """
 
+
+@implementer(_IGlobal)
 class _GlobalObject(object):
     """
     used for global tool lookup
     """
-    implements(_IGlobal)
+
     
     
-    
-class ToolView(BaseView):    
+class ToolView(BaseView):
     """
     Default tool views supporting a form renderer and direct execution
 
@@ -214,7 +217,7 @@ class ToolView(BaseView):
         form = ToolForm(view=self, loadFromType=self.context.configuration)
         form.Setup()
         result, data, action = form.Process()
-        if not isinstance(data, basestring):
+        if not isinstance(data, (str, bytes)):
             try:
                 data = data.getvalue()
             except:
@@ -223,7 +226,7 @@ class ToolView(BaseView):
             fn = None
             if hasattr(self.context, "filename"):
                 fn = self.context.filename
-            return self.SendResponse(data=data, mime=self.context.mimetype, raiseException=True, filename=fn)
+            return self.SendResponse(data, mime=self.context.mimetype, raiseException=True, filename=fn)
         return self.SendResponse(form.HTMLHead() + data, mime=self.context.mimetype, raiseException=False) 
     
     
@@ -237,13 +240,18 @@ class ToolView(BaseView):
         tool = self.context
         values = self.GetFormValues(method="POST")
         values["request"] = self.request
-        result = tool.Run(**values)
-        data = tool.stream
-        if not isinstance(data, basestring):
+        values["user"] = self.User()
+        values, data = tool.Run(**values)
+        if tool.stream is not None:
+            data = tool.stream
+        if not isinstance(data, (str, bytes)):
             try:
                 data = data.getvalue()
             except:
                 data = str(data)
-        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False)     
+        fn = None
+        if hasattr(self.context, "filename"):
+            fn = self.context.filename
+        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False, filename=fn)
     
            

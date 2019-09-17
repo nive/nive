@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
+
+    <tal:block metal:fill-slot="editmain">
+
+        <div class="row"><div class="col-sm">
+            <div class="alert alert-info" i18n:translate="">This page lists all included views for browsing in readonly mode.</div>
+
+            <h3 i18n:translate="">View Modules</h3>
+            <div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IViewModuleConf')"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Single Views</h3>
+            <div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IViewConf')"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Widgets</h3>
+            <div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IWidgetConf')"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Other modules</h3>
+            <div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IModuleConf')"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+
+        </div></div>
+    </tal:block>
+
+</tal:block>

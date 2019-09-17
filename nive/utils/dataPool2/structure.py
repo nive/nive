@@ -4,7 +4,7 @@
 
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
 from nive.utils.utils import ConvertToDateTime
@@ -35,22 +35,28 @@ class Wrapper(object):
         return ["_temp_", "_content_", "_entry_"]
     
     def __setitem__(self, key, value):
-        if key in (u"id", u"pool_datatbl", u"pool_dataref"):
+        if key in ("id", "pool_datatbl", "pool_dataref"):
             return
         self._temp_[key] = self._entry_().DeserializeValue(key, value, self.meta)
 
     def __getitem__(self, key):
-        if self._temp_.has_key(key):
+        if key in self._temp_:
             return self._temp_[key]
         if not self._content_:
             self._Load()
         return self._content_.get(key)
 
+    def __contains__(self, key):
+        if key in self._temp_:
+            return True
+        if not self._content_:
+            self._Load()
+        return key in self._content_
 
     def __getattr__(self, key):
-        if key in self.__dict__.keys():
+        if key in list(self.__dict__.keys()):
             return self.__dict__[key]
-        if self._temp_.has_key(key):
+        if key in self._temp_:
             return self._temp_[key]
         if not self._content_:
             self._Load()
@@ -84,7 +90,7 @@ class Wrapper(object):
     def has_key(self, key):
         if self.HasTempKey(key):
             return True
-        return key in self.keys()
+        return key in list(self.keys())
 
 
     def get(self, key, default=None):
@@ -104,21 +110,21 @@ class Wrapper(object):
     def update(self, dict, force = False):
         dict = self._entry_().DeserializeValue(None, dict, self.meta)
         if force:
-            for k in dict.keys():
+            for k in list(dict.keys()):
                 data = dict[k]
                 if isinstance(data, bytes):
                     dict[k] = self._entry_().pool.DecodeText(data)
             self._temp_.update(dict)
             return
-        for k in dict.keys():
+        for k in list(dict.keys()):
             self[k] = dict[k]
 
 
     def keys(self):
         if not self._content_:
             self._Load()
-        t = self._content_.keys()
-        t += self._temp_.keys()
+        t = list(self._content_.keys())
+        t += list(self._temp_.keys())
         return t
 
 
@@ -127,7 +133,7 @@ class Wrapper(object):
     def GetTemp(self):                return self._temp_
     def HasTemp(self):                return self._temp_ != {}
     def GetTempKey(self, key):        return self._temp_.get(key)
-    def HasTempKey(self, key):        return self._temp_.has_key(key)
+    def HasTempKey(self, key):        return key in self._temp_
 
     def GetEntry(self):                return self._entry_()
 
@@ -215,7 +221,7 @@ class FileWrapper(Wrapper):
         self._content_ = {}
         for f in files:
             self._content_[f["filekey"]] = f
-        return self._content_.keys()
+        return list(self._content_.keys())
 
 
 #  Pool Structure ---------------------------------------------------------------------------
@@ -272,7 +278,7 @@ class PoolStructure(object):
     prefix.
 
     """
-    MetaTable = u"pool_meta"
+    MetaTable = "pool_meta"
     
     def __init__(self, structure=None, fieldtypes=None, stdMeta=None, codepage="utf-8", **kw):
         #
@@ -290,10 +296,10 @@ class PoolStructure(object):
         self.codepage = codepage
         meta = list(s[self.MetaTable])
         # add default fields
-        if not u"pool_dataref" in s[self.MetaTable]:
-            meta.append(u"pool_dataref")
-        if not u"pool_datatbl" in s[self.MetaTable]:
-            meta.append(u"pool_datatbl")
+        if not "pool_dataref" in s[self.MetaTable]:
+            meta.append("pool_dataref")
+        if not "pool_datatbl" in s[self.MetaTable]:
+            meta.append("pool_datatbl")
         s[self.MetaTable] = tuple(meta)
         for k in s:
             s[k] = tuple(s[k])
@@ -313,21 +319,24 @@ class PoolStructure(object):
     def __getitem__(self, key, version=None):
         return self.structure[key]
 
+    def __contains__(self, key):
+        return key in self.structure
+
     def get(self, key, default=None, version=None):
         return self.structure.get(key, default)
 
     def has_key(self, key, version=None):
-        return self.structure.has_key(key)
+        return key in self.structure
 
     def keys(self, version=None):
-        return self.structure.keys()
+        return list(self.structure.keys())
     
     
     def serialize(self, table, field, value):
         # if field==None and value is a dictionary multiple values are serialized
         if field==None and isinstance(value, dict):
             newdict = {}
-            for field, v in value.items():
+            for field, v in list(value.items()):
                 try:        t = self.fieldtypes[table][field]
                 except:     t = None
                 newdict[field] = self._se(v, t, field)
@@ -343,7 +352,7 @@ class PoolStructure(object):
         # if field==None and value is a dictionary multiple values are deserialized
         if field is None and isinstance(value, dict):
             newdict = {}
-            for field, v in value.items():
+            for field, v in list(value.items()):
                 try:        t = self.fieldtypes[table][field]
                 except:     t = None
                 newdict[field] = self._de(v, t, field)
@@ -359,54 +368,60 @@ class PoolStructure(object):
         if not fieldtype:
             # no datatype information set
             if isinstance(value, datetime):
-                return value.strftime(u"%Y-%m-%d %H:%M:%S")
+                return value.strftime("%Y-%m-%d %H:%M:%S")
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                return n.strftime("%H:%M:%S")
             elif isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:
-                    value = [unicode(v, self.codepage) for v in value]
-                value = u"_json_"+json.dumps(value)
+                    value = [str(v, self.codepage) for v in value]
+                value = "_json_"+json.dumps(value)
             elif isinstance(value, bytes):
-                value = unicode(value, self.codepage)
+                value = str(value, self.codepage)
             return value
         
         if isinstance(fieldtype, dict):
-            fieldtype = fieldtype[u"datatype"]
+            fieldtype = fieldtype["datatype"]
             
         # call serialize callback function
         if fieldtype in self.serializeCallbacks:
             return self.serializeCallbacks[fieldtype](value, field)
             
         if fieldtype == "number":
-            if isinstance(value, basestring):
-                value = long(value)
+            if isinstance(value, str):
+                value = int(value)
             elif isinstance(value, float):
-                value = long(value)
+                value = int(value)
         
         elif fieldtype == "float":
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = float(value)
 
         elif fieldtype in ("date", "datetime"):
-            if isinstance(value, (float,int,long)):
-                value = unicode(datetime.fromtimestamp(value))
+            if isinstance(value, (float,int)):
+                value = str(datetime.fromtimestamp(value))
             elif value is None:
                 pass
-            elif not isinstance(value, unicode):
-                value = unicode(value)
+            elif not isinstance(value, str):
+                value = str(value)
         
         elif fieldtype == "time":
-            if isinstance(value, (float,int,long)):
-                value = unicode(datetime.fromtimestamp(value).strftime(u"HH:MM:SS.%f"))
+            if isinstance(value, (float,int)):
+                value = str(datetime.fromtimestamp(value).strftime("HH:MM:SS.%f"))
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                value = n.strftime("HH:MM:SS.%f")
             elif value is None:
                 pass
-            elif not isinstance(value, unicode):
-                value = unicode(value)
+            elif not isinstance(value, str):
+                value = str(value)
 
         elif fieldtype == "timestamp":
             if value is None:
                 pass
-            elif not isinstance(value, basestring):
-                value = unicode(value)
+            elif not isinstance(value, str):
+                value = str(value)
         
         elif fieldtype in ("list","radio"):
             # to single item string
@@ -414,25 +429,25 @@ class PoolStructure(object):
                 if value:
                     value = value[0]
                 else:
-                    value = u""
+                    value = ""
 
         elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
             # to json formatted list
             if not value:
-                value = u""
-            elif isinstance(value, basestring):
+                value = ""
+            elif isinstance(value, str):
                 value = [value]
             if isinstance(value, (list, tuple)):
                 if isinstance(value[0], bytes):
                     # list of strings:
-                    value = [unicode(v, self.codepage) for v in value]
+                    value = [str(v, self.codepage) for v in value]
                 value = json.dumps(value)
 
         elif fieldtype in ("bool"):
-            if isinstance(value, basestring):
-                if value.lower()==u"true":
+            if isinstance(value, str):
+                if value.lower()=="true":
                     value = 1
-                elif value.lower()==u"false":
+                elif value.lower()=="false":
                     value = 0
             else:
                 try:
@@ -442,13 +457,13 @@ class PoolStructure(object):
 
         elif fieldtype == "json":
             if not value:
-                value = u""
-            elif not isinstance(value, basestring):
+                value = ""
+            elif not isinstance(value, str):
                 value = json.dumps(value)
             
         # assure unicode except filedata
         if isinstance(value, bytes) and fieldtype!="file":
-            value = unicode(value, self.codepage)
+            value = str(value, self.codepage)
         
         return value
 
@@ -456,14 +471,17 @@ class PoolStructure(object):
     def _de(self, value, fieldtype, field):
         if not fieldtype:
             # no datatype information set
-            if isinstance(value, basestring) and value.startswith(u"_json_"):
-                value = json.loads(value[len(u"_json_"):])
+            if isinstance(value, str) and value.startswith("_json_"):
+                value = json.loads(value[len("_json_"):])
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                value = datetime_time(hour=n.hour, minute=n.minute, second=n.second, microsecond=n.microsecond)
             if isinstance(value, bytes):
-                value = unicode(value, self.codepage)
+                value = str(value, self.codepage)
             return value
 
         if isinstance(fieldtype, dict):
-            fieldtype = fieldtype[u"datatype"]
+            fieldtype = fieldtype["datatype"]
 
         # call serialize callback function
         if fieldtype in self.deserializeCallbacks:
@@ -471,53 +489,74 @@ class PoolStructure(object):
 
         if fieldtype in ("date", "datetime"):
             # -> to datetime
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = ConvertToDateTime(value)
-            elif isinstance(value, (float,int,long)):
+            elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
                     
         elif fieldtype == "time":
             # -> to datetime.time
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 # misuse datetime parser
-                value2 = ConvertToDateTime(u"2015-01-01 "+unicode(value))
+                value2 = ConvertToDateTime("2015-01-01 "+str(value))
                 if value2:
                     value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
-            elif isinstance(value, (float,int,long)):
+            elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
                 value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
+            elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
+                value = datetime_time(hour=n.hour, minute=n.minute, second=n.second, microsecond=n.microsecond)
 
         elif fieldtype == "timestamp":
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = float(value)
                     
-        elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist", "unitlist"):
+        elif fieldtype in ("multilist", "checkbox", "mselection", "mcheckboxes", "urllist"):
             # -> to string tuple
             # unitlist -> to number tuple
             if not value:
-                value = u""
-            elif isinstance(value, basestring):
-                if value.startswith(u"_json_"):
-                    value = json.loads(value[len(u"_json_"):])
+                value = ""
+            elif isinstance(value, str):
+                if value.startswith("_json_"):
+                    value = json.loads(value[len("_json_"):])
                 else:
                     try:
                         value = tuple(json.loads(value))
                     except ValueError:
-                        # bw 0.9.12 convert line based values
-                        if "\r\n" in value:
-                            value = value.split("\r\n")
-                        else:
-                            value = (value,)
+                        # use as single item text string
+                        value = (value,)
             elif isinstance(value, list):
                 value = tuple(value)
             if fieldtype == "unitlist":
-                value = tuple([long(v) for v in value])
-            
+                value = tuple([int(v) for v in value])
+
+        elif fieldtype in ("unitlist",):
+            # -> to string tuple
+            # unitlist -> to number tuple
+            if not value:
+                value = ""
+            elif isinstance(value, str):
+                if value.startswith("_json_"):
+                    value = json.loads(value[len("_json_"):])
+                else:
+                    try:
+                        value = tuple(json.loads(value))
+                    except ValueError:
+                        # use as single item text string
+                        value = (value,)
+                    except TypeError:
+                        # use as single item text string
+                        value = (value,)
+            elif isinstance(value, list):
+                value = [int(v) for v in value]
+                value = tuple(value)
+
         elif fieldtype == "json":
             # -> to python type
             if not value:
                 value = None
-            elif isinstance(value, basestring):
+            elif isinstance(value, str):
                 value = json.loads(value)
             
         return value

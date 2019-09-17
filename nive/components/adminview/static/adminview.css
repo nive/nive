@@ -1,0 +1,34 @@
+body {
+	font-family: Verdana, Arial, sans-serif;
+	font-style: normal;
+	font-size: 0.9em;
+	padding: 0;
+	margin: 0;
+}
+
+h1     { font-size: 1.3em; line-height: 1.3em; font-weight: bold; }
+h2     { font-size: 1.2em; line-height: 1.3em; font-weight: bold; }
+h3     { font-size: 1.1em; line-height: 1.3em; font-weight: bold; }
+h4     { font-size: 1em; line-height: 1.3em; font-weight: bold; }
+.btn   { font-size: 1em; line-height: 1.3em; }
+
+form label.required:after  { content: "*"; }
+form .form-control,
+form .form-control,
+form .form-control { font-size:1em; }
+form table.search .form-group { margin-bottom:0; }
+
+.navbar { background-color: #eaeaea; }
+.navbar .active { font-weight: bold; }
+
+#main { margin: 1rem; }
+
+#header { /* fix header for customizing */
+    width: 100%; height: 40px;
+    background-color:#aaaaaa;
+    background-image: url(logo.png);
+    background-repeat: no-repeat;
+    background-position: 20px 7px;
+}
+
+.invalid-feedback { display:block; }

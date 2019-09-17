@@ -1,0 +1,200 @@
+
+<!-- main header navigation used for all layouts -->
+<nav metal:define-macro="topnav" i18n:domain="nive">
+   <div class="navbar fixed-top navbar-expand-lg" id="topnav">
+   <div tal:condition="view.ifaceConf.slogan" class="slogan">${view.ifaceConf.slogan}</div>
+   <a class="navbar-brand" href="${view.backlink()}"><img src="${view.ifaceConf.logo}" class="logo" alt="${view.ifaceConf.slogan}" title="${view.ifaceConf.slogan}" /></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+     <span class="navbar-toggler-icon"></span>
+     <img src="${view.static}images/menu-black.png">
+   </button>
+   <div class="collapse navbar-collapse" id="navbarContent">
+     <ul metal:define-slot="sections"
+         class="navbar-nav mr-auto"
+         tal:content="structure view.sections()">
+     </ul>
+     <ul tal:condition="view.UserName()"
+         tal:define="ho view.headoptions();"
+         class="navbar-nav mr-right">
+       <li tal:condition="ho" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n:translate="">More</span> <b class="caret"></b></a>
+          <div tal:content="structure ho" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+          </div>
+       </li>
+       <li class="divider-vertical"></li>
+       <li class="nav-item" tal:define="hl view.headlink();"><span tal:condition="hl" tal:replace="structure hl"></span></li>
+     </ul>
+     <ul tal:condition="not view.UserName()"
+         tal:define="hl view.headlinkAnonymous();"
+         class="navbar-nav mr-right">
+       <li class="divider-vertical"></li>
+       <li class="nav-item"><span tal:condition="hl" tal:replace="structure hl"></span></li>
+     </ul>
+   </div>
+   </div>
+</nav>
+
+
+<!-- main navigation defines the header, content inside container/row including path -->
+<tal:block metal:define-macro="main"><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title tal:content="structure view.title()"></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta tal:replace="structure view.Assets(types='css')">
+<meta tal:replace="structure view.Assets(types='js')">
+<tal:block metal:define-slot="head"></tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
+</head>
+<body>
+  <tal:block metal:use-macro="template.topnav"> </tal:block>
+
+  <div class="container-fluid">
+    <div class="row">
+      <tal:block metal:define-slot="path">
+          <div class="col-sm">
+              <span tal:replace="structure view.path()"></span>
+              <span tal:replace="structure view.settingsLinks()"></span>
+          </div>
+      </tal:block>
+    </div>
+      <tal:block metal:define-slot="content"> </tal:block>
+  </div>
+  <br style="clear:both">
+
+  <tal:block metal:define-slot="foot"> </tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <span tal:replace="structure view.mark2()"></span>
+</body>
+</html>
+</tal:block>
+
+
+<!-- main navigation defines the header, navigation left, content right including path, header, tabs -->
+<tal:block metal:define-macro="main_object"><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title tal:content="structure view.title()"></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta tal:replace="structure view.Assets(types='css')">
+<meta tal:replace="structure view.Assets(types='js')">
+<tal:block metal:define-slot="head"></tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
+</head>
+<body>
+  <tal:block metal:use-macro="template.topnav"></tal:block>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2">
+        <div class="pathspacer">&nbsp;</div>
+        <div class="sidebar-nav"
+             tal:content="structure view.navigation()">
+        </div><!--/.well -->
+      </div><!--/span-->
+      <div class="col-md-10">
+        <tal:block metal:define-slot="title"><h2 tal:condition="view.contentHeader()">${view.contentHeader()}</h2></tal:block>
+        <tal:block metal:define-slot="tabs"><tal:block tal:replace="structure view.tabs()"/></tal:block>
+        <tal:block metal:define-slot="content"></tal:block>
+      </div><!--/span-->
+    </div><!--/row-->
+  </div>
+
+  <tal:block metal:define-slot="foot"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <span tal:replace="structure view.mark2()"></span>
+</body>
+</html>
+</tal:block>
+
+
+<!-- main navigation defines the header, navigation left, content right including path, header, tabs -->
+<tal:block metal:define-macro="main_object_full"><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title tal:content="structure view.title()"></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta tal:replace="structure view.Assets(types='css')">
+<meta tal:replace="structure view.Assets(types='js')">
+<tal:block metal:define-slot="head"></tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
+</head>
+<body>
+  <tal:block metal:use-macro="template.topnav"></tal:block>
+
+  <div class="container-fluid">
+    <div class="row">
+      <tal:block metal:define-slot="path">
+          <div class="col-sm">
+              <span tal:replace="structure view.path()"></span>
+              <span tal:replace="structure view.settingsLinks()"></span>
+          </div>
+      </tal:block>
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <tal:block metal:define-slot="tabs"><tal:block tal:replace="structure view.tabs()"/></tal:block>
+        <tal:block metal:define-slot="content"></tal:block>
+      </div><!--/span-->
+    </div><!--/row-->
+  </div>
+
+  <tal:block metal:define-slot="foot"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <span tal:replace="structure view.mark2()"></span>
+</body>
+</html>
+</tal:block>
+
+<!-- main navigation defines the header, free content area -->
+<tal:block metal:define-macro="main_global"><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title tal:content="structure view.title()"></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta tal:replace="structure view.Assets(types='css')">
+<meta tal:replace="structure view.Assets(types='js')">
+<tal:block metal:define-slot="head"></tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
+</head>
+<body>
+  <tal:block metal:use-macro="template.topnav"></tal:block>
+
+  <tal:block metal:define-slot="content"></tal:block>
+
+  <tal:block metal:define-slot="foot"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <span tal:replace="structure view.mark2()"></span>
+</body>
+</html>
+</tal:block>
+
+
+<tal:block metal:define-macro="empty"><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title tal:content="structure view.title()"></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta tal:replace="structure view.Assets(types='css')">
+<meta tal:replace="structure view.Assets(types='js')">
+<tal:block metal:define-slot="head"></tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
+<meta tal:replace="structure view.Assets(assets=view.configuration.assetsCustom)">
+</head>
+<body class="empty">
+<tal:block metal:define-slot="content"></tal:block>
+<tal:block metal:define-slot="foot"></tal:block>
+<tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+</body>
+</html>
+</tal:block>

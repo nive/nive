@@ -21,12 +21,12 @@ class DBStructureTest(unittest.TestCase):
         r=configuration.test()
         if not r:
             return
-        print FormatConfTestFailure(r)
-        self.assert_(False, "Configuration Error")
+        print(FormatConfTestFailure(r))
+        self.assertTrue(False, "Configuration Error")
 
     def test_tool(self):
         t = dbStructureUpdater(configuration,None)
-        self.assert_(t)
+        self.assertTrue(t)
 
     
 class DBStructureTest2(__local.DefaultTestCase):
@@ -37,25 +37,25 @@ class DBStructureTest2(__local.DefaultTestCase):
         self.app.Register(configuration)
 
     def tearDown(self):
-        self.app.Close()
-        pass
+        self._closeApp(True)
+
 
     def test_toolrun1(self):
         t = self.app.GetTool("nive.tools.dbStructureUpdater")
-        self.assert_(t)
+        self.assertTrue(t)
         t.importWf = 0
         t.importSecurity = 0
-        r,v = t()
-        self.assert_(r)
+        r = t()
+        self.assertTrue(r)
 
 
     def test_toolrun2(self):
         t = self.app.GetTool("nive.tools.dbStructureUpdater")
-        self.assert_(t)
+        self.assertTrue(t)
         t.importWf = 1
         t.importSecurity = 1
-        r,v = t()
-        self.assert_(r)
+        r = t()
+        self.assertTrue(r)
 
 
     def test_toolrun3(self):
@@ -63,9 +63,9 @@ class DBStructureTest2(__local.DefaultTestCase):
         tc["skipUpdateTables"] = ("pool_meta","pool_sys")
         self.app.configuration = tc
         t = self.app.GetTool("nive.tools.dbStructureUpdater")
-        self.assert_(t)
+        self.assertTrue(t)
         t.importWf = 1
         t.importSecurity = 1
-        r,v = t()
-        self.assert_(r)
+        r = t()
+        self.assertTrue(r)
 

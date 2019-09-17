@@ -21,10 +21,9 @@
 
 <div id="main">
 <div id="nive_edit">
-
-  <div tal:condition="request.session.peek_flash()" class="alert alert-sucess">
-    <ul><li tal:repeat="msg request.session.pop_flash()"
-            tal:content="msg"></li></ul>
+  <div tal:condition="request.session.peek_flash()" class="alert alert-success">
+    <div tal:repeat="msg request.session.pop_flash()"
+            tal:content="msg"></div>
   </div>
 
   <tal:block metal:define-slot="editmain"></tal:block>

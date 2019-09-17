@@ -28,7 +28,8 @@ class portalTest(unittest.TestCase):
         self.app = testapp(mApp2)
 
     def tearDown(self):
-        pass
+        self.app.Close()
+        testing.tearDown()
 
 
     def test_register(self):
@@ -49,23 +50,22 @@ class portalTest(unittest.TestCase):
         )
         self.portal.Register(testconf, "test")
         m=self.portal["test"]
-        self.assert_(self.portal["test"].hello()=="hello")
+        self.assertTrue(self.portal["test"].hello()=="hello")
 
     def test_portal(self):
         self.portal.Register(mApp2)
         self.portal.Register(self.app, "nive")
         self.portal.RegisterGroups(self.app)
-        self.assert_(self.portal.__getitem__("app2"))
-        self.assert_(self.portal.__getitem__("nive"))
+        self.assertTrue(self.portal.__getitem__("app2"))
+        self.assertTrue(self.portal.__getitem__("nive"))
         try:
             self.portal.Startup(None)
         except OperationalError:
             pass
-        self.assert_(len(self.portal.GetApps())==2)
-        self.assert_(self.portal.GetGroups(sort=u"id", visibleOnly=False))
-        self.assert_(self.portal.GetGroups(sort=u"name", visibleOnly=True))
-        self.assert_(self.portal.portal)
-
+        self.assertTrue(len(self.portal.GetApps())==2)
+        self.assertTrue(self.portal.GetGroups(sort="id", visibleOnly=False))
+        self.assertTrue(self.portal.GetGroups(sort="name", visibleOnly=True))
+        self.assertTrue(self.portal.portal)
 
     def test_portal2(self):
         self.portal.StartConnection(Event(self.request))

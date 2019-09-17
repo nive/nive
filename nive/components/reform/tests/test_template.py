@@ -18,7 +18,7 @@ class TestZPTTemplateLoader(unittest.TestCase):
         fixtures = os.path.join(os.path.dirname(__file__), 'fixtures')
         loader = self._makeOne(search_path=[fixtures])
         result = loader.load('test.pt')
-        self.failUnless(result)
+        self.assertTrue(result)
 
     def test_load_with_translate(self):
         import os
@@ -48,7 +48,7 @@ class TestZPTTemplateLoader(unittest.TestCase):
         loader = self._makeOne(search_path=[fixtures])
         self.assertRaises(TemplateError, loader.load, 'doesnt')
         if hasattr(loader, 'notexists'): # pragma: no cover (chameleon 1)
-            self.failUnless(
+            self.assertTrue(
                 os.path.join(fixtures, 'doesnt') in loader.notexists)
 
     def test_load_negative_cache(self):
@@ -59,7 +59,7 @@ class TestZPTTemplateLoader(unittest.TestCase):
         if hasattr(loader, 'notexists'): # pragma: no cover (chameleon 1)
             loader.notexists[path] = True
             result = loader.load('test.pt')
-            self.failUnless(result)
+            self.assertTrue(result)
 
     def test_load_negative_cache2(self):
         import os
@@ -81,7 +81,7 @@ class TestZPTRendererFactory(unittest.TestCase):
         default_dir = resource_filename('nive.components.reform', 'tests/fixtures/')
         renderer = self._makeOne((default_dir,))
         result = renderer('test')
-        self.assertEqual(result.strip(), u'<div>Test</div>')
+        self.assertEqual(result.strip(), '<div>Test</div>')
 
     def test_it(self):
         import os
@@ -112,8 +112,8 @@ class Test_default_renderer(unittest.TestCase):
         result = re.sub(' />', '/>', result)
         result = result.strip()
         self.assertEqual(result,
-                         u'<input type="checkbox" name="name" value="true" '
-                         'id="oid"> <label for="oid">title</label>')
+                         '<input type="checkbox" name="name" value="true" '
+                         'id="oid" class=""> <label for="oid">title</label>')
 
 class DummyWidget(object):
     name = 'name'
@@ -127,4 +127,5 @@ class DummyField(object):
     name = 'name'
     oid = 'oid'
     required = False
+    error = False
 

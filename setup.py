@@ -14,18 +14,20 @@ except:
     CHANGES = ''
 
 requires = [
-    'pyramid', 
+    'zope.interface==4.6',
+    'pyramid>=1.10.1',
     'pyramid_chameleon',
     'iso8601',
     'pytz',
     'translationstring',
-    'html2text'
+    'bs4',    # alternative - 'html2text'
+    # 'pillow' optional. required for extensions.images.
 ]
 
 setupkw = dict(
       name='nive',
-      version='1.0.7',
-      description='Nive base package',
+      version='1.3.1',
+      description='Nive 3 base package',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
         "Intended Audience :: Developers",
@@ -33,8 +35,7 @@ setupkw = dict(
         "Framework :: Pyramid",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Development Status :: 4 - Beta",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7"
+        "Programming Language :: Python :: 3.7"
       ],
       author='Arndt Droullier, Nive GmbH',
       author_email='info@nive.co',

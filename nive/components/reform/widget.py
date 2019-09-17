@@ -1,7 +1,7 @@
 import csv
 import random
 import string
-import StringIO
+import io
 import copy
 import base64
 import os
@@ -211,7 +211,7 @@ class FormWidget(Widget):
                             
             try:
                 result[name] = subfield.deserialize(subval, pstruct)
-            except Invalid, e:
+            except Invalid as e:
                 result[name] = e.value
                 if error is None:
                     error = Invalid(field.schema, value=result)
@@ -363,7 +363,7 @@ class AutocompleteInputWidget(Widget):
         if not self.delay:
             # set default delay if None
             options['delay'] = (isinstance(self.values,
-                                          basestring) and 400) or 10
+                                          str) and 400) or 10
         options['minLength'] = self.min_length
         options = json.dumps(options)
         values = json.dumps(self.values)
@@ -443,9 +443,8 @@ class DateInputWidget(Widget):
 
 class DateTimeInputWidget(DateInputWidget):
     """
-    Renders a a jQuery UI date picker with a JQuery Timepicker add-on
-    (http://trentrichardson.com/examples/timepicker/).  Used for
-    ``colander.DateTime`` schema nodes.
+    Renders a date picker with a JQuery Plugin tempusdominus add-on.
+    Used for ``colander.DateTime`` schema nodes.
 
     **Attributes/Arguments**
 
@@ -464,9 +463,9 @@ class DateTimeInputWidget(DateInputWidget):
     """
     template = 'datetimeinput'
     size = None
-    requirements = ( ('jqueryui', None), ('datetimepicker', None), )
-    option_defaults = {'dateFormat': 'yy-mm-dd',
-                       'timeFormat': 'hh:mm:ss',
+    requirements = ( ('datetimepicker', None), )
+    option_defaults = {'dateFormat': '%Y-%m-%d',
+                       'timeFormat': '%H:%M',
                        'separator': ' '}
     options = {}
 
@@ -482,19 +481,49 @@ class DateTimeInputWidget(DateInputWidget):
         options = self._options()
         if len(cstruct) == 25: # strip timezone if it's there
             cstruct = cstruct[:-6]
-        cstruct = options['separator'].join(cstruct.split('T'))
+        #cstruct = options['separator'].join(cstruct.split('T'))
+
+        temp = dict(date='', time='')
+        opt = self._options()
+        if cstruct:
+            try:
+                dt = datetime.datetime.strptime(cstruct, "%Y-%m-%dT%H:%M:%S")
+                if cstruct:
+                    temp['date'] = dt.strftime(opt['dateFormat'])
+                    temp['time'] = dt.strftime(opt['timeFormat'])
+                    test = datetime.datetime(year=2000,day=31,month=12)
+                    if temp['time']==test.strftime(opt['timeFormat']):
+                        temp['time'] = ''
+            except ValueError:
+                try:
+                    temp['date'], temp['time'] = cstruct.split(opt['separator'])
+                except ValueError:
+                    temp['date'] = field.widget.form.view.GetFormValue(field.name+'-dt')
+                    temp['time'] = field.widget.form.view.GetFormValue(field.name+'-tm')
+
+        cstruct = temp
+
         return field.renderer(
             template,
             field=field,
             cstruct=cstruct,
-            options=json.dumps(self._options()),
+            options=json.dumps(opt),
             )
 
     def deserialize(self, field, pstruct, formstruct=None):
+        pstruct = pstruct.strip()
         if pstruct in ('', null):
+            if not field.required and pstruct=='':
+                # empty value allowed
+                return ''
             return null
-        options = self._options()
-        return pstruct.replace(options['separator'], 'T')
+        opt = self._options()
+        try:
+            dt = datetime.datetime.strptime(pstruct, opt['dateFormat'] + opt['separator'] + opt['timeFormat'])
+            pstruct = dt.strftime("%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            pass
+        return pstruct
 
 class TextAreaWidget(TextInputWidget):
     """
@@ -584,8 +613,8 @@ class RichTextWidget(TextInputWidget):
     template = 'richtext'
     skin = 'default'
     theme = 'simple'
-    category = 'full-width'
-    requirements = ( ('tinymce', None), )
+    category = 'default' #full-width'
+    requirements = ( ('trumbowyg', None), )
     options = {
         "mode" : "exact",
         "elements": "",  # element id is set in renderOptions() call
@@ -607,12 +636,12 @@ class RichTextWidget(TextInputWidget):
 
         # Style formats
         "style_formats" : [
-            {"title" : _(u"Header 1"), "block" : "h1"},
-            {"title" : _(u"Header 2"), "block" : "h2"},
-            {"title" : _(u"Header 3"), "block" : "h3"},
-            {"title" : _(u"Header 4"), "block" : "h4"},
-            {"title" : _(u"Text (p)"), "block" : "p"},
-            {"title" : _(u"Formatted (pre)"), "block" : "pre"},
+            {"title" : _("Header 1"), "block" : "h1"},
+            {"title" : _("Header 2"), "block" : "h2"},
+            {"title" : _("Header 3"), "block" : "h3"},
+            {"title" : _("Header 4"), "block" : "h4"},
+            {"title" : _("Text (p)"), "block" : "p"},
+            {"title" : _("Formatted (pre)"), "block" : "pre"},
         ],
 
         # Content CSS (should be your site CSS)
@@ -651,7 +680,7 @@ class RichTextWidget(TextInputWidget):
                 if isinstance(opt, dict):
                     opt["elements"] = field.oid
                     return json.dumps(opt)
-                return opt % {u"oid": field.oid}
+                return opt % {"oid": field.oid}
 
         # set editor width and height for default options
         opt = copy.deepcopy(self.options)
@@ -694,7 +723,7 @@ class CodeTextWidget(TextInputWidget):
     width = 500
     template = 'codetext'
     codetype = 'default'
-    category = 'full-width'
+    category = 'default' #full-width'
     theme = 'simple'
     requirements = ( ('codemirror', None), )
     options = { "mode": "text/html", "tabMode": "indent", "lineNumbers": True }
@@ -794,6 +823,7 @@ class CheckboxWidget(Widget):
     true_val = 'true'
     false_val = 'false'
     title = ''
+    css_class = 'form-check-input'
     template = 'checkbox'
 
     def serialize(self, field, cstruct):
@@ -842,13 +872,14 @@ class SelectWidget(Widget):
         if cstruct in (null, None):
             cstruct = self.null_value
         template = self.template
+        if isinstance(cstruct, (list,tuple)):
+            cstruct = [str(a) for a in cstruct]
         return field.renderer(template, field=field, cstruct=cstruct)
 
     def deserialize(self, field, pstruct, formstruct=None):
-        if pstruct in (null, self.null_value):
+        if pstruct in (null, self.null_value):#, ""
             return null
         return pstruct
-    
     
     def controlset_fields(self, field, value=None, format='html'):
         """
@@ -872,7 +903,39 @@ class SelectWidget(Widget):
         if format=="html":
             return json.dumps(ids)
         return ids
-        
+
+
+class ChooseWidget(SelectWidget):
+    """
+    Extends SelectWidget for long select lists with search option
+    """
+    template = 'choose'
+    requirements = ( ('chosen', None), )
+    option_defaults = {}
+    null_value = ''
+
+    def serialize(self, field, cstruct):
+        if cstruct in (null, None):
+            cstruct = self.null_value
+        template = self.template
+        if isinstance(cstruct, (list, tuple)):
+            cstruct = [str(a) for a in cstruct]
+        return field.renderer(template, field=field, cstruct=cstruct)
+
+    def deserialize(self, field, pstruct, formstruct=None):
+        if pstruct in (null, None, ""):
+            return self.null_value
+        return pstruct
+
+
+class UnitWidget(SelectWidget):
+    """
+    Extends SelectWidget for long select lists with search option
+    """
+    template = 'unitselect'
+    requirements = ( ('chosen', None), )
+    option_defaults = {}
+
 
 class RadioChoiceWidget(SelectWidget):
     """
@@ -898,6 +961,8 @@ class RadioChoiceWidget(SelectWidget):
         Default: the empty string.
     """
     template = 'radio_choice'
+    css_class = 'form-check-input'
+
 
 class CheckboxChoiceWidget(Widget):
     """
@@ -924,6 +989,7 @@ class CheckboxChoiceWidget(Widget):
     """
     null_value = ()
     template = 'checkbox_choice'
+    css_class = 'form-check-input'
     values = ()
 
     def serialize(self, field, cstruct):
@@ -935,7 +1001,7 @@ class CheckboxChoiceWidget(Widget):
     def deserialize(self, field, pstruct, formstruct=None):
         if pstruct is null:
             return self.null_value
-        if isinstance(pstruct, basestring):
+        if isinstance(pstruct, str):
             return (pstruct,)
         return tuple(pstruct)
 
@@ -1112,7 +1178,7 @@ class FileUploadWidget(Widget):
 
     def random_id(self):
         return ''.join(
-            [random.choice(string.uppercase+string.digits) for i in range(10)])
+            [random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for i in range(10)])
 
     def serialize(self, field, cstruct, readonly=False):
         if cstruct in (null, None):
@@ -1192,13 +1258,13 @@ class FileUploadWidget2(Widget):
         Widget.__init__(self, **kw)
 
     def serialize(self, field, cstruct):
-        if cstruct in ("", null, None):
+        if cstruct in ("", b"", null, None):
             cstruct = {}
         template = self.template
         return field.renderer(template, field=field, cstruct=cstruct)
 
     def deserialize(self, field, pstruct, formstruct=None):
-        if pstruct in ("", null, None):
+        if pstruct in ("", b"", null, None):
             return null
         try:
             cls = self.form.app.db.GetFileClass()
@@ -1264,7 +1330,7 @@ class FileToDataUploadWidget(Widget):
             return null
         file = pstruct.file.read()
         if self.base64:
-            file = base64.b64encode(file)
+            file = base64.b64encode(bytes(file,encoding="utf-8")) # todo [3] unicode
         return file
 
 
@@ -1365,7 +1431,7 @@ class TextAreaCSVWidget(Widget):
             cstruct = []
         textrows = getattr(field, 'unparseable', None)
         if textrows is None:
-            outfile = StringIO.StringIO()
+            outfile = io.StringIO()
             writer = csv.writer(outfile)
             writer.writerows(cstruct)
             textrows = outfile.getvalue()
@@ -1378,10 +1444,10 @@ class TextAreaCSVWidget(Widget):
         if not pstruct.strip():
             return null
         try:
-            infile = StringIO.StringIO(pstruct)
+            infile = io.StringIO(pstruct)
             reader = csv.reader(infile)
             rows = list(reader)
-        except Exception, e:
+        except Exception as e:
             field.unparseable = pstruct
             raise Invalid(field.schema, str(e))
         return rows
@@ -1422,7 +1488,7 @@ class TextInputCSVWidget(Widget):
             cstruct = ''
         textrow = getattr(field, 'unparseable', None)
         if textrow is None:
-            outfile = StringIO.StringIO()
+            outfile = io.StringIO()
             writer = csv.writer(outfile)
             writer.writerow(cstruct)
             textrow = outfile.getvalue().strip()
@@ -1435,10 +1501,10 @@ class TextInputCSVWidget(Widget):
         if not pstruct.strip():
             return null
         try:
-            infile = StringIO.StringIO(pstruct)
+            infile = io.StringIO(pstruct)
             reader = csv.reader(infile)
-            row = reader.next()
-        except Exception, e:
+            row = next(reader)
+        except Exception as e:
             field.unparseable = pstruct
             raise Invalid(field.schema, str(e))
         return row
@@ -1493,7 +1559,7 @@ class ResourceRegistry(object):
         :meth:`reform.Field.get_widget_requirements`).  The dictionary
         will be a mapping from resource type (``js`` and ``css`` are
         both keys in the dictionary) to a list of relative resource
-        paths.  Each path is relative to wherever you've mounted
+        paths.  Each path is relative to wherever yo've mounted
         Deform's ``static`` directory in your web server.  You can use
         the paths for each resource type to inject CSS and Javascript
         on-demand into the head of dynamic pages that render Deform
@@ -1534,7 +1600,7 @@ default_resources = {
                    ('jquery-ui.css', 'nive.components.reform:static/css/ui-lightness/jquery-ui-1.8.11.custom.css'))
             },
         },
-    'jquery.form': {
+    'deactivated!jquery.form': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
                    ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form-3.50.js')),
@@ -1549,20 +1615,31 @@ default_resources = {
     'datetimepicker': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery-ui-timepicker.js', 'nive.components.reform:static/scripts/jquery-ui-timepicker-addon.js'),
-                   ('jquery-ui-timepicker.css', 'nive.components.reform:static/css/jquery-ui-timepicker-addon.css')),
+                   ('moment.js', 'nive.components.reform:static/tempusdominus/moment.min.js'),
+                   ('moment-de.js', 'nive.components.reform:static/tempusdominus/de.js'),
+                   ('tempusdominus.js', 'nive.components.reform:static/tempusdominus/tempusdominus-bootstrap-4.min.js'),
+                   ('tempusdominus.css', 'nive.components.reform:static/tempusdominus/tempusdominus-bootstrap-4.min.css')),
             },
         },
     'reform': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js'),
+                   #('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js'),
                    ('reform.js', 'nive.components.reform:static/scripts/reform.js')),
             },
         },
-    'tinymce': {
+    'trumbowyg': {
         None:{
-            'seq':(('tiny_mce.js', 'nive.components.reform:static/tinymce/jscripts/tiny_mce/tiny_mce.js'),),
+            'seq':(('trumbowyg.js', 'nive.components.reform:static/trumbowyg/trumbowyg.min.js'),
+                   ('trumbowyg.cleanpaste.js', 'nive.components.reform:static/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.js'),
+                   ('trumbowyg.de.js', 'nive.components.reform:static/trumbowyg/langs/de.min.js'),
+                   ('trumbowyg.css', 'nive.components.reform:static/trumbowyg/ui/trumbowyg.min.css')),
+            },
+        },
+    'chosen': {
+        None:{
+            'seq':(('chosen.js', 'nive.components.reform:static/chosen/chosen.jquery.min.js'),
+                   ('chosen.css', 'nive.components.reform:static/chosen/chosen.min.css')),
             },
         },
     'codemirror': {

@@ -122,7 +122,7 @@ class Field(object):
     def __init__(self, schema, renderer=None, counter=None,
                  resource_registry=None, **kw):
         self.counter = counter or itertools.count()
-        self.order = self.counter.next()
+        self.order = next(self.counter)
         self.oid = 'reformField%s' % self.order
         self.schema = schema
         self.typ = self.schema.typ # required by Invalid exception
@@ -187,7 +187,7 @@ class Field(object):
         """ Set the callable that will act as a default renderer for
         instances of the associated class when no ``renderer``
         argument is provided to the class' constructor.  Useful when
-        you'd like to use an alternate templating system.
+        yo'd like to use an alternate templating system.
 
         Calling this method resets the :term:`default renderer`.
         """
@@ -199,7 +199,7 @@ class Field(object):
         """ Set the callable that will act as a default
         :term:`resource registry` for instances of the associated
         class when no ``resource_registry`` argument is provided to
-        the class' constructor.  Useful when you'd like to use
+        the class' constructor.  Useful when yo'd like to use
         non-default requirement to resource path mappings for the
         entirety of a process.
 
@@ -223,7 +223,7 @@ class Field(object):
         than the last renderered field of this set."""
         cloned = self.__class__(self.schema)
         cloned.__dict__.update(self.__dict__)
-        cloned.order = cloned.counter.next()
+        cloned.order = next(cloned.counter)
         cloned.oid = 'reformField%s' % cloned.order
         cloned.children = [ field.clone() for field in self.children ]
         return cloned
@@ -244,7 +244,7 @@ class Field(object):
             widget_maker = widget.default_widget_makers.get(
                 self.schema.typ.__class__)
             if widget_maker is None:
-                for (cls, wgt) in widget.default_widget_makers.items():
+                for (cls, wgt) in list(widget.default_widget_makers.items()):
                     if isinstance(self.schema.typ, cls):
                         widget_maker = wgt
                         break
@@ -389,7 +389,7 @@ class Field(object):
           Set *form* node's widget to a ``MyMappingWidget``.
 
         """
-        for k, v in values.items():
+        for k, v in list(values.items()):
             if not k:
                 self.widget = v
             else:
@@ -450,7 +450,7 @@ class Field(object):
 
           request.POST.items()
 
-        Or, if you're using a ``cgi.FieldStorage`` object named
+        Or, if yo're using a ``cgi.FieldStorage`` object named
         ``fs``, you can compute a suitable value for ``controls``
         via::
 
@@ -513,21 +513,20 @@ class Field(object):
 
         try:
             cstruct = self.deserialize(pstruct)
-        except schema.Invalid, e:
+        except schema.Invalid as e:
             # fill in errors raised by widgets
             self.widget.handle_error(self, e)
             cstruct = e.value
+            raise exception.ValidationFailure(self, cstruct, e)
 
         try:
             appstruct = self.schema.deserialize(cstruct)
-        except schema.Invalid, e:
+            return appstruct
+        except schema.Invalid as e:
             # fill in errors raised by schema nodes
             self.widget.handle_error(self, e)
-
-        if e:
             raise exception.ValidationFailure(self, cstruct, e)
 
-        return appstruct
 
     def __repr__(self):
         return '<%s.%s object at %d (schemanode %r)>' % (

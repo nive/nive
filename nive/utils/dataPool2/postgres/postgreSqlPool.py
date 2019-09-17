@@ -23,7 +23,7 @@ except ImportError:
         Warning = None
         @staticmethod
         def connect(*args,**kw):
-            raise ImportError, "Python postgres binding not available. Try 'pip install psycopg2' to install the package."
+            raise ImportError("Python postgres binding not available. Try 'pip install psycopg2' to install the package.")
             
             
 from nive.utils.utils import STACKF
@@ -61,7 +61,7 @@ class PostgresConnection(Connection):
         db = self.PrivateConnection()
         if not db:
             conf = self.configuration
-            raise OperationalError, "Cannot connect to database '%s.%s'" % (conf.host, conf.dbName)
+            raise OperationalError("Cannot connect to database '%s.%s'" % (conf.host, conf.dbName))
         self._set(db)
         return db
 
@@ -97,12 +97,12 @@ class PostgresConnection(Connection):
         Format a parameter for sql queries like literal for db. This function is not
         secure for any values. 
         """
-        if isinstance(param, (int, long, float)):
-            return unicode(param)
-        d = unicode(param)
-        if d.find(u"'")!=-1:
-            d = d.replace(u"'",u"\\'")
-        return u"'%s'"%d
+        if isinstance(param, (int, float)):
+            return str(param)
+        d = str(param)
+        if d.find("'")!=-1:
+            d = d.replace("'","\\'")
+        return "'%s'"%d
 
 
 class PgConnThreadLocal(PostgresConnection, ConnectionThreadLocal):
@@ -133,7 +133,7 @@ class PostgreSql(FileManager, Base):
     _DefaultConnection = PgConnRequest#PgConnThreadLocal
             
 
-    def GetContainedIDs(self, base=0, sort=u"title", parameter=u""):
+    def GetContainedIDs(self, base=0, sort="title", parameter=""):
         """
         select list of all entries
         id needs to be first field, pool_unitref second
@@ -145,10 +145,10 @@ class PostgreSql(FileManager, Base):
                 ids.append(e[0])
                 ids = _SelectIDs(e[0], ids, sql, cursor)
             return ids
-        if parameter != u"":
-            parameter = u"AND " + parameter
-        parameter = (u"WHERE pool_unitref=%d", parameter)
-        sql = u"""SELECT id FROM %s %s ORDER BY %s""" % (self.MetaTable, u" ".join(parameter), sort)
+        if parameter != "":
+            parameter = "AND " + parameter
+        parameter = ("WHERE pool_unitref=%d", parameter)
+        sql = """SELECT id FROM %s %s ORDER BY %s""" % (self.MetaTable, " ".join(parameter), sort)
         cursor = self.connection.cursor()
         ids = _SelectIDs(base, [], sql, cursor)
         cursor.close()
@@ -156,12 +156,12 @@ class PostgreSql(FileManager, Base):
     
     
     def _GetInsertIDValue(self, cursor):
-        cursor.execute(u"SELECT LASTVAL()")
+        cursor.execute("SELECT LASTVAL()")
         return cursor.fetchone()[0]
 
-    def _CreateNewID(self, table = u"", dataTbl = None):
+    def _CreateNewID(self, table = "", dataTbl = None):
         aC = self.connection.cursor()
-        if table == u"":
+        if table == "":
             table = self.MetaTable
         if table == self.MetaTable:
             if not dataTbl:
@@ -169,35 +169,35 @@ class PostgreSql(FileManager, Base):
 
             # sql insert empty rec in meta table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s DEFAULT VALUES" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
+                STACKF(0,"INSERT INTO %s DEFAULT VALUES" % (dataTbl)+"\r\n",self._debug, self._log,name=self.name)
             try:
-                aC.execute(u"INSERT INTO %s DEFAULT VALUES" % (dataTbl))
+                aC.execute("INSERT INTO %s DEFAULT VALUES" % (dataTbl))
             except self._Warning:
                 pass
             # sql get id of created rec
             if self._debug:
-                STACKF(0,u"SELECT LASTVAL()\r\n",0, self._log,name=self.name)
-            aC.execute(u"SELECT LASTVAL()")
+                STACKF(0,"SELECT LASTVAL()\r\n",0, self._log,name=self.name)
+            aC.execute("SELECT LASTVAL()")
             dataref = aC.fetchone()[0]
             # sql insert empty rec in meta table
             if self._debug:
-                STACKF(0,u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log,name=self.name)
-            aC.execute(u"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
+                STACKF(0,"INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref),0, self._log,name=self.name)
+            aC.execute("INSERT INTO %s (pool_datatbl, pool_dataref) VALUES ('%s', %s)"% (self.MetaTable, dataTbl, dataref))
             if self._debug:
-                STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
-            aC.execute(u"SELECT LASTVAL()")
+                STACKF(0,"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+            aC.execute("SELECT LASTVAL()")
             aID = aC.fetchone()[0]
             aC.close()
             return aID, dataref
 
         # sql insert empty rec in meta table
         if self._debug:
-            STACKF(0,u"INSERT INTO %s () VALUES ()" % (table)+"\r\n",self._debug, self._log,name=self.name)
-        aC.execute(u"INSERT INTO %s () VALUES ()" % (table))
+            STACKF(0,"INSERT INTO %s () VALUES ()" % (table)+"\r\n",self._debug, self._log,name=self.name)
+        aC.execute("INSERT INTO %s () VALUES ()" % (table))
         # sql get id of created rec
         if self._debug:
-            STACKF(0,u"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
-        aC.execute(u"SELECT LAST_INSERT_ID()")
+            STACKF(0,"SELECT LAST_INSERT_ID()\r\n",0, self._log,name=self.name)
+        aC.execute("SELECT LAST_INSERT_ID()")
         aID = aC.fetchone()[0]
         aC.close()
         return aID, 0
@@ -214,8 +214,8 @@ class PostgreSql(FileManager, Base):
 
     def _FmtLimit(self, start, max):
         if start != None:
-            return u"LIMIT %s OFFSET %s" % (unicode(max), unicode(start))
-        return u"LIMIT %s" % (unicode(max))
+            return "LIMIT %s OFFSET %s" % (str(max), str(start))
+        return "LIMIT %s" % (str(max))
 
 
 class PostgreSqlEntry(FileEntry, Entry):

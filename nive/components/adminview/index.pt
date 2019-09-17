@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<tal:block metal:define-macro="main">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" i18n:domain="nive">
+    <head>
+        <title>${view.context.app.configuration.title}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <tal:block tal:replace="structure view.Assets()"> </tal:block>
+        <tal:block metal:define-slot="head"> </tal:block>
+        <tal:block tal:condition="head|None" tal:replace="structure head"> </tal:block>
+    </head>
+
+    <body>
+    <div class="container-fluid">
+        <header id="header"></header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="navbar-brand">${view.context.app.configuration.title}</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul metal:define-slot="adminsections" class="navbar-nav mr-auto">
+                    <li tal:repeat="tab view.GetAdminWidgets()"
+                            class="nav-item ${'active' if request.view_name==tab.viewmapper else ''}">
+                        <a tal:content="structure tab.name"
+                            tal:attributes="href tab.viewmapper" class="nav-link"></a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav pull-right">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span i18n:translate="">Switch location or Logout</span> <span class="caret"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a tal:repeat="link view.AdministrationLinks()" href="${link.href}" class="dropdown-item">${link.title}</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/" class="dropdown-item" i18n:translate="">Portal default</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="/logout" class="dropdown-item" i18n:translate="">Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <div id="main" style="clear:both">
+            <div tal:condition="request.session.peek_flash()" class="alert alert-success">
+                <div tal:repeat="msg request.session.pop_flash()"
+                         tal:content="msg"></div>
+            </div>
+
+            <tal:block metal:define-slot="editmain"></tal:block>
+        </div>
+
+    </div>
+
+    </body>
+    </html>
+</tal:block>

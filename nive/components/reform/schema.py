@@ -16,7 +16,7 @@ _marker = required # bw compat
 
 class _null(object):
     """ Represents a null value in colander-related operations. """
-    def __nonzero__(self):
+    def __bool__(self):
         return False
 
     def __repr__(self):
@@ -66,9 +66,9 @@ class Invalid(Exception):
         ``msg`` attribute is iterable, it is returned.  If it is not
         iterable, a single-element list containing the ``msg`` value
         is returned."""
-        if hasattr(self.msg, '__iter__'):
-            return self.msg
-        return [self.msg]
+        if isinstance(self.msg, str):
+            return [self.msg]
+        return self.msg
 
     def add(self, exc, pos=None):
         """ Add a child exception; ``exc`` must be an instance of
@@ -171,7 +171,7 @@ class All(object):
         for validator in self.validators:
             try:
                 validator(node, value)
-            except Invalid, e:
+            except Invalid as e:
                 msgs.append(e.msg)
 
         if msgs:
@@ -211,7 +211,7 @@ class Function(object):
         result = self.function(value)
         if not result:
             raise Invalid(node, self.message)
-        if isinstance(result, basestring):
+        if isinstance(result, str):
             raise Invalid(node, result)
 
 class Regex(object):
@@ -231,7 +231,7 @@ class Regex(object):
         raised with the ``msg`` error message.
     """
     def __init__(self, regex, msg=None):
-        if isinstance(regex, basestring):
+        if isinstance(regex, str):
             self.match_object = re.compile(regex)
         else:
             self.match_object = regex
@@ -256,7 +256,7 @@ class Email(Regex):
         if msg is None:
             msg = _("Invalid email address")
         super(Email, self).__init__(
-            u'(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', msg=msg)
+            '(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', msg=msg)
 
 class Literal(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .-_` charachters are allowed.
@@ -267,7 +267,7 @@ class Literal(Regex):
     def __init__(self, msg=None):
         if msg is None:
             msg = _("Invalid characters in string: Only 'a-zA-Z0-9.-_' allowed.")
-        super(Literal, self).__init__(u'^[a-zA-Z0-9\._\-]*$', msg=msg)
+        super(Literal, self).__init__('^[a-zA-Z0-9\._\-]*$', msg=msg)
 
 class LiteralWS(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .- _` charachters including whitespace are allowed.
@@ -278,7 +278,7 @@ class LiteralWS(Regex):
     def __init__(self, msg=None):
         if msg is None:
             msg = _("Invalid characters in string: Only 'a-zA-Z0-9.- _' allowed.")
-        super(Literal, self).__init__(u'^[a-zA-Z0-9\._\- ]*$', msg=msg)
+        super(Literal, self).__init__('^[a-zA-Z0-9\._\- ]*$', msg=msg)
 
 class Range(object):
     """ Validator which succeeds if the value it is passed is greater
@@ -360,6 +360,38 @@ class OneOf(object):
             err = _('"${val}" is not one of ${choices}',
                     mapping={'val':value, 'choices':choices})
             raise Invalid(node, err)
+
+class ExistingObject(object):
+    """ Validator which succeeds if the value passed to it has a
+    length between a minimum and maximum.  The value is most often a
+    string."""
+    def __init__(self, obj_type=None):
+        if isinstance(obj_type, str):
+            self.obj_type = (obj_type,)
+        else:
+            self.obj_type = obj_type
+
+    def __call__(self, node, value):
+        if not value:
+            return
+        c = node.widget.form.context
+        from nive.definitions import IRoot
+        if not IRoot.providedBy(c):
+            root = c.root
+        else:
+            root = c
+        results = root.search.Select(parameter=dict(id=value), fields=["id","pool_type"], max=1)
+        if not results:
+            raise Invalid(node, _('Object does not exist.'))
+
+        if self.obj_type is not None:
+            if not results[0][1] in self.obj_type:
+                min_err = _('Object type not allowed.')
+                raise Invalid(node, min_err)
+
+
+
+
 
 class SchemaType(object):
     """ Base class for all schema types """
@@ -447,7 +479,7 @@ class Mapping(SchemaType):
     def _validate(self, node, value):
         try:
             return dict(value)
-        except Exception, e:
+        except Exception as e:
             raise Invalid(node,
                           _('"${val}" is not a mapping type: ${err}',
                           mapping = {'val':value, 'err':e})
@@ -464,7 +496,7 @@ class Mapping(SchemaType):
             subval = value.pop(name, null)
             try:
                 result[name] = callback(subnode, subval)
-            except Invalid, e:
+            except Invalid as e:
                 if error is None:
                     error = Invalid(node)
                 error.add(e, num)
@@ -590,7 +622,7 @@ class Tuple(Positional, SchemaType):
             subval = value[num]
             try:
                 result.append(callback(subnode, subval))
-            except Invalid, e:
+            except Invalid as e:
                 if error is None:
                     error = Invalid(node)
                 error.add(e, num)
@@ -695,24 +727,24 @@ class String(SchemaType):
        - A Unicode input value to ``serialize`` is returned untouched.
 
        - A non-Unicode input value to ``serialize`` is run through the
-         ``unicode()`` function without an ``encoding`` parameter
-         (``unicode(value)``) and the result is returned.
+         ``str()`` function without an ``encoding`` parameter
+         (``str(value)``) and the result is returned.
 
        - A Unicode input value to ``deserialize`` is returned untouched.
 
        - A non-Unicode input value to ``deserialize`` is run through the
-         ``unicode()`` function without an ``encoding`` parameter
-         (``unicode(value)``) and the result is returned.
+         ``str()`` function without an ``encoding`` parameter
+         (``str(value)``) and the result is returned.
 
        If ``encoding`` is not ``None``:
 
        - A Unicode input value to ``serialize`` is run through the
          ``unicode`` function with the encoding parameter
-         (``unicode(value, encoding)``) and the result (a ``str``
+         (``str(value, encoding)``) and the result (a ``str``
          object) is returned.
 
        - A non-Unicode input value to ``serialize`` is converted to a
-         Unicode using the encoding (``unicode(value, encoding)``);
+         Unicode using the encoding (``str(value, encoding)``);
          subsequently the Unicode object is reeencoded to a ``str``
          object using the encoding and returned.
 
@@ -722,7 +754,7 @@ class String(SchemaType):
        - A non-Unicode input value to ``deserialize`` is converted to
          a ``str`` object using ``str(value``).  The resulting str
          value is converted to Unicode using the encoding
-         (``unicode(value, encoding)``) and the result is returned.
+         (``str(value, encoding)``) and the result is returned.
 
        A corollary: If a string (as opposed to a unicode object) is
        provided as a value to either the serialize or deserialize
@@ -742,19 +774,19 @@ class String(SchemaType):
             return null
 
         try:
-            if isinstance(appstruct, unicode):
+            if isinstance(appstruct, str):
                 if self.encoding:
                     result = appstruct.encode(self.encoding)
                 else:
                     result = appstruct
             else:
                 encoding = self.encoding
-                if encoding:
-                    result = unicode(appstruct, encoding).encode(encoding)
+                if encoding: # todo [3] unicode ?
+                    result = str(appstruct, encoding).encode(encoding)
                 else:
-                    result = unicode(appstruct)
+                    result = str(appstruct)
             return result
-        except Exception, e:
+        except Exception as e:
             raise Invalid(node,
                           _('"${val} cannot be serialized: ${err}',
                             mapping={'val':appstruct, 'err':e})
@@ -768,12 +800,12 @@ class String(SchemaType):
 
         try:
             result = cstruct
-            if not isinstance(result, unicode):
-                if self.encoding:
-                    result = unicode(str(cstruct), self.encoding)
-                else:
-                    result = unicode(cstruct)
-        except Exception, e:
+            if not isinstance(result, str):
+                #if self.encoding: # todo [3] unicode ?
+                #    result = str(str(cstruct), self.encoding)
+                #else:
+                result = str(cstruct)
+        except Exception as e:
             raise Invalid(node,
                           _('${val} is not a string: %{err}',
                             mapping={'val':cstruct, 'err':e}))
@@ -1006,7 +1038,7 @@ class GlobalObject(SchemaType):
         if not cstruct:
             return null
 
-        if not isinstance(cstruct, basestring):
+        if not isinstance(cstruct, str):
             raise Invalid(node,
                           _('"${val}" is not a string',
                             mapping={'val':cstruct}))
@@ -1068,20 +1100,20 @@ class DateTime(SchemaType):
 
     def __init__(self, default_tzinfo=_marker):
         if default_tzinfo is _marker:
-            default_tzinfo = iso8601.iso8601.Utc()
+            default_tzinfo = iso8601.iso8601.UTC
         self.default_tzinfo = default_tzinfo
 
     def serialize(self, node, appstruct):
         if appstruct in (null,None,""):
             return null
 
-        if isinstance(appstruct, basestring):
+        if isinstance(appstruct, str):
             try:
                 appstruct = iso8601.parse_date(
                     appstruct, default_timezone=self.default_tzinfo)
-            except (iso8601.ParseError, TypeError), e:
+            except (iso8601.ParseError, TypeError) as e:
                 try:
-                    year, month, day = map(int, appstruct.split('-', 2))
+                    year, month, day = list(map(int, appstruct.split('-', 2)))
                     appstruct = datetime.datetime(year, month, day,
                                                tzinfo=self.default_tzinfo)
                 except:
@@ -1102,17 +1134,17 @@ class DateTime(SchemaType):
 
     def deserialize(self, node, cstruct, formstruct=None):
         if not cstruct:
-            return null
+            return cstruct
 
         try:
             result = iso8601.parse_date(
                 cstruct, default_timezone=self.default_tzinfo)
-        except (iso8601.ParseError, TypeError), e:
+        except (iso8601.ParseError, TypeError) as e:
             try:
-                year, month, day = map(int, cstruct.split('-', 2))
+                year, month, day = list(map(int, cstruct.split('-', 2)))
                 result = datetime.datetime(year, month, day,
                                            tzinfo=self.default_tzinfo)
-            except Exception, e:
+            except Exception as e:
                 raise Invalid(node, _(self.err_template,
                                       mapping={'val':cstruct, 'err':e}))
         return result
@@ -1163,12 +1195,12 @@ class Date(SchemaType):
         if appstruct in (null,None,""):
             return null
 
-        if isinstance(appstruct, basestring):
+        if isinstance(appstruct, str):
             try:
                 appstruct = iso8601.parse_date(appstruct)
-            except (iso8601.ParseError, TypeError), e:
+            except (iso8601.ParseError, TypeError) as e:
                 try:
-                    year, month, day = map(int, appstruct.split('-', 2))
+                    year, month, day = list(map(int, appstruct.split('-', 2)))
                     appstruct = datetime.date(year, month, day)
                 except:
                     pass
@@ -1192,9 +1224,9 @@ class Date(SchemaType):
             result = result.date()
         except (iso8601.ParseError, TypeError):
             try:
-                year, month, day = map(int, cstruct.split('-', 2))
+                year, month, day = list(map(int, cstruct.split('-', 2)))
                 result = datetime.date(year, month, day)
-            except Exception, e:
+            except Exception as e:
                 raise Invalid(node,
                               _(self.err_template,
                                 mapping={'val':cstruct, 'err':e})
@@ -1249,7 +1281,7 @@ class Time(SchemaType):
         if appstruct in (null, None, ""):
             return null
 
-        if isinstance(appstruct, basestring):
+        if isinstance(appstruct, str):
             try:
                 value = iso8601.parse_date(appstruct)
                 appstruct = value.time()
@@ -1291,7 +1323,7 @@ class Time(SchemaType):
                 except ValueError:
                     try:
                         result = timeparse(cstruct, '%H')
-                    except Exception, e:
+                    except Exception as e:
                         raise Invalid(node,
                                       _(self.err_template,
                                         mapping={'val':cstruct, 'err':e})
@@ -1371,7 +1403,7 @@ class SchemaNode(object):
 
     def __new__(cls, *arg, **kw):
         inst = object.__new__(cls)
-        inst._order = cls._counter.next()
+        inst._order = next(cls._counter)
         return inst
 
     def __init__(self, typ, *children, **kw):
@@ -1526,7 +1558,7 @@ class SchemaNode(object):
     def _bind(self, kw):
         for child in self.children:
             child._bind(kw)
-        for k, v in self.__dict__.items():
+        for k, v in list(self.__dict__.items()):
             if isinstance(v, deferred):
                 v = v(self, kw)
                 setattr(self, k, v)
@@ -1578,7 +1610,7 @@ class SchemaNode(object):
 class _SchemaMeta(type):
     def __init__(cls, name, bases, clsattrs):
         nodes = []
-        for name, value in clsattrs.items():
+        for name, value in list(clsattrs.items()):
             if isinstance(value, SchemaNode):
                 value.name = name
                 if value.raw_title is _marker:
@@ -1594,15 +1626,16 @@ class _SchemaMeta(type):
         extended.sort()
         cls.nodes = [x[1] for x in extended]
 
-class Schema(object):
+class Schema(metaclass=_SchemaMeta):
     schema_type = Mapping
     node_type = SchemaNode
-    __metaclass__ = _SchemaMeta
+    # todo [3] metaclass?
+    #__metaclass__ = _SchemaMeta
 
     def __new__(cls, *args, **kw):
         node = object.__new__(cls.node_type)
         node.name = None
-        node._order = SchemaNode._counter.next()
+        node._order = next(SchemaNode._counter)
         typ = cls.schema_type()
         node.__init__(typ, *args, **kw)
         for n in cls.nodes:
@@ -1787,7 +1820,7 @@ class Set(object):
        Boolean representing whether an empty set input to
        deserialize will be considered valid.  Default: ``False``.
     """
-    def __init__(self, allow_empty=False):
+    def __init__(self, allow_empty=True):
         self.allow_empty = allow_empty
         
     def serialize(self, node, value):
@@ -1819,7 +1852,7 @@ class List(object):
     ``allowed``
        List of strings defining the allowed values to be serialized.
     """
-    def __init__(self, allow_empty=False, allowed=None):
+    def __init__(self, allow_empty=True, allowed=None):
         self.allow_empty = allow_empty
         self.allowed = allowed
         
@@ -1829,8 +1862,11 @@ class List(object):
     def deserialize(self, node, value, formstruct=None):
         if value in (null, None):
             return null
-        if isinstance(value, basestring):
-            value = [value]
+        if isinstance(value, str):
+            if not value:
+                value = []
+            else:
+                value = [value]
         elif not isinstance(value, (list, tuple)):
             raise Invalid(
                 node,
@@ -1859,7 +1895,7 @@ class CodeList(object):
     ``allowed``
        List of strings defining the allowed values to be serialized.
     """
-    def __init__(self, allow_empty=False, allowed=None):
+    def __init__(self, allow_empty=True, allowed=None):
         self.allow_empty = allow_empty
         self.allowed = set(allowed)
         
@@ -1877,8 +1913,8 @@ class CodeList(object):
                     )
             value = value[0]
         
-        if not isinstance(value, basestring):
-            value = unicode(value)
+        if not isinstance(value, str):
+            value = str(value)
         
         if not value in self.allowed:
             if value:
@@ -1917,16 +1953,16 @@ class Lines(object):
     def deserialize(self, node, value, formstruct=None):
         if value in (null, None):
             return null
-        if value == u"":
+        if value == "":
             value = []
 
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             value = value.split(self.lb)
             if self.remove_empty:
                 try:
                     # remove empty lines
                     while True:
-                        value.remove(u"")
+                        value.remove("")
                 except:
                     pass
         elif not isinstance(value, (list, tuple)):
@@ -2017,7 +2053,7 @@ class FileData2(object):
                     node,
                     _('${value} has no ${key} key', mapping=mapping)
                     )
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             # from path
             file = File()
             file.fromPath(value)

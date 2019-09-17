@@ -6,29 +6,33 @@ __doc__ = """
 This file provides *container* functionality for :term:`objects` and :term:`roots`. The different components
 are separated into classes by functionality. 
 
-See :py:mod:`nive.components.objects.base` for subclassing containers.
 """
 
-from time import time
 from datetime import datetime
 
+from nive.definitions import implementer
 from nive.definitions import Conf, baseConf
 from nive.definitions import StagContainer, StagRessource, MetaTbl
-from nive.definitions import IContainer, ICache, IObject, IConf 
+from nive.definitions import IContainer, IRoot, ICache, IObject, IConf, IObjectConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
 from nive.security import has_permission, SetupRuntimeAcls
-from nive.workflow import WorkflowNotAllowed
-from nive.helper import ResolveName, ClassFactory
+from nive.workflow import WorkflowNotAllowed, ObjectWorkflow, RootWorkflow
+from nive.helper import ResolveName, ClassFactory, GetVirtualObj
 from nive.i18n import translate
 
+from nive.events import Events
+from nive.search import Search
+from nive.objects import Object
 
-class Container(object):
+
+class ContainerRead(Events):
     """
     Container implementation with read access for subobjects used for objects and roots.
 
     Requires: ContainerFactory
     """
+    defaultSort = "id"
 
     def obj(self, id, **kw):
         """ shortcut for GetObj """
@@ -38,48 +42,46 @@ class Container(object):
         o = self.GetObj(id)
         if o:
             return o
-        raise KeyError, id
-
+        raise KeyError(id)
 
     # Container functions ----------------------------------------------------
 
     def GetObj(self, id, **kw):
         """
         Get the subobject by id. ::
-        
+
             id = object id as number
             permission = check current users permissions for the page. requires securityContext.
             securityContext = required to check the permission. the request object by default.
             **kw = load information
             returns the object or None
-        
+
         Events:
         - loadObj(obj)
         """
         try:
-            id = long(id)
+            id = int(id)
         except:
             return None
         if not id:
             return None
-        obj = self._GetObj(id, **kw)
+        obj = self.factory.DbObj(id, **kw)
         self.Signal("loadObj", obj)
         return obj
 
-
-    def GetObjs(self, parameter = None, operators = None, pool_type = None, **kw):
+    def GetObjs(self, parameter=None, operators=None, pool_type=None, containerOnly=False, **kw):
         """
         Search for subobjects based on parameter and operators. ::
-        
+
             parameter = dict. see nive.Search
             operators = dict. see nive.Search
             kw.sort = sort objects. if None container default sort is used
             kw.batch = load subobjects as batch
             **kw = see Container.GetObj()
             returns all matching subobjects as list
-    
+
         see :class:`nive.Search` for parameter/operators description
-        
+
         Events
         - loadObj(obj)
         """
@@ -87,27 +89,33 @@ class Container(object):
             parameter = {}
         if operators is None:
             operators = {}
-        parameter[u"pool_unitref"] = self.id
-        sort = kw.get("sort", self.GetSort())
-        fields = [u"id",u"pool_datatbl",u"pool_dataref",u"pool_type"]
-        root = self.dataroot
-        if kw.get("queryRestraints")!=False:
-            parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort=sort)
+
+        if containerOnly:
+            parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+            operators["pool_stag"] = "BETWEEN"
+
+        parameter["pool_unitref"] = self.id
+        sort = kw.get("sort", self.defaultSort)
+        fields = ["id", "pool_datatbl", "pool_dataref", "pool_type"]
+        root = self.root
+        if kw.get("queryRestraints") != False:
+            parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
+        objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
+                                         sort=sort)
         useBatch = kw.get("batch", True)
         if useBatch:
             ids = [c["id"] for c in objects]
             kw["meta"] = objects
             kw["sort"] = sort
-            objs = self._GetObjBatch(ids, queryRestraint=False, **kw)
+            objs = self.factory.ObjBatch(ids, queryRestraint=False, **kw)
             return objs
         objs = []
         for c in objects:
             try:
-                kw[u"pool_datatbl"] = c[u"pool_datatbl"]
-                kw[u"pool_dataref"] = c[u"pool_dataref"]
+                kw["pool_datatbl"] = c["pool_datatbl"]
+                kw["pool_dataref"] = c["pool_dataref"]
                 try:
-                    obj = self._GetObj(c[u"id"], queryRestraints=False, **kw)
+                    obj = self.factory.DbObj(c["id"], queryRestraints=False, **kw)
                 except PermissionError:
                     # ignore permission errors and continue
                     obj = None
@@ -118,43 +126,44 @@ class Container(object):
         self.Signal("loadObj", objs)
         return objs
 
-
-    def GetObjsList(self, fields = None, parameter = None, operators = None, pool_type = None, **kw):
+    def GetObjsList(self, fields=None, parameter=None, operators=None, pool_type=None, containerOnly=False, **kw):
         """
         Search for subobjects based on parameter and operators. This function performs a sql query based on parameters and
         does not load any object. ::
-        
+
             fields = list. see nive.Search
             parameter = dict. see nive.Search
             operators = dict. see nive.Search
             kw.sort = sort objects. if None container default sort is used
             kw.batch = load subobjects as batch
             returns dictionary list
-    
+
         see :class:`nive.Search` for parameter/operators description
         """
-        if parameter==None:
+        if parameter is None:
             parameter = {}
-        if operators==None:
+        if operators is None:
             operators = {}
-        parameter[u"pool_unitref"] = self.id
-        sort = kw.get("sort", self.GetSort())
+
+        if containerOnly:
+            parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+            operators["pool_stag"] = "BETWEEN"
+
+        parameter["pool_unitref"] = self.id
+        sort = kw.get("sort", self.defaultSort)
         if not fields:
             # lookup meta list default fields
             fields = self.app.configuration.listDefault
-            if not fields:
-                # bw: 0.9.12 fallback for backward compatibility
-                fields = [u"id", u"title", u"pool_filename", u"pool_type", u"pool_state", u"pool_sort", u"pool_stag", u"pool_wfa"]
-        root = self.dataroot
-        parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators, sort = sort)
+        root = self.root
+        parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
+        objects = root.search.SelectDict(pool_type=pool_type, parameter=parameter, fields=fields, operators=operators,
+                                         sort=sort)
         return objects
-    
-        
+
     def GetObjsBatch(self, ids, **kw):
         """
         Tries to load the objects with as few sql queries as possible. ::
-        
+
             ids = list of object ids as number
             **kw = see Container.GetObj()
             returns all matching sub objects as list
@@ -162,102 +171,73 @@ class Container(object):
         Events
         - loadObj(objs)
         """
-        sort = kw.get("sort", self.GetSort())
-        fields = [u"id",u"pool_datatbl",u"pool_dataref"]
-        parameter,operators = {}, {}
-        parameter[u"id"] = ids
-        parameter[u"pool_unitref"] = self.id
-        operators[u"id"] = "IN"
-        root = self.dataroot
-        parameter,operators = root.ObjQueryRestraints(self, parameter, operators)
-        objects = root.SelectDict(parameter=parameter, fields=fields, operators=operators, sort = sort)
+        sort = kw.get("sort", self.defaultSort)
+        fields = ["id", "pool_datatbl", "pool_dataref"]
+        parameter, operators = {}, {}
+        parameter["id"] = ids
+        parameter["pool_unitref"] = self.id
+        operators["id"] = "IN"
+        root = self.root
+        parameter, operators = root.ObjQueryRestraints(self, parameter, operators)
+        objects = root.search.SelectDict(parameter=parameter, fields=fields, operators=operators, sort=sort)
         ids = [c["id"] for c in objects]
         kw["meta"] = objects
-        objs = self._GetObjBatch(ids, **kw)
+        objs = self.factory.ObjBatch(ids, **kw)
         self.Signal("loadObj", objs)
         return objs
-    
-        
-    def GetContainers(self, parameter = None, operators = None, **kw):
-        """
-        Loads all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to 
-        `nive.definitions.StagRessource - 1`.  ::
-        
-            kw.batch = load subobjects as batch and not as single object
-            parameter = see pool Search
-            operators = see pool Search
-            **kw = see Container.GetObj()
-            returns all matching sub objects as list
 
-        see :class:`nive.Search` for parameter/operators description
-
-        Events
-        - loadObj(objs)
+    def GetSubtreeIDs(self, sort=None):
         """
-        if parameter==None:
-            parameter = {}
-        if operators==None:
-            operators = {}
-        parameter[u"pool_stag"] = (StagContainer, StagRessource-1)
-        operators[u"pool_stag"] = u"BETWEEN"
-        objs = self.GetObjs(parameter, operators, **kw)        
-        return objs
-
-        
-    def GetContainerList(self, fields = None, parameter = None, operators = None, **kw):
-        """
-        Lists all subobjects with container functionality. Uses select tag range `nive.definitions.StagContainer` to 
-        `nive.definitions.StagRessource - 1`. This function performs a sql query based on parameters and
-        does not load any object. ::
-
-            fields = list. see nive.Search
-            parameter = see pool Search
-            operators = see pool Search
-            kw.batch = load subobjects as batch
-            **kw = see Container.GetObj()
-            returns dictionary list
-
-        see :class:`nive.Search` for parameter/operators description
-        """
-        if parameter==None:
-            parameter = {}
-        if operators==None:
-            operators = {}
-        parameter[u"pool_stag"] = (StagContainer, StagRessource-1)
-        operators[u"pool_stag"] = u"BETWEEN"
-        return self.GetObjsList(fields, parameter, operators, **kw)
-    
-        
-    def GetContainedIDs(self, sort=None):
-        """
-        Returns the ids of all contained objects including subfolders sorted by *sort*. Default is *GetSort()*.
+        Returns the ids of all contained objects including subfolders sorted by *sort*. Default is *self.defaultSort*.
 
         returns list
         """
         if not sort:
-            sort = self.GetSort()
+            sort = self.defaultSort
         db = self.app.db
         ids = db.GetContainedIDs(sort=sort, base=self.id)
         return ids
-
-
-    def GetSort(self):
-        """
-        The default sort order field name.
-        
-        returns the field id as string
-        """
-        return u"id"
-
 
     def IsContainer(self):
         """ """
         return IContainer.providedBy(self)
 
 
-class ContainerEdit:
+
+    # bw [3]
+
+    def GetSort(self):
+        return self.defaultSort
+
+    def GetContainers(self, parameter=None, operators=None, **kw):
+        if parameter is None:
+            parameter = {}
+        if operators is None:
+            operators = {}
+        parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+        operators["pool_stag"] = "BETWEEN"
+        objs = self.GetObjs(parameter, operators, **kw)
+        return objs
+
+    def GetContainerList(self, fields=None, parameter=None, operators=None, **kw):
+        if parameter is None:
+            parameter = {}
+        if operators is None:
+            operators = {}
+        parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+        operators["pool_stag"] = "BETWEEN"
+        return self.GetObjsList(fields, parameter, operators, **kw)
+
+    def GetContainedIDs(self, sort=None):
+        return self.GetSubtreeIDs(sort)
+
+
+class ContainerWrite:
     """
     Container with add and delete functionality for subobjects.
+
+    Provides functionality to allow or disallow the creation of objects based
+    on object configuration.subtypes.
 
     Requires: Container
     """
@@ -288,30 +268,34 @@ class ContainerEdit:
         - create (called in context of the new object)
         """
         app = self.app
-        typedef = app.GetObjectConf(type)
-        if not typedef:
-            raise ConfigurationError, "Type not found (%s)" % (str(type))
+        if not IObjectConf.providedBy(type):
+            typedef = app.configurationQuery.GetObjectConf(type)
+            if not typedef:
+                raise ConfigurationError("Type not found (%s)" % (str(type)))
+        else:
+            typedef = type
 
         # allow subobject
         if not self.IsTypeAllowed(typedef, user):
-            raise ContainmentError, "Add type not allowed here (%s)" % (str(type))
+            raise ContainmentError("Add type not allowed here (%s)" % (str(type)))
 
-        if not self.WfAllow("add", user=user):
-            raise WorkflowNotAllowed, "Not allowed in current workflow state (add)"
+        wf = self.workflow
+        if not wf.WfAllow("add", user=user):
+            raise WorkflowNotAllowed("Not allowed in current workflow state (add)")
 
         self.Signal("beforeAdd", data=data, type=type, user=user, **kw)
         db = app.db
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
-            obj = self._GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj = self.factory.DbObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
             if typedef.events:
                 obj.SetupEventsFromConfiguration(typedef.events)
             obj.CreateSelf(data, user=user, **kw)
-            self.WfAction("add", user=user)
+            wf.WfAction("add", user=user)
             obj.Signal("create", user=user, **kw)
             if not kw.get("nocommit") and app.configuration.autocommit:
                 obj.CommitInternal(user=user)
-        except Exception, e:
+        except Exception as e:
             db.Undo()
             raise 
         self.Signal("afterAdd", obj=obj, user=user, **kw)
@@ -336,12 +320,12 @@ class ContainerEdit:
         dbEntry = None
         try:
             dbEntry = db.CreateEntry(pool_datatbl=typedef["dbparam"], user=user, **kw)
-            obj = self._GetObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
+            obj = self.factory.DbObj(dbEntry.GetID(), dbEntry = dbEntry, parentObj = self, configuration = typedef, **kw)
             obj.UpdateInternal(data)
             obj.meta["pool_type"] = typedef.id
             obj.meta["pool_unitref"] = obj.parent.id
             obj.meta["pool_stag"] = obj.selectTag
-        except Exception, e:
+        except Exception as e:
             db.Undo()
             raise
         return obj
@@ -369,21 +353,22 @@ class ContainerEdit:
         - create (called in context of the new object)
         """
         if not updateValues:
-            updateValues={}
+            updateValues = dict()
         app = self.app
-        type=obj.GetTypeID()
+        type = obj.GetTypeID()
         # allow subobject
         if not self.IsTypeAllowed(type, user):
-            raise ContainmentError, "Add type not allowed here (%s)" % (str(type))
+            raise ContainmentError("Add type not allowed here (%s)" % (str(type)))
         
-        if not self.WfAllow("add", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (add)"
+        wf = ObjectWorkflow(self)
+        if not wf.WfAllow("add", user=user):
+            raise WorkflowNotAllowed("Workflow: Not allowed (add)")
 
         self.Signal("beforeAdd", data=updateValues, type=type, user=user, **kw)
         newDataEntry = None
         try:
             newDataEntry = obj.dbEntry.Duplicate()
-            updateValues["pool_unitref"] = self.GetID()
+            updateValues["pool_unitref"] = self.id
             updateValues["pool_wfa"] = ""
             data, meta, files = obj.SplitData(updateValues)
             newDataEntry.meta.update(meta)
@@ -392,11 +377,11 @@ class ContainerEdit:
             id = newDataEntry.GetID()
             typedef = obj.configuration
     
-            newobj = self._GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
+            newobj = self.factory.DbObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
             newobj.CreateSelf(data, user=user)
             newobj.Signal("duplicate", **kw)
             
-        except Exception, e:
+        except Exception as e:
             db = app.db
             if newDataEntry:
                 try:
@@ -411,10 +396,10 @@ class ContainerEdit:
             if obj.IsContainer():
                 for o in obj.GetObjs(queryRestraints=False):
                     newobj._RecursiveDuplicate(o, user, **kw)
-            self.WfAction("add", user=user)
+            wf.WfAction("add", user=user)
             if app.configuration.autocommit:
                 newobj.CommitInternal(user=user)
-        except Exception, e:
+        except Exception as e:
              self._DeleteObj(newobj)
              raise 
          
@@ -431,7 +416,7 @@ class ContainerEdit:
         updateValues = {}
         self.Signal("beforeAdd", data=updateValues, type=type, **kw)
         newDataEntry = obj.dbEntry.Duplicate()
-        updateValues["pool_unitref"] = self.GetID()
+        updateValues["pool_unitref"] = self.id
         updateValues["pool_wfa"] = ""
         data, meta, files = obj.SplitData(updateValues)
         newDataEntry.meta.update(meta)
@@ -440,7 +425,7 @@ class ContainerEdit:
         id = newDataEntry.GetID()
         typedef = obj.configuration
 
-        newobj = self._GetObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
+        newobj = self.factory.DbObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
         newobj.CreateSelf({}, user=user)
         newobj.Signal("duplicate", **kw)
         
@@ -478,28 +463,29 @@ class ContainerEdit:
         # check if id is object
         if IObject.providedBy(id):
             obj = id
-        if not obj:
+        if obj is None:
             obj = self.GetObj(id, queryRestraints=False, **kw)
-            if not obj:
+            if obj is None:
                 return False
-        if obj.parent.id!=self.id:
-            raise ContainmentError, "Object is not a child (%s)" % (str(id))
+        if obj.parent.id != self.id:
+            raise ContainmentError("Object is not a child (%s)" % (str(id)))
 
         # call workflow
-        if not self.WfAllow("remove", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (remove)"
-        if not obj.WfAllow("delete", user=user):
-            raise WorkflowNotAllowed, "Workflow: Not allowed (delete)"
+        wf = ObjectWorkflow(self)
+        if not wf.WfAllow("remove", user=user):
+            raise WorkflowNotAllowed("Workflow: Not allowed (remove)")
+        if not obj.workflow.WfAllow("delete", user=user):
+            raise WorkflowNotAllowed("Workflow: Not allowed (delete)")
         obj.Signal("delete", user=user)
         if hasattr(obj, "_RecursiveDelete"):
             obj._RecursiveDelete(user)
 
         # call workflow
-        obj.WfAction("delete", user=user)
+        obj.workflow.WfAction("delete", user=user)
         self._DeleteObj(obj)
         if app.configuration.autocommit:
             self.db.Commit()
-        self.WfAction("remove", user=user)
+        wf.WfAction("remove", user=user)
         self.Signal("afterDelete", id=id, user=user)
 
         return True
@@ -525,13 +511,25 @@ class ContainerEdit:
             obj = self.GetObj(id, queryRestraints=False, **kw)
         else:
             if not obj.parent==self:
-                raise ContainmentError, "Object is not a child (%s)" % (str(id))
+                raise ContainmentError("Object is not a child (%s)" % (str(id)))
         obj.Signal("delete")
         if hasattr(obj, "_RecursiveDeleteInternal"):
             obj._RecursiveDeleteInternal(user)
         self._DeleteObj(obj)
         self.Signal("afterDelete", id=id)
         return 1
+
+
+    def _DeleteObj(self, obj, id=0):
+        """
+        Deletes the object and additional data from wfdata, wflog, fulltext,
+        security tables.
+        """
+        if obj is not None:
+            id = obj.id
+        obj.Close()
+        if id > 0:
+            self.db.DeleteEntry(id)
 
 
     def _RecursiveDelete(self, user):
@@ -552,12 +550,6 @@ class ContainerEdit:
             self.DeleteInternal(o.id, obj=o, user=user)
             
             
-class ContainerSecurity:
-    """
-    Provides functionality to allow or disallow the creation of objects based
-    on object configuration.subtypes.
-    """
-
     def GetAllowedTypes(self, user=None, visible=1):
         """
         List types allowed to be created in this container based on
@@ -571,7 +563,7 @@ class ContainerSecurity:
         subtypes = self.configuration.subtypes
         if not subtypes:
             return False
-        all = self.app.GetAllObjectConfs(visibleOnly=visible)
+        all = self.app.configurationQuery.GetAllObjectConfs(visibleOnly=visible)
         if subtypes == AllTypesAllowed:
             return all
 
@@ -579,12 +571,12 @@ class ContainerSecurity:
         allowed = []
         for conf in all:
             # create type from configuration
-            type = self._GetVirtualObj(conf)
+            type = GetVirtualObj(conf, self.app)
             if not type:
                 continue
             # loop subtypes
             for iface in subtypes:
-                if isinstance(iface, basestring):
+                if isinstance(iface, str):
                     iface = ResolveName(iface, raiseExcp=False)
                     if not iface:
                         continue
@@ -620,15 +612,15 @@ class ContainerSecurity:
         if not subtypes:
             return False
 
-        if isinstance(type, basestring):
+        if isinstance(type, str):
             if type in subtypes:
                 return True
             # dotted python to obj configuration
-            type = self.app.GetObjectConf(type)
+            type = self.app.configurationQuery.GetObjectConf(type)
             if type is None:
                 return False
             # create type from configuration
-            type = self._GetVirtualObj(type)
+            type = GetVirtualObj(type, self.app)
             if type is None:
                 return False
 
@@ -636,7 +628,7 @@ class ContainerSecurity:
             if type.id in subtypes:
                 return True
             # create type from configuration
-            type = self._GetVirtualObj(type)
+            type = GetVirtualObj(type, self.app)
             if type is None:
                 return False
 
@@ -644,7 +636,7 @@ class ContainerSecurity:
             return False
         # loop subtypes
         for iface in subtypes:
-            if isinstance(iface, basestring):
+            if isinstance(iface, str):
                 iface = ResolveName(iface, raiseExcp=False)
                 if not iface:
                     continue
@@ -655,180 +647,53 @@ class ContainerSecurity:
             except:
                 pass
         return False
-    
 
-class ContainerFactory:
+
+
+@implementer(IContainer, IObject)
+class Container(Object, ContainerRead, ContainerWrite):
     """
-    Container object factory. Creates objects based on type configuration.
+    Container implementation for objects and roots.
     """
 
-    def _GetObj(self, id, dbEntry = None, parentObj = None, configuration = None, **kw):
-        """
-        Loads and initializes the object. ::
-        
-            id = id of the object to be loaded
-            dbEntry = the database entry. Will be loaded automatically if None
-            parentObj = if a different parent than the container
-            configuration = the object configuration to be loaded
-            returns the object or None
-            
-        """
-        useCache = ICache.providedBy(self)
-        if useCache:
-            o = self.GetFromCache(id)
-            if o:
-                return o
-        app = self.app
-        if not dbEntry:
-            # check restraints
-            qr = kw.get("queryRestraints",None)
-            if qr!=False:
-                root = self.dataroot
-                p,o = root.ObjQueryRestraints(self)
-                p["id"] = id
-                p["pool_unitref"] = self.id
-                e = root.Select(parameter=p, operators=o)
-                if len(e)==0:
-                    return None
+    @property
+    def factory(self):
+        return ContainerFactory(self)
 
-            dbEntry = app.db.GetEntry(id, **kw)
-            if not dbEntry:
-                return None
-                #raise Exception, "NotFound"
-
-            if dbEntry.meta["pool_unitref"]!=self.id:
-                raise ContainmentError, "Object is not a child (%s)" % (str(id))
-
-        # create object for type
-        if not parentObj:
-            parentObj = self
-        obj = None
-        if not configuration:
-            type = dbEntry.GetMetaField("pool_type")
-            if not type:
-                # broken entry 
-                #raise ConfigurationError, "Empty type"
-                return None
-            configuration = app.GetObjectConf(type)
-            if not configuration:
-                raise ConfigurationError, "Type not found (%s)" % (str(type))
-        obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-        obj = obj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
-
-        # check security if context passed in keywords
-        if kw.get("securityContext") and kw.get("permission"):
-            if not has_permission(kw["permission"], obj, kw["securityContext"]):
-                raise PermissionError, "Permission check failed (%s)" % (str(id))
-
-        if useCache:
-            self.Cache(obj, obj.id)
-        return obj
-
-
-    def _GetVirtualObj(self, configuration):
-        """
-        This loads an object for a non existing database entry.
-        """
-        if not configuration:
-            raise ConfigurationError, "Type not found"
-        app = self.app
-        obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-        dbEntry = app.db.GetEntry(0, virtual=1)
-        obj = obj(0, dbEntry, parent=None, configuration=configuration)
-        return obj
-
-    
-    def _GetObjBatch(self, ids, parentObj = None, **kw):
-        """
-        Load multiple objects at once.
-        """
-        if len(ids)==0:
-            return []
-        useCache = ICache.providedBy(self)
-        objs = []
-        if useCache:
-            load = []
-            for id in ids:
-                o = self.GetFromCache(id)
-                if o:
-                    objs.append(o)
-                else:
-                    load.append(id)
-            if len(load)==0:
-                return objs
-            ids = load
-
-        app = self.app
-        entries = app.db.GetBatch(ids, preload="all", **kw)
-
-        # create object for type
-        if not parentObj:
-            parentObj = self
-        securityContext = kw.get("securityContext")
-        permission = kw.get("permission")
-        for dbEntry in entries:
-            obj = None
-            type = dbEntry.meta.get("pool_type")
-            if not type:
-                continue
-            configuration = app.GetObjectConf(type, skipRoot=1)
-            if not configuration:
-                continue
-            obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
-            obj = obj(dbEntry.id, dbEntry, parent=parentObj, configuration=configuration, **kw)
-
-            # check security if context passed in keywords
-            if securityContext and permission:
-                if not has_permission(permission, obj, securityContext):
-                    continue
-
-            if useCache:
-                self.Cache(obj, obj.id)
-            objs.append(obj)
-        return objs
-
-
-    def _DeleteObj(self, obj, id=0):
-        """
-        Deletes the object and additional data from wfdata, wflog, fulltext,
-        security tables.
-        """
-        if obj:
-            id = obj.GetID()
-        obj.Close()
-        db = self.db
-        if id > 0:
-            db.DeleteEntry(id)
+    @property
+    def workflow(self):
+        return ObjectWorkflow(self)
 
 
 
-class Root(object):
+@implementer(IContainer, IRoot)
+class Root(ContainerRead, ContainerWrite):
     """
     The root is a container for objects but does not store any data in the database itself. It
-    is the entry point for object access. Roots are only handled by the application. 
+    is the entry point for object access. Roots are only handled by the application.
 
     Requires (Container, ContainerFactory, Event)
     """
-    
+
     def __init__(self, path, app, rootDef):
         self.__name__ = str(path)
         self.__parent__ = app
-        self.id = 0 
+        self.id = 0
         # unique root id generated from name . negative integer.
-        self.idhash = abs(hash(self.__name__))*-1
+        self.idhash = abs(hash(self.__name__)) * -1
         self.path = path
         self.configuration = rootDef
         self.queryRestraints = {}, {}
 
-        self.meta = Conf(pool_type=rootDef["id"], 
-                         title=translate(rootDef["name"]), 
-                         pool_state=1, 
-                         pool_filename=path, 
-                         pool_wfa=u"",
+        self.meta = Conf(pool_type=rootDef["id"],
+                         title=translate(rootDef["name"]),
+                         pool_state=1,
+                         pool_filename=path,
+                         pool_wfa="",
                          pool_change=datetime.now(tz=app.pytimezone),
-                         pool_changedby=u"",
+                         pool_changedby="",
                          pool_create=datetime.now(tz=app.pytimezone),
-                         pool_createdby=u"")
+                         pool_createdby="")
         self.data = Conf()
         self.files = Conf()
 
@@ -840,11 +705,10 @@ class Root(object):
 
         self.Signal("init")
 
-
     # Properties -----------------------------------------------------------
 
     @property
-    def dataroot(self):
+    def root(self):
         """ this will return itself. Used for object compatibility. """
         return self
 
@@ -863,78 +727,89 @@ class Root(object):
         """ this will return None. Used for object compatibility. """
         return None
 
+    @property
+    def factory(self):
+        return ContainerFactory(self)
+
+    @property
+    def workflow(self):
+        return RootWorkflow(self)
+
+    @property
+    def search(self):
+        return Search(self)
+
     # Object Lookup -----------------------------------------------------------
 
     def LookupObj(self, id, **kw):
         """
-        Lookup the object referenced by id *anywhere* in the tree structure. Use obj() to 
+        Lookup the object referenced by id *anywhere* in the tree structure. Use obj() to
         restrain lookup to the first sublevel only. ::
-        
+
             id = number
             **kw = version information
-        
+
         returns the object or None
         """
         try:
-            id = long(id)
+            id = int(id)
         except:
             return None
         if id <= 0:
             return self
         if not id:
             return None
-            #raise Exception, "NotFound"
+            # raise Exception, "NotFound"
 
         # proxy object
-        if kw.has_key("proxyObj") and kw["proxyObj"]:
-            obj = self._GetObj(id, parentObj = kw["proxyObj"], **kw)
+        if "proxyObj" in kw and kw["proxyObj"]:
+            obj = self.factory.DbObj(id, parentObj=kw["proxyObj"], **kw)
             if not obj:
-                raise ContainmentError, "Proxy object not found"
+                raise ContainmentError("Proxy object not found")
             return obj
 
         # load tree structure
         path = self.app.db.GetParentPath(id)
         if path is None:
             return None
-            #raise Exception, "NotFound"
-        
+            # raise Exception, "NotFound"
+
         # check and adjust root id
         if hasattr(self, "rootID"):
             if self.rootID in path:
-                path = path[path.index(self.rootID)+1:]
+                path = path[path.index(self.rootID) + 1:]
         if hasattr(self.app, "rootID"):
             if self.app.rootID in path:
-                path = path[path.index(self.app.rootID)+1:]
+                path = path[path.index(self.app.rootID) + 1:]
 
         # reverse lookup of object tree. loads all parent objs.
         path.append(id)
-        #opt
+        # opt
         obj = self
         for id in path:
             if id == self.id:
                 continue
-            obj = obj._GetObj(id, **kw)
+            obj = obj.factory.DbObj(id, **kw)
             if not obj:
                 return None
-                #raise Exception, "NotFound"
+                # raise Exception, "NotFound"
         return obj
-
 
     def ObjQueryRestraints(self, containerObj=None, parameter=None, operators=None):
         """
         The functions returns two dictionaries (parameter, operators) used to restraint
         object lookup in subtree. For example a restraint can be set to ignore all
-        objects with meta.pool_state=0. All container get (GetObj, GetObjs, ...) functions 
-        use query restraints internally. 
-        
+        objects with meta.pool_state=0. All container get (GetObj, GetObjs, ...) functions
+        use query restraints internally.
+
         See `nive.search` for parameter and operator usage.
-        
-        Please note: Setting the wrong values for query restraints can easily crash 
-        the application. 
-        
+
+        Please note: Setting the wrong values for query restraints can easily crash
+        the application.
+
         Event:
         - loadRestraints(parameter, operators)
-        
+
         returns parameter dict, operators dict
         """
         p, o = self.queryRestraints
@@ -945,11 +820,10 @@ class Root(object):
             else:
                 operators = o.copy()
         else:
-            parameter=p.copy()
-            operators=o.copy()
+            parameter = p.copy()
+            operators = o.copy()
         self.Signal("loadRestraints", parameter=parameter, operators=operators)
         return parameter, operators
-
 
     # Values ------------------------------------------------------
 
@@ -975,16 +849,15 @@ class Root(object):
         for f in self.configuration["data"]:
             if f["id"] == fldId:
                 return f
-        return self.app.GetMetaFld(fldId)
+        return self.app.configurationQuery.GetMetaFld(fldId)
 
     def GetTitle(self):
         """ returns the root title from configuration. """
-        return self.meta.get("title","")
+        return self.meta.get("title", "")
 
     def GetPath(self):
         """ returns the url path name as string. """
         return self.__name__
-
 
     # Parents ----------------------------------------------------
 
@@ -994,29 +867,28 @@ class Root(object):
 
     def GetParents(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     def GetParentIDs(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     def GetParentTitles(self):
         """ returns empty list. Used for object compatibility. """
-        return []
+        return ()
 
     def GetParentPaths(self):
         """ returns empty list. Used for object compatibility. """
-        return []
-
+        return ()
 
     # tools ----------------------------------------------------
 
     def GetTool(self, name):
         """
         Load a tool in the roots' context. Only works for tools registered for roots or this root type. ::
-            
+
             returns the tool object or None
-        
+
         Event
         - loadToool(tool=toolObj)
         """
@@ -1024,140 +896,151 @@ class Root(object):
         self.Signal("loadTool", tool=t)
         return t
 
-
     def Close(self):
         """
         Close the root and all contained objects. Currently only used in combination with caches.
-        
+
         Event
         - close()
         """
         self.Signal("close")
         if ICache.providedBy(self):
-            #opt
+            # opt
             for o in self.GetAllFromCache():
                 o.Close()
         return
 
-    # to be removed in future versions --------------------------------------------
 
-    def root(self):
-        """
-        bw 0.9.12: use dataroot property instead! 
-        this will return itself. Used for object compatibility. 
-        """
-        return self
-
-    def GetRoot(self):
-        """bw 0.9.12: to be removed. returns self. """
-        return self
-
-    def GetApp(self):
-        """bw 0.9.12: to be removed. returns the cms application. """
-        return self.app
-
-    def GetParent(self):
-        """bw 0.9.12: to be removed. returns None. """
-        return None
-
-
-
-class RootWorkflow:
+class ContainerFactory(object):
     """
-    Provides workflow functionality for roots. 
-    Workflow process objects are handled and loaded by the application. Meta layer fields `pool_wfp` stores the 
-    process id and `pool_wfa` the current state.
+    Container object factory. Creates objects based on type configuration.
     """
 
-    def WfAllow(self, action, user, transition = None):
+    def __init__(self, obj):
+        self.obj = obj
+
+
+
+    def DbObj(self, id, dbEntry=None, parentObj=None, configuration=None, **kw):
         """
-        Check if action is allowed in current state in workflow. This functions returns True or False
-        and unlike WFAction() will not raise a WorkflowNotAllowed Exception.
-        
-        Event: 
-        - wfAllow(name)
+        Loads and initializes the object. ::
 
-        returns bool
+            id = id of the object to be loaded
+            dbEntry = the database entry. Will be loaded automatically if None
+            parentObj = if a different parent than the container
+            configuration = the object configuration to be loaded
+            returns the object or None
+
         """
-        wf = self.GetWf()
-        if not wf:
-            return True
-        self.Signal("wfAllow", name=action)
-        return wf.Allow(action, self, user=user, transition=transition)
+        obj = self.obj
+        useCache = ICache.providedBy(obj)
+        if useCache:
+            o = obj.GetFromCache(id)
+            if o:
+                return o
+        app = obj.app
+        if not dbEntry:
+            # check restraints
+            qr = kw.get("queryRestraints", None)
+            if qr != False:
+                root = obj.root
+                p, o = root.ObjQueryRestraints(obj)
+                p["id"] = id
+                p["pool_unitref"] = obj.id
+                e = root.search.Select(parameter=p, operators=o)
+                if len(e) == 0:
+                    return None
 
+            dbEntry = app.db.GetEntry(id, **kw)
+            if not dbEntry:
+                return None
+                # raise Exception, "NotFound"
 
-    def WfAction(self, action, user, transition = None):
+            if dbEntry.meta["pool_unitref"] != obj.id:
+                raise ContainmentError("Object is not a child (%s)" % (str(id)))
+
+        # create object for type
+        if not parentObj:
+            parentObj = obj
+        if not configuration:
+            type = dbEntry.GetMetaField("pool_type")
+            if not type:
+                # broken entry
+                # raise ConfigurationError, "Empty type"
+                return None
+            configuration = app.configurationQuery.GetObjectConf(type)
+            if not configuration:
+                raise ConfigurationError("Type not found (%s)" % (str(type)))
+        newobj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+        newobj = newobj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
+
+        # check security if context passed in keywords
+        if kw.get("securityContext") and kw.get("permission"):
+            if not has_permission(kw["permission"], newobj, kw["securityContext"]):
+                raise PermissionError("Permission check failed (%s)" % (str(id)))
+
+        if useCache:
+            obj.Cache(newobj, newobj.id)
+        return newobj
+
+    def ObjBatch(self, ids, parentObj=None, **kw):
         """
-        Trigger workflow action. If several transitions are possible for the action in the current state
-        the first is used. In this case the transition id can be passed as parameter.
-        
-        Event: 
-        - wfAction(name)
-
-        raises WorkflowNotAllowed 
+        Load multiple objects at once.
         """
-        wf = self.GetWf()
-        if not wf:
-            return 
-        wf.Action(action, self, user=user, transition=transition)
-        self.Signal("wfAction", name=action)
+        if len(ids) == 0:
+            return []
+        obj = self.obj
+        useCache = ICache.providedBy(self.obj)
+        objs = []
+        if useCache:
+            load = []
+            for id in ids:
+                o = obj.GetFromCache(id)
+                if o:
+                    objs.append(o)
+                else:
+                    load.append(id)
+            if len(load) == 0:
+                return objs
+            ids = load
+
+        app = obj.app
+        entries = app.db.GetBatch(ids, preload="all", **kw)
+
+        # create object for type
+        if not parentObj:
+            parentObj = obj
+        securityContext = kw.get("securityContext")
+        permission = kw.get("permission")
+        for dbEntry in entries:
+            type = dbEntry.meta.get("pool_type")
+            if not type:
+                continue
+            configuration = app.configurationQuery.GetObjectConf(type, skipRoot=1)
+            if not configuration:
+                continue
+            newobj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+            newobj = newobj(dbEntry.id, dbEntry, parent=parentObj, configuration=configuration, **kw)
+
+            # check security if context passed in keywords
+            if securityContext and permission:
+                if not has_permission(permission, obj, securityContext):
+                    continue
+
+            if useCache:
+                obj.Cache(newobj, newobj.id)
+            objs.append(newobj)
+        return objs
 
 
-    def GetWf(self):
+    def VirtualObj(self, configuration):
         """
-        Returns the workflow process for the object.
-
-        Event: 
-        - wfLoad(workflow) 
-        
-        returns object
+        This loads an object for a non existing database entry.
         """
-        app = self.app
-        if not app.configuration.workflowEnabled:
-            return None
-        wfTag = self.GetNewWf()
-        if not wfTag:
-            return None
-        # load workflow
-        wf = app.GetWorkflow(wfTag, contextObject=self)
-        # enable strict workflow checking
-        if not wf:
-            raise ConfigurationError, "Workflow process not found (%s)"%(wfTag)
-        self.Signal("wfLoad", workflow=wf)
-        return wf
-
-
-    def GetNewWf(self):
-        """
-        Returns the workflow process id for the object based on configuration settings. 
-
-        returns string
-        """
-        if not self.configuration.workflowEnabled:
-            return ""
-        return self.configuration.workflowID
-
-
-    def GetWfInfo(self, user):
-        """
-        returns the current workflow state as dictionary
-        """
-        wf = self.GetWf()
-        if not wf:
-            return {}
-        return wf.GetObjInfo(self, user)
-
-
-    def GetWfState(self):
-        """
-        """
-        return self.meta["pool_wfa"]
-
-
-    def SetWfState(self, stateID):
-        """
-        Sets the workflow state for the object. The new is state is set
-        regardless of transitions or calling any workflow actions.
-        """
-        self.meta["pool_wfa"] = stateID
-
+        if configuration is None:
+            raise ConfigurationError("Type not found")
+        app = self.obj.app
+        obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+        dbEntry = app.db.GetEntry(0, virtual=1)
+        obj = obj(0, dbEntry, parent=None, configuration=configuration)
+        return obj

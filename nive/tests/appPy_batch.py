@@ -16,19 +16,19 @@ level3_2 = 10
 
 
 def test1():
-    print "1) Testing objects create / delete, 3 level, no files"
+    print("1) Testing objects create / delete, 3 level, no files")
     t = time.time()
     a=db_app.app_db([DB_CONF])
-    print time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)"
+    print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
-    print time.time() - t2, "Creating root"
+    r=a.root
+    print(time.time() - t2, "Creating root")
     t2 = time.time()
 
     c=r
     ids=[]
     n=0
-    user = User(u"test")
+    user = User("test")
     for i in range(0,level1):
         o=db_app.createObj1(c)
         n+=1
@@ -43,27 +43,27 @@ def test1():
                 db_app.createObj2(o2)
                 n+=1
 
-    print time.time() - t2, "Creating", n, "objects"
+    print(time.time() - t2, "Creating", n, "objects")
     t2 = time.time()
 
     for id in ids:
         r.Delete(id, user=user)
-    print time.time() - t2, "Deleting objects recursively"
+    print(time.time() - t2, "Deleting objects recursively")
 
-    print "------------"
-    print time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)"
+    print("------------")
+    print(time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)")
     a.Close()
-    print "--------------------------------------------------------"
+    print("--------------------------------------------------------")
 
 
 def test2():
-    print "2) Testing objects create / delete, 3 level, with files"
+    print("2) Testing objects create / delete, 3 level, with files")
     t = time.time()
     a=db_app.app_db([DB_CONF])
-    print time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)"
+    print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
-    print time.time() - t2, "Creating root"
+    r=a.root
+    print(time.time() - t2, "Creating root")
     t2 = time.time()
 
     c=r
@@ -83,29 +83,29 @@ def test2():
                 db_app.createObj2file(o2)
                 n+=1
 
-    print time.time() - t2, "Creating", n, "objects"
+    print(time.time() - t2, "Creating", n, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         r.Delete(id, user=user)
-    print time.time() - t2, "Deleting objects recursively"
+    print(time.time() - t2, "Deleting objects recursively")
 
-    print "------------"
-    print time.time() - t, "Total Finished (contains", db_app.statdb(a), "Entries)"
+    print("------------")
+    print(time.time() - t, "Total Finished (contains", db_app.statdb(a), "Entries)")
     a.Close()
-    print "--------------------------------------------------------"
+    print("--------------------------------------------------------")
 
 
 
 def test3():
-    print "3) Testing objects create / load / load batch / delete, 3 level, no files"
+    print("3) Testing objects create / load / load batch / delete, 3 level, no files")
     t = time.time()
     a=db_app.app_db([DB_CONF])
-    print time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)"
+    print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
-    print time.time() - t2, "Creating root"
+    r=a.root
+    print(time.time() - t2, "Creating root")
     t2 = time.time()
 
     c=r
@@ -125,16 +125,16 @@ def test3():
                 db_app.createObj2(o2)
                 n+=1
 
-    print time.time() - t2, "Creating", n, "objects"
+    print(time.time() - t2, "Creating", n, "objects")
     t2 = time.time()
     del r
     del a
 
     a=db_app.app_db([DB_CONF])
-    print time.time() - t2, "Creating db (contains", db_app.statdb(a), "Entries)"
+    print(time.time() - t2, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
-    print time.time() - t2, "Creating root"
+    r=a.root
+    print(time.time() - t2, "Creating root")
     t2 = time.time()
 
     o1 = r.GetObjs(batch=True)
@@ -145,29 +145,29 @@ def test3():
         for a in o2:
             o3 = a.GetObjs(batch=True)
             cc+=len(o3)
-    print time.time() - t2, "Loading batch", cc, "objects"
+    print(time.time() - t2, "Loading batch", cc, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         r.Delete(id, user=user)
-    print time.time() - t2, "Deleting objects recursively"
+    print(time.time() - t2, "Deleting objects recursively")
 
-    print "------------"
-    print time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)"
+    print("------------")
+    print(time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)")
     a.Close()
-    print "--------------------------------------------------------"
+    print("--------------------------------------------------------")
 
 
 
 def test4():
-    print "4) Testing objects create / load cache / delete, 3 level, no files"
+    print("4) Testing objects create / load cache / delete, 3 level, no files")
     t = time.time()
     a=db_app.app_db([DB_CONF])
-    print time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)"
+    print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
-    print time.time() - t2, "Creating root"
+    r=a.root
+    print(time.time() - t2, "Creating root")
     t2 = time.time()
 
     c=r
@@ -178,25 +178,25 @@ def test4():
         o=db_app.createObj1(r)
         o.useCache = True
         ids.append(o.id)
-        #print o.id
+        #print(o.id)
         n+=1
         for i2 in range(0,level2):
             o2=db_app.createObj1(o)
             o2.useCache = True
-            #print o2.id,
+            #print(o2.id,
             n+=1
             for i3 in range(0,level3_1):
                 o3 = db_app.createObj1(o2)
                 o3.useCache = True
-                #print o3.id,
+                #print(o3.id,)
                 n+=1
             for i3 in range(0,level3_2):
                 o3 = db_app.createObj2(o2)
                 o3.useCache = True
-                #print o3.id,
+                #print(o3.id,)
                 n+=1
 
-    print time.time() - t2, "Creating", n, "objects"
+    print(time.time() - t2, "Creating", n, "objects")
     t2 = time.time()
 
     o1 = r.GetObjs()
@@ -207,35 +207,35 @@ def test4():
         for a in o2:
             o3 = a.GetObjs()
             cc+=len(o3)
-    print time.time() - t2, "Loading", cc, "objects"
+    print(time.time() - t2, "Loading", cc, "objects")
     t2 = time.time()
 
     r.Close()
-    print time.time() - t2, "Closing", cc, "objects"
+    print(time.time() - t2, "Closing", cc, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         try:
             r.Delete(id, user=user)
-        except Exception, e:
-            raise Exception, str(ids)+ " " + str(id)
-    print time.time() - t2, "Deleting objects recursively"
+        except Exception as e:
+            raise Exception(str(ids)+ " " + str(id))
+    print(time.time() - t2, "Deleting objects recursively")
 
-    print "------------"
-    print time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)"
+    print("------------")
+    print(time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)")
     a.Close()
-    print "--------------------------------------------------------"
+    print("--------------------------------------------------------")
 
 
 def test5():
-    print "5) Testing objects create / close load cache / delete, 3 level, no files"
+    print("5) Testing objects create / close load cache / delete, 3 level, no files")
     t = time.time()
     a=db_app.app_db([DB_CONF])
-    print time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)"
+    print(time.time() - t, "Creating db (contains", db_app.statdb(a), "Entries)")
     t2 = time.time()
-    r=a.root()
-    print time.time() - t2, "Creating root"
+    r=a.root
+    print(time.time() - t2, "Creating root")
     t2 = time.time()
 
     c=r
@@ -246,32 +246,32 @@ def test5():
         o=db_app.createObj1(r)
         o.useCache = True
         ids.append(o.id)
-        #print o.id
+        #print(o.id)
         n+=1
         for i2 in range(0,level2):
             o2=db_app.createObj1(o)
             o2.useCache = True
-            #print o2.id,
+            #print(o2.id,)
             n+=1
             for i3 in range(0,level3_1):
                 o3 = db_app.createObj1(o2)
                 o3.useCache = True
-                #print o3.id,
+                #print(o3.id,)
                 n+=1
             for i3 in range(0,level3_2):
                 o3 = db_app.createObj2(o2)
                 o3.useCache = True
-                #print o3.id,
+                #print(o3.id,)
                 n+=1
 
-    print time.time() - t2, "Creating", n, "objects"
+    print(time.time() - t2, "Creating", n, "objects")
     t2 = time.time()
 
     r.Close()
-    print time.time() - t2, "Closing", n, "objects"
+    print(time.time() - t2, "Closing", n, "objects")
     t2 = time.time()
 
-    r=a.root()
+    r=a.root
     r.useCache = True
     o1 = r.GetObjs()
     cc = len(o1)
@@ -283,22 +283,22 @@ def test5():
             a.useCache = True
             o3 = a.GetObjs()
             cc+=len(o3)
-    print time.time() - t2, "Loading after Close", cc, "objects"
+    print(time.time() - t2, "Loading after Close", cc, "objects")
     t2 = time.time()
 
-    user = User(u"test")
+    user = User("test")
     for id in ids:
         r.Delete(id, user=user)
         #try:
         #    r.Delete(id)
         #except Exception, e:
         #    raise Exception, str(ids)+ " " + str(id)
-    print time.time() - t2, "Deleting objects recursively"
+    print(time.time() - t2, "Deleting objects recursively")
 
-    print "------------"
-    print time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)"
+    print("------------")
+    print(time.time() - t, "Total. Finished (contains", db_app.statdb(a), "Entries)")
     a.Close()
-    print "--------------------------------------------------------"
+    print("--------------------------------------------------------")
 
 
 

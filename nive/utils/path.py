@@ -6,7 +6,7 @@ try:    from win32pipe import popen
 except: from os import popen
 
 import os
-import string
+import zipfile
 import stat
 import shutil
 import uuid
@@ -23,7 +23,7 @@ class DvPath(object):
         """
         self._path = ""
         if path:
-            if isinstance(path, basestring):
+            if isinstance(path, str):
                 self.SetStr(path)
             else:
                 self.SetStr(str(path))
@@ -299,3 +299,60 @@ class DvPath(object):
         self.SetExtension(ext)
         return True
 
+
+    def Copy(self, copyPath):
+        """(string copyPath) return bool
+        Copy file to copyPath. Directories are created if necessary
+        """
+        try:
+            aOldPath = self._path
+            self._path = copyPath
+            self.CreateDirectories()
+            shutil.copy2(aOldPath, str(copyPath))
+            return True
+        except Exception as e:
+            self._path = aOldPath
+            return False
+
+    def Pack(self, add=(), rootDir=""):
+        """
+        create a zip or tar archive from file/directory list.
+        to store files with relative directory set rootdir
+        to base directory for files
+        format is choosen from extension
+        """
+        if self.GetExtension() == "zip":
+            return self.Zip(add, rootDir)
+        return self.Tar(add, rootDir)
+
+    def Zip(self, add=(), rootDir=""):
+        def zipdir(path, ziph):
+            # ziph is zipfile handle
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    fn = os.path.join(root, file)
+                    ziph.write(fn, arcname=fn[len(rootDir):])
+
+        zipf = zipfile.ZipFile(self._path, 'w', zipfile.ZIP_DEFLATED)
+        for file in add:
+            if os.path.isdir(file):
+                zipdir(file, zipf)
+            else:
+                zipf.write(file, arcname=file[len(rootDir):])
+        zipf.close()
+        return True
+
+
+    def Tar(self, add=(), rootDir=""):
+        files = ""
+        for f in add:
+            files += "'%s' " % (f)
+        cmd = """cvzf %(path)s %(files)s""" % {"path": self._path, "files": str(files)}
+        s = popen("tar " + cmd, "r")
+        r = ""
+        while 1:
+            d = s.readline()
+            if not d or d == ".\n" or d == ".\r":
+                break
+            r += d
+        return True

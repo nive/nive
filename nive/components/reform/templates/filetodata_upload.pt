@@ -6,7 +6,8 @@
   </p>
 
   <input type="file" name="${field.name}"
-         tal:attributes="size field.widget.size; class field.widget.css_class"
+         tal:attributes="size field.widget.size"
+           class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
          id="${field.oid}">
 
 </tal:block>

@@ -11,14 +11,15 @@ and id attribute (number). Uses idhash for root objects.
 """
 
 from nive.definitions import ModuleConf, Conf
-from nive.definitions import implements, ILocalGroups
+from nive.definitions import implementer, ILocalGroups
 
+
+@implementer(ILocalGroups)
 class LocalGroups(object):
     """
     """
-    _owner = u"group:owner"
+    _owner = "group:owner"
     _secid = None
-    implements(ILocalGroups)
 
     def Init(self):
         self._localRoles = {}
@@ -141,13 +142,13 @@ def SetupLocalGroups(app, pyramidConfig):
             c.extensions = tuple(e)
             c.lock()
     
-    add(app.GetAllRootConfs())
-    add(app.GetAllObjectConfs())
+    add(app.configurationQuery.GetAllRootConfs())
+    add(app.configurationQuery.GetAllObjectConfs())
     
     
 configuration = ModuleConf(
     id = "localGroups",
-    name = u"Local Group assignment for objects and roots",
+    name = "Local Group assignment for objects and roots",
     context = "nive.extensions.localgroups",
     events = (Conf(event="startRegistration", callback=SetupLocalGroups),),
 )

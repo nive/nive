@@ -14,7 +14,7 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "dbJsonDump",
     context = "nive.tools.dbJsonDump.dbJsonDump",
-    name = _(u"Database json dump"),
+    name = _("Database json dump"),
     description = _("This function dumps table contents the way records are stored in json format."),
     apply = (IApplication,),
     mimetype = "text/json",
@@ -23,7 +23,7 @@ configuration = ToolConf(
                   datatype="checkbox",
                   default=[], 
                   listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
-                  name=_(u"Exclude system columns"))
+                  name=_("Exclude system columns"))
     ],
     views = [
         ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
@@ -39,6 +39,7 @@ class dbJsonDump(Tool):
         result = 1
         codepage="utf-8"
     
+        self.InitStream()
         app = self.app
         datapool = app.db
         conf = app.dbConfiguration
@@ -47,12 +48,12 @@ class dbJsonDump(Tool):
         self.filename = app.configuration.id + ".json"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
-            return 0
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
+            return None, 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
-            return 0
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
+            return None, 0
         
         def mapfields(fields):
             a=[]
@@ -60,10 +61,10 @@ class dbJsonDump(Tool):
                 a.append(f.id)
             return a
         
-        export = [(MetaTbl,mapfields(app.GetAllMetaFlds(ignoreSystem=False)))]
-        for t in app.GetAllObjectConfs():
+        export = [(MetaTbl,mapfields(app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)))]
+        for t in app.configurationQuery.GetAllObjectConfs():
             export.append((t.dbparam, ["id"]+mapfields(t.data)))
-        for t in Structure.items():
+        for t in list(Structure.items()):
             export.append((t[0], mapfields(t[1]["fields"])))
 
         data = {}
@@ -90,5 +91,5 @@ class dbJsonDump(Tool):
         
         self.stream.write(JsonDataEncoder().encode(data))        
         
-        return 1
+        return None, 1
 

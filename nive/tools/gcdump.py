@@ -9,7 +9,7 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "gcdump",
     context = "nive.tools.gcdump.gcdump",
-    name = _(u"Object dump"),
+    name = _("Object dump"),
     description = _("This function dumps a list of all objects found in memory."),
     apply = (IApplication,),
     data = [],
@@ -18,7 +18,11 @@ configuration = ToolConf(
 
 
 import gc
-from types import InstanceType
+try:
+  from types import InstanceType
+except ImportError:
+  InstanceType = object
+
 
 def DumpObjects(stream):
         
@@ -46,9 +50,9 @@ def DumpObjects(stream):
     # _getr does the real work.
     _getr(gcl, olist, seen)
 
-    stream.write(u"Number of objects found: ")
-    stream.write(unicode(len(olist)))
-    stream.write(u"<br>\n")
+    stream.write("Number of objects found: ")
+    stream.write(str(len(olist)))
+    stream.write("<br>\n")
     #stream.write(olist[0].__dict__)
     trefs = {}
     for o in olist:#[100000:100200]:
@@ -77,7 +81,7 @@ def DumpObjects(stream):
         
     stream.write("<table class='table-bordered table table-condensed' style='width:70%'>\n")
     sorted = []
-    for r,v in trefs.items():
+    for r,v in list(trefs.items()):
         if v < limit:
             continue
         sorted.append((r,v))
@@ -87,7 +91,7 @@ def DumpObjects(stream):
         stream.write("<tr><td>%s</td><th>%d</th></tr>\n"%(i[0].replace("<","").replace(">",""),i[1]))
     stream.write("</table>\n")            
 
-    return 1
+    return None, 1
 
 
 
@@ -98,5 +102,6 @@ class gcdump(Tool):
 
     def _Run(self, **values):
         
+        self.InitStream()
         return DumpObjects(self.stream)
         

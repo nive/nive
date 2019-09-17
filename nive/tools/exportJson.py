@@ -14,7 +14,7 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "exportJson",
     context = "nive.tools.exportJson.exportJson",
-    name = _(u"Json data export"),
+    name = _("Json data export"),
     description = _("This function exports all objects in json format. Optionally as flat list or tree structure. This is not a simple database table dump. Object events will be triggered before exporting data."),
     apply = (IApplication,),
     mimetype = "text/json",
@@ -23,16 +23,16 @@ configuration = ToolConf(
                   datatype="bool", 
                   default=1, 
                   listItems=[{"id":"true", "name":"Tree"},{"id":"false","name":"Flat list"}], 
-                  name=_(u"Export as tree"),
-                  description=_(u"Export objects as tree structure (contained objects are included as 'items')")),
+                  name=_("Export as tree"),
+                  description=_("Export objects as tree structure (contained objects are included as 'items')")),
         FieldConf(id="filedata", 
                   datatype="radio", 
                   default="none", 
                   listItems=[{"id":"none", "name":"Only file information (No file data)"},
                              {"id":"path", "name":"Only file information and local paths (No file data)"},
                              {"id":"data", "name":"Include all file data"},], 
-                  name=_(u"File data"),
-                  description=_(u"Include binary file data in json export (encoded as base64)"))
+                  name=_("File data"),
+                  description=_("Include binary file data in json export (encoded as base64)"))
     ],
     views = [
         ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.exportJson.exportJson"),
@@ -48,6 +48,7 @@ class exportJson(Tool):
         result = 1
         codepage="utf-8"
     
+        self.InitStream()
         app = self.app
         datapool = app.db
         conf = app.dbConfiguration
@@ -57,17 +58,17 @@ class exportJson(Tool):
         self.filename = app.configuration.id + ".json"
 
         if not conn:
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
-            return 0
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
+            return None, 0
         
         if not conn.IsConnected():
-            self.stream.write(_(u"Database connection error (${name})\n", mapping={u"name": app.dbConfiguration.context}))
-            return 0
+            self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
+            return None, 0
         
         def mapfields(fields):
             return [f.id for f in fields]
         
-        metaflds = mapfields(app.GetAllMetaFlds(ignoreSystem=False))
+        metaflds = mapfields(app.configurationQuery.GetAllMetaFlds(ignoreSystem=False))
 
         def exportObj(o):
             values = {"__items__": []}
@@ -92,7 +93,7 @@ class exportJson(Tool):
                     values["__items__"].append(cv)
             return values
                 
-        root = app.root()
+        root = app.root
         data = {"__items__": []}
         for child in root.GetObjs():
             cv = exportObj(child)
@@ -109,5 +110,5 @@ class exportJson(Tool):
             
         self.stream.write(ConfEncoder().encode(data))
         
-        return 1
+        return None, 1
 

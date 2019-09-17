@@ -1,0 +1,19 @@
+<tal:block i18n:domain="nive">
+    <div class="input-group" id="unit-${field.oid}">
+        <select name="${field.name}"
+                id="${field.oid}"
+                 tal:attributes="size field.widget.size; multiple field.widget.size and field.widget.size>1"
+                class="chosen-select ${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+                data-placeholder="...">
+            <option tal:repeat="(value, description) field.widget.values"
+                     tal:attributes="selected value in cstruct and 'selected';"
+                            value="${value}">${description}</option>
+        </select>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#${field.oid}").chosen({disable_search_threshold: 1, allow_single_deselect: true, no_results_text: "Nichts gefunden!"});
+        });
+    </script>
+</tal:block>

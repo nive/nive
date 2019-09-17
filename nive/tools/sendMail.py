@@ -29,38 +29,38 @@ from nive.i18n import _
 configuration = ToolConf(
     id = "sendMail",
     context = "nive.tools.sendMail.sendMail",
-    name = _(u"Send mails to registered users"),
+    name = _("Send mails to registered users"),
     description = __doc__,
     apply = None,
     data = (
-        FieldConf(id="host",    name=_(u"SMTP host"),       datatype="string",       required=1,     readonly=1, default=u"",    description=u""),
-        FieldConf(id="port",    name=_(u"SMTP port"),       datatype="number",       required=1,     readonly=1, default=21,     description=u""),
-        FieldConf(id="sender",  name=_(u"SMTP sender mail"),datatype="email",        required=1,     readonly=1, default=u"",    description=u""),
-        FieldConf(id="user",    name=_(u"SMTP user"),       datatype="string",       required=0,     readonly=1, default=u"",    description=u""),
-        FieldConf(id="pass_",   name=_(u"SMTP password"),   datatype="password",     required=0,     readonly=1, default=u"",    description=u""),
+        FieldConf(id="host",    name=_("SMTP host"),       datatype="string",       required=1,     readonly=1, default="",    description=""),
+        FieldConf(id="port",    name=_("SMTP port"),       datatype="number",       required=1,     readonly=1, default=21,     description=""),
+        FieldConf(id="sender",  name=_("SMTP sender mail"),datatype="email",        required=1,     readonly=1, default="",    description=""),
+        FieldConf(id="user",    name=_("SMTP user"),       datatype="string",       required=0,     readonly=1, default="",    description=""),
+        FieldConf(id="pass_",   name=_("SMTP password"),   datatype="password",     required=0,     readonly=1, default="",    description=""),
 
-        FieldConf(id="fromName",  name=_(u"Sender name"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="fromMail",  name=_(u"Sender mail"),   datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="replyTo",   name=_(u"Reply to"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="recvrole",  name=_(u"Receiver role"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="recvids",   name=_(u"Receiver User IDs"),datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="recvmails", name=_(u"Receiver Mail"),    datatype="string",    required=1,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="force",     name=_(u"Ignore notify settings"),datatype="bool", required=0,     readonly=0, default=0,      description=u""),
-        FieldConf(id="cc",        name=_(u"CC"),            datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="bcc",       name=_(u"BCC"),           datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
+        FieldConf(id="fromName",  name=_("Sender name"),   datatype="string",       required=0,     readonly=0, default="",    description=""),
+        FieldConf(id="fromMail",  name=_("Sender mail"),   datatype="string",       required=0,     readonly=0, default="",    description=""),
+        FieldConf(id="replyTo",   name=_("Reply to"),      datatype="string",       required=0,     readonly=0, default="",    description=""),
+        FieldConf(id="recvrole",  name=_("Receiver role"),    datatype="string",    required=1,     readonly=0, default="",    description=""),
+        FieldConf(id="recvids",   name=_("Receiver User IDs"),datatype="string",    required=1,     readonly=0, default="",    description=""),
+        FieldConf(id="recvmails", name=_("Receiver Mail"),    datatype="string",    required=1,     readonly=0, default="",    description=""),
+        FieldConf(id="force",     name=_("Ignore notify settings"),datatype="bool", required=0,     readonly=0, default=0,      description=""),
+        FieldConf(id="cc",        name=_("CC"),            datatype="string",       required=0,     readonly=0, default="",    description=""),
+        FieldConf(id="bcc",       name=_("BCC"),           datatype="string",       required=0,     readonly=0, default="",    description=""),
 
-        FieldConf(id="title", name=_(u"Title"),             datatype="string",       required=1,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="body",  name=_(u"Text"),              datatype="htext",        required=0,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="html",  name=_(u"Html format"),       datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
-        FieldConf(id="utf8",  name=_(u"UTF-8 encoding"),    datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
-        FieldConf(id="ssl",   name=_(u"Use SSL"),           datatype="bool",         required=0,     readonly=0, default=1,      description=u""),
-        FieldConf(id="maillog",  name=_(u"Log mails"),      datatype="string",       required=0,     readonly=0, default=u"",    description=u""),
-        FieldConf(id="showToListInHeader",name=_(u"Show all receivers in header"), datatype="bool", required=0, readonly=0, default=0,    description=u""),
+        FieldConf(id="title", name=_("Title"),             datatype="string",       required=1,     readonly=0, default="",    description=""),
+        FieldConf(id="body",  name=_("Text"),              datatype="htext",        required=0,     readonly=0, default="",    description=""),
+        FieldConf(id="html",  name=_("Html format"),       datatype="bool",         required=0,     readonly=0, default=1,      description=""),
+        FieldConf(id="utf8",  name=_("UTF-8 encoding"),    datatype="bool",         required=0,     readonly=0, default=1,      description=""),
+        FieldConf(id="ssl",   name=_("Use SSL"),           datatype="bool",         required=0,     readonly=0, default=1,      description=""),
+        FieldConf(id="maillog",  name=_("Log mails"),      datatype="string",       required=0,     readonly=0, default="",    description=""),
+        FieldConf(id="showToListInHeader",name=_("Show all receivers in header"), datatype="bool", required=0, readonly=0, default=0,    description=""),
 
-        FieldConf(id="debug", name=_(u"Debug mail receiver"),datatype="email",       required=0,     readonly=0, default=u"",    description=_(u"If not empty all mails are sent to this address. The original mail receivers are ignored.")),
+        FieldConf(id="debug", name=_("Debug mail receiver"),datatype="email",       required=0,     readonly=0, default="",    description=_("If not empty all mails are sent to this address. The original mail receivers are ignored.")),
     ),
     mimetype = "text/html"
-    #modules = WidgetConf(name=_(u"Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
+    #modules = WidgetConf(name=_("Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
 )
 
 
@@ -97,20 +97,22 @@ class sendMail(Tool):
         maillog = values.get("maillog")
         log = logging.getLogger(maillog or "sendMail")
 
+        self.InitStream()
+
         # lookup receivers
         # `recvs` is the raw list of mails in the form of `(mail, name)` tuples
         recvs = []
         if recvmails:
-            if isinstance(recvmails, basestring):
-                recvs.append((recvmails, u""))
+            if isinstance(recvmails, str):
+                recvs.append((recvmails, ""))
             else:
                 recvs.extend(recvmails)
         if recvids or recvrole:
             recvs.extend(self._GetRecv(recvids, recvrole, force, self.app))
 
         if len(recvs) == 0:
-            self.stream.write(_(u"No receiver for the e-mail! Aborting."))
-            return 0
+            self.stream.write(_("No receiver for the e-mail! Aborting."))
+            return None, 0
 
         # lookup copy and blindcopy receiver
         if cc:
@@ -131,20 +133,20 @@ class sendMail(Tool):
             senderMail = sender
         else:
             fromMail = sender
-            senderMail = u""
+            senderMail = ""
 
         if html:
-            contentType = u"text/html"
+            contentType = "text/html"
         else:
-            contentType = u"text/plain"
+            contentType = "text/plain"
         if utf8:
-            contentType += u"; charset=utf-8"
+            contentType += "; charset=utf-8"
 
         if debug:
-            mails_original = u"\r\n<br>".join([self._GetMailStr(r) for r in recvs])
-            body += u"""\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
+            mails_original = "\r\n<br>".join([self._GetMailStr(r) for r in recvs])
+            body += """\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
             # in debug mode use default receiver mail as receiving address for all mails
-            recvs = [(debug, u"")]
+            recvs = [(debug, "")]
 
         message = self._PrepareMessage(
             fromMail=fromMail,
@@ -160,22 +162,22 @@ class sendMail(Tool):
             replyTo=replyTo)
 
         if not host:
-            raise ConfigurationError, "Empty mail host"
+            raise ConfigurationError("Empty mail host")
         mailer = SMTP(host, port)
         try:
             mailer.ehlo()
             if ssl:
                 mailer.starttls()
                 mailer.ehlo()
-        except (SMTPServerDisconnected, SMTPHeloError, SMTPException), e:
+        except (SMTPServerDisconnected, SMTPHeloError, SMTPException) as e:
             log.error(" %s", repr(e))
-            return False
+            return None, False
 
         if user:
             mailer.login(user, str(pass_))
 
         result = 1
-        log.info(u"send to -> %s", u", ".join([r[0] for r in recvs]))
+        log.info("send to -> %s", ", ".join([r[0] for r in recvs]))
         for recv in recvs:
             try:
                 if not showToListInHeader:
@@ -183,28 +185,28 @@ class sendMail(Tool):
                     message["To"] = self._GetMailStr(recv)
 
                 info = mailer.sendmail(fromMail, recv[0], message.as_string(unixfrom=False))
-                self.stream.write(recv[0] + u" ok, ")
-                log.debug(u"%s - %s - %s" % (recv[0], title, str(info)))
+                self.stream.write(recv[0] + " ok, ")
+                log.debug("%s - %s - %s" % (recv[0], title, str(info)))
 
-            except (SMTPSenderRefused, SMTPDataError), e:
+            except (SMTPSenderRefused, SMTPDataError) as e:
                 result = 0
                 log.error("%s", repr(e))
-                log.error(u"->  %s", u"%s - %s - %s" % (recv[0], recv[1], title))
+                log.error("->  %s", "%s - %s - %s" % (recv[0], recv[1], title))
                 self.stream.write(str(e))
 
-            except SMTPRecipientsRefused, e:
+            except SMTPRecipientsRefused as e:
                 result = 0
                 log.error("%s", repr(e))
                 self.stream.write(str(e))
 
-            except (SMTPServerDisconnected,), e:
+            except (SMTPServerDisconnected,) as e:
                 result = 0
                 log.error("%s", repr(e))
                 self.stream.write(str(e))
                 break
 
         mailer.quit()
-        return result
+        return None, result
 
 
     def _PrepareMessage(self, **kw):
@@ -235,19 +237,19 @@ class sendMail(Tool):
 
         to = kw.get("to")
         if isinstance(to, (list,tuple)):
-            to = u", ".join(to)
+            to = ", ".join(to)
         message["To"] = to
 
         cc = kw.get("cc")
         if cc:
             if isinstance(cc, (list,tuple)):
-                cc = u", ".join(cc)
+                cc = ", ".join(cc)
             message["Cc"] = cc
 
         bcc = kw.get("bcc")
         if bcc:
             if isinstance(bcc, (list,tuple)):
-                bcc = u", ".join(bcc)
+                bcc = ", ".join(bcc)
             message["Bcc"] = bcc
 
         sender = kw.get("sender")
@@ -263,24 +265,24 @@ class sendMail(Tool):
 
     def _FormatDate(self):
         """Return the current date and time formatted for a message header."""
-        weekdayname = [u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat', u'Sun']
-        monthname = [None, u'Jan', u'Feb', u'Mar', u'Apr', u'May', u'Jun', u'Jul', u'Aug', u'Sep', u'Oct', u'Nov', u'Dec']
+        weekdayname = ['Mon', 'Tue', 'Wed', 'Th', 'Fri', 'Sat', 'Sun']
+        monthname = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         now = time.time()
         year, month, day, hh, mm, ss, wd, y, z = time.gmtime(now)
-        s = u"%s, %02d %3s %4d %02d:%02d:%02d GMT" % (weekdayname[wd], day, monthname[month], year, hh, mm, ss)
+        s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (weekdayname[wd], day, monthname[month], year, hh, mm, ss)
         return s
 
 
     def _GetMailStr(self, mail):
-        if isinstance(mail, basestring):
+        if isinstance(mail, str):
             return mail
         if len(mail) > 1 and mail[1]:
-            return u'"%s" <%s>' % (str(Header(mail[1], "utf-8")), mail[0])
+            return '"%s" <%s>' % ((Header(mail[1], "utf-8")), mail[0])
         return mail[0]
         
 
     def _GetRecv(self, recvids, recvrole, force, app):
-        userdb = app.root()
+        userdb = app.root
         if not hasattr(userdb, "GetUsersWithRole"):
             userdb = app.portal.userdb.GetRoot()
         recvList = []
@@ -290,10 +292,10 @@ class sendMail(Tool):
             recvids2 = userdb.GetUsersWithRole(recvrole, activeOnly=not force)
         # get users
         if recvids:
-            if isinstance(recvids, basestring):
+            if isinstance(recvids, str):
                 recvids = ConvertToList(recvids)
             for user in userdb.GetUserInfos(recvids+recvids2, ["name", "email", "title"], activeOnly=not force):
-                if user and user["email"] != u"":
+                if user and user["email"] != "":
                     if force or user.get("notify", 1):
                         recvList.append([user["email"], user["title"]])
         return recvList

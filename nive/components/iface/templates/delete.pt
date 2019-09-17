@@ -1,0 +1,34 @@
+<tal:block metal:use-macro="view.index_tmpl().macros[view.configuration.tmpl_macro or 'main_object']" i18n:domain="nive">
+<tal:block metal:fill-slot="content">
+
+<span tal:replace="view.unitInfo('edit')" />
+<span tal:replace="structure view.shortcuts()" />
+<span tal:replace="structure view.messages(msgs)" />
+
+<form tal:condition="len(objsToDelete)>0" action="${action}" method="post">
+ <div class="alert alert-error">
+   <h3>Are you sure you want to delete the following 
+      <span tal:condition="len(objsToDelete)==1">item?</span> 
+      <span tal:condition="len(objsToDelete)>1">items?</span>
+   </h3>
+   <br/>
+   <blockquote>
+   <p tal:repeat="obj objsToDelete">
+     <span tal:replace="structure obj.GetTitle()" /> (<span tal:content="structure obj.GetTypeName()" />)
+     <span tal:condition="obj.IsContainer()" class="deletecontainer">... and all subobjects</span>
+   </p>
+   </blockquote>
+   <div style="margin-top:10px;">
+    <span tal:replace="structure view.FmtFormParam(ids=ids, delete=1)"/>
+    <input type="submit" name="continue" value="Yes, delete" class="btn btn-danger" />
+   </div>
+ </div>
+</form>
+
+<div tal:condition="len(objsToDelete)==0" class="alert alert-error">
+    <a href="${view.GetURL()}}">Nothing to delete. Return.</a>
+</div>
+
+</tal:block>
+</tal:block>
+

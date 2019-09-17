@@ -284,16 +284,16 @@ msgid "administration"
 msgstr "administration"
 
 #: nive/adminview/tools.pt:18
-msgid "This page lists all <dynamic element> like database export or database schema manager."
-msgstr "Cette page liste tous les <dynamic element> comme l'export de la base ou l'administration du schéma de la base"
+msgid "This page lists all administration tools like database export or database schema manager."
+msgstr "Cette page liste tous les tools comme l'export de la base ou l'administration du schéma de la base"
 
 #: nive/adminview/tools.pt:23
 msgid "Administration tools"
 msgstr "Outils d'administration"
 
 #: nive/adminview/views.pt:5
-msgid "This page lists all included <dynamic element> for browsing in readonly mode."
-msgstr "Cette page liste tous les <dynamic element> inclus pour consulter en lecture seule."
+msgid "This page lists all included views for browsing in readonly mode."
+msgstr "Cette page liste tous les views inclus pour consulter en lecture seule."
 
 #: nive/adminview/views.pt:10
 msgid "View Modules"
@@ -313,10 +313,8 @@ msgstr "Autres modules"
 
 #: nive/adminview/modules.pt:5
 #, fuzzy
-msgid "This page lists all included <dynamic element> for browsing in readonly mode. <dynamic element> Also this will help you to easily lookup object ids and database fields for developing."
-msgstr ""
-"Cette page liste tous les <dynamic element> à consulter en lecture seule. <dynamic element>\n"
-"Cela vous permet également de retrouver facilement les ids d'objets et les champs de base de données pour le développement."
+msgid "This page lists all included modules for browsing in readonly mode."
+msgstr "Cette page liste tous les modules à consulter en lecture seule."
 
 #: nive/adminview/modules.pt:12
 msgid "CMS"

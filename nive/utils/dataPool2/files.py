@@ -5,16 +5,15 @@
 import weakref
 import os
 import uuid
-from StringIO import StringIO
-
-from zope.interface import implements
+from io import BytesIO
 
 from nive.utils.path import DvPath
-from nive.definitions import IFileStorage
+from nive.definitions import IFileStorage, implementer
 
 # FileManager Constants ---------------------------------------------------------------------------
 
-class File(object):
+@implementer(IFileStorage)
+class File:
     """
     File mapping object. The file attribute can be stored as data or readable stream object.
     This file class is used to map files stored and read from the storage system.
@@ -25,7 +24,7 @@ class File(object):
     
     Pass a dictionry to set all attributes as filemeta
     """
-    implements(IFileStorage)
+
 
     def __init__(self, 
                  filekey="", 
@@ -58,19 +57,21 @@ class File(object):
             # update attributes from dictionary
             self.update(filedict)
 
-        if isinstance(self.file, basestring):
+        if isinstance(self.file, (bytes,str)):
             # file data is set as string -> create string io and mark as tempfile
             self.size = len(self.file)
-            self.file = StringIO(self.file)
+            self.file = BytesIO(self.file)
             self.tempfile = True
-    
+
         # get extension and file name if not set
         if self.filename == "" and self.path != "":
             self.filename = os.path.basename(path)
         if self.filename != "" and self.extension == "":
             fileName, fileExtension = os.path.splitext(self.filename)
             self.extension = fileExtension[1:6]
-    
+
+    def __del__(self):
+        self.close()
 
     def fromPath(self, path):
         """
@@ -101,8 +102,8 @@ class File(object):
         # 2) read blob file
         if not self.file:
             # read all
-            file = open(self._Path())
-            if size < 1 or size == None:
+            file = open(self._Path(), "rb")
+            if size < 1 or size is None:
                 data = file.read()
                 file.close()
                 return data
@@ -121,7 +122,7 @@ class File(object):
         return self.file.tell()
 
     def close(self):
-        if self.file:
+        if self.file and not isinstance(self.file, str):
             self.file.close()
 
     def iterator(self):
@@ -179,7 +180,7 @@ class File(object):
         
         maxFileSize = fileentry.maxFileSize
         if self.size and self.size > maxFileSize:
-            raise ValueError, "File too big"
+            raise ValueError("File too big")
 
         # create temp path for current
         backupPath = None
@@ -187,7 +188,7 @@ class File(object):
         
         newPath = DvPath(self._CreatePath(self.filekey, self.filename))
         tempPath = DvPath(str(newPath))
-        tempPath.SetName(u"_temp_" + unicode(uuid.uuid4()))
+        tempPath.SetName("_temp_" + str(uuid.uuid4()))
         tempPath.SetExtension(newPath.GetExtension())
 
         if tempPath.Exists():
@@ -201,12 +202,12 @@ class File(object):
             while data:
                 size += len(data)
                 if maxFileSize and size > maxFileSize:
-                    raise ValueError, "File too big"
+                    raise ValueError("File too big")
                 out.write(data)
                 data = self.read(10000)
             out.close()
             #file.close()
-        except Exception, e:
+        except Exception as e:
             try:
                 self.file.close()
             except:
@@ -223,11 +224,11 @@ class File(object):
         # store path for cleanup on success
         if str(originalPath) and originalPath.Exists():
             backupPath = DvPath(str(originalPath))
-            backupPath.SetName("_del_" + unicode(uuid.uuid4()))
+            backupPath.SetName("_del_" + str(uuid.uuid4()))
             backupPath.SetExtension(originalPath.GetExtension())
             if originalPath.Exists() and not originalPath.Rename(backupPath):
                 tempPath.Delete()
-                raise IOError, "Rename file failed"
+                raise IOError("Rename file failed")
             self.deleteOnSuccess = str(backupPath)
 
         try:
@@ -259,7 +260,7 @@ class File(object):
     # file class dictionary support ---------------------------------------
 
     def __iter__(self):
-        return iter(self.__dict__.keys())
+        return iter(list(self.__dict__.keys()))
     
     def __getitem__(self, key):
         return getattr(self, key)
@@ -272,7 +273,7 @@ class File(object):
             return default
         
     def update(self, data):
-        for k in data.keys():
+        for k in list(data.keys()):
             setattr(self, k, data[k])
 
 
@@ -283,7 +284,7 @@ class File(object):
         Get the physical path of the file. Checks the database.
         """
         if self.tempfile or not self.path:
-            return u""
+            return ""
         root = str(self.fileentry().pool.root)
         if absolute and self.path[:len(root)] != root:
             path = DvPath(root)
@@ -304,7 +305,7 @@ class File(object):
         aP.AppendDirectory(self.fileentry().pool._GetDirectory(self.fileentry().id))
         aP.AppendSeperator()
 
-        aP.SetName(u"%06d_%s_" % (self.fileentry().id, key))
+        aP.SetName("%06d_%s_" % (self.fileentry().id, key))
         aP.SetExtension(DvPath(filename).GetExtension())
         return aP.GetStr()
 
@@ -334,9 +335,9 @@ class FileManager(object):
     """
 
     DirectoryCnt = -4                 # directory id range limit
-    FileTable = u"pool_files"    # file table name
-    FileTableFields = (u"id", u"fileid", u"filekey", u"path", u"filename", u"size", u"extension", u"version")
-    Trashcan = u"_trashcan"
+    FileTable = "pool_files"    # file table name
+    FileTableFields = ("id", "fileid", "filekey", "path", "filename", "size", "extension", "version")
+    Trashcan = "_trashcan"
     
     def GetFileClass(self):
         """
@@ -350,7 +351,7 @@ class FileManager(object):
         """
         self.root = DvPath()
         self.root.SetStr(root)
-        if root == u"":
+        if root == "":
             return
         self.root.AppendSeperator()
         self.root.CreateDirectoriesExcp()
@@ -360,10 +361,10 @@ class FileManager(object):
         """
         search for filename
         """
-        return self.SearchFiles({u"filename": filename})
+        return self.SearchFiles({"filename": filename})
 
 
-    def SearchFiles(self, parameter, sort=u"filename", start=0, max=100, ascending = 1, **kw):
+    def SearchFiles(self, parameter, sort="filename", start=0, max=100, ascending = 1, **kw):
         """
         search files
         """
@@ -377,11 +378,11 @@ class FileManager(object):
         return f2
 
 
-    def DeleteFiles(self, id, cursor=None, version=None):
+    def DeleteFiles(self, id, version=None):
         """
         Delete the file with the prop description
         """
-        files = self.SearchFiles({u"id":id}, sort=u"id")
+        files = self.SearchFiles({"id":id}, sort="id")
         if not files:
             return True
         entry = self.GetEntry(id, version=version)
@@ -389,8 +390,8 @@ class FileManager(object):
             file = self.GetFileClass()(filedict=f,fileentry=entry)
             file.delete()
         if len(files):
-            sql = u"delete from %s where id = %d" % (self.FileTable, id)
-            self.Query(sql, cursor=cursor, getResult=False)
+            sql = "delete from %s where id = %d" % (self.FileTable, id)
+            self.Query(sql, getResult=False)
         return True
 
 
@@ -400,7 +401,7 @@ class FileManager(object):
         """
         construct directory path without root
         """
-        return (u"%06d" % (id))[self.DirectoryCnt:-2] + u"00/" + (u"%06d" % (id))[self.DirectoryCnt+2:]
+        return ("%06d" % (id))[self.DirectoryCnt:-2] + "00/" + ("%06d" % (id))[self.DirectoryCnt+2:]
 
 
     def _MoveToTrashcan(self, path, id):
@@ -444,8 +445,8 @@ class FileEntry(object):
         """
         if not parameter:
             parameter = {}
-        parameter[u"id"] = self.id
-        operators={u"filekey":u"=", "filename": u"="}
+        parameter["id"] = self.id
+        operators={"filekey":"=", "filename": "="}
         sql, values = self.pool.FmtSQLSelect(self.pool.FileTableFields, 
                                              parameter, 
                                              dataTable=self.pool.FileTable, 
@@ -466,7 +467,7 @@ class FileEntry(object):
         """
         return all existing file keys as list
         """
-        sql = u"select filekey from %s where id = %d group by filekey" % (self.pool.FileTable, self.id)
+        sql = "select filekey from %s where id = %d group by filekey" % (self.pool.FileTable, self.id)
         keys = self.pool.Query(sql)
         return [i[0] for i in keys]
 
@@ -478,10 +479,10 @@ class FileEntry(object):
         """
         if not key:
             return None
-        if fileid!=None:
-            parameter = {u"fileid":fileid}
+        if fileid is not None:
+            parameter = {"fileid":fileid}
         else:
-            parameter = {u"filekey": key}
+            parameter = {"filekey": key}
         files = self.Files(parameter, loadFileData=loadFileData)
         if not files:
             return None
@@ -490,26 +491,26 @@ class FileEntry(object):
 
     # Store File --------------------------------------------------------------------
 
-    def CommitFiles(self, files, cursor=None):
+    def CommitFiles(self, files):
         """
         Commit multiple files in a row
         """
         for key in files:
-            files[key] = self.CommitFile(key, files[key], cursor=cursor)
+            files[key] = self.CommitFile(key, files[key])
 
 
-    def CommitFile(self, key, file, cursor=None):
+    def CommitFile(self, key, file):
         """
         Store the file under key. File can either be a path, dictionary with file informations 
         or a File object.
         """
-        if key in (u"", None):
+        if key in ("", None):
             raise ValueError("File key invalid")
 
         # convert to File object
         if isinstance(file, dict):
             file = File(key, filedict=file, fileentry=self)
-        elif isinstance(file, basestring):
+        elif isinstance(file, str):
             # load from temp path
             f = File(key, fileentry=self)
             f.fromPath(file)
@@ -519,14 +520,11 @@ class FileEntry(object):
 
         # lookup exiting file to replace
         if file.fileid == 0:
-            fileid = self._LookupFileID(file, cursor)
-            file.fileid = fileid
-        else:
-            fileid = file.fileid
-        
+            file.fileid = self._LookupFileID(file)
+
         # update file records
         file.commitTemp(self)
-        self._UpdateMeta(file, cursor=cursor)
+        self._UpdateMeta(file)
         return file
 
 
@@ -536,7 +534,7 @@ class FileEntry(object):
         """
         if not isinstance(files, dict):
             files = {"":files}
-        for key, file in files.items():
+        for key, file in list(files.items()):
             if not hasattr(file, "deleteOnSuccess"):
                 continue
             path = DvPath(file.deleteOnSuccess)
@@ -578,7 +576,7 @@ class FileEntry(object):
             return False
         if not file.delete():
             return False
-        sql = u"delete from %s where fileid = %d" % (self.pool.FileTable, file.fileid)
+        sql = "delete from %s where fileid = %d" % (self.pool.FileTable, file.fileid)
         self.pool.Query(sql, getResult=False)
         return True
 
@@ -592,12 +590,12 @@ class FileEntry(object):
         if not file:
             return False
         data = {"filename": filename}
-        return self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, idColumn=u"fileid")
+        return self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, idColumn="fileid")
 
 
     # internal --------------------------------------------------------------------
 
-    def _UpdateMeta(self, file, cursor):
+    def _UpdateMeta(self, file):
         """
         store file meta information in database table
         """
@@ -609,14 +607,14 @@ class FileEntry(object):
             "size": file.size
         }
         if file.fileid:
-            file.fileid = self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, cursor=cursor, idColumn=u"fileid")
+            file.fileid = self.pool.UpdateFields(self.pool.FileTable, file.fileid, data, idColumn="fileid")
         else:
             data["id"] = self.id
-            data, file.fileid = self.pool.InsertFields(self.pool.FileTable, data, cursor=cursor, idColumn=u"fileid")
+            data, file.fileid = self.pool.InsertFields(self.pool.FileTable, data, idColumn="fileid")
         return True
 
 
-    def _LookupFileID(self, file, cursor=None):
+    def _LookupFileID(self, file):
         """
         lookup unique fileid for file
         """
@@ -631,7 +629,7 @@ class FileEntry(object):
 
     def _RelativePath(self, path):
         p = path[len(str(self.pool.root)):]
-        p = p.replace(u"\\", u"/")
+        p = p.replace("\\", "/")
         return p
 
 
@@ -658,7 +656,7 @@ class FileIterator(object):
     chunk_size = 10*1024
 
     def __init__(self, file, start, stop):
-        if isinstance(file, basestring):
+        if isinstance(file, str):
             self.fileobj = open(file, 'rb')
         else:
             self.fileobj = file
@@ -672,7 +670,7 @@ class FileIterator(object):
     def __iter__(self):
         return self
     
-    def next(self):
+    def __next__(self):
         if self.length is not None and self.length <= 0:
             raise StopIteration
         chunk = self.fileobj.read(self.chunk_size)

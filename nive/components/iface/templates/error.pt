@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" i18n:domain="nive">
+<head>
+<title i18n:translate="">Sorry</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link href="/assets/bootstrap-2.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/assets/intern/err/styles.css" rel="stylesheet" type="text/css" media="all" />
+</head>
+
+<body>
+<div class="container" id="container">
+<div id="main">
+<article>
+<div class="row">
+
+<div class="span6 offset3 well" style="background-color:white">
+<img src="/assets/intern/err/logo1.png" style="margin:10px;" class="pull-right" title="" alt="Nive" />
+
+<tal:block tal:condition="error=='404'">
+<h1 i18n:translate="">Page not found (404)!</h1>
+<p i18n:translate="">Sorry, the requested url does not exist on this server.</p>
+</tal:block>
+
+<tal:block tal:condition="error=='500'">
+<h1 i18n:translate="">Something went wrong!</h1>
+<p i18n:translate="">Sorry, the server failed to process your request.</p>
+<!--${message}-->
+</tal:block>
+
+<br/>
+<br/>
+<p><a href="/workspace/conf" i18n:translate="">Return to dashboard</a></p>
+
+<br/>
+</div>
+
+</div>
+</article>
+</div>
+</div>
+</body>
+</html>
+

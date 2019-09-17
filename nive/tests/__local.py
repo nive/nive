@@ -12,14 +12,14 @@ WIN = sys.platform.startswith("win")
 
 # sqlite and mysql
 if WIN:
-    ROOT = "c:\\Temp\\nive\\"
+    ROOT = "c:\\Temp\\nive3-test\\"
 else:
-    ROOT = "/var/tmp/nive/"
+    ROOT = "/tmp/nive3-test/"
 
 
 
 DB_CONF = DatabaseConf(
-    dbName = ROOT+"nive.db",
+    dbName = ROOT+"test.db",
     fileRoot = ROOT,
     context = "Sqlite3"
 )
@@ -30,7 +30,7 @@ MYSQL_CONF = DatabaseConf(
     dbName = "ut_nive",
     host = "localhost",
     user = "root",
-    password = "",
+    password = "root",
     port = "",
     fileRoot = ROOT
 )
@@ -62,10 +62,19 @@ if ENABLE_SQLITE_TESTS:
             mods.append(DatabaseConf(DB_CONF))
             self.app = db_app.app_db(mods)
 
+        def _closeApp(self, data=False, files=False):
+            pass
+            #if data:
+            #    db_app.emptypool(self.app, files)
+            #self.app.Close()
+
 else:
 
     class SqliteTestCase(object):
         def _loadApp(self, mods=None):
+            pass
+
+        def _closeApp(self, delete=False, files=False):
             pass
 
 
@@ -78,10 +87,17 @@ if ENABLE_MYSQL_TESTS:
             mods.append(DatabaseConf(MYSQL_CONF))
             self.app = db_app.app_db(mods)
 
+        def _closeApp(self, delete=False, files=False):
+            if delete:
+                db_app.emptypool(self.app, files)
+            self.app.Close()
+
 else:
 
     class MySqlTestCase(object):
         def _loadApp(self, mods=None):
+            pass
+        def _closeApp(self, delete=False, files=False):
             pass
 
 
@@ -94,16 +110,27 @@ if ENABLE_POSTGRES_TESTS:
             mods.append(DatabaseConf(POSTGRES_CONF))
             self.app = db_app.app_db(mods)
 
+        def _closeApp(self, delete=False, files=False):
+            if delete:
+                db_app.emptypool(self.app, files)
+            self.app.Close()
+
 else:
 
     class PostgreSqlTestCase(object):
         def _loadApp(self, mods=None):
             pass
+        def _closeApp(self, delete=False, files=False):
+            pass
 
 
 
-# Higher level tests are only run for one database system, not multiple.
-# The database type can be switched here
+# Higher level tests are only run for one database system (sqlite if activated), not multiple.
 DefaultTestCase = SqliteTestCase
+if not ENABLE_SQLITE_TESTS:
+    if ENABLE_POSTGRES_TESTS:
+        DefaultTestCase = PostgreSqlTestCase
+    else:
+        DefaultTestCase = MySqlTestCase
 
     

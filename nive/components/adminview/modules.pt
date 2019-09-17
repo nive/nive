@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
+
+    <tal:block metal:fill-slot="editmain">
+
+        <div class="row"><div class="col-sm">
+
+            <div class="alert alert-info" i18n:translate="">This page lists all included modules for browsing in readonly mode. <br>
+                Also this will help you to easily lookup object ids and database fields for developing.</div>
+
+            <h3 i18n:translate="">CMS</h3>
+            <div tal:replace="structure view.RenderConf(context.configuration)"></div>
+            <hr>
+            <h3 i18n:translate="">Objects</h3>
+            <div tal:repeat="conf context.configurationQuery.GetAllObjectConfs()"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Roots</h3>
+            <div tal:repeat="conf context.configurationQuery.GetAllRootConfs()"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Meta fields</h3>
+            <div tal:repeat="conf context.configurationQuery.GetAllMetaFlds(ignoreSystem=False)"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Tools</h3>
+            <div tal:repeat="conf context.configurationQuery.GetAllToolConfs()"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Workflow processes</h3>
+            <div tal:repeat="conf context.configurationQuery.GetAllWorkflowConfs()"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+            <hr>
+            <h3 i18n:translate="">Others</h3>
+            <div tal:repeat="conf context.configurationQuery.QueryConf('nive.definitions.IModuleConf')"
+                     tal:replace="structure view.RenderConf(conf)"></div>
+
+        </div></div>
+    </tal:block>
+
+</tal:block>

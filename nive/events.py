@@ -84,7 +84,7 @@ class Events(object):
         - *function*: callback to be called if the event is fired
 
         """
-        if not self._eventdispatch.has_key(signal):
+        if signal not in self._eventdispatch:
             self._eventdispatch[signal] = [function]
         else:
             self._eventdispatch[signal].append(function)
@@ -98,7 +98,7 @@ class Events(object):
         - *function*: callback to be called if the event is fired
 
         """
-        if not self._eventdispatch.has_key(signal):
+        if signal not in self._eventdispatch:
             return
         if not function:
             del self._eventdispatch[signal]
@@ -121,7 +121,7 @@ class Events(object):
            ((True, "MyEvent", "<class MyObject ...>"))
 
         """
-        if signal==u"init":
+        if signal=="init":
             self.InitEvents()
             #return
         if not self._eventdispatch or not signal in self._eventdispatch:
@@ -129,7 +129,7 @@ class Events(object):
         result = []
         for fnc in self._eventdispatch[signal]:
             try:
-                if isinstance(fnc, basestring):
+                if isinstance(fnc, str):
                     for cls in self.__class__.__mro__:
                         f = cls.__dict__.get(fnc)
                         if f is not None:
@@ -139,7 +139,7 @@ class Events(object):
                                 # (result, str(fnc), str(cls))
                                 result.append((r, str(fnc), str(cls)))
                 else:
-                    if "context" in inspect.getargspec(fnc).args:
+                    if "context" in inspect.getfullargspec(fnc).args:
                         r = fnc(context=self, **kw)
                     else:
                         r = fnc(**kw)

@@ -5,7 +5,7 @@
 import weakref
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
 from pyramid.path import DottedNameResolver
@@ -21,7 +21,7 @@ from nive.definitions import (
 )
 from nive.definitions import Conf
 from nive.definitions import baseConf
-from nive.definitions import implements, ConfigurationError
+from nive.definitions import ConfigurationError
 from nive import File
 from nive.i18n import _
 
@@ -36,7 +36,7 @@ def ResolveName(name, base=None, raiseExcp=True):
     """
     if not name:
         return None
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         return name
     if not base:
         base = caller_package()
@@ -54,7 +54,7 @@ def ResolveAsset(name, base=None, raiseExcp=True):
     """
     if not name:
         return None
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         return name
     if not base:
         base = caller_package()
@@ -88,7 +88,7 @@ def ResolveConfiguration(conf, base=None):
     returns Interface, configuration
     """
     # string instance
-    if isinstance(conf, basestring):
+    if isinstance(conf, str):
         if not base:
             base = caller_package()
         # json file
@@ -105,7 +105,7 @@ def ResolveConfiguration(conf, base=None):
     elif isinstance(conf, dict):
         # load by interface
         if not "type" in conf:
-            raise TypeError, "Configuration type not defined"
+            raise TypeError("Configuration type not defined")
         c = ResolveName(conf["type"], base="nive")
         del conf["type"]
         conf = c(**conf)
@@ -156,18 +156,18 @@ def FormatConfTestFailure(report, fmt="text"):
     import inspect
     v=[]
     for r in report:
-        v+= u"-----------------------------------------------------------------------------------\r\n"
-        v+= unicode(r[0]) + " " + r[1] + "\r\n"
-        v+= u"-----------------------------------------------------------------------------------\r\n"
-        for d in r[2].__dict__.items():
+        v+= "-----------------------------------------------------------------------------------\r\n"
+        v+= str(r[0]) + " " + r[1] + "\r\n"
+        v+= "-----------------------------------------------------------------------------------\r\n"
+        for d in list(r[2].__dict__.items()):
             a = d[1]
             if a is None:
                 try:
                     a = r[2].parent.get(d[0])
                 except:
                     pass
-            v+= unicode(d[0])+u":  "+unicode(a)+u"\r\n"
-        v+= u"\r\n"
+            v+= str(d[0])+":  "+str(a)+"\r\n"
+        v+= "\r\n"
     return "".join(v)
 
 
@@ -181,6 +181,12 @@ def ReplaceInListByID(conflist, newconf, id=None):
             new.append(conf)
     return new
             
+def UpdateInListByID(conflist, updateconf, id=None):
+    id = id or updateconf.id
+    for conf in conflist:
+        if conf.id == id:
+            conf.update(updateconf)
+    return conflist
 
 
 class JsonDataEncoder(json.JSONEncoder):
@@ -189,6 +195,9 @@ class JsonDataEncoder(json.JSONEncoder):
             return str(obj)
         elif isinstance(obj, datetime_time):
             return str(obj)
+        elif isinstance(obj, timedelta):  # treat as time. py3 mysql bug?
+            n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + obj
+            return n.strftime("HH:MM:SS.%f")
         elif IFileStorage.providedBy(obj):
             file = {}
             file["filekey"] = obj.filekey
@@ -208,6 +217,8 @@ class ConfEncoder(json.JSONEncoder):
             return str(obj)
         elif isinstance(obj, datetime_time):
             return str(obj)
+        elif isinstance(obj, timedelta):
+            return obj.isoformat()
         return json.JSONEncoder.default(self, obj)
 
 class ConfDecoder(object):
@@ -220,7 +231,7 @@ class ConfDecoder(object):
                     return obj
                    
                 if not confclass:
-                    raise ConfigurationError, "Configuration class not found (ccc)"
+                    raise ConfigurationError("Configuration class not found (ccc)")
                 conf = ResolveName(confclass, base="nive")(**obj)
                 return conf
             return obj
@@ -278,25 +289,36 @@ def LoadJSONConf(jsondata, default=None):
     # load from json
     # default: the default configuration class to be used if the json values do not
     # specify the class as `ccc`
-    if isinstance(jsondata, basestring):
+    if isinstance(jsondata, str):
         try:
             jsondata = json.loads(jsondata)
         except:
             return jsondata
     if not isinstance(jsondata, dict):
         return jsondata
-    for k,v in jsondata.items():
+    for k,v in list(jsondata.items()):
         jsondata[k] = LoadJSONConf(v, default=default)
         
     confclass = jsondata.get("ccc")
     if not confclass:
         if not default:
-            raise ConfigurationError, "Configuration class not found (ccc)"
+            raise ConfigurationError("Configuration class not found (ccc)")
         return default(**jsondata)
     conf = ResolveName(confclass, base="nive")(**jsondata)
     return conf
 
 
+
+def GetVirtualObj(configuration, app):
+    """
+    This loads an object for a non existing database entry.
+    """
+    if not configuration:
+        raise ConfigurationError("Type not found")
+    obj = ClassFactory(configuration, app.reloadExtensions, True, base=None)
+    dbEntry = app.db.GetEntry(0, virtual=1)
+    obj = obj(0, dbEntry, parent=None, configuration=configuration)
+    return obj
 
 
 def ClassFactory(configuration, reloadClass=False, raiseError=True, base=None, storeConfAsStaticClassVar=False):
@@ -368,13 +390,13 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
     """
     Resolve class reference from python dotted string.
     """
-    if isinstance(tag, basestring):
+    if isinstance(tag, str):
         if raiseError:
             classRef = ResolveName(tag, base=base)
         else:
             try:
                 classRef = ResolveName(tag, base=base)
-            except ImportError, e:
+            except ImportError as e:
                 return None
         if not classRef:
             return None
@@ -387,7 +409,7 @@ def GetClassRef(tag, reloadClass=False, raiseError=True, base=None):
 
 def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
     ref = weakref.ref(viewModuleConf)
-    if isinstance(cls, basestring):
+    if isinstance(cls, str):
         cls = ResolveName(cls)
     cls = type("_factory_"+cls.__name__, (cls,), {})
     cls.__configuration__ = ref
@@ -399,7 +421,7 @@ def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
 from nive.security import GetUsers
 from nive.utils.language import LanguageExtension, CountryExtension
 
-def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
+def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, user=None):
     """
     Load field list items for the given fieldconf.
     If `force` is False and fieldconf already contains list items, the existing 
@@ -417,10 +439,10 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
     if fieldconf.listItems and not force:
         # skip loading if list filled
         if hasattr(fieldconf.listItems, '__call__'):
-            return fieldconf.listItems(fieldconf, obj or app)
+            return fieldconf.listItems(field=fieldconf, context=obj or app, user=user)
         return fieldconf.listItems
     
-    if not app:
+    if app is None:
         if fieldconf.settings:
             # settings dyn list
             dyn = fieldconf.settings.get("codelist")
@@ -446,23 +468,24 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             portal = app.portal
             if portal is None:
                 portal = app
-            return portal.GetGroups(sort="id", visibleOnly=True)
+            sort = fieldconf.settings.get("sort", "id")
+            return portal.GetGroups(sort=sort, visibleOnly=True)
         elif dyn == "localgroups":
             return app.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "groups+auth":
             portal = app.portal
             if portal is None:
                 portal = app
-            return [Conf(id=u"authenticated", name=_(u"Authenticated"), visible=True)] + portal.GetGroups(sort="id", visibleOnly=True)
+            return [Conf(id="authenticated", name=_("Authenticated"), visible=True)] + portal.GetGroups(sort="id", visibleOnly=True)
         elif dyn == "types":
-            return app.GetAllObjectConfs()
+            return app.configurationQuery.GetAllObjectConfs()
         elif dyn == "categories":
-            return app.GetAllCategories()
+            return app.configurationQuery.GetAllCategories()
         elif dyn[:5] == "type:":
             type = dyn[5:]
-            return app.root().GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
+            return app.root.search.GetEntriesAsCodeList(type, "title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "meta":
-            return app.root().GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
+            return app.root.search.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "languages":
             return LanguageExtension().Codelist()
         elif dyn == "countries":
@@ -470,10 +493,10 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
 
     fld = fieldconf.id
     if fld == "pool_type":
-        values = app.GetAllObjectConfs()
+        values = app.configurationQuery.GetAllObjectConfs()
 
     elif fld == "pool_category":
-        values = app.GetAllCategories()
+        values = app.configurationQuery.GetAllCategories()
 
     elif fld == "pool_groups":
         local = fieldconf.settings.get("local")
@@ -498,7 +521,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             except:
                 pass
         elif pool_type:
-            aWfp = app.GetObjectConf(pool_type).get("workflowID")
+            aWfp = app.configurationQuery.GetObjectConf(pool_type).get("workflowID")
             try:
                 obj = app.GetWorkflow(aWfp)
                 values = obj.GetActivities()
@@ -508,7 +531,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False):
             values = []
 
     elif fld == "pool_wfp":
-        values = app.GetAllWorkflowConfs()
+        values = app.configurationQuery.GetAllWorkflowConfs()
 
     return values
 
@@ -534,10 +557,10 @@ class FakeLocalizer(object):
     def translate(self, text, mapping=None):
         try:
             if text.mapping:
-                v = unicode(text)
+                v = str(text)
                 for k in text.mapping:
-                    v = v.replace(u"${%s}"%k, unicode(text.mapping[k]))
+                    v = v.replace("${%s}"%k, str(text.mapping[k]))
                 return v
         except:
             pass
-        return text
+        return str(text)

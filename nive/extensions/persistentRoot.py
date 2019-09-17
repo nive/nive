@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from nive.definitions import Conf, IConf 
-from nive.definitions import Interface, implements
+from nive.definitions import Interface, implementer
 from nive.helper import DumpJSONConf, LoadJSONConf
 
         
@@ -10,6 +10,7 @@ class IPersistentRoot(Interface):
     """
     """
     
+@implementer(IPersistentRoot)
 class Persistent(object):
     """
     Extension for nive root objects to store values
@@ -25,9 +26,8 @@ class Persistent(object):
     
     Requires: Events
     """
-    implements(IPersistentRoot)
-    defaultKey = u".root.storage"
-    storagekey = u""
+    defaultKey = ".root.storage"
+    storagekey = ""
     notifyAllRoots = True
 
     def Init(self):
@@ -72,8 +72,8 @@ class Persistent(object):
             values.update(self.files)
         values.update(self.data)
         values.update(self.meta)
-        values[u"pool_change"] = datetime.now(self.app.pytimezone)
-        values[u"pool_changedby"] = str(user)
+        values["pool_change"] = datetime.now(self.app.pytimezone)
+        values["pool_changedby"] = str(user)
         vstr = DumpJSONConf(values)
         self.app.StoreSysValue(self.storagekey, vstr)
         if self.notifyAllRoots:
@@ -109,14 +109,14 @@ class Persistent(object):
         if self.configuration.get("data"):
             for f in self.configuration.get("data"):
                 id = f["id"]
-                if sourceData.has_key(id):
+                if id in sourceData:
                     if f["datatype"]=="file":
                         files[id] = sourceData[id]
                     else:
                         data[id] = sourceData[id]
-        for f in self.app.GetAllMetaFlds(False):
+        for f in self.app.configurationQuery.GetAllMetaFlds(False):
             id = f["id"]
-            if sourceData.has_key(id):
+            if id in sourceData:
                 meta[id] = sourceData[id]
         return data, meta, files
         

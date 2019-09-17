@@ -2,6 +2,8 @@
 # Released under GPL3. See license.txt
 #
 
+# todo [3] remove cms definitions
+
 __doc__ = """
 Using configuration classes
 -----------------------------
@@ -77,7 +79,7 @@ Configurations
 
 import copy
 
-from zope.interface import Interface, implements, alsoProvides
+from zope.interface import Interface, implementer
 from pyramid.path import DottedNameResolver
 
 from nive.i18n import _
@@ -95,35 +97,11 @@ class IContainer(Interface):
     pass
 class INonContainer(Interface):
     pass
-class IReadonly(Interface):
-    pass
 class IPortal(Interface):
     pass
 
-# pages and elements
-class IWebsite(Interface):
-    pass
-class IPage(Interface):
-    pass
-class IPageContainer(Interface):
-    pass
-class IPageElement(Interface):
-    pass
-class IPageElementContainer(Interface):
-    pass
-class IFolder(Interface):
-    pass
-class IColumn(Interface):
-    pass
-class IFile(Interface):
-    pass
+# additional interfaces
 class ITool(Interface):
-    pass
-class IIFaceRoot(Interface):
-    pass
-class ICMSRoot(Interface):
-    pass
-class IWebsiteRoot(Interface):
     pass
 class ICache(Interface):
     pass
@@ -131,7 +109,13 @@ class IPersistent(Interface):
     pass
 class IUser(Interface):
     pass
-        
+class IFileStorage(Interface):
+    """
+    Used for file storage classes on object level.
+    """
+    pass
+
+
 # configuration 
 class IConf(Interface):
     pass
@@ -163,12 +147,6 @@ class IGroupConf(Interface):
 class IWorkflowConf(Interface):
     pass
 
-class IFileStorage(Interface):
-    """
-    Used for file storage classes on object level.
-    """
-    pass
-    
 # workflow
 class IWfProcessConf(Interface):
     pass
@@ -185,25 +163,6 @@ class IUserDatabase(Interface):
     pass
 class ILocalGroups(Interface):
     pass
-
-# interface extensions
-class IToolboxWidgetConf(Interface):
-    """
-    IToolboxWidgetConf refers to toolbox plugin points. Use IToolboxWidgetConf as widgetType
-    in your WidgetConf() to link a widget to the nive toolbox.
-    """
-
-class IEditorWidgetConf(Interface):
-    """
-    IEditorWidgetConf refers to editor tab plugin point. Use IEditorWidgetConf as widgetType
-    in your WidgetConf() to link a new tab to the nive editor header.
-    """
-
-class IAdminWidgetConf(Interface):
-    """
-    IAdminWidgetConf refers to the nive.adminview tab plugin point. Use IAdminWidgetConf as widgetType
-    in your WidgetConf() to link a new tab to the nive admin header.
-    """
 
 class ISort(Interface):
     pass
@@ -227,10 +186,9 @@ class baseConf(object):
     def __init__(self, copyFrom=None, **values):
         self._empty = True
         self._parent = None
-        #alsoProvides(self, IConf)
         if copyFrom:
             self._empty=False
-            import helper
+            from . import helper
             i,c = helper.ResolveConfiguration(copyFrom)
             if c:
                 data = copy.deepcopy(c.__dict__)
@@ -246,7 +204,7 @@ class baseConf(object):
         return not self._empty
     
     def keys(self):
-        k = self.__dict__.keys()
+        k = list(self.__dict__.keys())
         k.remove("_empty")
         k.remove("_parent")
         try:
@@ -263,7 +221,7 @@ class baseConf(object):
     def update(self, values):
         self._empty=False
         #opt
-        for k in values.keys():
+        for k in list(values.keys()):
             setattr(self, k, values[k])
             
     @property
@@ -283,11 +241,11 @@ class baseConf(object):
         if self._parent is not None:
             if key in self._parent.__dict__:
                 return self._parent.__dict__[key]
-        raise AttributeError, key
+        raise AttributeError(key)
 
     def __setattr__(self, key, value):
         if self.locked:
-            raise ConfigurationError, "Configuration locked."
+            raise ConfigurationError("Configuration locked.")
         self.__dict__["_empty"]=False
         self.__dict__[key]=value
 
@@ -296,18 +254,18 @@ class baseConf(object):
 
     def __setitem__(self, key, value):
         if self.locked:
-            raise ConfigurationError, "Configuration locked."
+            raise ConfigurationError("Configuration locked.")
         self._empty=False
         setattr(self, key, value)
         
     def __delitem__(self, key):
         if self.locked:
-            raise ConfigurationError, "Configuration locked."
+            raise ConfigurationError("Configuration locked.")
         if key in self.__dict__:
             del self.__dict__[key]
 
     def __iter__(self):
-        return iter(self.keys())
+        return iter(list(self.keys()))
 
     def __deepcopy__(self, memo):
         data = copy.deepcopy(self.__dict__)
@@ -340,16 +298,16 @@ class baseConf(object):
         return self
 
 
+@implementer(IConf)
 class Conf(baseConf):
     """
     Configuration class with no predefined fields
 
     Interface: IConf
     """
-    implements(IConf)
 
 
-
+@implementer(IFieldConf)
 class FieldConf(baseConf):
     """
     Definition of a field used for object.data, object.meta, form.field and tool.data
@@ -419,20 +377,19 @@ class FieldConf(baseConf):
     Interface: IFieldConf
 
     """
-    implements(IFieldConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.datatype = ""
         self.size = 0
-        self.default = u""
+        self.default = ""
         self.listItems = None
         self.settings = {}
         self.unique = False
         self.fulltext = False
         # used as default for forms
-        self.name = u""
-        self.description = u""
+        self.name = ""
+        self.description = ""
         self.required = False
         self.readonly = False
         self.hidden = False
@@ -463,6 +420,7 @@ class FieldConf(baseConf):
         return report
 
 
+@implementer(IAppConf)
 class AppConf(baseConf):
     """
     Application configuration class. Contains all configurable options for the cms 
@@ -512,14 +470,13 @@ class AppConf(baseConf):
     
     Interface: IAppConf
     """
-    implements(IAppConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = "app"
-        self.context = "nive.components.objects.base.ApplicationBase"
+        self.context = "nive.application.Application"
         
-        self.title = u""
-        self.description = u""
+        self.title = ""
+        self.description = ""
         
         # data pool
         self.autocommit = True
@@ -547,13 +504,7 @@ class AppConf(baseConf):
 
         if not self.meta:
             self.meta = copy.deepcopy(AllMetaFlds)
-                        
-        # bw 0.9.3 
-        # database connection parameter
-        if hasattr(self, "dbConfiguration") and isinstance(self.dbConfiguration, basestring):
-            import helper
-            self.dbConfiguration = helper.LoadConfiguration(self.dbConfiguration)
-        
+
  
     def __str__(self):
         return "%(id)s implemented by %(context)s" % self
@@ -574,7 +525,7 @@ class AppConf(baseConf):
             report.append((ImportError, " for AppConf.context", self))
         # check modules
         for m in self.modules:
-            if isinstance(m, basestring):
+            if isinstance(m, str):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " AppConf.modules error: "+m, self, m))
@@ -615,6 +566,7 @@ class AppConf(baseConf):
         return report
         
 
+@implementer(IDatabaseConf)
 class DatabaseConf(baseConf):
     """
     Database configuration ::
@@ -644,8 +596,7 @@ class DatabaseConf(baseConf):
     
     Call ``DatabaseConf().test()`` to verify configuration values.
     """
-    implements(IDatabaseConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.context = "Sqlite3"
         self.fileRoot = ""
@@ -655,7 +606,7 @@ class DatabaseConf(baseConf):
         self.user = ""
         self.password = ""
         self.useTrashcan = False
-        self.unicode = True
+        self.unicode = True # [3] deprecated
         self.timeout = 3
         self.verifyConnection = False
         self.connection = None
@@ -685,7 +636,7 @@ class DatabaseConf(baseConf):
         return report
 
 
-
+@implementer(IObjectConf)
 class ObjectConf(baseConf):
     """
     Configuration of a object type definition
@@ -732,14 +683,13 @@ class ObjectConf(baseConf):
     
     Interface: IObjectConf
     """
-    implements(IObjectConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.dbparam = u""
+        self.name = ""
+        self.dbparam = ""
         self.selectTag = 0
-        self.context = "nive.components.objects.base.ObjectContainerBase"
+        self.context = "nive.container.Container"
         self.template = None
         self.extensions = None
         self.data = []
@@ -749,14 +699,14 @@ class ObjectConf(baseConf):
         self.workflowEnabled = False
         self.workflowID = ""
         self.subtypes = "*"
-        self.category = u""
+        self.category = ""
         self.hidden = False
         self.events = None
         self.translations = None
-        self.description = u""
+        self.description = ""
         self.version = "1"
         baseConf.__init__(self, copyFrom, **values)
-        import helper
+        from . import helper
         d=[]
         for field in self.data:
             if isinstance(field, dict):
@@ -825,7 +775,7 @@ class ObjectConf(baseConf):
         return report
 
 
-
+@implementer(IRootConf)
 class RootConf(baseConf):
     """
     Configuration of a root object
@@ -862,12 +812,11 @@ class RootConf(baseConf):
     
     Interface: IRootConf
     """
-    implements(IRootConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
-        self.context = "nive.components.objects.base.RootBase"
+        self.name = ""
+        self.context = "nive.container.Root"
         self.extensions = None
         self.template = None
         self.default = True
@@ -879,7 +828,7 @@ class RootConf(baseConf):
         self.urlTraversal = True
         self.workflowID = ""
         self.translations = None
-        self.description = u""
+        self.description = ""
         baseConf.__init__(self, copyFrom, **values)
 
 
@@ -911,6 +860,7 @@ class RootConf(baseConf):
         return report        
 
 
+@implementer(IViewModuleConf)
 class ViewModuleConf(baseConf):
     """
     View module configuration
@@ -955,11 +905,10 @@ class ViewModuleConf(baseConf):
         
     Interface: IViewModuleConf
     """
-    implements(IViewModuleConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
+        self.name = ""
         self.static = ""
         self.staticName = None
         self.assets = None
@@ -967,7 +916,7 @@ class ViewModuleConf(baseConf):
         self.widgets = None
         self.acl = None
         self.translations = None
-        self.description = u""
+        self.description = ""
         
         # views and defaults
         self.context = None
@@ -975,13 +924,9 @@ class ViewModuleConf(baseConf):
         self.containment = None    
         self.renderer = None    
         self.permission = None
-        self.custom_predicates = None
         self.templates = ""
         self.views = []
         baseConf.__init__(self, copyFrom, **values)
-        # bw 0.9.13
-        if self.get("mainTemplate") and not self.get("template"):
-            self.template = self.mainTemplate
 
 
     def __str__(self):
@@ -1033,6 +978,7 @@ class ViewModuleConf(baseConf):
         return report
 
 
+@implementer(IViewConf)
 class ViewConf(baseConf):
     """
     Configuration for a view definition
@@ -1061,8 +1007,7 @@ class ViewConf(baseConf):
     
     Interface: IViewConf
     """
-    implements(IViewConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
         self.attr = None
@@ -1073,9 +1018,8 @@ class ViewConf(baseConf):
         self.containment = None
         self.permission = None
         self.options = {}
-        self.custom_predicates = None
         self.settings = {}
-        self.description = u""
+        self.description = ""
         baseConf.__init__(self, copyFrom, **values)
 
 
@@ -1098,7 +1042,7 @@ class ViewConf(baseConf):
             report.append((ImportError, " for ViewConf.view", self))
         # check renderer
         if self.renderer:
-            import helper
+            from . import helper
             r = helper.ResolveAsset(self.renderer)
             try:
                 r = helper.ResolveAsset(self.renderer)
@@ -1119,7 +1063,7 @@ class ViewConf(baseConf):
         return report
 
 
-
+@implementer(IPortalConf)
 class PortalConf(baseConf):
     """
     Portal configuration class. Contains all configurable options for the portal 
@@ -1142,8 +1086,7 @@ class PortalConf(baseConf):
     
     Interface: IPortalConf
     """
-    implements(IPortalConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.portalDefaultUrl = "/website/"
         self.loginUrl = "/userdb/udb/login"
@@ -1154,7 +1097,7 @@ class PortalConf(baseConf):
         self.accountUrl = "/userdb/udb/update"
         self.groups = ()
         self.favicon = ""
-        self.robots = u"""
+        self.robots = """
 User-agent: *
 Disallow: /login
 Disallow: /logout
@@ -1183,7 +1126,7 @@ Disallow: /update
         return report
         
 
-
+@implementer(IToolConf)
 class ToolConf(baseConf):
     """
     Tool configuration 
@@ -1208,11 +1151,10 @@ class ToolConf(baseConf):
     
     Interface: IToolConf
     """
-    implements(IToolConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
+        self.name = ""
         self.context = ""
         self.apply = None
         self.data = []
@@ -1221,7 +1163,7 @@ class ToolConf(baseConf):
         self.modules = []
         self.mimetype = ""
         self.hidden = False
-        self.description = u""
+        self.description = ""
         baseConf.__init__(self, copyFrom, **values)
 
     def __call__(self, context):
@@ -1257,7 +1199,7 @@ class ToolConf(baseConf):
                     report += m.test()
         # check modules
         for m in self.modules:
-            if isinstance(m, basestring):
+            if isinstance(m, str):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " ToolConf.modules import: "+m, self))
@@ -1267,7 +1209,7 @@ class ToolConf(baseConf):
         return report
         
 
-
+@implementer(IModuleConf)
 class ModuleConf(baseConf):
     """
     Generic module definition for application extension
@@ -1290,18 +1232,17 @@ class ModuleConf(baseConf):
     
     Interface: IModuleConf
     """
-    implements(IModuleConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
+        self.name = ""
         self.context = ""
         self.views = []
         self.events = None
         self.modules = []
         self.extensions = None
         self.translations = None
-        self.description = u""
+        self.description = ""
         baseConf.__init__(self, copyFrom, **values)
 
     def __call__(self, context):
@@ -1330,7 +1271,7 @@ class ModuleConf(baseConf):
                     report += m.test()
         # check modules
         for m in self.modules:
-            if isinstance(m, basestring):
+            if isinstance(m, str):
                 o = TryResolveName(m)
                 if not o:
                     report.append((ImportError, " ModuleConf.modules import: "+m, self))
@@ -1345,6 +1286,7 @@ class ModuleConf(baseConf):
         return report                
         
 
+@implementer(IWidgetConf)
 class WidgetConf(baseConf):
     """
     Configuration for a widget link
@@ -1370,8 +1312,7 @@ class WidgetConf(baseConf):
     
     Interface: IWidgetConf
     """
-    implements(IWidgetConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.apply = None
         self.viewmapper = None
@@ -1380,7 +1321,7 @@ class WidgetConf(baseConf):
         self.id = None
         self.sort = 100
         self.translations = None
-        self.description = u""
+        self.description = ""
         baseConf.__init__(self, copyFrom, **values)
 
     def __call__(self, context):
@@ -1412,6 +1353,7 @@ class WidgetConf(baseConf):
         return report
 
 
+@implementer(IGroupConf)
 class GroupConf(baseConf):
     """
     Configuration of a group or principal definition 
@@ -1425,13 +1367,12 @@ class GroupConf(baseConf):
 
     Interface: IGroupConf
     """
-    implements(IGroupConf)
-    
+
     def __init__(self, copyFrom=None, **values):
         self.id = ""
-        self.name = u""
+        self.name = ""
         self.hidden = False
-        self.description = u""
+        self.description = ""
         baseConf.__init__(self, copyFrom, **values)
 
     def test(self):
@@ -1466,7 +1407,7 @@ class Warning(Exception):
 def TryResolveName(name, base=None):
     if not name:
         return None
-    if not isinstance(name, basestring):
+    if not isinstance(name, str):
         return name
     d = DottedNameResolver(base)
     try:
@@ -1481,37 +1422,34 @@ def TryResolveName(name, base=None):
 
 DataTypes = (
 # basic data types
-Conf(id="string",      name=_(u"String"),             description=u""),
-Conf(id="number",      name=_(u"Number"),             description=u""),
-Conf(id="float",       name=_(u"Float"),              description=u""),
-Conf(id="bool",        name=_(u"Bool"),               description=u""),
-Conf(id="file",        name=_(u"File"),               description=u""),
-Conf(id="text",        name=_(u"Text"),               description=u""),
-Conf(id="date",        name=_(u"Date"),               description=u""),
-Conf(id="datetime",    name=_(u"Datetime"),           description=u""),
-Conf(id="time",        name=_(u"Time"),               description=u""),
+Conf(id="string",      name=_("String"),             description=""),
+Conf(id="number",      name=_("Number"),             description=""),
+Conf(id="float",       name=_("Float"),              description=""),
+Conf(id="bool",        name=_("Bool"),               description=""),
+Conf(id="file",        name=_("File"),               description=""),
+Conf(id="text",        name=_("Text"),               description=""),
+Conf(id="date",        name=_("Date"),               description=""),
+Conf(id="datetime",    name=_("Datetime"),           description=""),
+Conf(id="time",        name=_("Time"),               description=""),
 # extended data types, handled like basic with different validation and renderer
-Conf(id="htext",       name=_(u"HTML Text"),          description=u""),
-Conf(id="code",        name=_(u"Code (Html, Javascript, Css)"), description=u""),
-Conf(id="json",        name=_(u"Json"),               description=u""),
-Conf(id="lines",       name=_(u"Lines"),              description=u""),
-Conf(id="list",        name=_(u"List"),               description=u""),
-Conf(id="radio",       name=_(u"Radio Selection"),    description=u""),
-Conf(id="multilist",   name=_(u"Multiple Selection"), description=u""),
-Conf(id="checkbox",    name=_(u"Multiple Checkboxes"),description=u""),
-Conf(id="email",       name=_(u"Email"),              description=u""),
-Conf(id="password",    name=_(u"Password"),           description=u""),
-Conf(id="url",         name=_(u"URL"),                description=u""),
-Conf(id="urllist",     name=_(u"URL List"),           description=u""),
-Conf(id="unit",        name=_(u"ID Reference"),       description=u""),
-Conf(id="unitlist",    name=_(u"ID Reference List"),  description=u""),
-Conf(id="timestamp",   name=_(u"Timestamp"),          description=u""),
+Conf(id="htext",       name=_("HTML Text"),          description=""),
+Conf(id="code",        name=_("Code (Html, Javascript, Css)"), description=""),
+Conf(id="json",        name=_("Json"),               description=""),
+Conf(id="lines",       name=_("Lines"),              description=""),
+Conf(id="list",        name=_("List"),               description=""),
+Conf(id="radio",       name=_("Radio Selection"),    description=""),
+Conf(id="multilist",   name=_("Multiple Selection"), description=""),
+Conf(id="checkbox",    name=_("Multiple Checkboxes"),description=""),
+Conf(id="email",       name=_("Email"),              description=""),
+Conf(id="password",    name=_("Password"),           description=""),
+Conf(id="url",         name=_("URL"),                description=""),
+Conf(id="urllist",     name=_("URL List"),           description=""),
+Conf(id="unit",        name=_("ID Reference"),       description=""),
+Conf(id="unitlist",    name=_("ID Reference List"),  description=""),
+Conf(id="timestamp",   name=_("Timestamp"),          description=""),
 # not supported as database field yet
-Conf(id="binary",      name=_(u"Binary"),             description=u""),   
-Conf(id="nlist",       name=_(u"List of numbers"),    description=u""),
-# bw 0.9.23
-Conf(id="mselection",  name=_(u"Multiple Selection"), description=u""), # use multilist instead
-Conf(id="mcheckboxes", name=_(u"Multiple Checkboxes"),description=u""), # use checkbox instead
+Conf(id="binary",      name=_("Binary"),             description=""),   
+Conf(id="nlist",       name=_("List of numbers"),    description=""),
 )
 
 
@@ -1520,32 +1458,32 @@ ReadonlySystemFlds = ("id", "pool_type", "pool_unitref", "pool_dataref", "pool_d
 
 #v2: Meta layer fields grouped for easier linking. SysFlds and UserFlds are always required.
 SystemFlds=(
-FieldConf(id="id",             datatype="number",    size=8,     default=0,     required=0,   readonly=1, name=_(u"ID")),
-FieldConf(id="pool_type",      datatype="list",      size=35,    default=u"",   required=1,   readonly=1, name=_(u"Type")),
-FieldConf(id="pool_unitref",   datatype="number",    size=8,     default=0,     required=0,   readonly=1, name=_(u"Container")),
-FieldConf(id="pool_filename",  datatype="string",    size=255,   default=u"",   required=0,   readonly=0, name=_(u"Filename")),
-FieldConf(id="pool_state",     datatype="number",    size=4,     default=1,     required=0,   readonly=0, name=_(u"State")),
-FieldConf(id="pool_stag",      datatype="number",    size=4,     default=0,     required=0,   readonly=0, name=_(u"Select Number")),
-FieldConf(id="pool_dataref",   datatype="number",    size=8,     default=0,     required=1,   readonly=1, name=_(u"Data Table Reference")),
-FieldConf(id="pool_datatbl",   datatype="string",    size=35,    default=u"",   required=1,   readonly=1, name=_(u"Data Table Name")),
+FieldConf(id="id",             datatype="number",    size=8,     default=0,     required=0,   readonly=1, name=_("ID")),
+FieldConf(id="pool_type",      datatype="list",      size=35,    default="",   required=1,   readonly=1, name=_("Type")),
+FieldConf(id="pool_unitref",   datatype="number",    size=8,     default=0,     required=0,   readonly=1, name=_("Container")),
+FieldConf(id="pool_filename",  datatype="string",    size=255,   default="",   required=0,   readonly=0, name=_("Filename")),
+FieldConf(id="pool_state",     datatype="number",    size=4,     default=1,     required=0,   readonly=0, name=_("State")),
+FieldConf(id="pool_stag",      datatype="number",    size=4,     default=0,     required=0,   readonly=0, name=_("Select Number")),
+FieldConf(id="pool_dataref",   datatype="number",    size=8,     default=0,     required=1,   readonly=1, name=_("Data Table Reference")),
+FieldConf(id="pool_datatbl",   datatype="string",    size=35,    default="",   required=1,   readonly=1, name=_("Data Table Name")),
 )
 # user change/mod
 UserFlds=(
-FieldConf(id="pool_create",    datatype="datetime",  size=30,    default=u"",   required=0,   readonly=1, name=_(u"Created")),
-FieldConf(id="pool_change",    datatype="datetime",  size=30,    default=u"",   required=0,   readonly=1, name=_(u"Changed")),
-FieldConf(id="pool_createdby", datatype="string",    size=35,    default=u"",   required=0,   readonly=1, name=_(u"Created by"), settings={u"relation":"userid"}),
-FieldConf(id="pool_changedby", datatype="string",    size=35,    default=u"",   required=0,   readonly=1, name=_(u"Changed by"), settings={u"relation":"userid"}),
+FieldConf(id="pool_create",    datatype="datetime",  size=30,    default="",   required=0,   readonly=1, name=_("Created")),
+FieldConf(id="pool_change",    datatype="datetime",  size=30,    default="",   required=0,   readonly=1, name=_("Changed")),
+FieldConf(id="pool_createdby", datatype="string",    size=40,    default="",   required=0,   readonly=1, name=_("Created by"), settings={"relation":"userid"}),
+FieldConf(id="pool_changedby", datatype="string",    size=40,    default="",   required=0,   readonly=1, name=_("Changed by"), settings={"relation":"userid"}),
 )
 # utilities
 UtilityFlds=(
-FieldConf(id="title",          datatype="string",    size=255,   default=u"",   required=0,   readonly=0, name=_(u"Title"), fulltext=True),
-FieldConf(id="pool_sort",      datatype="number",    size=8,     default=0,     required=0,   readonly=0, name=_(u"Sort")),
-FieldConf(id="pool_category",  datatype="list",      size=35,    default=u"",   required=0,   readonly=0, name=_(u"Category")),
+FieldConf(id="title",          datatype="string",    size=255,   default="",   required=0,   readonly=0, name=_("Title"), fulltext=True),
+FieldConf(id="pool_sort",      datatype="number",    size=8,     default=0,     required=0,   readonly=0, name=_("Sort")),
+FieldConf(id="pool_category",  datatype="list",      size=100,   default="",   required=0,   readonly=0, name=_("Category")),
 )
 # workflow
 WorkflowFlds=(
-FieldConf(id="pool_wfp",       datatype="list",      size=35,    default=u"",   required=0,   readonly=0, name=_(u"Workflow Process")),
-FieldConf(id="pool_wfa",       datatype="list",      size=35,    default=u"",   required=0,   readonly=0, name=_(u"Workflow Activity")),
+FieldConf(id="pool_wfp",       datatype="list",      size=35,    default="",   required=0,   readonly=0, name=_("Workflow Process")),
+FieldConf(id="pool_wfa",       datatype="list",      size=35,    default="",   required=0,   readonly=0, name=_("Workflow Activity")),
 )
 
 dc = copy.deepcopy
@@ -1565,43 +1503,39 @@ LocalGroupsTbl = "pool_groups"
 Structure={
 FileTbl: {"identity": "fileid",
           "fields": (
-    FieldConf(id="fileid",     datatype="number",    size=8,     default=0,    required=0,   readonly=1, name=_(u"Unique ID")),
-    FieldConf(id="id",         datatype="number",    size=8,     default=0,    required=0,   readonly=1, name=_(u"Object ID")),
-    FieldConf(id="filekey",    datatype="string",    size=35,    default='',   required=1,   readonly=0, name=_(u"File key")),
-    FieldConf(id="filename",   datatype="string",    size=255,   default='',   required=0,   readonly=0, name=_(u"Filename")),
-    FieldConf(id="path",       datatype="string",    size=255,   default='',   required=0,   readonly=0, name=_(u"Internal file path")),
-    FieldConf(id="size",       datatype="number",    size=8,     default=0,    required=0,   readonly=0, name=_(u"File size")),
-    FieldConf(id="extension",  datatype="string",    size=5,     default='',   required=0,   readonly=0, name=_(u"File extension")),
-    FieldConf(id="version",    datatype="string",    size=5,     default='',   required=0,   readonly=0, name=_(u"Version")),
+    FieldConf(id="fileid",     datatype="number",    size=8,     default=0,    required=0,   readonly=1, name=_("Unique ID")),
+    FieldConf(id="id",         datatype="number",    size=8,     default=0,    required=0,   readonly=1, name=_("Object ID")),
+    FieldConf(id="filekey",    datatype="string",    size=35,    default='',   required=1,   readonly=0, name=_("File key")),
+    FieldConf(id="filename",   datatype="string",    size=255,   default='',   required=0,   readonly=0, name=_("Filename")),
+    FieldConf(id="path",       datatype="string",    size=255,   default='',   required=0,   readonly=0, name=_("Internal file path")),
+    FieldConf(id="size",       datatype="number",    size=8,     default=0,    required=0,   readonly=0, name=_("File size")),
+    FieldConf(id="extension",  datatype="string",    size=5,     default='',   required=0,   readonly=0, name=_("File extension")),
+    FieldConf(id="version",    datatype="string",    size=5,     default='',   required=0,   readonly=0, name=_("Version")),
 )},
 FulltextTbl: {"identity": None,
               "fields": (
-    FieldConf(id="id",     datatype="number",    size=8,     default=0,    required=1,   readonly=1, name=_(u"Object ID")),
-    FieldConf(id="text",   datatype="text",      size=0,     default="",   required=0,   readonly=0, name=_(u"Text")),
-    FieldConf(id="files",  datatype="text",      size=0,     default="",   required=0,   readonly=0, name=_(u"Files")),
+    FieldConf(id="id",     datatype="number",    size=8,     default=0,    required=1,   readonly=1, name=_("Object ID")),
+    FieldConf(id="text",   datatype="text",      size=0,     default="",   required=0,   readonly=0, name=_("Text")),
+    FieldConf(id="files",  datatype="text",      size=0,     default="",   required=0,   readonly=0, name=_("Files")),
 )},
 SystemTbl: {"identity": None,
             "fields": (
-    FieldConf(id="id",     datatype="string",    size=50,    default="",   required=0,   readonly=0, name=_(u"Key")),
-    FieldConf(id="value",  datatype="text",      size=0,     default="",   required=0,   readonly=0, name=_(u"Value")),
-    FieldConf(id="ts",     datatype="number",    size=8,     default="",   required=0,   readonly=0, name=_(u"Timestamp")),
+    FieldConf(id="id",     datatype="string",    size=50,    default="",   required=0,   readonly=0, name=_("Key")),
+    FieldConf(id="value",  datatype="text",      size=0,     default="",   required=0,   readonly=0, name=_("Value")),
+    FieldConf(id="ts",     datatype="number",    size=8,     default="",   required=0,   readonly=0, name=_("Timestamp")),
 )},
 LocalGroupsTbl: {"identity": None,
                 "fields": (
-    FieldConf(id="id",     datatype="number",    size=8,     default=0,    required=1,   readonly=1, name=_(u"Object ID")),
-    FieldConf(id="userid", datatype="string",    size=35,    default="",   required=1,   readonly=1, name=_(u"User name")),
-    FieldConf(id="groupid",datatype="string",    size=20,    default="",   required=1,   readonly=1, name=_(u"Group assignment")),
+    FieldConf(id="id",     datatype="number",    size=8,     default=0,    required=1,   readonly=1, name=_("Object ID")),
+    FieldConf(id="userid", datatype="string",    size=35,    default="",   required=1,   readonly=1, name=_("User name")),
+    FieldConf(id="groupid",datatype="string",    size=20,    default="",   required=1,   readonly=1, name=_("Group assignment")),
 )}
 }
 
 # select tags (pool_stag) ----------------------------------------------------------------------------
 
 StagContainer = 0        # 0-9
-StagPage = 10            # 10-19
-StagPageElement = 20     # 20-29
-StagItem = 30            # 30-39
 StagRessource = 50       # 50-59
-StagUser = 100           # 100-109
 
 
 # allowed types in contaier --------------------------------------------------------------------------

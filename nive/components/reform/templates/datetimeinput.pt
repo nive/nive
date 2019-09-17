@@ -1,16 +1,35 @@
 <tal:block i18n:domain="nive">
-<input type="text"
-       name="${field.name}"
-       value="${cstruct}" 
-       tal:attributes="size field.widget.size;
-                       class field.widget.css_class"
-       id="${field.oid}">
-<script type="text/javascript">
-  reform.addCallback(
-    '${field.oid}',
-    function(oid) {
-        $('#' + oid).datetimepicker(${options});
-    }
-  );
-</script>
+    <div class="input-group date" id="datetimepicker-${field.oid}" data-target-input="#${field.oid}-dt">
+        <input type="date"
+               name="${field.name}-dt"
+               value="${cstruct['date']}"
+               size="${field.widget.size}"
+               class="datetimepicker-input ${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+               id="${field.oid}-dt"
+               data-target="#datetimepicker-${field.oid}"
+               placeholder="Datum">
+        <div class="input-group-append" data-target="#datetimepicker-${field.oid}" data-toggle="datetimepicker">
+            <label class="input-group-text" for="#datetimepicker-${field.oid}"> Kalender</label>
+        </div>
+        <input type="text"
+               name="${field.name}-tm"
+               value="${cstruct['time']}"
+               size="${field.widget.size}"
+               class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+               id="${field.oid}-tm"
+               placeholder="Uhrzeit">
+        <input type="hidden"
+               name="${field.name}"
+               value="${cstruct['date']} ${cstruct['time']}"
+               id="${field.oid}">
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#datetimepicker-${field.oid}").datetimepicker({locale: 'de', format: 'YYYY-MM-DD'});
+            $(document).on("submit", "#${field.widget.form.formid}", function() {
+                $("#${field.oid}").val($("#${field.oid}-dt").val() + " " + $("#${field.oid}-tm").val());
+            });
+        });
+    </script>
 </tal:block>
+<!-- -->

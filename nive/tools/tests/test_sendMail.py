@@ -23,8 +23,8 @@ class SendMailTest1(unittest.TestCase):
         r=configuration.test()
         if not r:
             return
-        print FormatConfTestFailure(r)
-        self.assert_(False, "Configuration Error")
+        print(FormatConfTestFailure(r))
+        self.assertTrue(False, "Configuration Error")
 
     def test_tool(self):
         sendMail(configuration,None)
@@ -38,37 +38,37 @@ class SendMailTest2_db(__local.DefaultTestCase):
         logging.basicConfig()
     
     def tearDown(self):
-        self.app.Close()
+        self._closeApp(True)
 
 
     def test_tool(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
 
     
     def test_toolrun1(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
         try:
-            r,v = t()
+            r = t()
         except ConfigurationError:
             pass
 
 
     def test_toolrun2(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
         try:
-            r,v = t(recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
+            r = t(recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
         except ConfigurationError:
             pass
 
 
     def test_toolrundebug(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t)
+        self.assertTrue(t)
         try:
-            r,v = t(debug=1, recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
+            r = t(debug=1, recvmails=[("test@aaaaaaaa.com", "No name")], title="Testmail", body="body mail")
         except ConfigurationError:
             pass
 
@@ -76,37 +76,37 @@ class SendMailTest2_db(__local.DefaultTestCase):
     def test_date(self):
         t = self.app.GetTool("sendMail")
         date = t._FormatDate()
-        self.assert_(date)
+        self.assertTrue(date)
 
 
     def test_mailstr(self):
         t = self.app.GetTool("sendMail")
-        self.assert_(t._GetMailStr("aaa@ddd.aa")=="aaa@ddd.aa")
-        self.assert_(t._GetMailStr(("aaa@ddd.aa","a a"))=='"=?utf-8?q?a_a?=" <aaa@ddd.aa>', t._GetMailStr(("aaa@ddd.aa","a a")))
-        self.assert_(t._GetMailStr(("aaa@ddd.aa",))=="aaa@ddd.aa")
+        self.assertTrue(t._GetMailStr("aaa@ddd.aa")=="aaa@ddd.aa")
+        self.assertEqual(t._GetMailStr(("aaa@ddd.aa","a a")), '"a a" <aaa@ddd.aa>') # todo [3] unicode '"=?utf-8?q?a_a?=" <aaa@ddd.aa>'
+        self.assertTrue(t._GetMailStr(("aaa@ddd.aa",))=="aaa@ddd.aa")
 
 
     def test_message(self):
         t = self.app.GetTool("sendMail")
         values = dict(contentType="text/html;charset=utf-8",
-                      body=u"aaaaa",
-                      fromName=u"uuuuu",
-                      fromMail=u"uuu@aaa.dd",
-                      to=[u"ooo", u"ggg"],
-                      cc=[u"ooo", u"ggg"],
-                      bcc=[u"ooo", u"ggg"],
-                      sender=u"mmmm",
-                      replyTo=u"uoah",
-                      subject=u"My mail")
+                      body="aaaaa",
+                      fromName="uuuu",
+                      fromMail="uuu@aaa.dd",
+                      to=["ooo", "ggg"],
+                      cc=["ooo", "ggg"],
+                      bcc=["ooo", "ggg"],
+                      sender="mmmm",
+                      replyTo="uoah",
+                      subject="My mail")
         m = t._PrepareMessage(**values)
-        self.assert_(str(m))
+        self.assertTrue(str(m))
 
         values = dict(contentType="text/html;charset=utf-8",
-                      body=u"aaaaa",
-                      fromMail=u"uuu@aaa.dd",
-                      to=u"ooo",
-                      cc=u"ooo",
-                      bcc=u"ooo",
-                      subject=u"My mail")
+                      body="aaaaa",
+                      fromMail="uuu@aaa.dd",
+                      to="ooo",
+                      cc="ooo",
+                      bcc="ooo",
+                      subject="My mail")
         m = t._PrepareMessage(**values)
-        self.assert_(str(m))
+        self.assertTrue(str(m))

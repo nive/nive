@@ -34,10 +34,11 @@ Interface: IPortal
 import copy
 import time
 import logging
-import ConfigParser
+# todo [3] configparser?
+import configparser
 
 from nive.definitions import PortalConf, Conf, baseConf
-from nive.definitions import implements
+from nive.definitions import implementer
 from nive.definitions import ConfigurationError
 from nive.definitions import IModuleConf, IAppConf
 from nive.definitions import IPortal, IApplication
@@ -48,12 +49,11 @@ from nive.events import Events
 from nive.utils.utils import SortConfigurationList
 
 
-
+@implementer(IPortal)
 class Portal(Events):
     """ """
-    implements(IPortal)
 
-    __name__ = u""
+    __name__ = ""
     __parent__ = None
     host = None
     port = None
@@ -84,12 +84,12 @@ class Portal(Events):
         """
         try:
             if not name in self.components:
-                raise KeyError, name
+                raise KeyError(name)
             obj = getattr(self, name)
             self.Signal("getitem", obj=obj)
             return obj
         except AttributeError:
-            raise KeyError, name
+            raise KeyError(name)
         
     def Register(self, comp, name=None):
         """
@@ -108,9 +108,9 @@ class Portal(Events):
         """
         log = logging.getLogger("portal")
         iface, conf = ResolveConfiguration(comp)
-        if not conf and isinstance(comp, basestring):
-            raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
-        if isinstance(comp, basestring) or isinstance(comp, baseConf):
+        if not conf and isinstance(comp, str):
+            raise ConfigurationError("Portal registration failure. No name given (%s)" % (str(comp)))
+        if isinstance(comp, str) or isinstance(comp, baseConf):
             # factory methods
             if IAppConf.providedBy(conf):
                 comp = ClassFactory(conf)(conf)
@@ -118,7 +118,7 @@ class Portal(Events):
                 comp = ClassFactory(conf)(conf)
             elif iface and iface.providedBy(comp):
                 comp = ResolveName(conf.context)(conf)
-            elif isinstance(comp, basestring):
+            elif isinstance(comp, str):
                 comp = ResolveName(conf.context)(conf)
 
         try:
@@ -126,7 +126,7 @@ class Portal(Events):
         except AttributeError:
             pass
         if not name:
-            raise ConfigurationError, "Portal registration failure. No name given (%s)" % (str(comp))
+            raise ConfigurationError("Portal registration failure. No name given (%s)" % (str(comp)))
 
         log.debug("Portal.Register: %s %s", name, repr(conf))
         self.__dict__[name] = comp
@@ -158,12 +158,12 @@ class Portal(Events):
         # extract host and port from global config if set
         if "global_config" in kw:
             # get host and port from default pyramid ini file
-            ini=ConfigParser.ConfigParser()
+            ini=configparser.ConfigParser()
             try:
                 ini.read(kw["global_config"]["__file__"])
                 self.host = ini.get("server:main","host")
                 self.port = int(ini.get("server:main","port"))
-            except (KeyError, ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+            except (KeyError, configparser.NoSectionError, configparser.NoOptionError):
                 pass
 
         if pyramidConfig:
@@ -197,7 +197,7 @@ class Portal(Events):
         """
         Returns registered components and apps as list.
         """
-        if isinstance(interface, basestring):
+        if isinstance(interface, str):
             interface = ResolveName(interface)
         apps=[]
         for name in self.components:
@@ -235,13 +235,17 @@ class Portal(Events):
         self.Signal("finish", request)
         
 
-    def GetGroups(self, sort=u"id", visibleOnly=False):
+    def GetGroups(self, sort="id", visibleOnly=False):
         """
         returns all groups registered by components as list
         """
+        if not len(self.groups):
+            return ()
+        if not sort in self.groups[0]:
+            sort = "id"
         if not visibleOnly:
             return SortConfigurationList(self.groups, sort)
-        c = filter(lambda a: not a.get("hidden"), self.groups)
+        c = [a for a in self.groups if not a.get("hidden")]
         return SortConfigurationList(c, sort)
 
 
@@ -279,7 +283,7 @@ class Portal(Events):
         config.add_view(logout_view, name="logout", context="nive.portal.Portal")
         config.add_view(login_view,  name="login", context="nive.portal.Portal")
         config.add_view(account_view,name="account", context="nive.portal.Portal")
-        #config.add_view(favicon_view, name=u"favicon.txt", context=u"nive.portal.Portal", view=PortalViews)
+        #config.add_view(favicon_view, name="favicon.txt", context="nive.portal.Portal", view=PortalViews)
     
         # translations
         config.add_translation_dirs('nive:locale/')
@@ -301,7 +305,7 @@ class Portal(Events):
 
 
 
-from views import Redirect
+from .views import Redirect
 from pyramid.exceptions import Forbidden
 from pyramid.response import Response
 from pyramid.httpexceptions import HTTPError, HTTPNotFound, HTTPServerError

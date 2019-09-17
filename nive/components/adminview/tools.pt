@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
+
+    <tal:block metal:fill-slot="editmain">
+
+        <div class="row"><div class="col-sm">
+            <tal:block tal:condition="tool">
+                <h3>${tool.name}</h3>
+                <div class="alert alert-info" tal:content="structure tool.description"></div>
+                <span tal:replace="structure content"/>
+            </tal:block>
+
+            <tal:block tal:condition="not tool">
+                <div class="alert alert-info" i18n:translate="">This page lists all administration tools
+                    like database export or database schema manager. </div>
+                <tal:block tal:repeat="tool tools">
+                    <div class="alert alert-info">
+                        <strong><a name="${tool.id}" href="?tag=${tool.id}">${tool.name}</a></strong><br>
+                            <span tal:replace="structure tool.description"></span>
+                    </div>
+                </tal:block>
+
+            </tal:block>
+
+        </div></div>
+    </tal:block>
+
+</tal:block>

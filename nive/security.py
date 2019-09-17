@@ -18,7 +18,7 @@ from pyramid import threadlocal
 from pyramid.interfaces import IAuthenticationPolicy, IAuthorizationPolicy
 
 from nive.definitions import Conf
-from nive.definitions import Interface, implements
+from nive.definitions import Interface, implementer
 
 
 def GetUsers(app):
@@ -28,7 +28,7 @@ def GetUsers(app):
     portal = app.portal
     try:
         userdb = portal.userdb
-        return userdb.root().GetUsers()
+        return userdb.root.GetUsers()
     except:
         return []
 
@@ -57,7 +57,7 @@ class User(object):
         """
         check if user has one of these groups
         """
-        if isinstance(groups, basestring):
+        if isinstance(groups, str):
             return groups in self.groups
         for g in groups:
             if g in self.groups:
@@ -93,12 +93,12 @@ class IAdminUser(Interface):
     """
 
 
+@implementer(IAdminUser)
 class AdminUser(object):
     """
     Admin User object with groups and login possibility. 
     """
-    implements(IAdminUser)
-    
+
     def __init__(self, values, ident):
         self.id = 0
         self.data = Conf(**values)
@@ -107,14 +107,14 @@ class AdminUser(object):
         if values.get("groups"):
             groups = tuple(values.get("groups"))
         else:
-            groups = (u"group:admin",)
+            groups = ("group:admin",)
         self.groups = self.data.groups = groups
 
     def __str__(self):
         return str(self.identity)
 
     def Authenticate(self, password):
-        return password == unicode(self.data["password"])
+        return password == str(self.data["password"])
     
     def Login(self):
         """ """
@@ -130,7 +130,7 @@ class AdminUser(object):
         """
         check if user has one of these groups
         """
-        if isinstance(groups, basestring):
+        if isinstance(groups, str):
             return groups in self.groups
         for g in groups:
             if g in self.groups:
@@ -164,7 +164,7 @@ def SetupRuntimeAcls(acl, context):
     processed = []
     for a in acl:
         if len(a)==4:
-            if apply(a[3], (context,)):
+            if a[3](*(context,)):
                 processed.append(tuple(list(a[:3])))
             continue
         processed.append(tuple(a))
