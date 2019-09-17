@@ -20,7 +20,8 @@ requires = [
     'iso8601',
     'pytz',
     'translationstring',
-    'html2text'
+    'bs4',    # alternative - 'html2text'
+    # 'pillow' optional. required for extensions.images.
 ]
 
 setupkw = dict(
