@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2019-09-17 10:20+0200\n"
+"POT-Creation-Date: 2019-09-17 11:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
+"Generated-By: Lingua 4.13\n"
 
 #: ./nive/definitions.py:1425
 msgid "String"
@@ -247,11 +247,11 @@ msgstr ""
 msgid "<em>Unknown field</em>"
 msgstr ""
 
-#: ./nive/views.py:1270 ./nive/components/reform/reformed.py:158
+#: ./nive/views.py:1273 ./nive/components/reform/reformed.py:158
 msgid "Yes"
 msgstr ""
 
-#: ./nive/views.py:1272 ./nive/components/reform/reformed.py:158
+#: ./nive/views.py:1275 ./nive/components/reform/reformed.py:158
 msgid "No"
 msgstr ""
 
@@ -295,13 +295,15 @@ msgstr ""
 msgid "Incomplete date"
 msgstr ""
 
-#: ./nive/components/reform/forms.py:1209
-msgid "Create"
-msgstr ""
-
-#: ./nive/components/reform/forms.py:1211
+#: ./nive/components/reform/forms.py:810 ./nive/components/reform/forms.py:1211
+#: ./nive/components/reform/forms.py:1599
+#: ./nive/components/reform/forms.py:1705
 #: ./nive/components/adminview/view.py:108
 msgid "Save"
+msgstr ""
+
+#: ./nive/components/reform/forms.py:1209
+msgid "Create"
 msgstr ""
 
 #: ./nive/components/reform/forms.py:1212
@@ -318,6 +320,10 @@ msgstr ""
 #: ./nive/components/adminview/view.py:144
 #: ./nive/components/adminview/view.py:215
 msgid "OK. Data saved."
+msgstr ""
+
+#: ./nive/components/reform/forms.py:1420
+msgid "Start"
 msgstr ""
 
 #: ./nive/components/reform/forms.py:1554

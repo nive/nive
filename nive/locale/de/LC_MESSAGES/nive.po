@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nive 0.9.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-09-17 10:21+0200\n"
+"POT-Creation-Date: 2019-09-17 11:12+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -244,11 +244,11 @@ msgstr "Authentifiziert"
 msgid "<em>Unknown field</em>"
 msgstr "<em>Feld unbekannt</em>"
 
-#: nive/views.py:1270 nive/components/reform/reformed.py:158
+#: nive/views.py:1273 nive/components/reform/reformed.py:158
 msgid "Yes"
 msgstr "Ja"
 
-#: nive/views.py:1272 nive/components/reform/reformed.py:158
+#: nive/views.py:1275 nive/components/reform/reformed.py:158
 msgid "No"
 msgstr "Nein"
 
@@ -292,13 +292,15 @@ msgstr "Passwörter stimmen nicht überein"
 msgid "Incomplete date"
 msgstr "Fehlerhaftes Datum"
 
+#: nive/components/reform/forms.py:810 nive/components/reform/forms.py:1211
+#: nive/components/reform/forms.py:1599 nive/components/reform/forms.py:1705
+#: nive/components/adminview/view.py:108
+msgid "Save"
+msgstr "Speichern"
+
 #: nive/components/reform/forms.py:1209
 msgid "Create"
 msgstr "Erstellen"
-
-#: nive/components/reform/forms.py:1211 nive/components/adminview/view.py:108
-msgid "Save"
-msgstr "Speichern"
 
 #: nive/components/reform/forms.py:1212 nive/components/reform/forms.py:1555
 #: nive/components/reform/templates/unitselect.pt:38
@@ -311,6 +313,10 @@ msgstr "Abbrechen"
 #: nive/components/adminview/view.py:144 nive/components/adminview/view.py:215
 msgid "OK. Data saved."
 msgstr "OK. Daten gespeichert."
+
+#: nive/components/reform/forms.py:1420
+msgid "Start"
+msgstr "Start"
 
 #: nive/components/reform/forms.py:1554
 msgid "Continue"
@@ -372,7 +378,6 @@ msgstr "Zu lang. Eingabe maximal ${max} Zeichen."
 #, python-format
 msgid "\"${val}\" is not one of ${choices}"
 msgstr "\"${val}\" nicht möglich. Möglich: ${choices}."
-
 
 #: nive/components/reform/schema.py:385
 msgid "Object does not exist."
@@ -459,7 +464,6 @@ msgstr "\"${val}\" ist kein datetime Objekt"
 msgid "\"${val}\" is not a date object"
 msgstr "\"${val}\" ist kein date Objekt"
 
-#: nive/components/reform/schema.py:1868 nive/components/reform/schema.py:1829
 #: nive/components/reform/schema.py:1278
 msgid "Invalid time"
 msgstr "Ungültige Uhrzeit"
