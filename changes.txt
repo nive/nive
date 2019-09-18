@@ -1,3 +1,7 @@
+1.3.2
+-----
+- translation fix
+
 1.3.1
 -----
 - object and container class hirarchy, imports and subclassing refactored (removed nive.components.baseobjects)
