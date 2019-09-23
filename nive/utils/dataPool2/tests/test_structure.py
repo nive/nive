@@ -186,8 +186,7 @@ class ConversionTest(unittest.TestCase):
         self.assertTrue(self.structure.deserialize("data2", "fmultilist", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assertTrue(self.structure.deserialize("data2", "fcheckbox", json.dumps(["aaa","bbb"]))[0]=="aaa")
         self.assertTrue(self.structure.deserialize("data2", "furllist", json.dumps(["aaa","bbb"]))[0]=="aaa")
-        self.assertTrue(self.structure.deserialize("data2", "funitlist", json.dumps(["123","123"]))[0]==123)
-        self.assertRaises(ValueError, self.structure.deserialize, "data2", "funitlist", json.dumps(["aaa","bbb"]))
+        self.assertTrue(self.structure.deserialize("data2", "funitlist", json.dumps(["123","123"]))[0]=="123")
         self.assertTrue(self.structure.deserialize("data2", "fcheckbox", "aaa")[0]=="aaa")
         self.assertTrue(self.structure.deserialize("data2", "fcheckbox", ["aaa","bbb"])[0]=="aaa")
         

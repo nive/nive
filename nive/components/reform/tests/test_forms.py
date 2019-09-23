@@ -17,8 +17,8 @@ data1_1 = { "ftext": "this is text!",
             "fdate": "2008-06-23 16:55:20",#
             "flist": "item 2",
             "fmselect": "item 5",
-            "funit": "35",
-            "funitlist": "34\r\n35\r\n36",
+            "funit": 35,
+            "funitlist": [34, 35, 36],
             "pool_type": "type1"}
 
 data1_2 = { "ftext": "this is a new text!",
@@ -27,33 +27,34 @@ data1_2 = { "ftext": "this is a new text!",
 
 
 class Viewy(BaseView):
-    def __init__(self):
+    def __init__(self, c):
         self.request = Request()
-        self.context = None
+        self.context = c
     
-    def User(self):
+    def User(self, **kw):
         return UserO("test")
 
 # -----------------------------------------------------------------
 from pyramid import testing
 
-class FormTest(unittest.TestCase):
+class FormTest_db:
 
     def setUp(self):
-        self.app = db_app.app_nodb()
-        self.view = Viewy()
-        request = testing.DummyRequest()
-        request._LOCALE_ = "en"
-        self.config = testing.setUp(request=request)
+        self._loadApp()
+        self.request = testing.DummyRequest()
+        self.request._LOCALE_ = "en"
+        self.config = testing.setUp(request=self.request)
+        self.view = Viewy(self.app)
         self.config.include('pyramid_chameleon')
+        self.remove=[]
     
     def tearDown(self):
-        self.app.Close()
+        self._closeApp(True)
         testing.tearDown()
 
 
     def test_form(self, **kw):
-        form = HTMLForm(loadFromType="type1", context=None, request=Request(), app=self.app, view=self.view)
+        form = HTMLForm(loadFromType="type1", context=self.app, request=Request(), app=self.app, view=self.view)
         form.Setup()
         self.assertTrue(form.GetFields())
         form._SetUpSchema()
@@ -275,25 +276,11 @@ class FormTest(unittest.TestCase):
         f = form.GetFields(removeReadonly=False)
         self.assertTrue(len(f)==len(db_app.type1.data)+len(db_app.appconf.meta)-len(ReadonlySystemFlds))
 
-        
 
-class FormTest_db:
-
-    def setUp(self):
-        self._loadApp()
-        self.request = testing.DummyRequest()
-        self.request._LOCALE_ = "en"
-        self.config = testing.setUp(request=self.request)
-        self.config.include('pyramid_chameleon')
-        self.remove=[]
-    
-    def tearDown(self):
-        self._closeApp(True)
-        testing.tearDown()
 
     def test_obj(self, **kw):
         root = self.app.GetRoot()
-        v = Viewy()
+        v = Viewy(self.app)
         form = ObjectForm(loadFromType="type1", context=root, view=v, request=Request(), app=self.app)
         form.formUrl = "form/url"
         form.cssID = "upload"
@@ -385,7 +372,7 @@ class FormTest_db:
         root = self.app.GetRoot()
         obj = root.Create("type1", data1_2, user)
         self.remove.append(obj.id)
-        v = Viewy()
+        v = Viewy(self.app)
 
         form = ObjectForm(loadFromType="type1", context=obj, view=v, request=Request(), app=self.app)
         form.formUrl = "form/url"
@@ -458,7 +445,7 @@ class FormTest_db:
         obj.data["fjson"] = {}
         obj.Commit(user=user)
         self.remove.append(obj.id)
-        v = Viewy()
+        v = Viewy(self.app)
 
         form = JsonMappingForm(request=Request(),app=self.app,context=obj, view=v)
         form.fields = (

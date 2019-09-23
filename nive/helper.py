@@ -548,6 +548,8 @@ class Request(object):
     username = ""
     response = Response()
     environ = {}
+    def resource_url(self, o):
+        return str(o)
 
 class Event(object):
     def __init__(self, request=None):

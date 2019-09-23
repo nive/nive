@@ -112,15 +112,17 @@ class Tool(object):
         
         If stream is disabled (self.stream = None) and no stream is passed,
         the function returns the result data as string/binary.
-        Otherwise the stream is returned as second parameter.
+        Otherwise the stream is returned as first parameter.
         
-        returns bool, stream
+        returns stream, result
         """
         # call function
         values = self.ExtractValues(**kw)
         values["original"] = kw
-        values, data = self._Run(**values)
-        return values, data
+        stream, result = self._Run(**values)
+        if self.stream is None:
+            return stream, result
+        return self.stream, result
 
 
     def ExtractValues(self, **kw):

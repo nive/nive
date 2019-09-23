@@ -75,8 +75,8 @@ data1_1 = {"ftext": "this is text!",
 data2_1 = {"fstr": "this is sting!",
            "ftext": "this is text!"}
 meta1 = {"title":"title "}
-file1_1 = "File 1 content, text text text text."
-file1_2 = "File 2 content, text text text text."
+file1_1 = b"File 1 content, text text text text."
+file1_2 = b"File 2 content, text text text text."
 
 
 

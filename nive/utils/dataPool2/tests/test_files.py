@@ -39,7 +39,7 @@ class FileTest(unittest.TestCase):
         #         fileentry=None)
         file = File(filekey="aaa",
                     filename="qqqq.png", 
-                    file="0123456789"
+                    file=b"0123456789"
                     )
         self.assertTrue(file.filekey=="aaa")
         self.assertTrue(file.filename=="qqqq.png")
@@ -48,7 +48,7 @@ class FileTest(unittest.TestCase):
 
         file = File(filekey="aaa",
                     filename="qqqq.png", 
-                    file="0123456789",
+                    file=b"0123456789",
                     fileentry=fileentrytest()
                     )
         self.assertTrue(file.filekey=="aaa")
@@ -65,7 +65,7 @@ class FileTest(unittest.TestCase):
         
         file = File(filedict={"filekey":"aaa",
                               "filename":"qqqq.png", 
-                              "file":"0123456789",
+                              "file":b"0123456789",
                               "fileentry":fileentrytest()}
                     )
         self.assertTrue(file.filekey=="aaa")
@@ -83,19 +83,19 @@ class FileTest(unittest.TestCase):
 
         file = File(filekey="aaa",
                     filename="qqqq.png", 
-                    file="0123456789",
+                    file=b"0123456789",
                     fileentry=fileentrytest()
                     )
-        self.assertTrue(file.read()=="0123456789")
+        self.assertTrue(file.read()==b"0123456789")
 
         file = File(filekey="aaa",
                     filename="qqqq.png", 
-                    file="0123456789",
+                    file=b"0123456789",
                     fileentry=fileentrytest()
                     )
-        self.assertTrue(file.read(5)=="01234")
-        self.assertTrue(file.read(5)=="56789")
-        self.assertTrue(file.read(5)=="")
+        self.assertTrue(file.read(5)==b"01234")
+        self.assertTrue(file.read(5)==b"56789")
+        self.assertTrue(file.read(5)==b"")
         self.assertTrue(file.tell()==10)
         file.seek(0)
         self.assertTrue(file.tell()==0)
@@ -135,7 +135,7 @@ class FileTest(unittest.TestCase):
     def test_dict(self):
         file = File(filekey="aaa",
                     filename="qqqq.png", 
-                    file="0123456789",
+                    file=b"0123456789",
                     fileentry=fileentrytest()
                     )
         self.assertTrue(file.get("filekey")=="aaa")

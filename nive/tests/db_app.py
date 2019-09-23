@@ -120,8 +120,8 @@ data1_2 = { "ftext": "this is a new text!",
 data2_2 = { "fstr": "this is new sting!",
             "pool_filename": "new title data 2"}
 
-file2_1_data="This is the first text"
-file2_2_data="This is the text in the second file"
+file2_1_data=b"This is the first text"
+file2_2_data=b"This is the text in the second file"
 file2_1 = {"filename":"file1.txt", "file":file2_1_data}
 file2_2 = {"filename":"file2.txt", "file":file2_2_data}
 

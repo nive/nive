@@ -1169,8 +1169,9 @@ class TestDateTime(unittest.TestCase):
         from nive.components import reform
         node = DummySchemaNode(None)
         typ = self._makeOne()
+        typ.allow_empty=False
         result = typ.deserialize(node, '')
-        self.assertEqual(result, reform.schema.null)
+        self.assertEqual(result, '')
 
     def test_deserialize_success(self):
         import iso8601
@@ -1873,6 +1874,7 @@ class TestSet(unittest.TestCase):
     def test_deserialize_empty_allow_empty_false(self):
         node = DummySchemaNode2()
         typ = self._makeOne()
+        typ.allow_empty=False
         e = invalid_exc(typ.deserialize, node, ())
         self.assertEqual(e.msg, 'Required')
 
@@ -1984,6 +1986,7 @@ class TestList(unittest.TestCase):
     def test_deserialize_empty_allow_empty_false(self):
         node = DummySchemaNode2()
         typ = self._makeOne()
+        typ.allow_empty=False
         e = invalid_exc(typ.deserialize, node, ())
         self.assertEqual(e.msg, 'Required')
 
@@ -2049,6 +2052,7 @@ class TestCodeList(unittest.TestCase):
     def test_deserialize_empty_allow_empty_false(self):
         node = DummySchemaNode2()
         typ = self._makeOne(allowed=("aaa","bbb"))
+        typ.allow_empty=False
         e = invalid_exc(typ.deserialize, node, "")
         self.assertEqual(e.msg, 'Required')
   

@@ -2,7 +2,7 @@
 import time
 import unittest
 
-from nive.definitions import IObject
+from nive.definitions import IObject, Conf
 
 from nive.workflow import *
 
@@ -137,7 +137,7 @@ wf2 = WfProcessConf(
 
 
 
-class Tmeta(object):
+class Tmeta(Conf):
     pool_wfa=""
     pool_wfp = "wf1"
     

@@ -230,7 +230,6 @@ class TestDateInputWidget(unittest.TestCase):
         widget.serialize(field, null)
         self.assertEqual(renderer.template, widget.template)
         self.assertEqual(renderer.kw['field'], field)
-        self.assertEqual(renderer.kw['cstruct'], '')
 
     def test_serialize_None(self):
         widget = self._makeOne()
@@ -239,31 +238,12 @@ class TestDateInputWidget(unittest.TestCase):
         widget.serialize(field, None)
         self.assertEqual(renderer.template, widget.template)
         self.assertEqual(renderer.kw['field'], field)
-        self.assertEqual(renderer.kw['cstruct'], '')
-
-    def test_serialize_not_null(self):
-        widget = self._makeOne()
-        renderer = DummyRenderer()
-        schema = DummySchema()
-        field = DummyField(schema, renderer=renderer)
-        cstruct = 'abc'
-        widget.serialize(field, cstruct)
-        self.assertEqual(renderer.template, widget.template)
-        self.assertEqual(renderer.kw['field'], field)
-        self.assertEqual(renderer.kw['cstruct'], cstruct)
 
     def test_deserialize_null(self):
         from nive.components.reform.schema import null
         widget = self._makeOne()
         field = DummyField()
         result = widget.deserialize(field, null)
-        self.assertEqual(result, null)
-
-    def test_deserialize_emptystring(self):
-        from nive.components.reform.schema import null
-        widget = self._makeOne()
-        field = DummyField()
-        result = widget.deserialize(field, '')
         self.assertEqual(result, null)
 
 class TestDateTimeInputWidget(TestDateInputWidget):
@@ -279,7 +259,7 @@ class TestDateTimeInputWidget(TestDateInputWidget):
         widget.serialize(field, cstruct)
         self.assertEqual(renderer.template, widget.template)
         self.assertNotEqual(renderer.kw['cstruct'], cstruct)
-        self.assertEqual(renderer.kw['cstruct'], cstruct[:-6].replace('T', ' '))
+        self.assertEqual(renderer.kw['cstruct'], {'date': '2011-12-13', 'time': '14:15'})
 
     def test_serialize_without_timezone(self):
         widget = self._makeOne()
@@ -288,19 +268,19 @@ class TestDateTimeInputWidget(TestDateInputWidget):
         cstruct = '2011-12-13T14:15:16'
         widget.serialize(field, cstruct)
         self.assertEqual(renderer.template, widget.template)
-        self.assertEqual(renderer.kw['cstruct'], cstruct.replace('T', ' '))
+        self.assertEqual(renderer.kw['cstruct'], {'date': '2011-12-13', 'time': '14:15'})
 
     def test_deserialize_with_timezone(self):
         widget = self._makeOne()
         field = DummyField()
         result = widget.deserialize(field, '2011-12-13 14:15:16+01:00')
-        self.assertEqual(result, '2011-12-13T14:15:16+01:00')
+        self.assertEqual(result, '2011-12-13 14:15:16+01:00')
 
     def test_deserialize_without_timezone(self):
         widget = self._makeOne()
         field = DummyField()
         result = widget.deserialize(field, '2011-12-13 14:15:16')
-        self.assertEqual(result, '2011-12-13T14:15:16')
+        self.assertEqual(result, '2011-12-13 14:15:16')
 
 class TestHiddenWidget(unittest.TestCase):
     def _makeOne(self, **kw):

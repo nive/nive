@@ -511,8 +511,13 @@ class DateTimeInputWidget(DateInputWidget):
             )
 
     def deserialize(self, field, pstruct, formstruct=None):
+        if pstruct in (null,):
+            if not field.required and pstruct=='':
+                # empty value allowed
+                return ''
+            return null
         pstruct = pstruct.strip()
-        if pstruct in ('', null):
+        if pstruct in ('',):
             if not field.required and pstruct=='':
                 # empty value allowed
                 return ''

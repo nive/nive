@@ -204,17 +204,17 @@ class TestNodes(unittest.TestCase):
         nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
         self.assertTrue(len(nodes)==1)
 
-    def test_unit(self):
-        field = FieldConf(datatype="unit",id="field",name="Field")
-        self.assertTrue(unit_node(field, {}, {}, testform()))
-        nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
-        self.assertTrue(len(nodes)==1)
+    #def test_unit(self):
+    #    field = FieldConf(datatype="unit",id="field",name="Field")
+    #    self.assertTrue(unit_node(field, {}, {}, testform()))
+    #    nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
+    #    self.assertTrue(len(nodes)==1)
 
-    def test_unitlist(self):
-        field = FieldConf(datatype="unitlist",id="field",name="Field")
-        self.assertTrue(unitlist_node(field, {}, {}, testform()))
-        nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
-        self.assertTrue(len(nodes)==1)
+    #def test_unitlist(self):
+    #    field = FieldConf(datatype="unitlist",id="field",name="Field")
+    #    self.assertTrue(unitlist_node(field, {}, {}, testform()))
+    #    nodes, buttons = SchemaFactory(testform(), [field], [], force=False)
+    #    self.assertTrue(len(nodes)==1)
 
     def test_timestamp(self):
         field = FieldConf(datatype="timestamp",id="field",name="Field")
