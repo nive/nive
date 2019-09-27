@@ -270,7 +270,7 @@ def email_node(field, kw, kwWidget, form):
 def url_node(field, kw, kwWidget, form):
     if not "validator" in kw:
         kw["validator"] = Length(max=field.get("size",255))
-    kw["widget"] = TextInputWidget(**kwWidget)
+    kw["widget"] = TextInputWidget(**kwWidget, input_type="url")
     return SchemaNode(String(), **kw)
 
 def urllist_node(field, kw, kwWidget, form):

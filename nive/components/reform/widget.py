@@ -234,6 +234,9 @@ class TextInputWidget(Widget):
         ``None``, meaning that the ``size`` is not included in the
         widget output (uses browser default size).
 
+    input_type
+        Html input.type value. Default = text
+
     template
        The template name used to render the widget.  Default:
         ``textinput``.
@@ -269,6 +272,7 @@ class TextInputWidget(Widget):
         is used.  Default: ``_`` (underscore).
     """
     template = 'textinput'
+    input_type = None
     size = None
     strip = True
     mask = None

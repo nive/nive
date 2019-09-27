@@ -11,7 +11,7 @@
         <div class="input-group-append" data-target="#datetimepicker-${field.oid}" data-toggle="datetimepicker">
             <label class="input-group-text" for="#datetimepicker-${field.oid}"> Kalender</label>
         </div>
-        <input type="text"
+        <input type="time"
                name="${field.name}-tm"
                value="${cstruct['time']}"
                size="${field.widget.size}"
