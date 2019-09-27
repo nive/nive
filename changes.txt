@@ -1,3 +1,8 @@
+1.3.4
+-----
+- form datetimeinput html type time
+- form textinput widget added input_type html type attribute value
+
 1.3.3
 -----
 - form test fixes
