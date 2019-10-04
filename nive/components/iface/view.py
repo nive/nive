@@ -26,7 +26,7 @@ configuration = ViewModuleConf(
     view = "nive.components.iface.view.IFaceView",
     static =  "nive.components.iface:static/",
     templates = "nive.components.iface:templates/",
-    mainTemplate = "nive.components.iface:templates/index.pt",
+    template = "nive.components.iface:templates/index.pt",
     ifaceConf = None,
     permission = "view",
     acl = [
@@ -38,12 +38,12 @@ configuration = ViewModuleConf(
         (Allow, "group:editor", "iface_tools")
     ],
     assets = [
-        ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
-        ('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
-        ('iface.css', 'nive.components.adminview:static/iface.css'),
-        ('jquery.js', 'nive.components.adminview:static/mods/jquery-3.3.1.min.js'),
-        ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/js/bootstrap.bundle.js'),
-        ('iface.js', 'nive.components.adminview:static/iface.js'),
+        ('bootstrap.min.css', 'nive.components.iface:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
+        #('adminview.css', 'nive.components.iface:static/adminview.css'),   # nive css
+        ('iface.css', 'nive.components.iface:static/iface.css'),
+        ('jquery.js', 'nive.components.iface:static/mods/jquery-3.3.1.min.js'),
+        ('bootstrap.min.js', 'nive.components.iface:static/mods/bootstrap-4.3.1-dist/js/bootstrap.bundle.js'),
+        ('iface.js', 'nive.components.iface:static/iface.js'),
     ]
 )
 
@@ -127,13 +127,13 @@ class IFaceView(Parts, Search, BaseView):
     - iface_tools 
     """
     
-    viewModuleID = "ifaceconf"
+    #viewModuleID = "ifaceconf"
     action = None
     
     def __init__(self, context, request):
         BaseView.__init__(self, context, request)
-        self.ifaceConf = self.viewModule.ifaceConf
-        path = self.viewModule.static or self.ifaceConf.static
+        self.ifaceConf = self.configuration.ifaceConf
+        path = self.configuration.static or self.ifaceConf.get("static")
         self.static = self.StaticUrl(path)
 
 

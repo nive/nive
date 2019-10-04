@@ -90,6 +90,7 @@ class IFaceConf(baseConf):
         self.id = ""
         self.name = ""
         self.slogan = ""
+        self.logo = ""
         self.cache = "no-cache"
         
         # id: used as url, name: display name, ref: section reference used to highlight active section
