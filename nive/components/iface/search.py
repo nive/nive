@@ -252,7 +252,7 @@ class Search:
             formhtml = """
             <tr>
               %(fields)s
-              <th><button class="btn"><img src="%(static)simages/icon_reload.svg" alt="Liste aktualisieren" title="Liste aktualisieren"></button></th>
+              <th><button class="btn btn-info"><img src="%(static)simages/icon_reload.svg" alt="Liste aktualisieren" title="Liste aktualisieren"></button></th>
             </tr>
             """ % dict(fields=" ".join(fl), static=self.static)
 
@@ -581,7 +581,7 @@ class Search:
             return ""
         ccp = delete = ""
 
-        if searchconf.get("container") and "ccp" in searchconf.get("listoptions",[]):
+        if searchconf.get("container") and "ccp" in searchconf.get("listoptions", []):
             ccp = """
  <input type="image" src="%(static)simages/copy.png" name="copy" title="%(Copy)s" />
  <input type="image" src="%(static)simages/cut.png" name="cut" title="%(Cut)s" />
@@ -592,7 +592,7 @@ class Search:
                "Paste": translate(_("Paste"), self.request)}
 
         if "delete" in searchconf.get("listoptions",[]):
-            delete = """<input type="submit" name="delete" id="delete" value="%(Delete)s" class="btn btn-light" i18n:attributes="value">""" % \
+            delete = """<input type="submit" name="delete" id="delete" value="%(Delete)s" class="btn btn-info" i18n:attributes="value">""" % \
                      {"static": self.static,
                       "Delete": translate(_("Delete selected"), self.request)}
 
@@ -600,7 +600,7 @@ class Search:
 <div id="listActionButtons">
  %(ccp)s &nbsp;
  %(delete)s &nbsp;
- <button type="button" name="selectButton" id="selectButton" class="btn btn-light">%(Select all)s</button>
+ <button type="button" name="selectButton" id="selectButton" class="btn btn-info">%(Select all)s</button>
 </div>
         """ % {"static": self.static, "ccp": ccp, "delete": delete, "base":self.FolderUrl(),
                "Select all": translate(_("Select all"), self.request)}
