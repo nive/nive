@@ -1731,14 +1731,20 @@ class JsonSequenceForm(HTMLForm):
         # process action
         msgs = []
         if self.GetFormValue(self.editKey, self.request, "GET"):
-            seqindex = int(self.GetFormValue(self.editKey, self.request, "GET"))
+            try:
+                seqindex = int(self.GetFormValue(self.editKey, self.request, "GET"))
+            except ValueError:
+                seqindex = 0
             if not seqindex or seqindex > len(sequence):
                 data = []
             else:
                 data = sequence[seqindex-1]
                 data[self.editKey] = seqindex
         elif self.GetFormValue(self.delKey, self.request, "GET"):
-            seqindex = int(self.GetFormValue(self.delKey, self.request, "GET"))
+            try:
+                seqindex = int(self.GetFormValue(self.delKey, self.request, "GET"))
+            except ValueError:
+                seqindex = 0
             if not seqindex or seqindex > len(sequence):
                 data = []
             else:

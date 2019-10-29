@@ -664,6 +664,7 @@ class Base(object):
         id = 0
         if idColumn:
             id = self._GetInsertIDValue(cursor)
+        cursor.close()
         return data, id
 
 
@@ -742,7 +743,8 @@ class Base(object):
         except:
             self.Undo()
             raise
-        cursor.close()
+        finally:
+            cursor.close()
 
 
     # Text conversion -----------------------------------------------------------------------
