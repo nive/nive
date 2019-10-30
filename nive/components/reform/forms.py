@@ -716,8 +716,8 @@ class Form(Events, ReForm):
                 value = request.POST.get(key)
                 if not value:
                     value = request.GET.get(key)
-            if not isinstance(value, str):
-                value = str(value)
+            #if not isinstance(value, str):
+            #    value = str(value)
             return value
         if not len(value):
             return None
@@ -1730,9 +1730,9 @@ class JsonSequenceForm(HTMLForm):
             sequence = []
         # process action
         msgs = []
-        if self.GetFormValue(self.editKey, self.request, "GET"):
+        if self.GetFormValue(self.editKey, self.request, "ALL"):
             try:
-                seqindex = int(self.GetFormValue(self.editKey, self.request, "GET"))
+                seqindex = int(self.GetFormValue(self.editKey, self.request, "ALL"))
             except ValueError:
                 seqindex = 0
             if not seqindex or seqindex > len(sequence):
@@ -1740,9 +1740,9 @@ class JsonSequenceForm(HTMLForm):
             else:
                 data = sequence[seqindex-1]
                 data[self.editKey] = seqindex
-        elif self.GetFormValue(self.delKey, self.request, "GET"):
+        elif self.GetFormValue(self.delKey, self.request, "ALL"):
             try:
-                seqindex = int(self.GetFormValue(self.delKey, self.request, "GET"))
+                seqindex = int(self.GetFormValue(self.delKey, self.request, "ALL"))
             except ValueError:
                 seqindex = 0
             if not seqindex or seqindex > len(sequence):
@@ -1805,7 +1805,6 @@ class JsonSequenceForm(HTMLForm):
                 sequence[seqindex-1] = data
             self.context.data[self.jsonDataField] = sequence
             self.context.Commit(user)
-            self.context.data[self.jsonDataField] = sequence
             msgs.append(_("OK. Data saved."))
             self.Signal("success", data=sequence)
             data = {}
