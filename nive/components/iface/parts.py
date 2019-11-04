@@ -53,20 +53,6 @@ class Parts:
         return self.ifaceConf.name
 
 
-    def head(self):
-        """
-        html head
-        additional html rendered in html.head
-        """
-        return """
-<link href="%(static)sbootstrap/css/bootstrap.min.css" rel="stylesheet" />
-<script src="%(static)sjquery.min.js" type="text/javascript"></script>
-<script src="%(static)siface.js" type="text/javascript"></script>
-<script src="%(static)sbootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<link href="%(static)siface.css" rel="stylesheet" type="text/css" media="all" />
-        """ % {"static": self.static}
-    
-
     def sections(self, count=100, context=None):
         """
         html body div#header div#headOptions div#mainNav

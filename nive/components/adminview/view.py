@@ -227,8 +227,6 @@ class AdminBasics(BaseView):
 
     def __init__(self, context, request):
         super(AdminBasics, self).__init__(context, request)
-        # the viewModule is used for template/template directory lookup 
-        #self.viewModuleID = "administration"
 
     def view(self):
         return {}

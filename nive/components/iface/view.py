@@ -127,7 +127,6 @@ class IFaceView(Parts, Search, BaseView):
     - iface_tools 
     """
     
-    #viewModuleID = "ifaceconf"
     action = None
     
     def __init__(self, context, request):

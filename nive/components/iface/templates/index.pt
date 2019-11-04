@@ -46,8 +46,8 @@
 <meta tal:replace="structure view.Assets(types='css')">
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
-<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
-<meta tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
+<tal:block tal:condition="head|None" tal:replace="structure head"></tal:block>
+<meta tal:condition="view.configuration.get('assetsCustom')" tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"> </tal:block>
@@ -66,7 +66,7 @@
   <br style="clear:both">
 
   <tal:block metal:define-slot="foot"> </tal:block>
-  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot"></tal:block>
   <span tal:replace="structure view.mark2()"></span>
 </body>
 </html>
@@ -83,8 +83,8 @@
 <meta tal:replace="structure view.Assets(types='css')">
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
-<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
-<meta tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
+<tal:block tal:condition="head|None" tal:replace="structure head"></tal:block>
+<meta tal:condition="view.configuration.get('assetsCustom')" tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
@@ -106,7 +106,7 @@
   </div>
 
   <tal:block metal:define-slot="foot"></tal:block>
-  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot"></tal:block>
   <span tal:replace="structure view.mark2()"></span>
 </body>
 </html>
@@ -123,8 +123,8 @@
 <meta tal:replace="structure view.Assets(types='css')">
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
-<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
-<meta tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
+<tal:block tal:condition="head|None" tal:replace="structure head"></tal:block>
+<meta tal:condition="view.configuration.get('assetsCustom')" tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
@@ -147,7 +147,7 @@
   </div>
 
   <tal:block metal:define-slot="foot"></tal:block>
-  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot"></tal:block>
   <span tal:replace="structure view.mark2()"></span>
 </body>
 </html>
@@ -163,8 +163,8 @@
 <meta tal:replace="structure view.Assets(types='css')">
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
-<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
-<meta tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
+<tal:block tal:condition="head|None" tal:replace="structure head"></tal:block>
+<meta tal:condition="view.configuration.get('assetsCustom')" tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
 </head>
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
@@ -172,7 +172,7 @@
   <tal:block metal:define-slot="content"></tal:block>
 
   <tal:block metal:define-slot="foot"></tal:block>
-  <tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot"></tal:block>
   <span tal:replace="structure view.mark2()"></span>
 </body>
 </html>
@@ -188,13 +188,13 @@
 <meta tal:replace="structure view.Assets(types='css')">
 <meta tal:replace="structure view.Assets(types='js')">
 <tal:block metal:define-slot="head"></tal:block>
-<tal:block tal:condition="head|None" tal:replace="structure head" tal:on-error="nothing"></tal:block>
-<meta tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
+<tal:block tal:condition="head|None" tal:replace="structure head"></tal:block>
+<meta tal:condition="view.configuration.get('assetsCustom')" tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
 </head>
 <body class="empty">
 <tal:block metal:define-slot="content"></tal:block>
 <tal:block metal:define-slot="foot"></tal:block>
-<tal:block tal:condition="foot|None" tal:replace="structure foot" tal:on-error="nothing"></tal:block>
+<tal:block tal:condition="foot|None" tal:replace="structure foot"></tal:block>
 </body>
 </html>
 </tal:block>
