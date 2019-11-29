@@ -1,6 +1,6 @@
 import csv
 import random
-import string
+import ntpath
 import io
 import copy
 import base64
@@ -1211,7 +1211,7 @@ class FileUploadWidget(Widget):
             # the upload control had a file selected
             data = schema.filedict()
             data['fp'] = upload.file
-            data['filename'] = upload.filename
+            data['filename'] = ntpath.basename(upload.filename)
             data['mimetype'] = upload.type
             data['size']  = upload.length
             if uid is None:
@@ -1280,7 +1280,7 @@ class FileUploadWidget2(Widget):
         except AttributeError:
             cls = File
         file = cls(
-            filename = pstruct.filename,
+            filename = ntpath.basename(pstruct.filename),
             file = pstruct.file,
             filekey = field.name,
             size = pstruct.length if hasattr(pstruct, "length") else -1,
