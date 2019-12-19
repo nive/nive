@@ -183,14 +183,14 @@ button.go-sm     {
 #tableList tr.listRow { cursor:pointer; }
 
 /* search form (ok) --------------------------------------------------- */
-#boxSearch { padding:0px; margin:0px; }
+#boxSearch { padding:0; margin:0; }
 #boxSearch #switch { float:right; margin:5px; }
-#boxSearch #formBody { padding:10px; padding-bottom:0px; width:90%; }
+#boxSearch #formBody { padding:10px; padding-bottom:0; width:90%; }
 #boxSearch .control-group { float:left; padding:2px 6px 2px 2px; }
-#boxSearch .control-label { margin: 2px 5px 0px 0px; width: 65px; overflow:hidden; font-size: 0.9em; float:left; text-align:right; }
-#boxSearch .form-group { float:left; }
+#boxSearch .control-label { margin: 2px 5px 0 0; width: 65px; overflow:hidden; font-size: 0.9em; float:left; text-align:right; }
+#boxSearch .form-group { }
 #boxSearch .help-block { display:none; }
-#boxSearch .form-actions { padding:0px; margin:2px 2px 2px 10px; float:left; background-color:transparent;}
+#boxSearch .form-actions { padding:0; margin:2px 2px 2px 10px; float:left; background-color:transparent;}
 #searchList tr.listRow { cursor:pointer; }
 
 /* pagination --------------------------------------------------- */
@@ -199,27 +199,23 @@ button.go-sm     {
 .search a { cursor:pointer; }
 
 /* search list --------------------------------------------------- */
-
-.search table.list { width: 100%; margin-bottom:0px; border: 1px solid #e8e8e8; }
+.search table.list { width: 100%; margin-bottom:0; border: 1px solid #e8e8e8; }
 .search table.list th div {
-	float:right;
-	position:relative;
-	margin-right: 4px;
     line-height:8px;
     margin-top:2px;
 }
 .search table.list th .asc {
 	float:right;
 	height:6px;
-	margin:0px;
-	padding:0px;
+	margin:0;
+	padding:0;
 	cursor:pointer;
 }
 .search table.list th .desc {
 	float:right;
 	height:6px;
-	margin:0px;
-	padding:0px;
+	margin:0;
+	padding:0;
 	cursor:pointer;
 }
 .search table.list th {
@@ -229,7 +225,6 @@ button.go-sm     {
     padding-bottom: 0;
 	text-align: left;
 	font-weight: normal;
-	position:relative;
 }
 .search table.list th.listAction {
     text-align: right;
