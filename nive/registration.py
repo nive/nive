@@ -496,7 +496,16 @@ class Registration(object):
             maxage = 60 * 60 * 4
             if app.debug:
                 maxage = None
-            config.add_static_view(name=viewmod.staticName or viewmod.id, path=viewmod.static, cache_max_age=maxage)
+            if isinstance(viewmod.static, (list,tuple)):
+                for static in viewmod.static:
+                    config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage))
+
+            elif isinstance(viewmod.static, dict):
+                config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage))
+
+            elif viewmod.static:
+                # bw update
+                config.add_static_view(name=viewmod.staticName or viewmod.id, path=viewmod.static, cache_max_age=maxage)
 
             # acls
             if viewmod.get("acl"):
