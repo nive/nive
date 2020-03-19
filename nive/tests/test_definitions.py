@@ -187,6 +187,22 @@ class ConfTest(unittest.TestCase):
         testconf = ViewModuleConf(
             id = "viewing",
             name = "Oh",
+            static = ({"path":"here:static", "name":"static", "maxage":12000}),
+            containment = "nive.tests.test_definitions.ConfTest",
+            widgets = (WidgetConf(apply=(IObject,),viewmapper="test",widgetType=IWidgetConf,id="test"),),
+        )
+        self.assertTrue(testconf.id=="viewing")
+        self.assertTrue(testconf.name=="Oh")
+        self.assertTrue(testconf.containment=="nive.tests.test_definitions.ConfTest")
+        self.assertTrue(len(testconf.test())==0)
+        self.assertTrue(len(testconf.uid()))
+        str(testconf) # may be empty
+        self.assertTrue(repr(testconf))
+
+    def test_obj5_bw_static(self, **kw):
+        testconf = ViewModuleConf(
+            id = "viewing",
+            name = "Oh",
             static = "here:static",
             containment = "nive.tests.test_definitions.ConfTest",
             widgets = (WidgetConf(apply=(IObject,),viewmapper="test",widgetType=IWidgetConf,id="test"),),

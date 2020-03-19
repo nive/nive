@@ -142,8 +142,8 @@ Form styling options
 ====================
 By default 3 column form layouts are used. Each column can get a custom css class by setting e.g. ::
 
-    form.widget.settings["column1_css"] = "span4"
-    form.widget.settings["column2_css"] = "span8"
+    form.widget.settings["column1_css"] = "col-md-4"
+    form.widget.settings["column2_css"] = "col-md-8"
     form.widget.settings["column3_css"] = "none"
 
 To switch to a one column layout use the following code: ::
@@ -1188,7 +1188,7 @@ class HTMLForm(Form):
         if isinstance(msgs, str):
             msgs = [msgs]
         for m in msgs:
-            h.append("""<p>%s</p>""" % (translate(m, self.view.request)))
+            h.append("""<div>%s</div>""" % (translate(m, self.view.request)))
         css = "alert alert-success"
         if err:
             css = "alert alert-warning"

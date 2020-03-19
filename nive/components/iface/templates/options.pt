@@ -6,7 +6,7 @@
 
 <!-- add -->
 <div tal:condition="context.IsContainer()"
-     class="well">
+     class="alert">
 <h4>Add a new item</h4>
 <ul class="nav">
   <li tal:repeat="element context.GetAllowedTypes('')"> 
@@ -17,14 +17,14 @@
 </div>
 
 <!-- tools -->
-<!--div class="well">
+<!--div class="alert">
 <h4>Tools</h4>
 <ul class="nav">
 </ul>
 </div-->
 
 <!-- delete self -->
-<div class="well">
+<div class="alert">
 <a href="deleteo"
    class="btn btn-danger" i18n:translate="">Delete now, cannot be undone!</a>
 </div>

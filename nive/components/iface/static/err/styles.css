@@ -1,0 +1,33 @@
+
+/*bootstrap layout additions--------------------------------------------------*/
+body {
+  font-family: 'Roboto Condensed', Arial, Verdana, sans-serif;
+  letter-spacing: 0.01em;
+  font-size: 1em;
+  position: relative;
+}
+h1              { font-family: 'Alegreya SC', Times, serif; font-size: 1.6em; line-height: 1em; font-weight: normal; }
+h2              { font-family: 'Alegreya SC', Times, serif; font-size: 1.4em; line-height: 1em; font-weight: normal; margin-top: 1em; }
+h3              { font-family: 'Roboto Condensed', sans-serif; font-size: 1.2em; line-height: 1em; }
+h4              { font-family: Arial, Verdana, sans-serif; font-size: 0.9em; line-height: 1em; }
+a               { color: #0786D5; }
+p, li           { font-family: Arial, Verdana, sans-serif; font-size: 0.9em; }
+ul              { list-style:square; }
+pre {
+  background-color: black;
+  font-family: Courier, monospace;
+  border: 1px solid #999999;
+  padding:0.3em;
+  line-height: 1.5em;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+pre code        { font-family: Courier, monospace; font-size:1.1em; }
+
+#footer         { background-color:#e8e8e8; border-top: 1em solid #dddddd; margin-top:20px; margin-bottom:10px; }
+#footer a       { display:block; color:#828282; font-size: 0.9em; }
+
+.smaller        { font-size: 0.8em; }
+.cursor         { cursor:pointer; }
+

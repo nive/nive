@@ -6,9 +6,9 @@
 <h2 i18n:translate="">Administration sections</h2>
 
 <tal:block tal:repeat="tab view.GetAdminWidgets()">
-<div class="well">
+<div class="alert">
 <div class="row">
-  <div class="span4"><strong><a href="${tab.viewmapper}">${tab.name}</a></strong></div> <div class="span7">${tab.description}</div>
+  <div class="col-md-4"><strong><a href="${tab.viewmapper}">${tab.name}</a></strong></div> <div class="col-md-8">${tab.description}</div>
 </div>
 </div>
 </tal:block>

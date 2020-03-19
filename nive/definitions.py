@@ -874,8 +874,9 @@ class ViewModuleConf(baseConf):
                  lookup the view module.
         name   : Display name 
         template : The main template containing the slots to insert content.
-        static : Static directory
-        staticName : By default ViewModule.id is used as url name to map the static
+        static : Static directory. Single or multiple static directories e.g.
+                 ({"name":"static1", "path": "module:static", "maxage": 1200})
+        staticName : Deprecated. Use `ViewModuleConf.static`. By default ViewModule.id is used as url name to map the static
                      directory. To change the default specify a different name here.  
         assets : list of assets required. each asset included as tuple (asset_id, asset_path)
         acl    : Pyramid security definitions added to nive.Application acls
