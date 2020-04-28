@@ -25,7 +25,6 @@ from pyramid.renderers import render_to_response, get_renderer, render
 from pyramid.url import static_url, resource_url
 from pyramid.view import render_view
 from pyramid.security import authenticated_userid
-from pyramid.security import has_permission
 from pyramid.i18n import get_localizer
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden, HTTPException
@@ -664,11 +663,11 @@ class BaseView(object):
             try:
                 originalContext = self.request.context
                 self.request.context = context
-                return has_permission(permission, context or self.context, self.request)
+                return self.request.has_permission(permission, context or self.context)
             finally:
                 self.request.context = originalContext
 
-        return has_permission(permission, context or self.context, self.request)
+        return self.request.has_permission(permission, context or self.context)
 
     def InGroups(self, groups):
         """

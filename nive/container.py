@@ -16,7 +16,7 @@ from nive.definitions import StagContainer, StagRessource, MetaTbl
 from nive.definitions import IContainer, IRoot, ICache, IObject, IConf, IObjectConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed
-from nive.security import has_permission, SetupRuntimeAcls
+from nive.security import SetupRuntimeAcls
 from nive.workflow import WorkflowNotAllowed, ObjectWorkflow, RootWorkflow
 from nive.helper import ResolveName, ClassFactory, GetVirtualObj
 from nive.i18n import translate
@@ -975,8 +975,8 @@ class ContainerFactory(object):
         newobj = newobj(id, dbEntry, parent=parentObj, configuration=configuration, **kw)
 
         # check security if context passed in keywords
-        if kw.get("securityContext") and kw.get("permission"):
-            if not has_permission(kw["permission"], newobj, kw["securityContext"]):
+        if kw.get("securityContext") is not None and kw.get("permission"):
+            if not kw["securityContext"].has_permission(kw["permission"], newobj):
                 raise PermissionError("Permission check failed (%s)" % (str(id)))
 
         if useCache:
@@ -1023,8 +1023,8 @@ class ContainerFactory(object):
             newobj = newobj(dbEntry.id, dbEntry, parent=parentObj, configuration=configuration, **kw)
 
             # check security if context passed in keywords
-            if securityContext and permission:
-                if not has_permission(permission, obj, securityContext):
+            if securityContext is not None and permission:
+                if not securityContext.has_permission(permission, obj):
                     continue
 
             if useCache:

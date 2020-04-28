@@ -8,7 +8,7 @@ from nive.security import User
 
 class TestSecurityContext(object):
     ppp="view"
-    def has_permission(self,p,c):
+    def has_permission(self,p):
         return p==self.ppp
 
 class containerTest_db:
