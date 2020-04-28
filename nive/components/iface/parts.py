@@ -401,7 +401,7 @@ class Parts:
         sc = self.GetShortcuts(self.context)
         if not sc:
             return ""
-        html = """<div id="unit_shortcuts" class="well"><div class="unit_options_block">Shortcuts</div> %s  <br class="clearBlock" /></div>"""
+        html = """<div id="unit_shortcuts" class="well alert alert-light"><div class="unit_options_block">Shortcuts</div> %s  <br class="clearBlock" /></div>"""
         l = []
         for s in sc:
             try:

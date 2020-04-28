@@ -139,7 +139,7 @@ class Search:
         else:
             l = ""
         if not rowtmpl:
-            rowtmpl = """<div class="well" %(link)s><h4>%(title)s</h4><div>%(subheader)s</div></div>"""
+            rowtmpl = """<div class="well alert alert-light" %(link)s><h4>%(title)s</h4><div>%(subheader)s</div></div>"""
             rowtmpl = rowtmpl % {
                           "link":l,
                           "header": "%(title)s",

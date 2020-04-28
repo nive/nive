@@ -4,7 +4,7 @@
 <title i18n:translate="">Sorry</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link href="/s-iface/mods/bootstrap-4.3.1-dist/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-<link href="/s-iface/err/styles.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/s-iface/iface.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body>
@@ -13,8 +13,8 @@
 <article>
 <div class="row">
 
-<div class="col-md-6 offset-3 well" style="background-color:white">
-<img src="/s-iface/images/logo-black.png" style="margin:10px;" class="pull-right" title="" alt="Nive" />
+<div class="col-md-6 offset-md-3 well">
+<img src="/s-iface/images/logo-black.png" class="float-right" title="" alt="Nive" />
 
 <tal:block tal:condition="error=='404'">
 <h1 i18n:translate="">Page not found (404)!</h1>
@@ -27,11 +27,10 @@
 <!--${message}-->
 </tal:block>
 
-<br/>
+<hr/>
 <br/>
 <p><a href="/workspace/conf" i18n:translate="">Return to dashboard</a></p>
 
-<br/>
 </div>
 
 </div>

@@ -3,7 +3,7 @@
 body {
   font-family: Arial, Verdana, sans-serif; 
   letter-spacing: 0.01em; 
-  font-size: 0.9em;;
+  font-size: 0.9em;
   position: relative;
   padding-top:80px;
 }
@@ -29,7 +29,7 @@ a               { color: #000000; }
 .navbar .active a.nav-link:focus { color:#fff; font-weight:normal; }
 .navbar a.dropdown-item { color:#000; }
 
-.well, .alert, .table-bordered { -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; }
+.alert, .table-bordered { -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; }
 .table-bordered { border-collapse: collapse }
 .sidebar-nav { background-color: #0786D5; }
 .nav-list .nav-header { color: #eeeeee; font-weight:bold; margin-top:8px; margin-bottom:4px; text-shadow:none; }
@@ -52,6 +52,12 @@ a               { color: #000000; }
 .hoveralert tr:hover { background-color: #f2dede; }
 .highlight      { background-color: #eaf5df; }
 .spacetop       { margin-top: 0.3em; }
+.well           {
+    margin-top: 2em;
+    padding: 2em;
+    -webkit-border-radius: 1em; -moz-border-radius: 1em; border-radius: 1em;
+    border: 1px solid lightgray;
+}
 
 /* path */
 ul.path         { padding:0px; margin:-15px 0px 10px 0px; color:#bbbbbb; }
