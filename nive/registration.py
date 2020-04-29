@@ -442,13 +442,14 @@ class Registration(object):
         Register configured views and static views with the pyramid web framework.
         """
         app = self.app
-        predicatename = app.uid+"_AppContainmentPredicate"
+        ref = str(app.configuration.context)
+        predicatename = ref+"_AppContainmentPredicate"
         config.add_view_predicate(predicatename, AppContainmentPredicate)
 
         views = app.registry.getAllUtilitiesRegisteredFor(IViewConf)
         # single views
         for view in views:
-            opts = {predicatename: app.uid}
+            opts = {predicatename: ref}
             if view.options:
                 opts.update(view.options)
 
@@ -467,7 +468,8 @@ class Registration(object):
         Register configured views and static views with the pyramid web framework.
         """
         app = self.app
-        predicatename = app.uid+"_AppContainmentPredicate"
+        ref = str(app.configuration.context)
+        predicatename = ref+"_AppContainmentPredicate"
         config.add_view_predicate(predicatename, AppContainmentPredicate)
 
         mods = app.registry.getAllUtilitiesRegisteredFor(IViewModuleConf)
@@ -479,7 +481,7 @@ class Registration(object):
                 viewcls = DecorateViewClassWithViewModuleConf(viewmod, viewcls)
             # object views
             for view in viewmod.views:
-                opts = {predicatename: app.uid}
+                opts = {predicatename: ref}
                 if view.options:
                     opts.update(view.options)
 
@@ -557,12 +559,12 @@ class AppContainmentPredicate(object):
     Check if context of view is this application. For multisite support.
     """
     def __init__(self, val, config):
-        self.uid = val
+        self.ref = val
 
     def __call__(self, context, request):
-        return context.app.uid == self.uid
+        return str(context.app.configuration.context) == self.ref
 
     def text(self):
-        return self.uid+".AppViewPredicate"
+        return self.ref+"_AppContainmentPredicate"
     phash = text
 
