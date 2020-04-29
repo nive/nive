@@ -132,9 +132,9 @@ class IFaceView(Parts, Search, BaseView):
     def __init__(self, context, request):
         BaseView.__init__(self, context, request)
         self.ifaceConf = self.configuration.ifaceConf
-        path = self.configuration.static or self.ifaceConf.get("static")
-        self.static = self.StaticUrl(path)
-
+        self.static = self.ifaceConf.get("static", "")
+        if ":" in self.static:
+            self.static = self.StaticUrl(self.static)
 
     # Get conf values -------------------------------------------------------------------
 

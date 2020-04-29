@@ -79,7 +79,7 @@ class IFaceConf(baseConf):
     
     searchfield rendere callback example: ::
 
-        def renderStateIcon(field, data, iface):
+        def renderStateIcon(field, value, context, data):
             return '<img src="/static/images/state%d.gif" title="Active state: %d"/>' % (data, data)
 
     

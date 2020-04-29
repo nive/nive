@@ -20,8 +20,10 @@ a               { color: #000000; }
 
 /*bootstrap layout additions--------------------------------------------------*/
 
-.navbar         { background-color:#0786D5; box-shadow:0 0 0.3em gray; padding:0.3em 1em 0 1em; color: #ffffff; }
+.navbar         { background-color:#0786D5; box-shadow:0 0 0.3em gray; padding:0 1.5em 0 1.5em; color: #ffffff; }
 /*.navbar .slogan { display:none }*/
+
+.navbar-brand { padding-top:0.5em; }
 .navbar-brand img { padding-bottom:0.3em; }
 
 .navbar a { color:#fff; }
@@ -36,12 +38,26 @@ a               { color: #000000; }
 .nav-list>li>a { color:#ffffff; text-shadow:none; }
 .nav-list>li>a:hover { text-shadow:none; }
 
-.navbar .active a.nav-link {
+.navbar a.nav-link {
     background-color: transparent;
     color: #ffffff;
     box-shadow: none;
-    border-bottom: 3px solid #dddddd;
+    padding:1.2em 1.5em 1em 1.5em;
+    border-bottom: 4px solid transparent;
 }
+.navbar .active a.nav-link {
+    border-bottom: 4px solid #dddddd;
+}
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding:1.2em 1.5em 1em 1.5em;
+}
+.navbar .divider-vertical {
+    height: auto;
+    margin: 0 9px;
+    border-right: 1px solid #fff;
+    border-left: 1px solid #f2f2f2;
+}
+
 /* iface additions ---------------------------------------------------------- */
 .pointer        { cursor:pointer; }
 .smaller        { font-size: 0.8em; color: #666666;}
