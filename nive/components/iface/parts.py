@@ -250,7 +250,7 @@ class Parts:
             return ""
         return """
 <div class="dropdown float-right unit-settings">
-  <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <i class="icon-cog"></i> %(Settings)s
     <span class="caret"></span>
   </button>

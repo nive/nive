@@ -56,8 +56,8 @@
     <div class="row">
       <tal:block metal:define-slot="path">
           <div class="col-sm">
-              <span tal:replace="structure view.path()"></span>
               <span tal:replace="structure view.settingsLinks()"></span>
+              <span tal:replace="structure view.path()"></span>
           </div>
       </tal:block>
     </div>
