@@ -6,6 +6,7 @@ import json
 import time
 from datetime import datetime, timedelta
 from datetime import time as datetime_time
+from decimal import Decimal
 
 from nive.utils.utils import ConvertToDateTime
 from nive.utils.dataPool2.files import File
@@ -257,6 +258,7 @@ class PoolStructure(object):
         bool -> 0/1
         file -> bytes
         timestamp -> float
+        decimal -> float
         date, datetime -> datetime
         multilist, checkbox, urllist -> unicode tuple
         unitlist -> number tuple
@@ -420,8 +422,8 @@ class PoolStructure(object):
         elif fieldtype == "timestamp":
             if value is None:
                 pass
-            elif not isinstance(value, str):
-                value = str(value)
+            elif isinstance(value, Decimal):
+                value = float(value)
         
         elif fieldtype in ("list","radio"):
             # to single item string
@@ -443,7 +445,7 @@ class PoolStructure(object):
                     value = [str(v, self.codepage) for v in value]
                 value = json.dumps(value)
 
-        elif fieldtype in ("bool"):
+        elif fieldtype in ("bool",):
             if isinstance(value, str):
                 if value.lower()=="true":
                     value = 1
@@ -464,7 +466,7 @@ class PoolStructure(object):
         # assure unicode except filedata
         if isinstance(value, bytes) and fieldtype!="file":
             value = str(value, self.codepage)
-        
+
         return value
 
 
@@ -558,7 +560,7 @@ class PoolStructure(object):
                 value = None
             elif isinstance(value, str):
                 value = json.loads(value)
-            
+
         return value
     
     

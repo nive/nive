@@ -15,6 +15,11 @@ from nive.definitions import ConfigurationError
 try:
     import psycopg2
     psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+    DEC2FLOAT = psycopg2.extensions.new_type(
+        psycopg2.extensions.DECIMAL.values,
+        'DEC2FLOAT',
+        lambda value, curs: float(value) if value is not None else None)
+    psycopg2.extensions.register_type(DEC2FLOAT)
 except ImportError:
     # define fake psycopg class here to avoid test import errors if psycopg is not installed
     class psycopg2(object):
@@ -25,7 +30,8 @@ except ImportError:
         def connect(*args,**kw):
             raise ImportError("Python postgres binding not available. Try 'pip install psycopg2' to install the package.")
             
-            
+
+
 from nive.utils.utils import STACKF
 
 from nive.utils.dataPool2.base import Base, Entry

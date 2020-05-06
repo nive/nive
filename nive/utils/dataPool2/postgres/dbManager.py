@@ -190,8 +190,8 @@ class PostgresManager(DatabaseManager):
 
         elif datatype == "timestamp":
             cval = conf["default"]
-            col = u"DOUBLE PRECISION DEFAULT %s" % (cval)
-            # py3? col = "TIMESTAMP DEFAULT NOW()"
+            col = "NUMERIC(16, 6) DEFAULT %s" % (cval)
+            #col = "TIMESTAMP without time zone DEFAULT %s" % (cval)
 
         elif datatype == "listt":
             col = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
