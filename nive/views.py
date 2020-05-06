@@ -1292,6 +1292,10 @@ class FieldRenderer(object):
                 import markdown2
                 data = markdown2.markdown(data)
 
+        elif fType == "code":
+            import html
+            data = html.escape( data )
+
         elif fType == "date":
             if not isinstance(data, datetime):
                 if not data:

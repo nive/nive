@@ -92,6 +92,7 @@ class IFaceConf(baseConf):
         self.slogan = ""
         self.logo = ""
         self.cache = "no-cache"
+        self.containercls = "container-fluid"
         
         # id: used as url, name: display name, ref: section reference used to highlight active section
         self.sections = [

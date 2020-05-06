@@ -153,13 +153,13 @@ class Parts:
         left column navigation
         """
         tmpl = """
- <li onclick="%(url)s" class="nav-header">%(name)s</li>
+ <div onclick="%(url)s" class="nav-link disabled nav-header">%(name)s</div>
  %(content)s
         """ 
-        html = ["""<ul class="nav nav-list">"""]
+        html = ["""<nav class="nav flex-column">"""]
         for n in self.ifaceConf.navigation:
-            html.append(tmpl % {"url": self.ToUrl(n), "content": getattr(self, n["widget"])(n), "name": n["name"]})
-        html.append("""</ul> """)
+            html.append(tmpl % {"url": self.ToUrl(n), "content": getattr(self, n["widget"])(n), "name": translate(n["name"], self.request)})
+        html.append("""</nav> """)
         return "".join(html)
 
         
@@ -474,13 +474,13 @@ class Parts:
         section with link list
         configuration: links 
         """
-        tmpl = """<li><a href="%(url)s" class="">%(icon)s %(name)s</a></li>"""
+        tmpl = """<a href="%(url)s" class="nav-link">%(icon)s %(name)s</a>"""
         html = []
         for link in conf["links"]:
             icon = link.get("icon", "")
             if icon:
                 icon = """<i class="%s"></i> """ % icon
-            html.append(tmpl % {"url": self.ToUrl(link), "name": link["name"], "icon": icon})
+            html.append(tmpl % {"url": self.ToUrl(link), "name": translate(link["name"], self.request), "icon": icon})
         return "".join(html)
     
 

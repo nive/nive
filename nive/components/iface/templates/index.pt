@@ -52,7 +52,7 @@
 <body>
   <tal:block metal:use-macro="template.topnav"> </tal:block>
 
-  <div class="container-fluid">
+  <div class="${view.ifaceConf.containercls}">
     <div class="row">
       <tal:block metal:define-slot="path">
           <div class="col-sm">
@@ -89,15 +89,14 @@
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
 
-  <div class="container-fluid">
+  <div class="${view.ifaceConf.containercls}">
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-3">
         <div class="pathspacer">&nbsp;</div>
-        <div class="sidebar-nav"
-             tal:content="structure view.navigation()">
-        </div><!--/.well -->
+        <nav class="sidebar-nav nav flex-column" tal:content="structure view.navigation()">
+        </nav><!--/.well -->
       </div><!--/span-->
-      <div class="col-md-10">
+      <div class="col-md-9">
         <tal:block metal:define-slot="title"><h2 tal:condition="view.contentHeader()">${view.contentHeader()}</h2></tal:block>
         <tal:block metal:define-slot="tabs"><tal:block tal:replace="structure view.tabs()"/></tal:block>
         <tal:block metal:define-slot="content"></tal:block>
@@ -129,7 +128,7 @@
 <body>
   <tal:block metal:use-macro="template.topnav"></tal:block>
 
-  <div class="container-fluid">
+  <div class="${view.ifaceConf.containercls}">
     <div class="row">
       <tal:block metal:define-slot="path">
           <div class="col-sm">
@@ -178,6 +177,40 @@
 </html>
 </tal:block>
 
+<!-- main navigation defines the header, free content area -->
+<tal:block metal:define-macro="main_global_nav"><!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title tal:content="structure view.title()"></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta tal:replace="structure view.Assets(types='css')">
+<meta tal:replace="structure view.Assets(types='js')">
+<tal:block metal:define-slot="head"></tal:block>
+<tal:block tal:condition="head|None" tal:replace="structure head"></tal:block>
+<meta tal:condition="view.configuration.get('assetsCustom')" tal:replace="structure view.Assets(assets=view.configuration.get('assetsCustom'))">
+</head>
+<body>
+  <tal:block metal:use-macro="template.topnav"></tal:block>
+
+  <div class="${view.ifaceConf.containercls}">
+    <div class="row">
+      <div class="col-md-3">
+        <nav class="sidebar-nav nav flex-column" tal:content="structure view.navigation()">
+        </nav>
+      </div>
+      <div class="col-md-9">
+        <tal:block metal:define-slot="content"></tal:block>
+      </div>
+    </div>
+  </div>
+
+  <tal:block metal:define-slot="foot"></tal:block>
+  <tal:block tal:condition="foot|None" tal:replace="structure foot"></tal:block>
+  <span tal:replace="structure view.mark2()"></span>
+</body>
+</html>
+</tal:block>
 
 <tal:block metal:define-macro="empty"><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
