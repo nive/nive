@@ -268,8 +268,9 @@ button.go-sm     {
   body { } /*padding-top: 0; */
   .container { padding: 10px; }
   .navbar { box-shadow: none; }
+  .navbar-collapse { border-top: 1px solid white; }
   .navbar-fixed-top .navbar-inner { padding: 0; }
-  .navbar .nav ul.dropdown-menu a { color: #dddddd;}
+  .navbar .nav ul.dropdown-menu a { color: #dddddd; }
   .navbar .nav .active a, .navbar .nav .active a:hover { border-bottom: 1px solid #dddddd; }
   .navbar .btn-navbar, .navbar .btn-navbar:hover {
       cursor:pointer;
@@ -291,7 +292,15 @@ button.go-sm     {
     color: #dddddd;
     border-bottom: none;
   }
-  .navbar .dropdown-menu {  } /*display:block;*/
+  .navbar .dropdown-menu {
+      background-color: transparent;
+      border: none;
+      font-size: 1em;
+      color: white;
+      margin-left: 2em;
+  }
+  .navbar .dropdown-menu a { color:white; }
+  .navbar .dropdown-menu a:hover { background-color:transparent; }
   .row #dashboard { width: 100%; }
 }
 @media (max-width: 767px) {
