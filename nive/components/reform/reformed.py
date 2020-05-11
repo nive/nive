@@ -210,7 +210,7 @@ def time_node(field, kw, kwWidget, form):
     return SchemaNode(Time(), **kw)
 
 def list_node(field, kw, kwWidget, form):
-    if hasattr(form, "view"):
+    if hasattr(form, "view") and form.view is not None:
         user = form.view.User(sessionuser=False)
     else:
         user = None
