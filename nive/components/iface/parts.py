@@ -72,11 +72,9 @@ class Parts:
                 n = self.GetFormValue("sec")
         if self.ifaceConf.sections == "portal":
             self.ifaceConf.sections = self.context.app.portal.sections
-        if context is None:
-            context = self.context.app
         for s in self.ifaceConf.sections[:count]:
             permission = s.get("permission")
-            if permission and not self.Allowed(permission, context):
+            if permission and not self.Allowed(permission, context or self.context):
                 continue
             cls = "normal"
             if n == s["ref"]:
@@ -135,14 +133,12 @@ class Parts:
         user options in head: head_logout, head_search
         """
         html = []
-        if context is None:
-            context = self.context.app
         for u in self.ifaceConf.headoptions:
             if isinstance(u, str):
                 html.append(getattr(self, u)())
             else:
                 permission = u.get("permission")
-                if permission and not self.Allowed(permission, context):
+                if permission and not self.Allowed(permission, context or self.context):
                     continue
                 html.append(self.head_link(u, cls="dropdown-item"))
         return "".join(html)
@@ -230,7 +226,7 @@ class Parts:
         html = ["""<ul class="nav nav-tabs">"""]
         for t in tabs:
             permission = t.get("permission")
-            if permission and not self.Allowed(permission):
+            if permission and not self.Allowed(permission, self.context):
                 continue
             cls = ""
             if active == t["id"]:
@@ -299,7 +295,7 @@ class Parts:
         html = []
         for t in settings:
             permission = t.get("permission")
-            if permission and not self.Allowed(permission):
+            if permission and not self.Allowed(permission, self.context):
                 continue
             cc = cls
             if active == t["id"]:
@@ -612,7 +608,7 @@ class Parts:
         """
         object delete button
         """
-        if not self.Allowed("iface_delete"):
+        if not self.Allowed("iface_delete", self.context):
             return ""
         p = self.FmtURLParam(ids=self.context.id)
         l = """<a href="../delete?%(param)s"><img src="%(static)simages/delete.png" alt="L&ouml;schen" align="top" /> </a>""" % {"param": p, "static": self.static}

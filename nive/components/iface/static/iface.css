@@ -61,7 +61,7 @@ a               { color: #000000; }
 /* iface additions ---------------------------------------------------------- */
 .pointer        { cursor:pointer; }
 .smaller        { font-size: 0.8em; color: #666666;}
-.mark           { display:none; position:absolute; top:50px; right:10px; width:40px; color:lightgray; }
+.mark           { display:none; position:absolute; top:55px; right:10px; width:40px; color:lightgray; font-size: 0.8em; background-color: transparent; }
 .clear          { clear:both; display:block; }
 .log            { font-family: monospace; color: gray; }
 .btn-mini       { font-size: 0.9em; }
