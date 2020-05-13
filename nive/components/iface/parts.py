@@ -80,7 +80,7 @@ class Parts:
             if n == s["ref"]:
                 cls = "active"
             url = self.ToUrl(s)
-            html.append(tmpl % {"url": url, "class": cls, "name": s["name"], "description": s.get("description","")})
+            html.append(tmpl % {"url": url, "class": cls, "name": translate(s["name"]), "description": translate(s.get("description",""))})
         return "".join(html)
     
 
@@ -103,11 +103,11 @@ class Parts:
         if conf.get("icon"):
             return """
 <a href="%(url)s" class="nav-link"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "icon": conf.icon}
+        """ % {"url": self.ToUrl(conf), "name": translate(conf.name), "static": self.static, "icon": conf.icon}
         # no icon configured
         return """
 <a href="%(url)s" class="nav-link">%(name)s</a>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static}
+        """ % {"url": self.ToUrl(conf), "name": translate(conf.name), "static": self.static}
         
 
     def headlinkAnonymous(self):
@@ -120,11 +120,11 @@ class Parts:
         if conf.get("icon"):
             return """
 <a href="%(url)s"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "icon": conf.icon}
+        """ % {"url": self.ToUrl(conf), "name": translate(conf.name), "static": self.static, "icon": conf.icon}
         # no icon configured
         return """
 <a href="%(url)s">%(name)s</a>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static}
+        """ % {"url": self.ToUrl(conf), "name": translate(conf.name), "static": self.static}
 
 
     def headoptions(self, context=None):
@@ -135,7 +135,10 @@ class Parts:
         html = []
         for u in self.ifaceConf.headoptions:
             if isinstance(u, str):
-                html.append(getattr(self, u)())
+                if u=="divider":
+                    html.append("""<div class="dropdown-divider"></div>""")
+                else:
+                    html.append(getattr(self, u)())
             else:
                 permission = u.get("permission")
                 if permission and not self.Allowed(permission, context or self.context):
@@ -184,7 +187,7 @@ class Parts:
             return ""
         html=[]
         if addLink:
-            html.append({"url":self.ToUrl(addLink.get('id')), "title":addLink.get('name'), "class":""})
+            html.append({"url":self.ToUrl(addLink.get('id')), "title":translate(addLink.get('name')), "class":""})
         if not object:
             o = self.context
         else:
@@ -231,7 +234,7 @@ class Parts:
             cls = ""
             if active == t["id"]:
                 cls = "active"
-            html.append(tmpl % {"url": self.ToUrl(t), "name": t["name"], "cls": cls})
+            html.append(tmpl % {"url": self.ToUrl(t), "name": translate(t["name"]), "cls": cls})
         html.append("</ul>")
         return "".join(html)
 
@@ -417,11 +420,11 @@ class Parts:
         if conf.get("icon"):
             return """
 <a href="%(url)s" class="%(cls)s"><img src="%(static)s%(icon)s" title="%(name)s"> %(name)s</a>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "static": self.static, "cls": cls, "icon": conf.icon}
+        """ % {"url": self.ToUrl(conf), "name": translate(conf.name), "static": self.static, "cls": cls, "icon": conf.icon}
         # no icon configured
         return """
 <a href="%(url)s" class="%(cls)s">%(name)s</a>
-        """ % {"url": self.ToUrl(conf), "name": conf.name, "cls": cls, "static": self.static}
+        """ % {"url": self.ToUrl(conf), "name": translate(conf.name), "cls": cls, "static": self.static}
 
     def head_logout(self):
         """

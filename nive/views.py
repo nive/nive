@@ -1294,7 +1294,7 @@ class FieldRenderer(object):
 
         elif fType == "code":
             import html
-            data = html.escape( data )
+            data = html.escape( data, False )
 
         elif fType == "date":
             if not isinstance(data, datetime):
