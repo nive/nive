@@ -129,7 +129,7 @@ class ConversionTest(unittest.TestCase):
         value = date.today()
         self.assertTrue(self.structure.serialize("pool_meta", "pool_create", value)==str(value))
         value = time.time()
-        self.assertTrue(self.structure.serialize("data2", "ftime", value)==str(value))
+        self.assertEqual(self.structure.serialize("data2", "ftime", value), value)
 
     def test_se_list(self):
         self.assertTrue(self.structure.serialize("pool_meta", "pool_wfa", "value")=="value")
