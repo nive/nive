@@ -11,7 +11,7 @@
 <ul class="nav">
   <li tal:repeat="element context.GetAllowedTypes('')"> 
     <a tal:attributes="href 'add?'+view.FmtURLParam(pool_type=element['id'])"
-     ><i class="icon-plus-sign"></i> <span i18n:translate="">${element.name}</span></a>
+     ><i class="glyphicon glyphicon-plus-sign"></i> <span i18n:translate="">${element.name}</span></a>
   </li>
 </ul>
 </div>

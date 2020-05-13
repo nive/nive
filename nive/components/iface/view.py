@@ -39,6 +39,7 @@ configuration = ViewModuleConf(
     ],
     assets = [
         ('bootstrap.min.css', 'nive.components.iface:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
+        ('glyphicon.css', 'nive.components.iface:static/mods/glyphicons/css/glyphicon.css'),   # nive css
         #('adminview.css', 'nive.components.iface:static/adminview.css'),   # nive css
         ('iface.css', 'nive.components.iface:static/iface.css'),
         ('jquery.js', 'nive.components.iface:static/mods/jquery-3.3.1.min.js'),
