@@ -3,7 +3,9 @@
 Update definitions.ViewModuleConf.static:
     Static directory. Single or multiple static directories e.g.
     ({"name":"static1", "path": "module:static", "maxage": 1200})
-
+- added components.iface
+- postgres timestamp fix
+- pyramid predicate fix
 
 1.3.7
 -----
