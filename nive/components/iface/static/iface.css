@@ -175,6 +175,7 @@ button.go-sm     {
 .chosen-container-single .chosen-single span {
     color: #495057;
 }
+#delete_list { overflow:auto; max-height: 300px; }
 
 /* table list (ok) --------------------------------------------------- */
 #tableList tr.listRow { cursor:pointer; }

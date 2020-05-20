@@ -133,6 +133,7 @@ class IFaceView(Parts, Search, BaseView):
     def __init__(self, context, request):
         BaseView.__init__(self, context, request)
         self.ifaceConf = self.configuration.ifaceConf
+        # default static routing for iface assets
         self.static = self.ifaceConf.get("static", "")
         if ":" in self.static:
             self.static = self.StaticUrl(self.static)

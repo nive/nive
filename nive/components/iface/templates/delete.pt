@@ -12,12 +12,12 @@
       <span tal:condition="len(objsToDelete)>1">items?</span>
    </h3>
    <br/>
-   <blockquote>
+   <div id="delete_list">
    <p tal:repeat="obj objsToDelete">
      <span tal:replace="structure obj.GetTitle()" /> (<span tal:content="structure obj.GetTypeName()" />)
      <span tal:condition="obj.IsContainer()" class="deletecontainer">... and all subobjects</span>
    </p>
-   </blockquote>
+   </div>
    <div style="margin-top:10px;">
     <span tal:replace="structure view.FmtFormParam(ids=ids, delete=1)"/>
     <input type="submit" name="continue" value="Yes, delete" class="btn btn-danger" />
