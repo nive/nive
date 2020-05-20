@@ -11,6 +11,7 @@
   method="${field.method}"
   class="${field.css_class}"
   enctype="multipart/form-data"
+  tal:attributes="autofill field.autofill"
   role="form">
 
     <div tal:condition="field.error" class="alert alert-warning">

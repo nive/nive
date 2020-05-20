@@ -93,6 +93,7 @@ class Form(Field):
     anchor = ''
     footer = ''
     uploadProgressBar = ''
+    autofill = None
 
     
     def __init__(self, schema=None, action='', method='POST', buttons=(),
