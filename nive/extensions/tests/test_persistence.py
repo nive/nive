@@ -42,8 +42,8 @@ class tdbPersistence(__local.DefaultTestCase):
         r=dbPersistenceConfiguration.test()
         if not r:
             return
-        print(FormatConfTestFailure(r))
-        self.assertTrue(False, "Configuration Error")
+        self.fail(FormatConfTestFailure(r))
+
         
         
     def test_storedconf(self):

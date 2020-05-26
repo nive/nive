@@ -16,7 +16,7 @@ class TestConf(unittest.TestCase):
         r=reformed.configuration.test()
         if not r:
             return
-        print(FormatConfTestFailure(r))
-        self.assertTrue(False, "Configuration Error")
+        self.fail(FormatConfTestFailure(r))
+
 
 

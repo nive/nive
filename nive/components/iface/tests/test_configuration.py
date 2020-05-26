@@ -14,7 +14,7 @@ class TestConf(unittest.TestCase):
 		r=view.configuration.test()
 		if not r:
 			return
-		print(FormatConfTestFailure(r))
-		self.assert_(False, "Configuration Error")
+		self.fail(FormatConfTestFailure(r))
+
 
 

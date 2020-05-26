@@ -23,8 +23,8 @@ class SendMailTest1(unittest.TestCase):
         r=configuration.test()
         if not r:
             return
-        print(FormatConfTestFailure(r))
-        self.assertTrue(False, "Configuration Error")
+        self.fail(FormatConfTestFailure(r))
+
 
     def test_tool(self):
         sendMail(configuration,None)

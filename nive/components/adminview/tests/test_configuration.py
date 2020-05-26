@@ -17,14 +17,14 @@ class TestConf(unittest.TestCase):
         r=view.configuration.test()
         if not r:
             return
-        print(FormatConfTestFailure(r))
-        self.assertTrue(False, "Configuration Error")
+        self.fail(FormatConfTestFailure(r))
+
 
 
     def test_conf2(self):
         r=view.dbAdminConfiguration.test()
         if not r:
             return
-        print(FormatConfTestFailure(r))
-        self.assertTrue(False, "Configuration Error")
+        self.fail(FormatConfTestFailure(r))
+
 
