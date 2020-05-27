@@ -680,7 +680,7 @@ class IFaceView(Parts, Search, BaseView):
         user = self.User()
         for o in objs:
             # linked as unit/unitlist
-            linked = self.context.search.GetReferences(o.id, types=None, sort="id")
+            linked = self.context.root.search.GetReferences(o.id, types=None, sort="id")
             if linked:
                 result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked. Not deleted.")))
                 ok = False
