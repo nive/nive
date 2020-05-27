@@ -493,10 +493,10 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, us
 
     fld = fieldconf.id
     if fld == "pool_type":
-        values = app.configurationQuery.GetAllObjectConfs()
+        values = app.configurationQuery.GetAllObjectConfs(visibleOnly=True)
 
     elif fld == "pool_category":
-        values = app.configurationQuery.GetAllCategories()
+        values = app.configurationQuery.GetAllCategories(visibleOnly=True)
 
     elif fld == "pool_groups":
         local = fieldconf.settings.get("local")
