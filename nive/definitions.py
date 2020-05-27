@@ -1459,13 +1459,13 @@ ReadonlySystemFlds = ("id", "pool_type", "pool_unitref", "pool_dataref", "pool_d
 
 #v2: Meta layer fields grouped for easier linking. SysFlds and UserFlds are always required.
 SystemFlds=(
-FieldConf(id="id",             datatype="number",    size=8,     default=0,     required=0,   readonly=1, name=_("ID")),
+FieldConf(id="id",             datatype="number",    size=8,     default=0,    required=0,   readonly=1, name=_("ID")),
 FieldConf(id="pool_type",      datatype="list",      size=35,    default="",   required=1,   readonly=1, name=_("Type")),
-FieldConf(id="pool_unitref",   datatype="number",    size=8,     default=0,     required=0,   readonly=1, name=_("Container")),
+FieldConf(id="pool_unitref",   datatype="number",    size=8,     default=0,    required=0,   readonly=1, name=_("Container")),
 FieldConf(id="pool_filename",  datatype="string",    size=255,   default="",   required=0,   readonly=0, name=_("Filename")),
-FieldConf(id="pool_state",     datatype="number",    size=4,     default=1,     required=0,   readonly=0, name=_("State")),
-FieldConf(id="pool_stag",      datatype="number",    size=4,     default=0,     required=0,   readonly=0, name=_("Select Number")),
-FieldConf(id="pool_dataref",   datatype="number",    size=8,     default=0,     required=1,   readonly=1, name=_("Data Table Reference")),
+FieldConf(id="pool_state",     datatype="number",    size=4,     default=1,    required=0,   readonly=0, name=_("State")),
+FieldConf(id="pool_stag",      datatype="number",    size=4,     default=0,    required=0,   readonly=0, name=_("Select Number")),
+FieldConf(id="pool_dataref",   datatype="number",    size=8,     default=0,    required=1,   readonly=1, name=_("Data Table Reference")),
 FieldConf(id="pool_datatbl",   datatype="string",    size=35,    default="",   required=1,   readonly=1, name=_("Data Table Name")),
 )
 # user change/mod
@@ -1478,7 +1478,7 @@ FieldConf(id="pool_changedby", datatype="string",    size=40,    default="",   r
 # utilities
 UtilityFlds=(
 FieldConf(id="title",          datatype="string",    size=255,   default="",   required=0,   readonly=0, name=_("Title"), fulltext=True),
-FieldConf(id="pool_sort",      datatype="number",    size=8,     default=0,     required=0,   readonly=0, name=_("Sort")),
+FieldConf(id="pool_sort",      datatype="number",    size=8,     default=0,    required=0,   readonly=0, name=_("Sort")),
 FieldConf(id="pool_category",  datatype="list",      size=100,   default="",   required=0,   readonly=0, name=_("Category")),
 )
 # workflow
