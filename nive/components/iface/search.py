@@ -358,6 +358,7 @@ class Search:
         list row and field rendering
         """
         wfa_icon = 1
+        type_icon = 0
         xOffset = "4"
         yOffset = "4"
         targetId = "list_ov"
@@ -437,12 +438,11 @@ class Search:
                     else:
                         data = translate(app.configurationQuery.GetObjectConf(t).get("name", t), self.request)
                         cache[ckey] = data
-                    if wfa_icon:
+                    if type_icon:
                         data = """<img src="%simages/types/%s.png" title="%s" />""" % (self.static, t, data)
                     if not select:
-                        data = """<a href="open?%s" class="text">%s</a>""" % (vUrl, data)
-                        rowIsLinked = True
-                        if not wfa_icon:
+                        #data = """<a href="open?%s" class="text">%s</a>""" % (vUrl, data)
+                        if not type_icon:
                             linkCnt = linkCnt + 1
         
                 elif fldid == "pool_wfa":
