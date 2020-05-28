@@ -352,7 +352,7 @@ class ContainerWrite:
         - add (called in context of the container)
         - create (called in context of the new object)
         """
-        if not updateValues:
+        if updateValues is None:
             updateValues = dict()
         app = self.app
         type = obj.GetTypeID()
@@ -380,7 +380,6 @@ class ContainerWrite:
             newobj = self.factory.DbObj(id, dbEntry = newDataEntry, parentObj = self, configuration = typedef)
             newobj.CreateSelf(data, user=user)
             newobj.Signal("duplicate", **kw)
-            
         except Exception as e:
             db = app.db
             if newDataEntry:
