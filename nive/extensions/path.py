@@ -40,10 +40,10 @@ class PathExtension:
         # create url compatible filename from title
         filename = self.EscapeFilename(self.meta.title)
         # make unique filename
+        filename = self.UniqueFilename(filename)
         if self.AddExtension(filename) == self.meta.pool_filename:
             # no change
             return
-        filename = self.UniqueFilename(filename)
         if filename:
             # update
             self.meta["pool_filename"] = self.AddExtension(filename)
