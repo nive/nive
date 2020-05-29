@@ -277,6 +277,7 @@ class TextInputWidget(Widget):
     strip = True
     mask = None
     mask_placeholder = "_"
+    placeholder = ""
     requirements = ( ('jquery.maskedinput', None), )
 
     def serialize(self, field, cstruct):
