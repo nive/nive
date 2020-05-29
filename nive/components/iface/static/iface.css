@@ -127,6 +127,7 @@ form input.password        { display:block; }
 .form .control-group input[type="checkbox"]  { width:auto; margin-bottom: 2px; display:block; }
 .form .input-subset { padding: 0px 10px 5px 10px; margin-bottom: 10px; border: 1px solid lightgray; border-top: none; }
 .form .form-actions { padding-left: 0px; }
+.form .errorMsg { font-weight:bold; }
 
 h2.formheader { margin-left: 170px; margin-bottom:20px; }
 .smallform { margin: 0px; padding: 0px; width:auto; }
