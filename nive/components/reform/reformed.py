@@ -367,7 +367,7 @@ def unitlist_node(field, kw, kwWidget, form):
             if field.settings.get("add_title_id"):
                 values = [(str(a["id"]),"%s (%d)"%(a["name"],a["id"])) for a in values]
             else:
-                values = [(str(a["id"]), a["name"]) for a in v]
+                values = [(str(a["id"]), a["name"]) for a in values]
         else:
             if hasattr(form, "view"):
                 user = form.view.User(sessionuser=False)

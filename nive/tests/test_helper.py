@@ -170,7 +170,8 @@ class ListItemTest_db:
 
 
     def test_listitems(self):
-        self.assertTrue(len(LoadListItems(self.app.configurationQuery.GetFld("pool_type"), app=self.app, obj=None, pool_type=None, force=True))==3)
+        val = LoadListItems(self.app.configurationQuery.GetFld("pool_type"), app=self.app, obj=None, pool_type=None, force=True)
+        self.assertTrue(len(val)==2, val) # one type is hidden
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"groups"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"languages"}), app=self.app))
         self.assertTrue(LoadListItems(FieldConf(id="test",datatype="list",settings={"codelist":"countries"}), app=self.app))

@@ -608,7 +608,7 @@ class Form(Events, ReForm):
         
         returns dict
         """
-        if not obj:
+        if obj is None:
             obj = self.context
         data = {}
         for f in self.GetFields():
