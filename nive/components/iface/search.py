@@ -472,7 +472,11 @@ class Search:
 
                 elif fld.datatype in ("list", "radio"):
                     data = row.get(fldid)
-                    for i in helper.LoadListItems(fld, app=app, obj=obj):
+                    cached = cache.get(fldid)
+                    if cached is None:
+                        cached = helper.LoadListItems(fld, app=app, obj=obj)
+                        cache[fld.id] = cached
+                    for i in cached:
                         if i["id"]==str(data):
                             data = translate(i["name"], self.request)
                             break
@@ -480,13 +484,28 @@ class Search:
                 elif fld.datatype in ("multilist", "checkbox"):
                     data = row.get(fldid)
                     names = []
+                    cached = cache.get(fldid)
+                    if cached is None:
+                        cached = helper.LoadListItems(fld, app=app, obj=obj)
+                        cache[fld.id] = cached
                     for value in data:
-                        for i in helper.LoadListItems(fld, app=app, obj=obj):
+                        for i in cached:
                             if i["id"]==value:
                                 names.append(translate(i["name"], self.request))
                                 break
                     if names:
                         data = ", ".join(names)
+
+                elif fld.datatype in ("unit",):
+                    data = row.get(fldid)
+                    cached = cache.get(fldid)
+                    if cached is None:
+                        cached = helper.LoadListItems(fld, app=app, obj=obj)
+                        cache[fld.id] = cached
+                    for i in cached:
+                        if i["id"]==str(data):
+                            data = i["name"]
+                            break
 
                 else:
                     data = row.get(fldid)

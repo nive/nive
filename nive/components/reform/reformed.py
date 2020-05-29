@@ -295,6 +295,12 @@ def password_node(field, kw, kwWidget, form):
 
 def unit_node(field, kw, kwWidget, form):
     """
+    options
+    - add_title_id
+    - obj_type
+    - name_field
+    - app
+
     field.settings:
     :param obj_type: string or list. object type id.
     :param name_field: string. Codelist name lookup field. default = title.
@@ -316,7 +322,10 @@ def unit_node(field, kw, kwWidget, form):
             if field.settings.get("app"):
                 pool = form.app.portal[field.settings.get("app")]
             values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
-            values = [(str(a["id"]),a["name"]) for a in values]
+            if field.settings.get("add_title_id"):
+                values = [(str(a["id"]),"%s (%d)"%(a["name"],a["id"])) for a in values]
+            else:
+                values = [(str(a["id"]),a["name"]) for a in values]
         else:
             if hasattr(form, "view"):
                 user = form.view.User(sessionuser=False)
@@ -329,6 +338,18 @@ def unit_node(field, kw, kwWidget, form):
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):
+    """
+    options
+    - add_title_id
+    - obj_type
+    - name_field
+    - app
+
+    field.settings:
+    :param obj_type: string or list. object type id.
+    :param name_field: string. Codelist name lookup field. default = title.
+    :param app: string. app id registered in portal.
+    """
     if not "widget" in kw:
         if field.get("listItems") is None:
             ot = field.settings.get("obj_type")
@@ -343,7 +364,10 @@ def unitlist_node(field, kw, kwWidget, form):
             if field.settings.get("app"):
                 pool = form.app.portal[field.settings.get("app")]
             values = pool.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
-            values = [(str(a["id"]),a["name"]) for a in values]
+            if field.settings.get("add_title_id"):
+                values = [(str(a["id"]),"%s (%d)"%(a["name"],a["id"])) for a in values]
+            else:
+                values = [(str(a["id"]), a["name"]) for a in v]
         else:
             if hasattr(form, "view"):
                 user = form.view.User(sessionuser=False)

@@ -459,10 +459,9 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, us
     # load list items from db, application or user database
     if fieldconf.settings:
         # settings dyn list
-        dyn = fieldconf.settings.get("codelist")
-        if not dyn:
-            pass        
-        elif dyn == "users":
+        dyn = fieldconf.settings.get("codelist") or ""
+        obj_type = fieldconf.settings.get("obj_type")
+        if dyn == "users":
             return GetUsers(app)
         elif dyn == "groups":
             portal = app.portal
@@ -490,6 +489,23 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, us
             return LanguageExtension().Codelist()
         elif dyn == "countries":
             return CountryExtension().Codelist()
+
+        elif obj_type:
+            ot = fieldconf.settings.get("obj_type")
+            tf = fieldconf.settings.get("name_field", "title")
+            operators = dict()
+            parameter = dict()
+            if ot:
+                parameter["pool_type"] = ot
+            if isinstance(ot, (list, tuple)):
+                operators["pool_type"] = "IN"
+            if fieldconf.settings.get("app"):
+                app = app.portal[fieldconf.settings.get("app")]
+            values = app.root.search.GetEntriesAsCodeList2(tf, parameter=parameter, operators=operators, sort=tf)
+            if fieldconf.settings.get("add_title_id"):
+                return [dict(id=str(a["id"]),name="%s (%d)"%(a["name"],a["id"])) for a in values]
+            else:
+                return [dict(id=str(a["id"]),name=a["name"]) for a in values]
 
     fld = fieldconf.id
     if fld == "pool_type":
