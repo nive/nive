@@ -6,6 +6,7 @@ Update definitions.ViewModuleConf.static:
 - added components.iface
 - postgres timestamp fix
 - pyramid predicate fix
+- form updates and fixes
 
 1.3.7
 -----
