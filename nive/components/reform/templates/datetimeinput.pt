@@ -11,6 +11,9 @@
         <div class="input-group-append" data-target="#datetimepicker-${field.oid}" data-toggle="datetimepicker">
             <label class="input-group-text" for="#datetimepicker-${field.oid}"> Kalender</label>
         </div>
+        <div class="input-group-append">
+            <label class="input-group-text" i18n:translate="">Time</label>
+        </div>
         <input type="time"
                name="${field.name}-tm"
                value="${cstruct['time']}"
