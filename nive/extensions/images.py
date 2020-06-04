@@ -43,7 +43,8 @@ class ImageExtension:
 
     def Init(self):
         if PILloaded:
-            self.ListenEvent("commit", "ProcessImages")
+            self.ListenEvent("create", "ProcessImages")
+            self.ListenEvent("update", "ProcessImages")
             self.ListenEvent("deleteFile", "CleanupImages")
         elif self.configuration.imageProfiles:
             self.app.log.error("Image Converter: PIL not imported!")
