@@ -190,7 +190,7 @@ class MySQLManager(DatabaseManager):
                 aN = 0
             if isinstance(aN, str):
                 aN = float(aN)
-            aStr = "FLOAT NOT NULL DEFAULT %d" % (aN)
+            aStr = "DECIMAL(16,6) NOT NULL DEFAULT %d" % (aN)
 
         elif datatype == "bool":
             aN = conf["default"]

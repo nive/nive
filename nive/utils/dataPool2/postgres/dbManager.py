@@ -67,7 +67,7 @@ class PostgresManager(DatabaseManager):
 
         string -> VARCHAR(size) NOT NULL DEFAULT default
         number -> INT NOT NULL DEFAULT default
-        float -> FLOAT NOT NULL DEFAULT default
+        float -> NUMERIC(16,6) NOT NULL DEFAULT default
         bool -> SMALLINT(4) NOT NULL DEFAULT default
         percent -> SMALLINT(4) NOT NULL DEFAULT default
         text -> TEXT NOT NULL DEFAULT default
@@ -123,7 +123,7 @@ class PostgresManager(DatabaseManager):
                 cval = 0
             if isinstance(cval, str):
                 cval = float(cval)
-            col = "FLOAT NOT NULL DEFAULT %d" % (cval)
+            col = "NUMERIC(16,6) NOT NULL DEFAULT %d" % (cval)
 
         elif datatype == "bool":
             cval = conf["default"]
