@@ -424,7 +424,7 @@ class IFaceView(Parts, Search, BaseView):
         if not context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
-        form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID))
+        form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID), autofill="off")
         form.subsets = {"create": {"fields": self.GetFldsAdd(context, typeID), "actions": ["default", "create", "cancel"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
@@ -440,7 +440,7 @@ class IFaceView(Parts, Search, BaseView):
         if not context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
-        form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID))
+        form = ObjectForm(view=self, context=context, loadFromType=context.app.configurationQuery.GetObjectConf(typeID), autofill="off")
         form.subsets = {"create": {"fields": self.GetFldsAdd(context, typeID), "actions": ["default", "create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
@@ -537,7 +537,7 @@ class IFaceView(Parts, Search, BaseView):
 
     def Form(self, conf, callback, formkws, tag):
         typeID = conf.get("loadFromType")
-        form = HTMLForm(view=self, loadFromType=self.context.app.configurationQuery.GetObjectConf(typeID))
+        form = HTMLForm(view=self, loadFromType=self.context.app.configurationQuery.GetObjectConf(typeID), autofill="off")
         form.fields = self.GetFlds(conf.fields, self.context, typeID)
         form.actions = [
             Conf(id="default",    method="StartForm",             name="Initialize",   hidden=True),
@@ -610,7 +610,7 @@ class IFaceView(Parts, Search, BaseView):
         if not self.context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
-        form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
+        form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID), autofill="off")
         form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default","create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)
@@ -622,7 +622,7 @@ class IFaceView(Parts, Search, BaseView):
 
     def edit(self):
         self.request.currentTab = "context.edit"
-        form = ObjectForm(loadFromType = self.context.configuration, view=self)
+        form = ObjectForm(loadFromType = self.context.configuration, view=self, autofill="off")
         form.subsets = {"edit": {"fields": self.GetFldsEdit(self.context), "actions": ["edit"], "defaultAction": "defaultEdit"}}
         form.Setup(subset="edit")
         result, data, action = form.Process(redirectSuccess="view_url")
@@ -637,7 +637,7 @@ class IFaceView(Parts, Search, BaseView):
         if not self.context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
 
-        form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID))
+        form = ObjectForm(view=self, loadFromType = self.context.app.configurationQuery.GetObjectConf(typeID), autofill="off")
         form.subsets = {"create": {"fields": self.GetFldsAdd(self.context, typeID), "actions": ["default","create"]}}
         form.use_ajax = False
         form.Setup(subset="create", addTypeField=True)

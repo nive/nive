@@ -50,7 +50,7 @@ class Search:
             for f in searchFlds:
                 tmp.append(f.copy(readonly=False, required=False))
             searchFlds = tmp
-            form = HTMLForm(view=self, user=user)
+            form = HTMLForm(view=self, user=user, autofill="off")
             form.method = searchconf.get("method")
             form.fields = tmp
             form.widget.item_template = "field_onecolumn"
@@ -241,7 +241,7 @@ class Search:
                 if f.datatype=="file":
                     fl.append("<th></th>")
                     continue
-                form2 = HTMLForm(loadFromType=form.loadFromType, view=self)
+                form2 = HTMLForm(loadFromType=form.loadFromType, view=self, autofill="off")
                 form2.actions = []
                 form2.fields = [f]
                 form2.widget.item_template = "field_nolabel"
