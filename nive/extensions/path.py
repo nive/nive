@@ -86,6 +86,12 @@ class PathExtension:
         path = path.decode("utf-8")
         path = re.sub('[^\w\s-]', '', path).strip().lower()
         path = re.sub('[-\s]+', '_', path)
+        # avoid ids as filenames
+        try:
+            int(path)
+            path += "_n"
+        except:
+            pass
 
         # cut long filenames
         cutlen = 20
