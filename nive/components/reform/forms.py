@@ -1540,7 +1540,7 @@ class ToolForm(HTMLForm):
             values, result = self.context.Run(request=self.request, user=self.view.User(), **data)
             if values is None:
                 return True, result
-            return False, self.Render(values, msgs=msgs, errors=errors) + result
+            return False, self.Render(values, msgs=msgs, errors=errors) + result.getvalue()
         return False, self.Render(data, msgs=msgs, errors=errors)
 
 
