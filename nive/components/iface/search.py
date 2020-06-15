@@ -634,6 +634,6 @@ class Search:
         d = {"start": int(self.GetFormValue('start',0) or 0),
              "max": int(self.GetFormValue('max',searchconf.get("max",30))), 
              "sort": self.GetFormValue('sort',searchconf.get("sort",'title')), 
-             "ascending": self.GetFormValue('ascending',searchconf.get('ascending',1))}
+             "ascending": self.GetFormValue('ascending',searchconf.get('ascending',True)) in ("True", "true", "1", 1, True)}
         return d
 
