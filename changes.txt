@@ -1,3 +1,7 @@
+1.3.10
+------
+- fixes: PIL image fp, search order iface, pool_filename asnumbers with _n postfix
+
 1.3.9
 -----
 - iface autofill off by default
