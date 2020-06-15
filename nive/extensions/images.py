@@ -29,6 +29,7 @@ See PIL documentation for possible format and quality values.
  
 """
 import logging
+import io
 
 from nive.utils.path import DvPath
 from nive import File
@@ -161,7 +162,8 @@ class ImageExtension:
             except:
                 pass
             try:
-                iObj = Image.open(source)
+                #iObj = Image.open(source) ? PIL bug closes source if used multiple times
+                iObj = Image.open(io.BytesIO(source.read()))
             except IOError:
                 # no file to be converted
                 return 0
