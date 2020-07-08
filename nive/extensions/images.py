@@ -64,11 +64,11 @@ class ImageExtension:
         for p in self.configuration.imageProfiles:
             if p.source in images:
                 continue
-            if not p.source in keys:
-                continue
-            f = self.files.get(p.source)
-            if f is None:
-                continue
+            #if not p.source in keys:
+            #    continue
+            #f = self.files.get(p.source)
+            #if f is None:
+            #    continue
             images.append(p.source)
         r,m = self.Process(images=images, force=kw.get("force", False))
         return r
