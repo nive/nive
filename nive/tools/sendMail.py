@@ -219,7 +219,7 @@ class sendMail(Tool):
         message.set_charset(charset)
         message.set_payload(kw.get("body"), charset)
         message["Date"] = self._FormatDate()
-        message["Subject"] = Header(kw.get("title"))
+        message["Subject"] = Header(kw.get("title"), charset=charset).encode()
         try:
             del message["Content-Type"]
         except:
@@ -277,7 +277,7 @@ class sendMail(Tool):
         if isinstance(mail, str):
             return mail
         if len(mail) > 1 and mail[1]:
-            return '"%s" <%s>' % ((Header(mail[1], "utf-8")), mail[0])
+            return '"%s" <%s>' % ((Header(mail[1], "utf-8").encode()), mail[0])
         return mail[0]
         
 
