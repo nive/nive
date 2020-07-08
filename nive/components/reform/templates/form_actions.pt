@@ -4,7 +4,6 @@
   <div class="${form.widget.settings.get('column2_css', 'col-md-7')}">
     <tal:block repeat="button buttons">
       <button
-        tal:attributes="disabled button.disabled"
         id="${form.formid+button.name}"
         name="${button.name}"
         type="${button.type}"
