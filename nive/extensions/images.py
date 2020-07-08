@@ -23,6 +23,13 @@ Examples ::
                         quality="80", width=400, height=0, extension="jpg")
     ProfileIcon =  Conf(source="imagefull", dest="icon",  format="JPEG", 
                         quality="70", width=100, height=0, extension="jpg")
+
+Fill ::
+    ProfileImage = Conf(source="imagefull", dest="image", format="JPEG",
+                        quality=80, width=630, height=0, extension="jpg",
+                        fill=(630, 354), bg=(242,242,242))
+
+
     
 If either width or height is 0 the new image is scaled proportionally.
 See PIL documentation for possible format and quality values.
@@ -44,8 +51,8 @@ class ImageExtension:
 
     def Init(self):
         if PILloaded:
-            self.ListenEvent("create", "ProcessImages")
-            self.ListenEvent("update", "ProcessImages")
+            self.ListenEvent("commit", "ProcessImages")
+            #self.ListenEvent("update", "ProcessImages")
             self.ListenEvent("deleteFile", "CleanupImages")
         elif self.configuration.imageProfiles:
             self.app.log.error("Image Converter: PIL not imported!")
@@ -168,32 +175,11 @@ class ImageExtension:
                 # no file to be converted
                 return 0
             iObj = iObj.convert("RGB")
-            
-            # resize
-            size = [profile.width, profile.height]
-            if size[0] != 0 or size[1] != 0:
-                #if size[0] == 0:
-                #    size[0] = size[1]
-                #elif size[1] == 0:
-                #    size[1] = size[0]
-                resize = True
-                x, y = iObj.size
-                if size[0] and x > size[0]:
-                    y = y * size[0] / x
-                    x = size[0]
-                elif size[1] and y > size[1]:
-                    x = x * size[1] / y
-                    y = size[1]
-                else:
-                    # original is smaller
-                    resize = False
-                    if profile.source==profile.dest:
-                        # same image -> skip
-                        return 0
 
-                size = int(x), int(y)
-                if resize:
-                    iObj = iObj.resize(size, Image.ANTIALIAS)
+            if profile.get("fill"):
+                iObj = self._ScaleAndFill(iObj, profile)
+            else:
+                iObj = self._Scale(iObj, profile)
 
             p = DvPath()
             p.SetUniqueTempFileName()
@@ -225,7 +211,98 @@ class ImageExtension:
             if p is not None:
                 p.Delete()
         return 1
-        
+
+
+    def _Scale(self, img, settings):
+        # resize
+        size = [settings.width, settings.height]
+        if size[0] != 0 or size[1] != 0:
+            # if size[0] == 0:
+            #    size[0] = size[1]
+            # elif size[1] == 0:
+            #    size[1] = size[0]
+            resize = True
+            x, y = img.size
+            if size[0] and x > size[0]:
+                y = y * size[0] / x
+                x = size[0]
+            elif size[1] and y > size[1]:
+                x = x * size[1] / y
+                y = size[1]
+            else:
+                # original is smaller
+                resize = False
+                if settings.source == settings.dest:
+                    # same image -> skip
+                    return 0
+
+            size = int(x), int(y)
+            if resize:
+                img = img.resize(size, Image.ANTIALIAS)
+
+        return img
+
+
+    def _ScaleAndFill(self, img, settings):
+        newx = settings.get("width", 0)
+        newy = settings.get("heigth", 0)
+        x, y = img.size
+
+        # enlarge
+        fill = settings.get("fill",None)
+        if fill is None and not settings.get("enlarge", False) and (newx>x or newy>y):
+            return img
+
+        if fill and x<fill[0]:
+            newx = 0
+            newy = fill[1]
+
+        # constraint dimension and fit in box
+        if settings.get("constraint", True) or newx==0 or newy==0:
+            ratio = settings.get("ratio", "").split(":")
+            if newx == 0 and newy != 0:
+                newx = newy / float(y) * x
+                if len(ratio)==2 and newx > newy / float(ratio[1]) * float(ratio[0]):
+                    # too width for box
+                    newx = newy / float(ratio[1]) * float(ratio[0])
+                    newy = newx / float(x) * y
+
+            elif newy == 0 and newx != 0:
+                newy = newx / float(x) * y
+                if len(ratio)==2 and newy > newx / float(ratio[0]) * float(ratio[1]):
+                    # too width for box
+                    newy = newx / float(ratio[0]) * float(ratio[1])
+                    newx = newy / float(y) * x
+
+        # valid?
+        if newx==0 and newy==0:
+            return img
+
+        size = int(newx), int(newy)
+        img = img.resize(size, Image.ANTIALIAS)
+
+        if fill is not None:
+            if x<fill[0]:
+                # fill sides with bgcolor
+                color = settings.get("bg", (242,242,242))
+                newImage = Image.new("RGB", fill, color)
+                newImage.paste(img, (int((fill[0]-newx)/2), 0))
+                img = newImage
+            elif newy>fill[1]:
+                # crop
+                top = int((newy-fill[1])/2)
+                img = self._Crop(img, (0, top, fill[0], fill[1]+top))
+
+        return img
+
+
+    def _Crop(self, img, box):
+        img = img.crop(box=box)
+        img.load()
+        return img
+
+
+
 
 
 
