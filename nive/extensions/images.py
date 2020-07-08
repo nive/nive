@@ -27,7 +27,7 @@ Examples ::
 Fill ::
     ProfileImage = Conf(source="imagefull", dest="image", format="JPEG",
                         quality=80, width=630, height=0, extension="jpg",
-                        fill=(630, 354), bg=(242,242,242))
+                        fill=(630, 354), bg=(242,242,242), crop=True, enlarge=True, constraint=True, ratio="16:9")
 
 
     
@@ -98,7 +98,7 @@ class ImageExtension:
             return im.size
         except:
             return 0,0        
-        
+
 
     def Process(self, images=None, profiles=None, force=False):
         """
@@ -246,14 +246,17 @@ class ImageExtension:
     def _ScaleAndFill(self, img, settings):
         newx = settings.get("width", 0)
         newy = settings.get("heigth", 0)
+        fill = settings.get("fill", None)
+        crop = settings.get("crop", False)
+        enlarge = settings.get("enlarge", True)
         x, y = img.size
 
         # enlarge
-        fill = settings.get("fill",None)
-        if fill is None and not settings.get("enlarge", False) and (newx>x or newy>y):
+        if not enlarge and (newx>x or newy>y):
             return img
 
-        if fill and x<fill[0]:
+        if x<fill[0]:
+            # width smaller dest
             newx = 0
             newy = fill[1]
 
@@ -281,17 +284,16 @@ class ImageExtension:
         size = int(newx), int(newy)
         img = img.resize(size, Image.ANTIALIAS)
 
-        if fill is not None:
-            if x<fill[0]:
-                # fill sides with bgcolor
-                color = settings.get("bg", (242,242,242))
-                newImage = Image.new("RGB", fill, color)
-                newImage.paste(img, (int((fill[0]-newx)/2), 0))
-                img = newImage
-            elif newy>fill[1]:
-                # crop
-                top = int((newy-fill[1])/2)
-                img = self._Crop(img, (0, top, fill[0], fill[1]+top))
+        if newx<fill[0]:
+            # fill sides with bgcolor
+            color = settings.get("bg", (242,242,242))
+            newImage = Image.new("RGB", fill, color)
+            newImage.paste(img, (int((fill[0]-newx)/2), 0))
+            img = newImage
+        elif newy>fill[1] and crop:
+            # crop
+            top = int((newy-fill[1])/2)
+            img = self._Crop(img, (0, top, fill[0], fill[1]+top))
 
         return img
 
