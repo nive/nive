@@ -184,6 +184,7 @@ class sendMail(Tool):
                     del message["To"]
                     message["To"] = self._GetMailStr(recv)
 
+                #log.error(message.as_string(unixfrom=False))
                 info = mailer.sendmail(fromMail, recv[0], message.as_string(unixfrom=False))
                 self.stream.write(recv[0] + " ok, ")
                 log.debug("%s - %s - %s" % (recv[0], title, str(info)))
@@ -225,11 +226,6 @@ class sendMail(Tool):
         except:
             pass
         message["Content-Type"] = contentType
-        try:
-            del message["Content-Transfer-Encoding"]
-        except:
-            pass
-        message["Content-Transfer-Encoding"] = "8bit"
 
         fromName = kw.get("fromName")
         fromMail = kw.get("fromMail")
@@ -265,7 +261,7 @@ class sendMail(Tool):
 
     def _FormatDate(self):
         """Return the current date and time formatted for a message header."""
-        weekdayname = ['Mon', 'Tue', 'Wed', 'Th', 'Fri', 'Sat', 'Sun']
+        weekdayname = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         monthname = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         now = time.time()
         year, month, day, hh, mm, ss, wd, y, z = time.gmtime(now)
