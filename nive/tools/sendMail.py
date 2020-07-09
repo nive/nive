@@ -10,7 +10,6 @@ Receivers are looked up by user ids or roles. Sender name, receiver, title, and 
 mails as list with [(email, name),...] ("name@mail.com","Name")
 """
 
-import types, string
 import time
 import logging
 
