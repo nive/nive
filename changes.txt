@@ -1,3 +1,9 @@
+1.3.12
+------
+- mail transfer encoding fix
+- image converter fix
+- zope.interface version
+
 1.3.11
 ------
 - image converter fix, update
