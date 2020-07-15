@@ -1,4 +1,5 @@
 
+from pyramid.response import Response
 from pyramid.httpexceptions import HTTPNotFound
 
 from nive.definitions import IObjectConf, IConf, Conf
@@ -9,6 +10,7 @@ from nive.views import BaseView
 from nive.components.reform.forms import ObjectForm, HTMLForm
 from nive.security import Allow
 from nive.helper import ResolveName
+from nive.workflow import WorkflowNotAllowed
 
 from .search import Search
 from .parts import Parts
@@ -24,7 +26,7 @@ configuration = ViewModuleConf(
     name = "Pool management interface",
     containment = "nive.components.iface.definitions.IIFaceRoot",
     view = "nive.components.iface.view.IFaceView",
-    static = ({"path":"nive.components.iface:static/","name":"s-iface"},),
+    static = ({"path":"nive.components.iface:static/", "name":"s-iface"},),
     templates = "nive.components.iface:templates/",
     template = "nive.components.iface:templates/index.pt",
     ifaceConf = None,
@@ -82,10 +84,15 @@ configuration.views = [
     # object pages
     ViewConf(name = "edit", attr = "edit",  context = IObject, renderer = t+"edit.pt", permission = "edit"),
     ViewConf(name = "meta", attr = "meta",  context = IObject, renderer = t+"meta.pt"),
-    ViewConf(name = "wf",   attr = "wf",    context = IObject, renderer = t+"wf.pt", permission = "wf"),
     ViewConf(name = "options",attr="options",context =IObject, renderer = t+"options.pt"),
     ViewConf(name = "file", attr = "file",  context = IObject),
     ViewConf(name = "deleteo",attr="delete",context = IObject, renderer = t+"delete.pt", permission = "delete"),
+    ViewConf(name = "@delfile",attr="delfile",context=IObject, permission="delete"),
+
+    ViewConf(name = "wf",  attr = "wf",    context = IObject, renderer = t+"wf.pt", permission="edit"),
+    ViewConf(name = "wfa", attr="action",  context = IObject, renderer = t+"form-workflow.pt", permission="edit"),
+    ViewConf(name = "wfa-i", attr="action", context = IObject, renderer = t+"form-workflow-inline.pt", permission="edit"),
+    ViewConf(name = "wft", attr="transition", context = IObject, permission="edit"),
 
     # container add, delete
     ViewConf(name = "add",      attr = "add",      context = IContainer, renderer = t+"add.pt", permission = "add"),
@@ -128,7 +135,7 @@ class IFaceView(Parts, Search, BaseView):
     - iface_tools 
     """
     
-    action = None
+    actionid = None
     
     def __init__(self, context, request):
         BaseView.__init__(self, context, request)
@@ -523,7 +530,7 @@ class IFaceView(Parts, Search, BaseView):
         """
         get the current action id from view or request
         """
-        return self.action or self.GetFormValue("a")
+        return self.actionid or self.GetFormValue("a")
     
     
     def IFaceCacheHeader(self, response):
@@ -712,6 +719,75 @@ class IFaceView(Parts, Search, BaseView):
         if not ok:
             return result
         self.Redirect(self.ResolveUrl(url, parent), messages=[translator()(_("OK. Deleted."))])
+
+    def delfile(self):
+        self.ResetFlashMessages()
+        file = self.GetFormValue("fid")
+        user = self.User()
+        try:
+            r = self.context.DeleteFile("highres", user)
+            if not r:
+                m = "Es ist leider ein Fehler aufgetreten."
+            else:
+                m = "OK"
+        except Exception as e:
+            m=str(e)
+        r = Response(content_type="text/html", conditional_response=True)
+        r.text = "<span>%(msg)s</span>" % {"name": str(file), "msg":m}
+        return r
+
+
+    def action(self):
+        action = self.GetFormValue("action")
+        url = self.GetFormValue("ref")
+        if not url:
+            url = self.FolderUrl()
+        values = dict()
+        context = self.context
+        user = self.User()
+
+        # interactive transitions mit form auslesen und verarbeiten. nur 1 form pro transition.
+        workflow = context.workflow
+        process = workflow.GetWf()
+        transitions = process.PossibleTransitions(context.meta.pool_wfa, action=action, context=context, user=user)
+        if len(transitions)>=1:
+            t = transitions[0]
+            fncs = t.GetInteractiveFunctions()
+            if fncs:
+                fnc = fncs[0]
+                if hasattr(fnc, "__init__") and fnc.form is None:
+                    form = fnc(self).form
+                else:
+                    form = fnc
+                form.Setup()
+                form.widget.item_template = "field_onecolumn"
+                form.widget.action_template = "form_actions_onecolumn"
+                result, data, formaction = form.Process(renderSuccess=False, redirectCancel=url)
+                if not result or (result and formaction.id != "submit"):
+                    return dict(result=result, head=form.HTMLHead(), content=data, transition=t)
+                values = result
+
+        try:
+            # workflow ausführen. form daten in 'data' wenn verarbeitet.
+            transition = workflow.WfAction(action, user, values=values)
+        except WorkflowNotAllowed:
+            self.Redirect(url, messages=["Bereits ausgeführt"])
+            return
+        self.context.CommitInternal(user)
+        msg = transition.message or "OK"
+        self.Redirect(url, messages=[msg])
+
+    def transition(self):
+        transition = self.GetFormValue("t")
+        url = self.GetFormValue("ref")
+        if not url:
+            url = self.Url()
+        user = self.User()
+        self.context.workflow.WfAction("", user, transition=transition)
+        self.context.CommitInternal(user)
+        msg = "OK"
+        self.Redirect(url, messages=[msg])
+
 
     def wf(self):
         self.request.currentTab = "context.options"
