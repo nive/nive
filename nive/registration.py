@@ -500,7 +500,10 @@ class Registration(object):
                 maxage = None
             if isinstance(viewmod.static, (list,tuple)):
                 for static in viewmod.static:
-                    config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage))
+                    if isinstance(static, dict):
+                        config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage))
+                    else:
+                        config.add_static_view(name=static[0], path=static[1], cache_max_age=viewmod.get("maxage", maxage))
 
             elif isinstance(viewmod.static, dict):
                 config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage))
