@@ -1,0 +1,18 @@
+<tal:block i18n:domain="nive">
+    <select name="${field.name}"
+            id="${field.oid}"
+            tal:attributes="size field.widget.size; multiple field.widget.size and field.widget.size>1"
+            class="chosen-select ${field.widget.css_class} ${'is-invalid' if field.error else ''}"
+            data-placeholder="...">
+        <tal:block tal:condition="not (field.widget.size and field.widget.size>1)">
+        <option tal:repeat="(value, description) field.widget.values"
+                 tal:attributes="selected value == cstruct and 'selected';"
+                        value="${value}">${description}</option>
+        </tal:block>
+        <tal:block tal:condition="field.widget.size and field.widget.size>1">
+        <option tal:repeat="(value, description) field.widget.values"
+                 tal:attributes="selected value in cstruct and 'selected';"
+                        value="${value}">${description}</option>
+        </tal:block>
+    </select>
+</tal:block>

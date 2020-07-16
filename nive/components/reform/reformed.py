@@ -300,11 +300,14 @@ def unit_node(field, kw, kwWidget, form):
     - obj_type
     - name_field
     - app
+    - addempty
+    - readonly_widget
 
     field.settings:
     :param obj_type: string or list. object type id.
     :param name_field: string. Codelist name lookup field. default = title.
     :param app: string. app id registered in portal.
+    :param readonly_widget: bool. Show / hide modal button.
     """
     if not "validator" in kw and field.settings.get("app"):
         kw["validator"] = ExistingObject(obj_type=field.settings.get("obj_type"))
@@ -334,7 +337,12 @@ def unit_node(field, kw, kwWidget, form):
             v = LoadListItems(field, app=form.app, obj=form.context, user=user)
             values = [(str(a["id"]), a["name"]) for a in v]
 
+        if field.settings and field.settings.get("addempty"):
+            # copy the list and add empty entry
+            values.insert(0, ("", ""))
         kw["widget"] = UnitWidget(values=values, **kwWidget)
+        if field.settings.get("readonly_widget"):
+            kw["widget"].template = "unitselect_ro"
     return SchemaNode(Integer(), **kw)
 
 def unitlist_node(field, kw, kwWidget, form):
