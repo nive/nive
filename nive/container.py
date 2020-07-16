@@ -561,7 +561,7 @@ class ContainerWrite:
         """
         subtypes = self.configuration.subtypes
         if not subtypes:
-            return False
+            return ()
         all = self.app.configurationQuery.GetAllObjectConfs(visibleOnly=visible)
         if subtypes == AllTypesAllowed:
             return all
