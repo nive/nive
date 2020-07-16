@@ -1,4 +1,4 @@
-<tal:block metal:use-macro="view.index_tmpl().macros[view.configuration.tmpl_macro or 'main_object']">
+<tal:block metal:use-macro="view.index_tmpl().macros[view.tmpl_macro or 'main_object']">
 <tal:block metal:fill-slot="content">
 
 <span tal:replace="structure view.unitInfo('edit')" />

@@ -114,15 +114,17 @@ class IFaceConf(baseConf):
         ]
         
         self.navigation = [
-            Conf(id="root.view", name="Folder", widget="navigation_tree", baseID=0, sort="title")
+            Conf(id="root.view", name="Folder", widget="navigation_firstlevel", baseID=0, sort="title")
         ]
         
         self.path = True
 
         self.tabs = [
-            Conf(id="context.view",     name="View",     permission= "iface_view", interfaces=[IObject,IRoot]),
+            Conf(id="context.viewlist", name="Content",  permission= "iface_view", interfaces=[IContainer]),
+            Conf(id="context.view",     name="View",     permission= "iface_view", interfaces=[IObject]),
             Conf(id="context.edit",     name="Edit",     permission= "iface_edit", interfaces=[IObject]),
-            Conf(id="context.options",  name="Options",  permission= "iface_view", interfaces=[IObject,IRoot]),
+            Conf(id="context.add",      name="Add",      permission= "iface_add",  interfaces=[IContainer]),
+            Conf(id="context.options",  name="Options",  permission= "iface_view", interfaces=[IObject]),
             Conf(id="context.meta",     name="System",   permission= "iface_view", interfaces=[IObject])
         ]
         
@@ -166,7 +168,8 @@ class IFaceConf(baseConf):
         )
             
         self.defaultviews= [
-            Conf(id="edit", permission="iface_view", interfaces=[IObject]),
+            Conf(id="viewlist", permission="iface_view", interfaces=[IContainer]),
+            Conf(id="view", permission="iface_view", interfaces=[IObject]),
             Conf(id="base", permission="iface_view", interfaces=[IRoot])
         ]
 

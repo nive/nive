@@ -26,7 +26,7 @@ configuration = ViewModuleConf(
     name = "Pool management interface",
     containment = "nive.components.iface.definitions.IIFaceRoot",
     view = "nive.components.iface.view.IFaceView",
-    static = ({"path":"nive.components.iface:static/", "name":"s-iface"},),
+    static = (("s-iface","nive.components.iface:static/"),),
     templates = "nive.components.iface:templates/",
     template = "nive.components.iface:templates/index.pt",
     ifaceConf = None,
@@ -58,47 +58,46 @@ t = configuration.templates
 
 configuration.views = [
     # Root views --------------------------------------------------------------------------------------
-    ViewConf(name = "",       attr = "default", context = IRoot),
-    #ViewConf(name = "view",   attr = "view",    context = IRoot, renderer = t+"list.pt"),
-    #ViewConf(name = "add",    attr = "add",     context = IRoot, renderer = t+"add.pt", permission = "add"),
-    #ViewConf(name = "delete", attr = "delete",  context = IRoot, renderer = t+"delete.pt", permission = "delete"),
-    ViewConf(name = "options",attr = "options", context = IRoot,    renderer = t+"options.pt"),
-    ViewConf(name = "base",   attr = "base",    context = IRoot,    renderer = t+"base.pt"),
-    ViewConf(name = "open",   attr = "open",    context = IRoot),
-    ViewConf(name = "tool",   attr = "tool",    context = IRoot,    renderer = t+"tool.pt"),
-    ViewConf(name = "tmpl",   attr = "search",  context = IRoot,    renderer = t+"search.pt"),
-    ViewConf(name="settings", attr = "settings",context = IRoot,    renderer = t+"settings.pt"),
+    ViewConf(name="", attr="default", context=IRoot),
+    ViewConf(name="base", attr="base", context=IRoot, renderer=t + "base.pt"),
+    ViewConf(name="open", attr="open", context=IRoot),
+    ViewConf(name="search", attr="viewsearch", context=IRoot, renderer=t + "search.pt"),
+    ViewConf(name="settings", attr="settings", context=IRoot, renderer=t + "settings.pt"),
+    # ViewConf(name = "options",attr = "options", context = IRoot,    renderer = t+"options.pt"),
+    ViewConf(name="tool", attr="tool", context=IRoot, renderer=t + "tool.pt"),
 
     # Object views -----------------------------------------------------------------------------------
     # view
-    ViewConf(name = "", attr = "default",  context = IObject),
+    ViewConf(name="", attr="default", context=IObject),
     # container object view
-    #ViewConf(name = "",     attr = "view",  context = IContainer, renderer = t+"list.pt"),
-    ViewConf(name = "view", attr = "view",  context = IContainer, renderer = t+"list.pt"),
-    ViewConf(name = "open", attr = "open",  context = IContainer),
+    # ViewConf(name = "",     attr = "view",  context = IContainer, renderer = t+"list.pt"),
+    ViewConf(name="viewlist", attr="viewlist", context=IContainer, renderer=t + "list.pt"),
+    ViewConf(name="open", attr="open", context=IContainer),
     # non container object view
-    #ViewConf(name = "",     attr = "view",  context = INonContainer, renderer = t+"view.pt"),
-    ViewConf(name = "view", attr = "view",  context = INonContainer, renderer = t+"view.pt"),
-    ViewConf(name = "open", attr = "open",  context = INonContainer),
-    
-    # object pages
-    ViewConf(name = "edit", attr = "edit",  context = IObject, renderer = t+"edit.pt", permission = "edit"),
-    ViewConf(name = "meta", attr = "meta",  context = IObject, renderer = t+"meta.pt"),
-    ViewConf(name = "options",attr="options",context =IObject, renderer = t+"options.pt"),
-    ViewConf(name = "file", attr = "file",  context = IObject),
-    ViewConf(name = "deleteo",attr="delete",context = IObject, renderer = t+"delete.pt", permission = "delete"),
-    ViewConf(name = "@delfile",attr="delfile",context=IObject, permission="delete"),
+    # ViewConf(name = "",     attr = "view",  context = INonContainer, renderer = t+"view.pt"),
+    ViewConf(name="view", attr="view", context=INonContainer, renderer=t + "view.pt"),
+    ViewConf(name="open", attr="open", context=INonContainer),
 
-    ViewConf(name = "wf",  attr = "wf",    context = IObject, renderer = t+"wf.pt", permission="edit"),
-    ViewConf(name = "wfa", attr="action",  context = IObject, renderer = t+"form-workflow.pt", permission="edit"),
-    ViewConf(name = "wfa-i", attr="action", context = IObject, renderer = t+"form-workflow-inline.pt", permission="edit"),
-    ViewConf(name = "wft", attr="transition", context = IObject, permission="edit"),
+    # object pages
+    ViewConf(name="edit", attr="edit", context=IObject, renderer=t + "edit.pt", permission="edit"),
+    ViewConf(name="meta", attr="meta", context=IObject, renderer=t + "meta.pt"),
+    ViewConf(name="options", attr="options", context=IObject, renderer=t + "options.pt"),
+    ViewConf(name="file", attr="file", context=IObject),
+    ViewConf(name="deleteo", attr="delete", context=IObject, renderer=t + "delete.pt", permission="delete"),
+    ViewConf(name="@delfile", attr="delfile", context=IObject, permission="delete"),
+
+    ViewConf(name="wf", attr="wf", context=IObject, renderer=t + "wf.pt", permission="edit"),
+    ViewConf(name="wfa", attr="action", context=IObject, renderer=t + "form-workflow.pt", permission="edit"),
+    ViewConf(name="wfa-i", attr="action", context=IObject, renderer=t + "form-workflow-inline.pt", permission="edit"),
+    ViewConf(name="wft", attr="transition", context=IObject, permission="edit"),
 
     # container add, delete
-    ViewConf(name = "add",      attr = "add",      context = IContainer, renderer = t+"add.pt", permission = "add"),
-    ViewConf(name = "deletec",  attr="deletelist", context = IContainer, renderer = t+"delete.pt", permission = "delete"),
-    ViewConf(name = "duplicate",attr="duplicate",  context = IObject,    permission = "add"),
-    ViewConf(name = "tool",     attr = "tool",     context = IObject,    renderer = t+"tool.pt", permission = "tools"),
+    ViewConf(name="add", attr="add", context=IContainer, renderer=t + "add.pt", permission="add"),
+    ViewConf(name="deletec", attr="deletelist", context=IContainer, renderer=t + "delete.pt", permission="delete"),
+    ViewConf(name="duplicate", attr="duplicate", context=IObject, permission="add"),
+    ViewConf(name="tool", attr="tool", context=IObject, renderer=t + "tool.pt", permission="tools"),
+
+    ViewConf(name="profile", attr="profile", context=IRoot, renderer=t + "profile.pt", permission="iface"),
 ]
 
 
@@ -147,14 +146,6 @@ class IFaceView(Parts, Search, BaseView):
 
     # Get conf values -------------------------------------------------------------------
 
-    def GetAddType(self):
-        """
-        returns the default type if only one is configured
-        """
-        addtype = list(self.ifaceConf.addflds.keys())[0]
-        return addtype
-    
-        
     def GetFlds(self, flds, container, addtype):
         flds = self._ResolveFlds(flds, object=None, addtype=addtype, addHidden=1, addReadonly=0)
         return self._LoadFldsConf(flds, container, addtype)
@@ -162,14 +153,17 @@ class IFaceView(Parts, Search, BaseView):
 
     def GetFldsAdd(self, container, addtype):
         flds = []
+        typedef = self.context.app.configurationQuery.GetObjectConf(addtype)
         if addtype in self.ifaceConf.addflds:
             flds = self.ifaceConf.addflds[addtype]["fields"]
         else:
-            typedef = self.context.app.configurationQuery.GetObjectConf(addtype)
             conf = self._GetFirstByInterfaces(typedef, self.ifaceConf.addflds)
-            if not conf:
-                return flds
-            flds = conf["fields"]
+            if conf:
+                flds = conf["fields"]
+        if not flds:
+            # use type configuration
+            if typedef.get("forms") and typedef.forms.get("create"):
+                flds = typedef.forms["create"].get("fields", [])
         flds = self._ResolveFlds(flds, object=None, addtype=addtype, addHidden=1, addReadonly=0)
         return self._LoadFldsConf(flds, container, addtype)
     
@@ -180,9 +174,13 @@ class IFaceView(Parts, Search, BaseView):
             flds = self.ifaceConf.editflds[object.GetTypeID()]["fields"]
         else:
             conf = self._GetFirstByInterfaces(object, self.ifaceConf.editflds)
-            if not conf:
-                return flds
-            flds = conf["fields"]
+            if conf:
+                flds = conf["fields"]
+        if not flds:
+            # use type configuration
+            conf = object.configuration
+            if conf.get("forms") and conf.forms.get("edit"):
+                flds = conf.forms["edit"].get("fields", [])
         flds = self._ResolveFlds(flds, object=object, addtype=None, addHidden=1, addReadonly=0)
         return self._LoadFldsConf(flds, object)
     
@@ -572,6 +570,7 @@ class IFaceView(Parts, Search, BaseView):
         return {}
 
     def base(self):
+        self.request.currentSection = "base"
         return {}
 
 
@@ -604,13 +603,30 @@ class IFaceView(Parts, Search, BaseView):
         self.request.currentTab = "context.view"
         return {"pageinfo": "view", "msgs": []}
 
+    def viewlist(self):
+        self.request.currentTab = "context.viewlist"
+        searchid = self.context.configuration.id
+        if not searchid or not str(searchid) in self.ifaceConf.searchconf:
+            if IRoot.providedBy(self.context):
+                searchid = "root"
+                if not str(searchid) in self.ifaceConf.searchconf:
+                    searchid = None
+            else:
+                searchid = None
+        return {"pageinfo": "view", "msgs": [], "searchconf": searchid or "default"}
+
+    def viewsearch(self):
+        self.request.currentTab = "context.search"
+        self.request.currentSection = "search"
+        return dict(pageinfo="search", msgs=[], searchconf="search")
+
     def options(self):
         self.request.currentTab = "context.options"
         return {"pageinfo": "options"}
 
     def add(self):
         self.request.currentTab = "context.add"
-        typeID = self.GetAddType() or self.GetFormValue("pool_type")
+        typeID = self.GetFormValue("pool_type")
         if not typeID:
             return {"content": self.selectType(), "result": True}
             #raise ValueError, "No type id found"
@@ -630,14 +646,14 @@ class IFaceView(Parts, Search, BaseView):
     def edit(self):
         self.request.currentTab = "context.edit"
         form = ObjectForm(loadFromType = self.context.configuration, view=self, autofill="off")
-        form.subsets = {"edit": {"fields": self.GetFldsEdit(self.context), "actions": ["edit"], "defaultAction": "defaultEdit"}}
+        form.subsets = {"edit": {"fielsd": self.GetFldsEdit(self.context), "actions": ["edit"], "defaultAction": "defaultEdit"}}
         form.Setup(subset="edit")
         result, data, action = form.Process(redirectSuccess="view_url")
         return {"content": data, "result": result, "foot": form.HTMLHead(), "pageinfo": "edit"}
 
     def form(self):
         self.request.currentTab = "context.options"
-        typeID = self.GetAddType()
+        typeID = self.GetFormValue("pool_type")
         if not typeID:
             return {"content": self.selectType(), "result": True}
             #raise ValueError, "No type id found"
@@ -797,15 +813,25 @@ class IFaceView(Parts, Search, BaseView):
         self.request.currentTab = "context.options"
         return {"pageinfo": "tool"}
     
+    def profile(self):
+        from nive_userdb.userview.view import UserForm
+        from nive.security import IAdminUser
 
+        user = self.User(sessionuser=False)
+        if IAdminUser.providedBy(user):
+            return dict(content="Singned in as System Admin", result=False, title="Profile")
 
-    # merged as one class for easier subclassing
-    # class ContainerIFace(Search, ObjectIFace):
-    
+        userdb = self.context.app.portal.userdb
+        typeconf=userdb.configurationQuery.GetObjectConf("user")
+        form = UserForm(view=self, context=user, loadFromType=typeconf)
+        form.Setup(subset="edit")
+        result, data, action = form.Process(renderSuccess=True)
+        return dict(content=data, result=result, title="Profile")
+
     def selectType(self):
         user = self.User()
         lt = self.context.GetAllowedTypes(user)
-        tmpl = """<a href="add.html?pool_type=%s" class="addlink">%s</a> """
+        tmpl = """<p><a href="add?pool_type=%s" class="btn btn-primary add">%s</a></p>"""
         html = ""
         for t in lt:
             html += tmpl % (t["id"], t["name"])

@@ -1,15 +1,11 @@
-<tal:block metal:use-macro="view.index_tmpl().macros['main_global']">
+<tal:block metal:use-macro="view.index_tmpl().macros['main_global']"  i18n:domain="nive">
 <tal:block metal:fill-slot="content">
 
- <div class="mainBoxContent">
-  <span tal:replace="structure view.search()" />
- </div>
- <div class="mainBoxNav">
-  <div class="blockNav">
-   <div class="treeSection">Suche</div>
-   <div class="tree">Dateinamen</div>
-  </div>
- </div>
+<div class="row">
+<div class="col-lg-10 offset-lg-1">
+  <span tal:replace="structure view.search(searchconf)" />
+</div>
+</div>
 
 </tal:block>
 </tal:block>

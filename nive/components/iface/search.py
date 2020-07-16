@@ -436,7 +436,10 @@ class Search:
                     if ckey in cache:
                         data = cache[ckey]
                     else:
-                        data = translate(app.configurationQuery.GetObjectConf(t).get("name", t), self.request)
+                        try:
+                            data = translate(app.configurationQuery.GetObjectConf(t).get("name", t), self.request)
+                        except AttributeError:
+                            data = t + " ???"
                         cache[ckey] = data
                     if type_icon:
                         data = """<img src="%simages/types/%s.png" title="%s" />""" % (self.static, t, data)

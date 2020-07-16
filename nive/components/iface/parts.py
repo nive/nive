@@ -52,6 +52,9 @@ class Parts:
             return "%s - %s" % (self.ifaceConf.name, t)
         return self.ifaceConf.name
 
+    @property
+    def tmpl_macro(self):
+        return self.ifaceConf.tmpl_macro
 
     def sections(self, count=100, context=None):
         """
@@ -455,9 +458,8 @@ class Parts:
         javascript tree view for content structure.
         configuration: baseID, rootTitle, sort 
         """
-        baseID = conf.get("baseID", 0)
         sort = conf.get("sort", "title")
-        items = self.context.root.search.GetObjsList(parameter = {"pool_unitref":baseID}, sort=sort)
+        items = self.context.GetObjsList(parameter = {}, sort=sort)
         if conf.get("icon"):
             tmpl = """<li class=""><a href="open?id=%(id)d"><i class='""" + conf.get("icon") + """'></i> %(title)s</a></li>"""
         else:
@@ -490,12 +492,12 @@ class Parts:
         tmpl = """<li><a href="%(url)sview" class="level%(level)s">%(name)s</a></li>"""
         html = []
         object = self.context
-        objs = object.GetParents()
+        objs = list(object.GetParents())
         objs.reverse()
         objs += [self.context]
         l = 0
         for p in objs:
-            html.append(html + tmpl % {"url":self.FolderUrl(p), "level": str(l), "name":p.GetTitle()})
+            html.append(tmpl % {"url":self.FolderUrl(p), "level": str(l), "name":p.GetTitle()})
             l+=1
         return "".join(html)
     
