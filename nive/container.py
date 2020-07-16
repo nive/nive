@@ -566,6 +566,7 @@ class ContainerWrite:
         if subtypes == AllTypesAllowed:
             return all
 
+        #allids = [c.id for c in all]
         # check types by interface
         allowed = []
         for conf in all:
@@ -576,11 +577,15 @@ class ContainerWrite:
             # loop subtypes
             for iface in subtypes:
                 if isinstance(iface, str):
+                    if conf.id==iface:
+                        # type id
+                        allowed.append(conf)
+                        continue
                     iface = ResolveName(iface, raiseExcp=False)
                     if not iface:
                         continue
                 try:
-                # may not be interface class
+                    # may not be interface class
                     if iface.providedBy(type):
                         allowed.append(conf)
                 except:
