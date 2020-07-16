@@ -493,7 +493,7 @@ class AppConf(baseConf):
         # extensions
         self.extensions = None
         self.meta = []
-        self.listDefault = []
+        self.listDefault = ["id", "title", "pool_type"," pool_filename", "pool_unitref"]
         self.modules = []
         self.categories = []
         self.translations = None
