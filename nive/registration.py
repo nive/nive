@@ -124,7 +124,7 @@ class AppConfigurationQuery(object):
         """
         if typeID is not None:
             f = self.GetObjectFld(fldID, typeID)
-            if f:
+            if f is not None:
                 return f
         return self.GetMetaFld(fldID)
 
