@@ -146,7 +146,7 @@ class IFaceConf(baseConf):
         self.addflds =  Conf(default=Conf(fields=["title", AllTypeDataFlds], interfaces=[IObject]))
         self.editflds = Conf(default=Conf(fields=["title", AllTypeDataFlds], interfaces=[IObject]))
         self.metaflds = Conf(default=Conf(fields=["title", AllTypeMetaFlds], interfaces=[IObject]))
-        self.dataflds = Conf(default=Conf(fields=["title", AllTypeDataFlds], interfaces=[IObject]))
+        self.dataflds = Conf(default=Conf(fields=["title", AllTypeDataFlds], interfaces=[IObject,IContainer]))
         
         # search and list defaults. can be replaced on type base.
         self.searchconf = Conf(default = 
