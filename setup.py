@@ -14,6 +14,10 @@ except:
     CHANGES = ''
 
 requires = [
+    'Chameleon==3.6.2', # form error in 3.8.1
+    'nive',
+    'nive_userdb',
+    'nive_datastore',
     'zope.interface',
     'pyramid>=1.10.1',
     'pyramid_chameleon',
