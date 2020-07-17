@@ -59,7 +59,6 @@ class Tool(object):
         self.__acl__ = []
 
         self.id = ""
-        self.mimetype = "text/html"
         self._LoadConfiguration()
 
 
@@ -80,7 +79,7 @@ class Tool(object):
                 self.__acl__ = c.acl
                 continue
             # map value
-            setattr(self, k, c[k])
+            #setattr(self, k, c[k])
             
     @property
     def app(self):
@@ -224,12 +223,12 @@ class ToolView(BaseView):
                 data = data.getvalue()
             except:
                 data = str(data)
-        if result and action.id == "run" and self.context.mimetype != "text/html":
+        if result and action.id == "run" and self.context.configuration.mimetype != "text/html":
             fn = None
             if hasattr(self.context, "filename"):
                 fn = self.context.filename
-            return self.SendResponse(data, mime=self.context.mimetype, raiseException=True, filename=fn)
-        return self.SendResponse(form.HTMLHead() + data, mime=self.context.mimetype, raiseException=False) 
+            return self.SendResponse(data, mime=self.context.configuration.mimetype, raiseException=True, filename=fn)
+        return self.SendResponse(form.HTMLHead() + data, raiseException=False)
     
     
     def run(self):
@@ -254,6 +253,6 @@ class ToolView(BaseView):
         fn = None
         if hasattr(self.context, "filename"):
             fn = self.context.filename
-        return self.SendResponse(data, mime=self.context.mimetype, raiseException=False, filename=fn)
+        return self.SendResponse(data, mime=self.context.configuration.mimetype, raiseException=False, filename=fn)
     
            

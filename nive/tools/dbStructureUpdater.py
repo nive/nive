@@ -67,17 +67,17 @@ By default this tool will only create new tables and columns and never delete an
             connection = app.NewConnection()
             if not connection:
                 self.stream.write(localizer.translate(_("""<div class="alert alert-error">No database connection configured</div>""")))
-                return None, 0
+                return self.stream, 0
         except OperationalError as e:
             self.stream.write(localizer.translate(_("""<div class="alert alert-error">No database connection configured</div>""")))
-            return None, 0
+            return self.stream, 0
 
         db = connection.GetDBManager()
         self.stream.write(localizer.translate(_("<h4>Database '${name}' ${host} </h4><br>", mapping={"host":conf.host, "name":conf.dbName})))
 
         if not db:
             self.stream.write(localizer.translate(_("<div class='alert alert-error'>Database connection error (${name})</div>", mapping={"name": app.dbConfiguration.context})))
-            return None, 0
+            return self.stream, 0
         
         # check database exists
         if not db.IsDatabase(conf.get("dbName")):
@@ -174,7 +174,7 @@ By default this tool will only create new tables and columns and never delete an
                 localizer.translate(_("Changes on existing columns have to be applied manually. This will write selected 'Configuration settings' to the database.<br> <b>Warning: This may destroy something!</b>"))))
         self.stream.write(localizer.translate("</form>"))
         connection.close()
-        return None, result
+        return self.stream, result
 
     
     def printStructure(self, structure, table, fmt, db, localizer):

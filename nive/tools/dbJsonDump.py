@@ -17,16 +17,17 @@ configuration = ToolConf(
     name = _("Database json dump"),
     description = _("This function dumps table contents the way records are stored in json format."),
     apply = (IApplication,),
-    mimetype = "text/json",
+    mimetype = "application/json",
     data = [
         FieldConf(id="excludeSystem", 
                   datatype="checkbox",
                   default=[], 
                   listItems=[{"id":"pool_sys", "name":"pool_sys"},{"id":"pool_fulltext","name":"pool_fulltext"}], 
-                  name=_("Exclude system columns"))
+                  name=_("Exclude system columns")),
+        FieldConf(id="tag", datatype="string", default="dbJsonDump", hidden=1)
     ],
     views = [
-        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
+        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.dbJsonDump.dbJsonDump")
     ]
 )
 
@@ -49,11 +50,11 @@ class dbJsonDump(Tool):
 
         if not conn:
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return None, 0
+            return self.stream, 0
         
         if not conn.IsConnected():
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return None, 0
+            return self.stream, 0
         
         def mapfields(fields):
             a=[]
@@ -91,5 +92,5 @@ class dbJsonDump(Tool):
         
         self.stream.write(JsonDataEncoder().encode(data))        
         
-        return None, 1
+        return self.stream, 1
 

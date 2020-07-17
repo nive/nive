@@ -2,8 +2,8 @@
 # Released under GPL3. See license.txt
 #
 
-from nive.tool import Tool
-from nive.definitions import ToolConf, IApplication
+from nive.tool import Tool, ToolView
+from nive.definitions import ToolConf, FieldConf, ViewConf, IApplication
 from nive.i18n import _
 
 configuration = ToolConf(
@@ -12,9 +12,23 @@ configuration = ToolConf(
     name = _("Object dump"),
     description = _("This function dumps a list of all objects found in memory."),
     apply = (IApplication,),
-    data = [],
-    mimetype = "text/html"
+    mimetype = "text/html",
+    data = [
+        FieldConf(id="tag", datatype="string", default="gcdump", hidden=1)
+    ],
+    views = [
+        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.gcdump.gcdump"),
+    ]
 )
+
+
+class gcdump(Tool):
+    """
+    """
+
+    def _Run(self, **values):
+        self.InitStream()
+        return DumpObjects(self.stream), 1
 
 
 import gc
@@ -95,13 +109,3 @@ def DumpObjects(stream):
 
 
 
-
-class gcdump(Tool):
-    """
-    """
-
-    def _Run(self, **values):
-        
-        self.InitStream()
-        return DumpObjects(self.stream)
-        

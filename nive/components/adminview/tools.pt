@@ -4,13 +4,13 @@
     <tal:block metal:fill-slot="editmain">
 
         <div class="row"><div class="col-sm">
-            <tal:block tal:condition="tool">
-                <h3>${tool.name}</h3>
-                <div class="alert alert-info" tal:content="structure tool.description"></div>
+            <tal:block tal:condition="tool is not None">
+                <h3>${tool.configuration.name}</h3>
+                <div class="alert alert-info" tal:content="structure tool.configuration.description"></div>
                 <span tal:replace="structure content"/>
             </tal:block>
 
-            <tal:block tal:condition="not tool">
+            <tal:block tal:condition="tool is None">
                 <div class="alert alert-info" i18n:translate="">This page lists all administration tools
                     like database export or database schema manager. </div>
                 <tal:block tal:repeat="tool tools">

@@ -1538,9 +1538,13 @@ class ToolForm(HTMLForm):
         validated,data,errors = self.Validate(self.request)
         if validated:
             values, result = self.context.Run(request=self.request, user=self.view.User(), **data)
-            if values is None:
-                return True, result
-            return False, self.Render(values, msgs=msgs, errors=errors) + values.getvalue()
+            if result:
+                return result, values
+            try:
+                msg = values.getvalue() if values is not None else ''
+            except:
+                msg = str(values) if values is not None else ''
+            return False, self.Render(values, msgs=msgs, errors=errors) + msg
         return False, self.Render(data, msgs=msgs, errors=errors)
 
 

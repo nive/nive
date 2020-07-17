@@ -17,7 +17,7 @@ configuration = ToolConf(
     name = _("Json data export"),
     description = _("This function exports all objects in json format. Optionally as flat list or tree structure. This is not a simple database table dump. Object events will be triggered before exporting data."),
     apply = (IApplication,),
-    mimetype = "text/json",
+    mimetype = "application/json",
     data = [
         FieldConf(id="tree", 
                   datatype="bool", 
@@ -32,10 +32,11 @@ configuration = ToolConf(
                              {"id":"path", "name":"Only file information and local paths (No file data)"},
                              {"id":"data", "name":"Include all file data"},], 
                   name=_("File data"),
-                  description=_("Include binary file data in json export (encoded as base64)"))
+                  description=_("Include binary file data in json export (encoded as base64)")),
+        FieldConf(id="tag", datatype="string", default="exportJson", hidden=1)
     ],
     views = [
-        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.exportJson.exportJson"),
+        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.exportJson.exportJson"),
     ]
 )
 
@@ -59,11 +60,11 @@ class exportJson(Tool):
 
         if not conn:
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return None, 0
+            return self.stream, 0
         
         if not conn.IsConnected():
             self.stream.write(_("Database connection error (${name})\n", mapping={"name": app.dbConfiguration.context}))
-            return None, 0
+            return self.stream, 0
         
         def mapfields(fields):
             return [f.id for f in fields]
@@ -110,5 +111,5 @@ class exportJson(Tool):
             
         self.stream.write(ConfEncoder().encode(data))
         
-        return None, 1
+        return self.stream, 1
 

@@ -7,7 +7,7 @@ from pyramid.threadlocal import get_current_request
 
 from nive.tool import Tool, ToolView
 from nive.helper import FakeLocalizer
-from nive.definitions import ToolConf, IApplication
+from nive.definitions import ToolConf, FieldConf, IApplication
 from nive.definitions import ViewConf
 from nive.i18n import _
 
@@ -20,9 +20,11 @@ configuration = ToolConf(
     description = _("This function provides a short summary of elements and data contained in the website."),
     apply = (IApplication,),
     mimetype = "text/html",
-    data = [],
+    data = [
+        FieldConf(id="tag", datatype="string", default="cmsstatistics", hidden=1)
+    ],
     views = [
-        ViewConf(name="", view=ToolView, attr="run", permission="system", context="nive.tools.cmsstatistics.cmsstatistics")
+        ViewConf(name="", view=ToolView, attr="form", permission="system", context="nive.tools.cmsstatistics.cmsstatistics")
     ]
 )
 
@@ -70,5 +72,5 @@ class cmsstatistics(Tool):
         self.stream.write("</table>\n")
 
         c.close()
-        return None, 1
+        return self.stream, 1
 
