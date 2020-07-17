@@ -260,7 +260,7 @@ class RewriteFilenamesTool(Tool):
         recs = root.search.Search(parameter, fields, max=10000, operators=operators, sort="id", ascending=0)
 
         if len(recs["items"]) == 0:
-            return values, "<h2>None found!</h2>"
+            return "<h2>None found!</h2>", False
 
         user = values["original"]["user"]
         testrun = values["testrun"]
@@ -281,5 +281,5 @@ class RewriteFilenamesTool(Tool):
 
             cnt += 1
 
-        return None, "OK. %d filenames updated, %d different!<br>%s" % (cnt, len(result), "<br>".join(result))
+        return "OK. %d filenames updated, %d different!<br>%s" % (cnt, len(result), "<br>".join(result)), True
 

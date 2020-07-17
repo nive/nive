@@ -348,7 +348,7 @@ class ProcessImagesTool(Tool):
         recs = root.search.Search(parameter, fields, max=1000000, operators=operators, sort="id")
 
         if len(recs["items"]) == 0:
-            return values, "<h2>None found!</h2>"
+            return values, False
 
         user = values["original"]["user"]
         testrun = values["testrun"]
@@ -378,7 +378,7 @@ class ProcessImagesTool(Tool):
                 err = str(rec["id"])+" Error: "+str(e)
                 log.error(err)
                 result.append(err)
-        return None, "OK. %d images processed!<br>%s" % (cnt, "<br>".join(result))
+        return "OK. %d images processed!<br>%s" % (cnt, "<br>".join(result)), True
 
 
 

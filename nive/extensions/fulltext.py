@@ -121,7 +121,7 @@ class RewriteFulltext(Tool):
         conn.commit()
         self.stream.write("Updated fulltext index. Finished.<br>")
         self.stream.write("%(cnt)d pages ok. %(err)d failed.<br>" % {"cnt": cnt, "err": err})
-        return None, self.stream
+        return self.stream, 1
 
 
 def SetupFulltext(app, pyramidConfig):
