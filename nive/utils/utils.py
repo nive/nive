@@ -32,20 +32,19 @@ def MakeListItems(items):
     return li
 
 def ConvertHTMLToText(html, removeReST=True, url=""):
-    # requires html2text module
+    # requires bs4 or html2text module
+    # disabled removeReST
+    try:
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(html, "html.parser")
+        return soup.get_text()
+    except ImportError:
+        pass
     try:
         import html2text
+        return html2text.html2text(html, url)
     except ImportError:
         return html
-    h = html2text.HTML2Text()
-    h.ignore_links = True
-    if removeReST:
-        h.ignore_emphasis = True
-        text = h.handle(html)
-        # replace markdown #
-        text = text.replace("# ","")
-        return text
-    return h.handle(html)
 
 
 def ConvertToDateTime(date):
