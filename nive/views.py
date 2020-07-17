@@ -695,7 +695,7 @@ class BaseView(object):
         self._c_tz = l
         return l
     
-    def RenderField(self, fld, data=None, context=None, user=None):
+    def RenderField(self, fld, data=None, context=None, user=None, htmlcode=True):
         """
         Render the data field for html display. Rendering depends on the datatype defined
         in the field configuration.
@@ -714,6 +714,8 @@ class BaseView(object):
             data = context.data.get(fld['id'], context.meta.get(fld['id']))
         if fld['datatype']=='file':
             url = self.FileUrl(fld['id'])
+            if not htmlcode:
+                return url
             if not url:
                 return ""
             url2 = url.lower()
@@ -1264,7 +1266,7 @@ class FieldRenderer(object):
             elif fmt=="image":
                 tmpl = settings.get("path", "")
                 path = tmpl % {"data":data, "static": kw.get("static","")}
-                data = """<img src="%(path)s" title="%(name)s">""" % {"path":path, "name": fieldConf.name}
+                data = """<img src="%(path)s" class="img-fluid" title="%(name)s">""" % {"path":path, "name": fieldConf.name}
                 return data
         
         if fType == "bool":
@@ -1354,6 +1356,8 @@ class FieldRenderer(object):
 
             if isinstance(data, str):
                 data = tuple(data.split("\n"))
+            if isinstance(data, (float,int)):
+                data = str(data)
             for ref in data:
                 if options:
                     for item in options:
