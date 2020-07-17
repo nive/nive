@@ -324,6 +324,7 @@ tool_configuration = ToolConf(
         FieldConf(id="types", datatype="checkbox", default="", required=1, settings=dict(codelist="types"), name="Object types", description=""),
         FieldConf(id="emptyonly", datatype="bool", default=1, name="Rewrite only empty images", description=""),
         FieldConf(id="testrun", datatype="bool", default=1, name="Testrun, no commits", description=""),
+
         FieldConf(id="tag", datatype="string", default="processImages", hidden=1)
     ],
 
@@ -336,6 +337,7 @@ class ProcessImagesTool(Tool):
 
     def _Run(self, **values):
 
+        self.InitStream()
         parameter = dict()
         if values.get("types"):
             tt = values.get("types")
@@ -348,7 +350,8 @@ class ProcessImagesTool(Tool):
         recs = root.search.Search(parameter, fields, max=1000000, operators=operators, sort="id")
 
         if len(recs["items"]) == 0:
-            return values, False
+            self.stream.write("<strong>Found nothing</strong>")
+            return self.stream, False
 
         user = values["original"]["user"]
         testrun = values["testrun"]
@@ -372,13 +375,16 @@ class ProcessImagesTool(Tool):
                     cnt += obj.ProcessImages(user=user)
                 else:
                     cnt += obj.ProcessImages(user=user, force=True)
-
                 obj.dbEntry.Commit(user=user)
             except Exception as e:
-                err = str(rec["id"])+" Error: "+str(e)
+                err = str(rec["id"])+" "+str(rec["pool_type"])+" Error: "+str(e)
                 log.error(err)
-                result.append(err)
-        return "OK. %d images processed!<br>%s" % (cnt, "<br>".join(result)), True
+                self.stream.write(err+"<br>")
+        if testrun:
+            self.stream.write("Done. %d images found to be processed!<br>%s" % (cnt, "<br>".join(result)))
+            return self.stream, ""
+        self.stream.write("OK. %d images processed!<br>" % (cnt))
+        return self.stream, ""
 
 
 
