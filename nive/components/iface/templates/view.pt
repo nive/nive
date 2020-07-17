@@ -1,16 +1,31 @@
 <tal:block metal:use-macro="view.index_tmpl().macros[view.tmpl_macro or 'main_object']">
-<tal:block metal:fill-slot="content">
+    <tal:block metal:fill-slot="content">
 
-<span tal:replace="structure view.unitInfo('view')" />
-<span tal:replace="structure view.shortcuts()" />
-<span tal:replace="structure view.messages()" />
+        <span tal:replace="structure view.unitInfo('view')" />
+        <span tal:replace="structure view.shortcuts()" />
+        <span tal:replace="structure view.messages()" />
 
-<table tal:define="fields view.GetFldsDataView(context)" 
-    class="table table-striped">
- <tr tal:repeat="fld fields">
-  <th tal:content="structure fld['name']"></th><td tal:content="structure view.RenderField(fld)"></td>
- </tr>
-</table>
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-striped">
+                    <tr tal:repeat="fld view.GetFldsDataView(context, files=False)">
+                        <th tal:content="structure fld['name']"></th>
+                        <td tal:content="structure view.RenderField(fld)"></td>
+                    </tr>
+                </table>
+            </div>
 
-</tal:block>
+            <div class="col-md-4">
+                <div tal:repeat="fld view.GetFldsDataView(context, files=True)">
+                    <figure class="figure" tal:define="url view.RenderField(fld, htmlcode=False)">
+                      <img tal:condition="url and url.lower().endswith(('.png','.jpg','.gif','.svg'))" src="${url}" class="figure-img img-fluid" alt="">
+                      <figcaption class="figure-caption">${fld['name']} <a tal:condition="url" href="${url}" target="_blank" alt="">[Download]</a></figcaption>
+                    </figure>
+                    <hr>
+                </div>
+
+            </div>
+
+        </div>
+    </tal:block>
 </tal:block>

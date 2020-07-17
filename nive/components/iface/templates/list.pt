@@ -1,6 +1,7 @@
 <tal:block metal:use-macro="view.index_tmpl().macros['main_object']">
 <tal:block metal:fill-slot="content">
 
+<tal:block metal:fill-slot="title"></tal:block>
 <span tal:replace="structure view.search(searchconf)" />
 
 </tal:block>

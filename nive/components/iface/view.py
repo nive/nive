@@ -200,7 +200,7 @@ class IFaceView(Parts, Search, BaseView):
         return self._LoadFldsConf(flds, object)
 
 
-    def GetFldsDataView(self, object):
+    def GetFldsDataView(self, object, files=None):
         flds = []
         if not self.ifaceConf.dataflds:
             return flds
@@ -212,7 +212,19 @@ class IFaceView(Parts, Search, BaseView):
                 return flds
             flds = conf["fields"]
         flds = self._ResolveFlds(flds, object=object, addtype=None, addHidden=0, addReadonly=1)
-        return self._LoadFldsConf(flds, object)
+        flds = self._LoadFldsConf(flds, object)
+        if files!=None:
+            flds2 = []
+            if files:
+                for f in flds:
+                    if f.datatype=="file":
+                        flds2.append(f)
+            else:
+                for f in flds:
+                    if f.datatype != "file":
+                        flds2.append(f)
+            flds=flds2
+        return flds
 
     
     def GetTabs(self, object):
@@ -586,8 +598,11 @@ class IFaceView(Parts, Search, BaseView):
         v = self.GetFormValue("v")
         obj = None
         if id:
-            obj = self.context.GetObj(id)
-            if not obj:
+            if not IContainer.providedBy(self.context):
+                obj = self.context.parent.GetObj(id)
+            else:
+                obj = self.context.GetObj(id)
+            if obj is None:
                 root = self.context.root
                 obj = root.LookupObj(id)
         if not obj:

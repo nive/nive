@@ -91,20 +91,15 @@
 
   <div class="${view.ifaceConf.containercls}">
     <div class="row">
-      <tal:block metal:define-slot="path">
-          <div class="col-sm">
-              <span tal:replace="structure view.settingsLinks()"></span>
-              <span tal:replace="structure view.path()"></span>
-          </div>
-      </tal:block>
-    </div>
-    <div class="row">
       <div class="col-md-2">
-        <div class="pathspacer">&nbsp;</div>
         <nav class="sidebar-nav nav flex-column" tal:content="structure view.navigation()">
         </nav><!--/.well -->
       </div><!--/span-->
       <div class="col-md-10">
+        <tal:block metal:define-slot="path">
+            <span tal:replace="structure view.settingsLinks()"></span>
+            <span tal:replace="structure view.path()"></span>
+        </tal:block>
         <tal:block metal:define-slot="title"><h2 tal:condition="view.contentHeader()">${view.contentHeader()}</h2></tal:block>
         <tal:block metal:define-slot="tabs"><tal:block tal:replace="structure view.tabs()"/></tal:block>
         <tal:block metal:define-slot="content"></tal:block>

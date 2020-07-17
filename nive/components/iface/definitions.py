@@ -114,7 +114,7 @@ class IFaceConf(baseConf):
         ]
         
         self.navigation = [
-            Conf(id="root.view", name="Folder", widget="navigation_firstlevel", baseID=0, sort="title")
+            Conf(id="root.view", name="Folder", widget="navigation_folder", baseID=0, sort="title")
         ]
         
         self.path = True
