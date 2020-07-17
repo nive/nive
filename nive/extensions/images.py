@@ -50,12 +50,13 @@ except:  PILloaded=0
 class ImageExtension:
 
     def Init(self):
-        if PILloaded:
-            self.ListenEvent("commit", "ProcessImages")
-            #self.ListenEvent("update", "ProcessImages")
-            self.ListenEvent("deleteFile", "CleanupImages")
-        elif self.configuration.imageProfiles:
-            self.app.log.error("Image Converter: PIL not imported!")
+        if self.configuration.get("imageProfiles"):
+            if PILloaded:
+                self.ListenEvent("commit", "ProcessImages")
+                #self.ListenEvent("update", "ProcessImages")
+                self.ListenEvent("deleteFile", "CleanupImages")
+            else:
+                self.app.log.error("Image Converter: PIL not imported!")
 
 
     def ProcessImages(self, **kw):
