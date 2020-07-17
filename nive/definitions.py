@@ -1536,6 +1536,7 @@ LocalGroupsTbl: {"identity": None,
 # select tags (pool_stag) ----------------------------------------------------------------------------
 
 StagContainer = 0        # 0-9
+StagObject = 20        # 0-9
 StagRessource = 50       # 50-59
 
 

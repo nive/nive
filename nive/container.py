@@ -91,7 +91,7 @@ class ContainerRead(Events):
             operators = {}
 
         if containerOnly:
-            parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+            parameter["pool_stag"] = (StagContainer, StagContainer + 9)
             operators["pool_stag"] = "BETWEEN"
 
         parameter["pool_unitref"] = self.id
@@ -146,7 +146,7 @@ class ContainerRead(Events):
             operators = {}
 
         if containerOnly:
-            parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+            parameter["pool_stag"] = (StagContainer, StagContainer + 9)
             operators["pool_stag"] = "BETWEEN"
 
         parameter["pool_unitref"] = self.id
@@ -214,7 +214,7 @@ class ContainerRead(Events):
             parameter = {}
         if operators is None:
             operators = {}
-        parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+        parameter["pool_stag"] = (StagContainer, StagContainer + 9)
         operators["pool_stag"] = "BETWEEN"
         objs = self.GetObjs(parameter, operators, **kw)
         return objs
@@ -224,7 +224,7 @@ class ContainerRead(Events):
             parameter = {}
         if operators is None:
             operators = {}
-        parameter["pool_stag"] = (StagContainer, StagRessource - 1)
+        parameter["pool_stag"] = (StagContainer, StagContainer + 9)
         operators["pool_stag"] = "BETWEEN"
         return self.GetObjsList(fields, parameter, operators, **kw)
 
