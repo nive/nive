@@ -1025,14 +1025,14 @@ class Search(object):
         db = self.db
 
         # lookup meta list default fields
-        flds = self.app.configuration.listDefault
-        flds = list(flds)
+        #flds = self.app.configuration.listDefault
+        #flds = list(flds)
         # search unit flds
         for t in types:
             for f in t["data"]:
                 if f["datatype"] != "unit":
                     continue
-                l = self.Select(pool_type=t["id"], parameter={f["id"]:unitID}, fields=flds, sort=sort)
+                l = self.Select(pool_type=t["id"], parameter={f["id"]:unitID}, fields=["id"], sort=sort)
                 for r in l:
                     if not r[0] in ids:
                         ids.append(r[0])
@@ -1043,7 +1043,7 @@ class Search(object):
             for f in t["data"]:
                 if f["datatype"] != "unitlist":
                     continue
-                l = self.Select(pool_type=t["id"], parameter={f["id"]:str(unitID)}, fields=flds+[f["id"]], sort=sort, 
+                l = self.Select(pool_type=t["id"], parameter={f["id"]:str(unitID)}, fields=["id", f["id"]], sort=sort,
                                 operators={f["id"]:"LIKE"})
                 for r in l:
                     if not r[2] == t["id"]:
