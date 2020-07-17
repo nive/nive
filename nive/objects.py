@@ -44,7 +44,7 @@ class ObjectRead(Events):
         self.__parent__ = parent
         self.id = id
         self.idhash = id
-        self.path = str(id)
+        self.path = str(id)  # ? unused
         self.dbEntry = dbEntry
         self.configuration = configuration
         self.selectTag = configuration.get("selectTag", StagContainer)
@@ -93,6 +93,14 @@ class ObjectRead(Events):
     def db(self):
         """ returns the database object """
         return self.app.db
+
+    @property
+    def relpath(self):
+        """ returns relative excluding root"""
+        path = self.GetParentPaths()
+        path.reverse()
+        path.append(self.GetPath())
+        return "/".join(path[1:])
 
     # Values ------------------------------------------------------
 

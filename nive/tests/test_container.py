@@ -40,7 +40,9 @@ class containerTest_db:
         self.assertTrue(o1.obj(id2))
         self.assertTrue(o1.db==a.db)
         self.assertTrue(r.db==a.db)
-        
+        self.assertTrue(o1.relpath)
+        self.assertTrue(o2.relpath)
+
         self.assertTrue(r.IsTypeAllowed("type1", user=user))
         self.assertTrue(o1.IsTypeAllowed("type1", user=user))
         

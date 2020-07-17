@@ -38,6 +38,7 @@ class objTest_db:
         self.assertTrue(o.GetParentIDs())
         self.assertTrue(o.GetParentTitles())
         self.assertTrue(o.GetParentPaths())
+        self.assertTrue(o.relpath)
         o.Close()
         r.Delete(id, user=user)
 
