@@ -12,7 +12,7 @@ from datetime import datetime
 
 from nive.definitions import implementer
 from nive.definitions import Conf, baseConf
-from nive.definitions import StagContainer, StagRessource, MetaTbl
+from nive.definitions import StagContainer
 from nive.definitions import IContainer, IRoot, ICache, IObject, IConf, IObjectConf
 from nive.definitions import ContainmentError, ConfigurationError, PermissionError
 from nive.definitions import AllTypesAllowed

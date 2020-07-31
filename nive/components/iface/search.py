@@ -605,9 +605,9 @@ class Search:
 
         if searchconf.get("container") and "ccp" in searchconf.get("listoptions", []):
             ccp = """
- <input type="image" src="%(static)simages/copy.png" name="copy" title="%(Copy)s" />
- <input type="image" src="%(static)simages/cut.png" name="cut" title="%(Cut)s" />
- <input type="image" src="%(static)simages/paste.png" name="paste" title="%(Paste)s" />
+ <input type="image" src="%(static)simages/copy.png" name="copy" id="copy" class="btn btn-sm btn-light" title="%(Copy)s" />
+ <input type="image" src="%(static)simages/cut.png" name="cut" id="cut" class="btn btn-sm btn-light" title="%(Cut)s" />
+ <input type="image" src="%(static)simages/paste.png" name="paste" id="paste" class="btn btn-sm btn-light" title="%(Paste)s" />
         """ % {"static": self.static,
                "Copy": translate(_("Copy"), self.request),
                "Cut": translate(_("Cut"), self.request),

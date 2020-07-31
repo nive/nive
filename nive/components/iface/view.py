@@ -14,6 +14,7 @@ from nive.workflow import WorkflowNotAllowed
 
 from .search import Search
 from .parts import Parts
+from .cutcopy import CopyView
 from .definitions import AllTypeDataFlds, AllTypeMetaFlds
 
 from nive.i18n import _, translator
@@ -97,11 +98,16 @@ configuration.views = [
     ViewConf(name="duplicate", attr="duplicate", context=IObject, permission="add"),
     ViewConf(name="tool", attr="tool", context=IObject, renderer=t + "tool.pt", permission="tools"),
 
+    # cut, copy, paste
+    ViewConf(name="@cut",   attr = "cut",   context = IContainer, permission="edit"),
+    ViewConf(name="@copy",  attr = "copy",  context = IContainer, permission="edit"),
+    ViewConf(name="@paste", attr = "paste", context = IContainer, permission="add"),
+
     ViewConf(name="profile", attr="profile", context=IRoot, renderer=t + "profile.pt", permission="iface"),
 ]
 
 
-class IFaceView(Parts, Search, BaseView):
+class IFaceView(Parts, Search, CopyView, BaseView):
     """
     Basic peak interface view implementation
     Provides default functionality for data management and interface configuration.

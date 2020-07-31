@@ -11,6 +11,18 @@ $(document).ready(function () {
         e.preventDefault();
         $("#boxSearch").attr("action", "deletec").submit();
     });
+    $("#boxSearch #cut").on("click", function (e) {
+        e.preventDefault();
+        $("#boxSearch").attr("action", "@cut").submit();
+    });
+    $("#boxSearch #copy").on("click", function (e) {
+        e.preventDefault();
+        $("#boxSearch").attr("action", "@copy").submit();
+    });
+    $("#boxSearch #paste").on("click", function (e) {
+        e.preventDefault();
+        $("#boxSearch").attr("action", "@paste").submit();
+    });
 
     $("#boxSearch .sort").on("click", function (e) {
         e.preventDefault();
