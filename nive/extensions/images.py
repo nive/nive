@@ -61,7 +61,7 @@ class ImageExtension:
 
     def ProcessImages(self, **kw):
         images = []
-        keys = self.files.keys()
+        #keys = self.files.keys()
         for p in self.configuration.imageProfiles:
             if p.source in images:
                 continue
@@ -172,9 +172,15 @@ class ImageExtension:
             try:
                 #iObj = Image.open(source) ? PIL bug closes source if used multiple times
                 iObj = Image.open(io.BytesIO(source.read()))
-            except IOError:
+            except IOError as e:
                 # no file to be converted
+                logging.warning("IOError: Failed to convert image: %s -> %s"%(source.filename, str(e)))
+                try:
+                    source.file.seek(0)
+                except:
+                    pass
                 return 0
+
             iObj = iObj.convert("RGB")
 
             if profile.get("fill"):
