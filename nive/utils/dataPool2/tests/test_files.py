@@ -18,7 +18,7 @@ class fileentrytest(object):
     def pool(self):
         return self
     
-    def _Path(self, file):
+    def abspath(self, file):
         root = resource_filename('nive.utils.dataPool2', 'tests/')
         return root+"test_files.py"
 

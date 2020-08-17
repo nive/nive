@@ -49,6 +49,7 @@ class File:
         self.extension = extension
         self.tempfile = tempfile
         self._mtime = mtime
+        self._abspath = None
         if fileentry:
             self.fileentry = weakref.ref(fileentry)
         else:
@@ -69,6 +70,9 @@ class File:
         if self.filename != "" and self.extension == "":
             fileName, fileExtension = os.path.splitext(self.filename)
             self.extension = fileExtension[1:6]
+
+        if fileentry and self.path:
+            self._abspath = self.abspath() # cache abspath
 
     def __del__(self):
         self.close()
@@ -102,7 +106,7 @@ class File:
         # 2) read blob file
         if not self.file:
             # read all
-            file = open(self._Path(), "rb")
+            file = open(self.abspath(), "rb")
             if size < 1 or size is None:
                 data = file.read()
                 file.close()
@@ -140,14 +144,29 @@ class File:
         """
         if not self.path:
             return True
-        path = DvPath(self._Path())
+        path = DvPath(self.abspath())
         return path.Exists()
 
     def abspath(self):
+        """
+        Get the physical path of the file. Checks the database.
+        """
         if not self.fileentry:
             return None
-        return self._Path()
-    
+        if self.tempfile or not self.path:
+            return ""
+        if self._abspath:
+            return self._abspath
+        root = str(self.fileentry().pool.root)
+        if self.path[:len(root)] != root:
+            path = DvPath(root)
+            path.AppendSeperator()
+            path.Append(self.path)
+        else:
+            path = DvPath(self.path)
+        return path.GetStr()
+
+
     @property
     def mtime(self):
         if self._mtime:
@@ -184,7 +203,7 @@ class File:
 
         # create temp path for current
         backupPath = None
-        originalPath = DvPath(self._Path())
+        originalPath = DvPath(self.abspath())
         
         newPath = DvPath(self._CreatePath(self.filekey, self.filename))
         tempPath = DvPath(str(newPath))
@@ -247,7 +266,7 @@ class File:
     def delete(self):
         if not self.path:
             return True
-        originalPath = DvPath(self._Path())
+        originalPath = DvPath(self.abspath())
         if not originalPath.IsFile():
             #not a file
             return True
@@ -278,22 +297,6 @@ class File:
 
 
     # path management ---------------------------------------
-
-    def _Path(self, absolute = True):
-        """
-        Get the physical path of the file. Checks the database.
-        """
-        if self.tempfile or not self.path:
-            return ""
-        root = str(self.fileentry().pool.root)
-        if absolute and self.path[:len(root)] != root:
-            path = DvPath(root)
-            path.AppendSeperator()
-            path.Append(self.path)
-        else:
-            path = DvPath(self.path)
-        return path.GetStr()
-
 
     def _CreatePath(self, key, filename):
         """
@@ -459,6 +462,7 @@ class FileEntry(object):
         for f in recs:
             d = self.pool.ConvertRecToDict(f, self.pool.FileTableFields)
             file = File(d["filekey"], filedict=d, fileentry=self)
+            file.abspath
             files.append(file)
         return files
 

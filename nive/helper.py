@@ -5,6 +5,7 @@
 import weakref
 import json
 import os
+import shutil
 from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
@@ -190,6 +191,7 @@ def UpdateInListByID(conflist, updateconf, id=None):
 
 
 class JsonDataEncoder(json.JSONEncoder):
+    exportDirectory = None  # set a valid path name to activate file exports. file["path"] points to the exported file
     def default(self, obj):
         if isinstance(obj, datetime):
             return str(obj)
@@ -199,10 +201,14 @@ class JsonDataEncoder(json.JSONEncoder):
             n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + obj
             return n.strftime("HH:MM:SS.%f")
         elif IFileStorage.providedBy(obj):
-            file = {}
-            file["filekey"] = obj.filekey
-            file["filename"] = obj.filename
-            file["size"] = obj.size
+            file = dict(filekey = obj.filekey, filename = obj.filename, size = obj.size)
+            if self.exportDirectory and obj.path:
+                # copy file
+                fn = "%d-%d-%s" % (obj.id, obj.fileid, obj.filename)
+                dest = self.exportDirectory + fn
+                src = obj.abspath()
+                shutil.copyfile(src, dest)
+                file["path"] = fn
             return file
         return json.JSONEncoder.default(self, obj)
 
