@@ -83,9 +83,13 @@ class Tool(object):
             
     @property
     def app(self):
-        """ returns the cms application object """
+        """ returns the application object """
         return self.app_
     
+    @property
+    def context(self):
+        """ returns the context/parent object """
+        return self.__parent__
 
     # Subclass functions --------------------------------------------
 
