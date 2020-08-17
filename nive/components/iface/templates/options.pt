@@ -4,16 +4,29 @@
 <span tal:replace="structure view.unitInfo('view')" />
 <span tal:replace="structure view.messages()" />
 
+<br>
+<tal:block tal:condition="tool is not None">
+    <h3>${tool.configuration.name}</h3>
+    <div class="alert alert-info" tal:condition="tool.configuration.description"
+             tal:content="structure tool.configuration.description"></div>
+    <span tal:replace="structure content"/>
+</tal:block>
 
-<h2>Tools</h2>
-<ul class="nav">
-</ul>
+<tal:block tal:condition="tool is None">
+    <tal:block tal:repeat="tool tools">
+        <div class="alert alert-info">
+            <strong><a name="${tool.id}" href="?tag=${tool.id}">${tool.name}</a></strong><br>
+                <span tal:replace="structure tool.description"></span>
+        </div>
+    </tal:block>
+</tal:block>
 
+<br>
 <hr>
-
+<br>
+<p class="alert alert-warning" tal:condition="tool is None">
 <a href="deleteo"
-   class="btn btn-danger" i18n:translate="">Delete now, cannot be undone!</a>
-
-
+   class="btn btn-danger" i18n:translate="">Delete this item now, cannot be undone!</a>
+</p>
 </tal:block>
 </tal:block>

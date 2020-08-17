@@ -643,7 +643,17 @@ class IFaceView(Parts, Search, CopyView, BaseView):
 
     def options(self):
         self.request.currentTab = "context.options"
-        return {"pageinfo": "options"}
+        app = self.context.app
+        selected = self.GetFormValue("tag")
+        if selected:
+            tool = app.GetTool(selected, contextObject=self.context)
+            data = self.RenderView(tool)
+            # pyramid bug? reset the active view in request
+            self.request.__dict__['__view__'] = self
+            return {"content": data, "tools": [], "tool": tool, "pageinfo": "options"}
+
+        t = app.configurationQuery.GetAllToolConfs(contextObject=self.context)
+        return {"content": "", "tools": t, "tool": None, "pageinfo": "options"}
 
     def add(self):
         self.request.currentTab = "context.add"
