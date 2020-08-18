@@ -524,7 +524,7 @@ class BaseView(object):
         except FileNotFound:
             raise NotFound
 
-    def SendFile(self, file):
+    def SendFile(self, file, filename=None):
         """
         Creates the response and sends the file back. Uses the FileIterator.
         
@@ -548,7 +548,9 @@ class BaseView(object):
         r.last_modified = last_mod
         r.etag = '%s-%s' % (last_mod, hash(file.path))
         r.cache_expires(self.fileExpires)
-        return r    
+        if filename:
+            r.content_disposition = 'attachment; filename=%s' % (filename)
+        return r
 
 
     # http caching ----------------------------------------------------------------
