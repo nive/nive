@@ -524,7 +524,7 @@ class BaseView(object):
         except FileNotFound:
             raise NotFound
 
-    def SendFile(self, file, filename=None):
+    def SendFile(self, file, filename=None, headers=None):
         """
         Creates the response and sends the file back. Uses the FileIterator.
         
@@ -535,7 +535,7 @@ class BaseView(object):
         last_mod = file.mtime
         if not last_mod:
             last_mod = self.context.meta.pool_change
-        r = Response(content_type=str(GetMimeTypeExtension(file.extension)), conditional_response=True)
+        r = Response(content_type=str(GetMimeTypeExtension(file.extension)), conditional_response=True, headerlist=headers)
         iterator = file.iterator()
         if iterator:
             r.app_iter = iterator
