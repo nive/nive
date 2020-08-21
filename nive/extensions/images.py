@@ -173,12 +173,25 @@ class ImageExtension:
                 #iObj = Image.open(source) ? PIL bug closes source if used multiple times
                 iObj = Image.open(io.BytesIO(source.read()))
             except IOError as e:
-                # no file to be converted
-                logging.warning("IOError: Failed to convert image: %s -> %s"%(source.filename, str(e)))
                 try:
                     source.file.seek(0)
                 except:
                     pass
+                if source.filename.endswith(".svg"):
+                    # copy svg file
+                    data = source.read()
+                    file = File(filekey=profile.dest,
+                                filename=str(profile.dest+"_"+source.filename),
+                                file=io.BytesIO(data),
+                                size=len(data),
+                                path=None,
+                                extension=source.extension,
+                                tempfile=True)
+                    self.files.set(profile.dest, file)
+                    return 1
+
+                # no file to be converted
+                logging.warning("IOError: Failed to convert image: %s -> %s"%(source.filename, str(e)))
                 return 0
 
             iObj = iObj.convert("RGB")
