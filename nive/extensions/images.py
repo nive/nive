@@ -227,6 +227,10 @@ class ImageExtension:
                         tempfile=True)
             self.files.set(profile.dest, file)
         finally:
+            try:
+                source.file.seek(0)
+            except:
+                pass
             # clean temp file
             if p is not None:
                 p.Delete()
