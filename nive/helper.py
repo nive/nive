@@ -6,6 +6,7 @@ import weakref
 import json
 import os
 import shutil
+import hashlib
 from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
@@ -192,6 +193,7 @@ def UpdateInListByID(conflist, updateconf, id=None):
 
 class JsonDataEncoder(json.JSONEncoder):
     exportDirectory = None  # set a valid path name to activate file exports. file["path"] points to the exported file
+    hashFilename = False
     def default(self, obj):
         if isinstance(obj, datetime):
             return str(obj)
@@ -205,6 +207,8 @@ class JsonDataEncoder(json.JSONEncoder):
             if self.exportDirectory and obj.path:
                 # copy file
                 fn = "%d-%d-%s" % (obj.id, obj.fileid, obj.filename)
+                if self.hashFilename:
+                    fn = hashlib.md5(fn.encode("utf-8")).hexdigest() + "." + obj.extension
                 dest = self.exportDirectory + fn
                 src = obj.abspath()
                 shutil.copyfile(src, dest)
