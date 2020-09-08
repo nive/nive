@@ -256,7 +256,7 @@ class Email(Regex):
         if msg is None:
             msg = _("Invalid email address")
         super(Email, self).__init__(
-            '(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', msg=msg)
+            '(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,15}$', msg=msg)
 
 class Literal(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .-_` charachters are allowed.
