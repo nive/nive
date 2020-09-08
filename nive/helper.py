@@ -204,11 +204,12 @@ class JsonDataEncoder(json.JSONEncoder):
             return n.strftime("HH:MM:SS.%f")
         elif IFileStorage.providedBy(obj):
             file = dict(filekey = obj.filekey, filename = obj.filename, size = obj.size)
+            fn = "%d-%d-%s" % (obj.id, obj.fileid, obj.filename)
+            if self.hashFilename:
+                fn = hashlib.md5(fn.encode("utf-8")).hexdigest() + "." + obj.extension
+                file["path"] = fn
             if self.exportDirectory and obj.path:
                 # copy file
-                fn = "%d-%d-%s" % (obj.id, obj.fileid, obj.filename)
-                if self.hashFilename:
-                    fn = hashlib.md5(fn.encode("utf-8")).hexdigest() + "." + obj.extension
                 dest = self.exportDirectory + fn
                 src = obj.abspath()
                 shutil.copyfile(src, dest)
