@@ -1,3 +1,13 @@
+1.3.13
+------
+- static routes as (name, path) tuples
+- beautiful soup default html parser
+- chameleon 3.6.2
+- iface updates
+- tool fixes
+- image converter svg support
+- added file export in json encoder
+
 1.3.12
 ------
 - mail transfer encoding fix
