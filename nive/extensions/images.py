@@ -258,7 +258,7 @@ class ImageExtension:
                 resize = False
                 if settings.source == settings.dest:
                     # same image -> skip
-                    return 0
+                    return img
 
             size = int(x), int(y)
             if resize:
