@@ -7,6 +7,7 @@ import itertools
 import iso8601
 import pprint
 import re
+import json
 
 from nive.i18n import _
 from nive.helper import File
@@ -1974,7 +1975,43 @@ class Lines(object):
         if not value and not self.allow_empty:
             raise Invalid(node, _('Required'))
         return value
-        
+
+
+class JsonData(object):
+    """ A type representing a python list/dict item stored as json string.
+    Deserializes to a ``text`` object.
+
+    This type constructor accepts one argument:
+
+    ``allow_empty``
+       Boolean representing whether an empty set input to
+       deserialize will be considered valid.  Default: ``False``.
+
+    """
+
+    def __init__(self, allow_empty=True):
+        self.allow_empty = allow_empty
+
+    def serialize(self, node, value):
+        if value in (None, null, ""):
+            return null
+        return json.dumps(value)
+
+    def deserialize(self, node, value, formstruct=None):
+        if value in (null, None):
+            return null
+
+        if not value and not self.allow_empty:
+            raise Invalid(node, _('Required'))
+
+        if value!="":
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError as e:
+                raise Invalid(node, _('Json format error'))
+
+        return value
+
 
 class FileData2(object):
     """

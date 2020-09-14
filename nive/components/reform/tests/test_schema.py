@@ -2117,6 +2117,40 @@ class TestLines(unittest.TestCase):
         self.assertEqual(result, null)
 
 
+class TestJson(unittest.TestCase):
+    def _makeOne(self, encoding=None):
+        from nive.components.reform.schema import JsonData
+        return JsonData()
+
+    def test_deserialize_emptystring(self):
+        from nive.components.reform.schema import null
+        node = DummySchemaNode(None)
+        typ = self._makeOne(None)
+        result = typ.deserialize(node, '')
+        self.assertEqual(result, '')
+
+    def test_serialize_dict(self):
+        value = dict(a=1)
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        result = typ.serialize(node, value)
+        self.assertEqual(result, '{"a": 1}')
+
+    def test_deserialize_dict(self):
+        value = '{"a": 1}'
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        result = typ.deserialize(node, value)
+        self.assertEqual(result["a"], 1)
+
+    def test_serialize_null(self):
+        from nive.components.reform.schema import null
+        node = DummySchemaNode(None)
+        typ = self._makeOne()
+        result = typ.serialize(node, null)
+        self.assertEqual(result, null)
+
+
 class TestFileData2(unittest.TestCase):
     def _makeOne(self):
         from nive.components.reform.schema import FileData2

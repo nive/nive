@@ -185,7 +185,7 @@ def json_node(field, kw, kwWidget, form):
         kw["validator"] = Length(max=field.get("size",1000000))
     if not "widget" in kw:
         kw["widget"] = CodeTextWidget(**kwWidget)
-    return SchemaNode(String(), **kw)
+    return SchemaNode(JsonData(), **kw)
 
 def file_node(field, kw, kwWidget, form):
     if not "widget" in kw:
