@@ -792,7 +792,7 @@ msgstr "Fehlende Berechtigung. "
 
 #: nive/components/iface/view.py:684
 msgid "Still linked. Not deleted."
-msgstr "Noch verlilnkt. Kann nicht gelöscht werden."
+msgstr "Noch verlinkt. Kann nicht gelöscht werden."
 
 #: nive/components/iface/view.py:713
 msgid "OK. Deleted."

@@ -736,7 +736,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
             # linked as unit/unitlist
             linked = self.context.root.search.GetReferences(o.id, types=None, sort="id")
             if linked:
-                result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked. Not deleted.")))
+                result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked. Not deleted.")) + " " + str([l[0] for l in linked]))
                 ok = False
                 continue
             try:
