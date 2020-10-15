@@ -9,10 +9,11 @@ Profiles are configured as ``object.configuration.imageProfiles`` with the follo
 
     source = "imagefull": field id of the source image 
     dest = "image": field id of the destination image
-    format = "jpg": image format
     quality = "80": quality depending on format
     width = 400: width of new image
     height = 0: height of new image
+    skip = []: skip conversion if fmt in list
+    format = "jpg": image format
     extension = "jpg": file name extension
     condition = None: callback function which takes the image object as parameter and returns whether
                        the profile is valid for the image object or not 
@@ -45,6 +46,10 @@ from nive.helper import ResolveName
 PILloaded = 1
 try:     from PIL import Image
 except:  PILloaded=0
+
+PyVipsloaded = 1
+try:     import pyvips
+except:  PyVipsloaded=0
 
 
 class ImageExtension:
@@ -163,37 +168,54 @@ class ImageExtension:
             # convert only if tempfile or dest does not exist or force=True
             return 0
 
-        p=None
         try:
+            source.file.seek(0)
+        except:
+            pass
+
+        # skip conversion and copy file
+        if profile.get("copy"):
+            if source.extension in profile.get("copy"):
+                # copy file
+                data = source.read()
+                file = File(filekey=profile.dest,
+                            filename=str(profile.dest + "_" + source.filename),
+                            file=io.BytesIO(data),
+                            size=len(data),
+                            path=None,
+                            extension=source.extension,
+                            tempfile=True)
+                self.files.set(profile.dest, file)
+                return 1
+
+        destFormat = profile.get("format")
+        destExtension = profile.get("extension")
+
+        try:
+            # svg
+            if source.extension != "svg":
+                # iObj = Image.open(source) ? PIL bug closes source if used multiple times
+                iObj = Image.open(io.BytesIO(source.read()))
+            else:
+                # set dest format to png
+                if not "format" in profile:
+                    destFormat = "png"
+                    destExtension = "png"
+                image = pyvips.Image.thumbnail_buffer(source.read(), profile.width)
+                iObj = Image.open(io.BytesIO(image.write_to_buffer("." + destExtension)))
+                del image
+
+        except IOError as e:
             try:
                 source.file.seek(0)
             except:
                 pass
-            try:
-                #iObj = Image.open(source) ? PIL bug closes source if used multiple times
-                iObj = Image.open(io.BytesIO(source.read()))
-            except IOError as e:
-                try:
-                    source.file.seek(0)
-                except:
-                    pass
-                if source.filename.endswith(".svg"):
-                    # copy svg file
-                    data = source.read()
-                    file = File(filekey=profile.dest,
-                                filename=str(profile.dest+"_"+source.filename),
-                                file=io.BytesIO(data),
-                                size=len(data),
-                                path=None,
-                                extension=source.extension,
-                                tempfile=True)
-                    self.files.set(profile.dest, file)
-                    return 1
+            # no file converted
+            logging.warning("IOError: Failed to convert image: %s -> %s" % (source.filename, str(e)))
+            return 0
 
-                # no file to be converted
-                logging.warning("IOError: Failed to convert image: %s -> %s"%(source.filename, str(e)))
-                return 0
-
+        temp = None
+        try:
             iObj = iObj.convert("RGB")
 
             if profile.get("fill"):
@@ -201,11 +223,15 @@ class ImageExtension:
             else:
                 iObj = self._Scale(iObj, profile)
 
-            p = DvPath()
-            p.SetUniqueTempFileName()
-            p.SetExtension(profile.extension)
-            destPath = str(p)
-            iObj.save(destPath, profile.format)
+            if not destFormat:
+                destFormat = self._NormalizeFmt(source.extension)
+                destExtension = source.extension
+
+            temp = DvPath()
+            temp.SetUniqueTempFileName()
+            temp.SetExtension(destExtension)
+            destPath = str(temp)
+            iObj.save(destPath, destFormat)
             try:
                 if source.file.closed:
                     source.file = None
@@ -217,13 +243,13 @@ class ImageExtension:
             # file meta data
             imgFile = open(destPath, 'rb')
             filename = DvPath(profile.dest+"_"+source.filename)
-            filename.SetExtension(profile.extension)
+            filename.SetExtension(destExtension)
             file = File(filekey=profile.dest, 
                         filename=str(filename), 
                         file=imgFile,
-                        size=p.GetSize(), 
+                        size=temp.GetSize(),
                         path=destPath, 
-                        extension=profile.extension,  
+                        extension=destExtension,
                         tempfile=True)
             self.files.set(profile.dest, file)
         finally:
@@ -232,8 +258,8 @@ class ImageExtension:
             except:
                 pass
             # clean temp file
-            if p is not None:
-                p.Delete()
+            if temp is not None:
+                temp.Delete()
         return 1
 
 
@@ -327,6 +353,11 @@ class ImageExtension:
         img.load()
         return img
 
+
+    def _NormalizeFmt(self, fmt):
+        if fmt.lower() in ("jpg", "jpeg"):
+            return "JPEG"
+        return fmt
 
 
 
