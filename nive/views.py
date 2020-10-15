@@ -1419,6 +1419,10 @@ class FieldRenderer(object):
                     data = data.split("\n")
                 data = "".join([tmpl%ll for ll in data])
 
+        elif fType == "json":
+            if data:
+                data = json.dumps(data)
+
         return data
     
 
