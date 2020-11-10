@@ -48,7 +48,7 @@ try:     from PIL import Image
 except:  PILloaded=0
 
 PyVipsloaded = 1
-try:     import pyvips
+try:     import pyvips  # requires libvips
 except:  PyVipsloaded=0
 
 
