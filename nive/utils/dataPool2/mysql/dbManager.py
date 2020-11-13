@@ -203,7 +203,7 @@ class MySQLManager(DatabaseManager):
             aStr = "TINYINT(4) NOT NULL DEFAULT %d" % (aN)
 
         elif datatype in ("text", "htext", "url", "urllist", "json", "code"):
-            aStr = "TEXT NOT NULL" # DEFAULT '%s'" % (conf["default"])
+            aStr = "TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
 
         elif datatype == "unit":
             aN = conf["default"]
