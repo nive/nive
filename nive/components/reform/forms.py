@@ -1159,6 +1159,11 @@ class HTMLForm(Form):
         if redirectSuccess and result is not None:
             redirectSuccess = self.view.ResolveUrl(url=redirectSuccess, context=result)
             # raises HTTPFound
+            if msgs:
+                temp = []
+                for m in msgs:
+                    temp.append(translate(m, self.view.request))
+                msgs = temp
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
         if self.successResponseBody is not None:
