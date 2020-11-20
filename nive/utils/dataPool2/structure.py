@@ -4,7 +4,7 @@
 
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from datetime import time as datetime_time
 from decimal import Decimal
 
@@ -405,6 +405,8 @@ class PoolStructure(object):
                 value = str(datetime.fromtimestamp(value))
             elif value is None:
                 pass
+            elif isinstance(value, datetime):
+                value = value.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             elif not isinstance(value, str):
                 value = str(value)
         
