@@ -106,7 +106,8 @@ class Tool(object):
 
 
     def InitStream(self):
-        self.stream = StringIO()
+        if self.stream is None:
+            self.stream = StringIO()
 
 
     def Run(self, **kw):
