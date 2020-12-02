@@ -456,7 +456,7 @@ class Parts:
     def navigation_folder(self, conf):
         """
         javascript tree view for content structure.
-        configuration: icon, sort, levelup
+        configuration: icon, sort, levelup, callback
 
         """
         sort = conf.get("sort", "title")
@@ -466,13 +466,19 @@ class Parts:
         items = container.GetObjsList(parameter=dict(), sort=sort, containerOnly=True)
         if conf.get("icon"):
             tmpl = """<li class="nav-item"><a href="open?id=%(id)d" class="nav-link"><i class='""" + conf.get("icon") + """'></i> %(title)s</a></li>"""
+        elif conf.get("state"):
+            tmpl = """<li class="nav-item"><a href="open?id=%(id)d" class="nav-link">%(title)s [%(pool_state)s]</a></li>"""
         else:
             tmpl = """<li class="nav-item"><a href="open?id=%(id)d" class="nav-link">%(title)s</a></li>"""
         html = []
         if conf.get("levelup", True) and not IRoot.providedBy(self.context):
-            html.append(tmpl % dict(id=container.parent.id, title="../ " + container.parent.meta.title))
+            html.append(tmpl % dict(id=container.parent.id, title="../ " + container.parent.meta.title, pool_state=""))
+        cb = conf.get("callback")
         for i in items:
-            html.append(tmpl % i)
+            if cb is not None:
+                html.append(cb(i))
+            else:
+                html.append(tmpl % i)
         return "".join(html)
 
 
