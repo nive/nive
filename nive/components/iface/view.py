@@ -772,11 +772,11 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         file = self.GetFormValue("fid")
         user = self.User()
         try:
-            r = self.context.DeleteFile("highres", user)
+            r = self.context.DeleteFile(file, user)
             if not r:
-                m = "Es ist leider ein Fehler aufgetreten."
+                m = translator()(_("Something went wrong!"))
             else:
-                m = "OK"
+                m =  translator()(_("OK. Deleted."))
         except Exception as e:
             m=str(e)
         r = Response(content_type="text/html", conditional_response=True)
