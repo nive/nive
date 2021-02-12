@@ -1216,7 +1216,7 @@ def User(context, request, sessionuser=True):
         user = request.environ["authenticated_user"]
         if user:
             return user
-    except KeyError:
+    except (AttributeError, KeyError):
         pass
     ident = authenticated_userid(request)
     if not ident:
