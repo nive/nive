@@ -13,6 +13,13 @@
 </tal:block>
 
 <tal:block tal:condition="tool is None">
+<p><a href="duplicate"
+   class="btn btn-success" i18n:translate="">Duplicate this item</a></p>
+<p><a href="translate"
+   class="btn btn-success" i18n:translate="">Translate this item</a></p>
+</tal:block>
+
+<tal:block tal:condition="tool is None">
     <tal:block tal:repeat="tool tools">
         <div class="alert alert-info">
             <strong><a name="${tool.id}" href="?tag=${tool.id}">${tool.name}</a></strong><br>
@@ -21,10 +28,6 @@
     </tal:block>
 </tal:block>
 
-<p><a href="duplicate"
-   class="btn btn-success" i18n:translate="">Duplicate this item</a></p>
-<p><a href="translate"
-   class="btn btn-success" i18n:translate="">Translate this item</a></p>
 <hr>
 <br>
 <p class="alert alert-warning" tal:condition="tool is None">
