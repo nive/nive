@@ -21,7 +21,10 @@
     </tal:block>
 </tal:block>
 
-<br>
+<p><a href="duplicate"
+   class="btn btn-success" i18n:translate="">Duplicate this item</a></p>
+<p><a href="translate"
+   class="btn btn-success" i18n:translate="">Translate this item</a></p>
 <hr>
 <br>
 <p class="alert alert-warning" tal:condition="tool is None">
