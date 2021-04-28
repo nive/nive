@@ -183,7 +183,7 @@ class sendMail(Tool):
                     del message["To"]
                     message["To"] = self._GetMailStr(recv)
 
-                #log.error(message.as_string(unixfrom=False))
+                #log.debug(message.as_string(unixfrom=False))
                 info = mailer.sendmail(fromMail, recv[0], message.as_string(unixfrom=False))
                 self.stream.write(recv[0] + " ok, ")
                 log.debug("%s - %s - %s" % (recv[0], title, str(info)))
@@ -196,7 +196,7 @@ class sendMail(Tool):
 
             except SMTPRecipientsRefused as e:
                 result = 0
-                log.error("%s", repr(e))
+                log.warning("%s", repr(e))
                 self.stream.write(str(e))
 
             except (SMTPServerDisconnected,) as e:
