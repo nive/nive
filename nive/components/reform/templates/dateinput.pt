@@ -1,7 +1,7 @@
 <tal:block i18n:domain="nive">
 <input type="date"
        name="${field.name}"
-       value="${cstruct}" 
+       value="${cstruct}"
        tal:attributes="size field.widget.size"
            class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
        id="${field.oid}">

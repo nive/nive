@@ -677,7 +677,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
     def edit(self):
         self.request.currentTab = "context.edit"
         form = ObjectForm(loadFromType = self.context.configuration, view=self, autofill="off")
-        form.subsets = {"edit": {"fielsd": self.GetFldsEdit(self.context), "actions": ["edit"], "defaultAction": "defaultEdit"}}
+        form.subsets = {"edit": {"fields": self.GetFldsEdit(self.context), "actions": ["edit"], "defaultAction": "defaultEdit"}}
         form.Setup(subset="edit")
         result, data, action = form.Process(redirectSuccess="view_url")
         return {"content": data, "result": result, "foot": form.HTMLHead(), "pageinfo": "edit"}

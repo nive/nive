@@ -336,7 +336,7 @@ class PoolStructure(object):
     
     def serialize(self, table, field, value):
         # if field==None and value is a dictionary multiple values are serialized
-        if field==None and isinstance(value, dict):
+        if field is None and isinstance(value, dict):
             newdict = {}
             for field, v in list(value.items()):
                 try:        t = self.fieldtypes[table][field]
