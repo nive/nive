@@ -64,6 +64,8 @@ configuration.views = [
     ViewConf(name="open", attr="open", context=IRoot),
     ViewConf(name="search", attr="viewsearch", context=IRoot, renderer=t + "search.pt"),
     ViewConf(name="settings", attr="settings", context=IRoot, renderer=t + "settings.pt"),
+    ViewConf(name="slot", attr="slot", context=IRoot, renderer=t + "settings.pt"),
+
     # ViewConf(name = "options",attr = "options", context = IRoot,    renderer = t+"options.pt"),
     ViewConf(name="tool", attr="tool", context=IRoot, renderer=t + "tool.pt"),
 
