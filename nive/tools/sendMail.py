@@ -16,7 +16,7 @@ import logging
 from smtplib import SMTP
 from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused, SMTPHeloError, SMTPSenderRefused, SMTPDataError, SMTPException
 
-from email.message import Message
+from email.message import EmailMessage
 from email.header import Header
 
 from nive.utils.utils import ConvertToList
@@ -134,12 +134,12 @@ class sendMail(Tool):
             fromMail = sender
             senderMail = ""
 
+        charset = "ascii"
+        contentType = None
         if html:
-            contentType = "text/html"
-        else:
-            contentType = "text/plain"
+            contentType = "html"
         if utf8:
-            contentType += "; charset=utf-8"
+            charset = "utf-8"
 
         if debug:
             mails_original = "\r\n<br>".join([self._GetMailStr(r) for r in recvs])
@@ -157,6 +157,7 @@ class sendMail(Tool):
             cc=cc,
             bcc=bcc,
             contentType=contentType,
+            charset=charset,
             sender=senderMail,
             replyTo=replyTo)
 
@@ -211,20 +212,12 @@ class sendMail(Tool):
 
     def _PrepareMessage(self, **kw):
         contentType = kw.get("contentType")
-        charset = "utf-8"
-        if contentType and contentType.find("charset=")!=-1:
-            charset = contentType.split("charset=")[1]
+        charset = kw.get("charset", "utf-8")
 
-        message = Message()
-        message.set_charset(charset)
-        message.set_payload(kw.get("body"), charset)
+        message = EmailMessage()
+        message.set_content(kw.get("body"), subtype=contentType, charset=charset)
         message["Date"] = self._FormatDate()
         message["Subject"] = Header(kw.get("title"), charset=charset).encode()
-        try:
-            del message["Content-Type"]
-        except:
-            pass
-        message["Content-Type"] = contentType
 
         fromName = kw.get("fromName")
         fromMail = kw.get("fromMail")
