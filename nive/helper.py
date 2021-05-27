@@ -204,7 +204,7 @@ class JsonDataEncoder(json.JSONEncoder):
             return n.strftime("HH:MM:SS.%f")
         elif IFileStorage.providedBy(obj):
             file = dict(filekey = obj.filekey, filename = obj.filename, size = obj.size)
-            fn = "%d-%d-%s" % (obj.id, obj.fileid, obj.filename)
+            fn = "%s-%d-%s" % (obj.uid, obj.fileid, obj.filename)
             if self.hashFilename:
                 fn = hashlib.md5(fn.encode("utf-8")).hexdigest() + "." + obj.extension
                 file["path"] = fn

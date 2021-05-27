@@ -51,19 +51,19 @@ class UtilsTest(unittest.TestCase):
     def test_htmltotext(self):
         html = "Hello!"
         t = ConvertHTMLToText(html, removeReST=True)
-        self.assertTrue(t==html+"\n\n")
+        self.assertEqual(t, html)
 
         html = "<h1>Hello!</h1>"
         t = ConvertHTMLToText(html, removeReST=True)
-        self.assertTrue(t == "Hello!"+"\n\n")
+        self.assertEqual(t, "Hello!")
 
         html = "<h1>Hello!</h1>"
         t = ConvertHTMLToText(html, removeReST=False)
-        self.assertTrue(t == "# Hello!"+"\n\n", t)
+        self.assertEqual(t, "Hello!", t)
 
         html = "# Hello!"
         t = ConvertHTMLToText(html, removeReST=True)
-        self.assertTrue(t == "Hello!"+"\n\n")
+        self.assertEqual(t, "# Hello!")
 
     def test_todatetime(self):
         import datetime

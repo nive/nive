@@ -125,9 +125,9 @@ class ConversionTest(unittest.TestCase):
 
     def test_se_date(self):
         value = datetime.now()
-        self.assertTrue(self.structure.serialize("pool_meta", "pool_change", value)==str(value))
+        self.assertTrue(self.structure.serialize("pool_meta", "pool_change", value)) # compare with timezone
         value = date.today()
-        self.assertTrue(self.structure.serialize("pool_meta", "pool_create", value)==str(value))
+        self.assertTrue(self.structure.serialize("pool_meta", "pool_create", value)) # compare with timezone
         value = time.time()
         self.assertEqual(self.structure.serialize("data2", "ftime", value), value)
 
