@@ -228,10 +228,8 @@ class ToolView(BaseView):
                 data = data.getvalue()
             except:
                 data = str(data)
-        if result and action.id == "run" and self.context.configuration.mimetype != "text/html":
-            fn = None
-            if hasattr(self.context, "filename"):
-                fn = self.context.filename
+        if result and action.id == "run" and hasattr(self.context, "filename"): # self.context.configuration.mimetype != "text/html":
+            fn = self.context.filename
             return self.SendResponse(data, mime=self.context.configuration.mimetype, raiseException=True, filename=fn)
         return self.SendResponse(form.HTMLHead() + data, raiseException=False)
     
