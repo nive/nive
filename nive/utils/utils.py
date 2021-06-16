@@ -2,7 +2,7 @@
 # Released under GPL3. See license.txt
 #
 
-import re, html.entities
+import re
 import iso8601
 import os, tempfile, json
 import datetime
@@ -288,37 +288,6 @@ def TidyHtml(data, options=None):
     except:
         return data
     return data2
-
-
-def ReplaceHTMLEntities(text, codepage = None):
-    """
-    Removes HTML or XML character references and entities from a text string.
-    """
-    def _fixup(m): #TODO py3
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = unichr(html.entities.name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text # leave as is
-
-    if codepage:
-        text = str(text, codepage)
-    result = re.sub("&#?\w+;", _fixup, text)
-    if codepage:
-        result = result.encode(codepage)
-    return result
 
 
 def SortConfigurationList(values, sort, ascending=True):
