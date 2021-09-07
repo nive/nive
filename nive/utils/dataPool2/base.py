@@ -1562,7 +1562,7 @@ class Entry(object):
         """
         temp = {}
         temp["pool_change"] = self.pool.GetDBDate()
-        if user==None:
+        if user is None:
             user=""
         else:
             user=str(user)

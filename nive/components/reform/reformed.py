@@ -202,7 +202,7 @@ def date_node(field, kw, kwWidget, form):
 def datetime_node(field, kw, kwWidget, form):
     if not "widget" in kw:
         kw["widget"] = DateTimeInputWidget(**kwWidget)
-    return SchemaNode(DateTime(), **kw)
+    return SchemaNode(DateTime(form.app.pytimezone), **kw)
 
 def time_node(field, kw, kwWidget, form):
     if not "widget" in kw:

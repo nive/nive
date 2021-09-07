@@ -1071,7 +1071,7 @@ class TestDateTime(unittest.TestCase):
     def test_ctor_default_tzinfo_None(self):
         import iso8601
         typ = self._makeOne()
-        self.assertEqual(typ.default_tzinfo, iso8601.iso8601.UTC)
+        self.assertEqual(typ.default_tzinfo, None)
 
     def test_ctor_default_tzinfo_non_None(self):
         import iso8601
@@ -1136,14 +1136,25 @@ class TestDateTime(unittest.TestCase):
         node = DummySchemaNode(None)
         dt = "2012-01-01T13:34:00"
         result = typ.serialize(node, dt)
-        expected = iso8601.parse_date(dt).isoformat()
+        expected = iso8601.parse_date(dt, default_timezone=typ.default_tzinfo).isoformat()
         self.assertEqual(result, expected)
 
     def test_deserialize_date(self):
         import datetime
-        import iso8601
         date = self._today()
         typ = self._makeOne()
+        formatted = date.isoformat()
+        node = DummySchemaNode(None)
+        result = typ.deserialize(node, formatted)
+        expected = datetime.datetime.combine(result, datetime.time())
+        tzinfo = None
+        self.assertEqual(result.isoformat(), expected.isoformat())
+
+    def test_deserialize_date_tz(self):
+        import datetime
+        import iso8601
+        date = self._today()
+        typ = self._makeOne(default_tzinfo=iso8601.iso8601.UTC)
         formatted = date.isoformat()
         node = DummySchemaNode(None)
         result = typ.deserialize(node, formatted)

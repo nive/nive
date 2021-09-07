@@ -554,7 +554,7 @@ class Application(Events):
             structure[ty.dbparam] = t
             fieldtypes[ty.dbparam] = f
 
-        app._structure.Init(structure, fieldtypes, m, app.configuration.frontendCodepage)
+        app._structure.Init(structure, fieldtypes, m, app.configuration.frontendCodepage, self.pytimezone)
         # reset cached db
         if app._dbpool is not None:
             app._dbpool.Close()

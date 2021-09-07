@@ -1099,9 +1099,9 @@ class DateTime(SchemaType):
     """
     err_template =  _('Invalid date')
 
-    def __init__(self, default_tzinfo=_marker):
-        if default_tzinfo is _marker:
-            default_tzinfo = iso8601.iso8601.UTC
+    def __init__(self, default_tzinfo=None):
+        #if default_tzinfo is _marker:
+        #    default_tzinfo = iso8601.iso8601.UTC
         self.default_tzinfo = default_tzinfo
 
     def serialize(self, node, appstruct):
@@ -1129,7 +1129,7 @@ class DateTime(SchemaType):
                             mapping={'val':appstruct})
                           )
 
-        if appstruct.tzinfo is None:
+        if appstruct.tzinfo is None and self.default_tzinfo is not None:
             appstruct = appstruct.replace(tzinfo=self.default_tzinfo)
         return appstruct.isoformat()
 

@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import time
 import unittest
 
-from nive.helper import FormatConfTestFailure
 from nive.definitions import DataTypes, FieldConf, Conf
 from nive.components.reform.reformed import *
 
 class testform(object):
     actionPostfix="$$$"
+    pytimezone=None
     @property
     def context(self):
         return None

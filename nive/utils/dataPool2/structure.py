@@ -3,8 +3,7 @@
 #
 
 import json
-import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from datetime import time as datetime_time
 from decimal import Decimal
 
@@ -282,20 +281,23 @@ class PoolStructure(object):
     """
     MetaTable = "pool_meta"
     
-    def __init__(self, structure=None, fieldtypes=None, stdMeta=None, codepage="utf-8", **kw):
+    def __init__(self, structure=None, fieldtypes=None, stdMeta=None, codepage="utf-8", tzinfo=None, **kw):
         #
         self.stdMeta = ()
         self.structure = {}
         self.fieldtypes = {}
         self.serializeCallbacks = {}
         self.deserializeCallbacks = {}
+        self.codepage = codepage
+        self.pytimezone = tzinfo
         if structure:
-            self.Init(structure, fieldtypes, stdMeta, codepage, **kw)
+            self.Init(structure, fieldtypes, stdMeta, codepage, tzinfo, **kw)
         
 
-    def Init(self, structure, fieldtypes=None, stdMeta=None, codepage="utf-8", **kw):
+    def Init(self, structure, fieldtypes=None, stdMeta=None, codepage="utf-8", tzinfo=None, **kw):
         s = structure.copy()
         self.codepage = codepage
+        self.pytimezone = tzinfo
         meta = list(s[self.MetaTable])
         # add default fields
         if not "pool_dataref" in s[self.MetaTable]:
@@ -403,11 +405,9 @@ class PoolStructure(object):
         elif fieldtype in ("date", "datetime"):
             if isinstance(value, (float,int)):
                 value = str(datetime.fromtimestamp(value))
-            elif value is None:
-                pass
-            elif isinstance(value, datetime):
-                value = value.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-            elif not isinstance(value, str):
+            if isinstance(value, datetime):
+                value = value.astimezone(self.pytimezone).strftime("%Y-%m-%d %H:%M:%S")
+            elif not isinstance(value, str) and not value is None:
                 value = str(value)
         
         elif fieldtype == "time":
@@ -497,6 +497,8 @@ class PoolStructure(object):
                 value = ConvertToDateTime(value)
             elif isinstance(value, (float,int)):
                 value = datetime.fromtimestamp(value)
+            if value is not None and self.pytimezone is not None and value.tzinfo is None:
+                value = value.replace(tzinfo=self.pytimezone)
                     
         elif fieldtype == "time":
             # -> to datetime.time

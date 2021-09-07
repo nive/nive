@@ -486,7 +486,6 @@ class DateTimeInputWidget(DateInputWidget):
         options = self._options()
         if len(cstruct) == 25: # strip timezone if it's there
             cstruct = cstruct[:-6]
-        #cstruct = options['separator'].join(cstruct.split('T'))
 
         temp = dict(date='', time='')
         opt = self._options()
