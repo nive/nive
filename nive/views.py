@@ -14,7 +14,7 @@ import os
 import time
 import collections
 try:
-    import simplejson
+    import simplejson as json
 except:
     import json
 from datetime import datetime
