@@ -491,7 +491,7 @@ class PoolStructure(object):
         if fieldtype in self.deserializeCallbacks:
             return self.deserializeCallbacks[fieldtype](value, field)
 
-        if fieldtype in ("date", "datetime"):
+        if fieldtype == "datetime":
             # -> to datetime
             if isinstance(value, str):
                 value = ConvertToDateTime(value)
@@ -499,7 +499,14 @@ class PoolStructure(object):
                 value = datetime.fromtimestamp(value)
             if value is not None and self.pytimezone is not None and value.tzinfo is None:
                 value = value.replace(tzinfo=self.pytimezone)
-                    
+
+        elif fieldtype == "date":
+            # -> to datetime
+            if isinstance(value, str):
+                value = ConvertToDateTime(value)
+            elif isinstance(value, (float,int)):
+                value = datetime.fromtimestamp(value)
+
         elif fieldtype == "time":
             # -> to datetime.time
             if isinstance(value, str):
