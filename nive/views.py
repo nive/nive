@@ -439,7 +439,8 @@ class BaseView(object):
             self.request.response = orgresp
             self.request.view_name = orgname
 
-        #return str(value, codepage) # todo [3] unicode
+        if isinstance(value, bytes):
+            return str(value, codepage)
         return value
 
     
