@@ -473,7 +473,7 @@ class Form(Events, ReForm):
                 setattr(self, "use_ajax", v)
                 #del settings[k]
             else:
-                self.__dict__.update(dict(k, v))
+                self.__dict__.update(dict(k=v))
 
 
     def _SetUpSchema(self, force=False):
