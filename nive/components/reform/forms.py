@@ -467,13 +467,13 @@ class Form(Events, ReForm):
         for k,v in list(settings.items()):
             if k.startswith("widget."):
                 setattr(self.widget, k[len("widget."):], v)
-                del settings[k]
-            if k == "useAjax":
+                #del settings[k]
+            elif k == "useAjax":
                 # rename
-                del settings[k]
-                settings["use_ajax"] = v
-
-        self.__dict__.update(settings)
+                setattr(self, "use_ajax", v)
+                #del settings[k]
+            else:
+                self.__dict__.update(dict(k, v))
 
 
     def _SetUpSchema(self, force=False):

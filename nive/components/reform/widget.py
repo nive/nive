@@ -186,6 +186,7 @@ class FormWidget(Widget):
     template = 'form'
     item_template = 'field'
     action_template = 'form_actions'
+    action_css_class = 'btn'
     error_class = 'error'
     category = 'structural'
     requirements = ( ('reform', None), )

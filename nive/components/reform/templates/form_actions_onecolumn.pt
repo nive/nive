@@ -5,7 +5,7 @@
         id="${form.formid+button.name}"
         name="${button.name}"
         type="${button.type}"
-        class="${button.action.get('css_class', 'btn')}"
+        class="${button.action.get('css_class', form.widget.action_css_class) or 'btn'}"
         value="${button.value}">
         <span>${button.title}</span>
       </button>
