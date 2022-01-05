@@ -68,9 +68,9 @@ class PathExtension:
         root = self.root
         while root.search.FilenameToID(self.AddExtension(name), unitref, parameter=dict(id=self.id), operators=dict(id="!=")) != 0:
             if cnt>1:
-                name = name[:-1]+str(cnt)
-            else:
-                name = name+str(cnt)
+                name = name.rstrip("1234567890-")
+
+            name = name+"-"+str(cnt)
             cnt += 1
         return name
 
