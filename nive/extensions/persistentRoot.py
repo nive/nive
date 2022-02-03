@@ -79,10 +79,11 @@ class Persistent(object):
         if self.notifyAllRoots:
             # call Init for other persistent roots to update values
             for root in self.app.GetRoots():
-                if root.idhash == self.idhash:
+                if not IPersistentRoot.providedBy(root):
                     continue
-                if IPersistentRoot.providedBy(root):
-                    root.LoadStoredValues()
+                if getattr(root, "idhash") and root.idhash == self.idhash:
+                    continue
+                root.LoadStoredValues()
         self.Signal("commit")
 
     def Update(self, values, user):
