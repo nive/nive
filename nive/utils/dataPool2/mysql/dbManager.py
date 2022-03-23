@@ -203,7 +203,10 @@ class MySQLManager(DatabaseManager):
             aStr = "TINYINT(4) NOT NULL DEFAULT %d" % (aN)
 
         elif datatype in ("text", "htext", "url", "urllist", "json", "code"):
-            aStr = "TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
+            if conf.get("size", 0) > 65535:
+                aStr = "MEDIUMTEXT NOT NULL DEFAULT '%s'" % (conf["default"])
+            else:
+                aStr = "TEXT NOT NULL DEFAULT '%s'" % (conf["default"])
 
         elif datatype == "unit":
             aN = conf["default"]
