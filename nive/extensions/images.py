@@ -401,7 +401,7 @@ class ProcessImagesTool(Tool):
         operators = dict(pool_type="IN")
         fields = ("id", "title", "pool_type", "pool_filename")
         root = self.app.root
-        recs = root.search.Search(parameter, fields, max=1000000, operators=operators, sort="id")
+        recs = root.search.Search(parameter, fields, max=1000000, operators=operators, sort="id", ascending=0)
 
         if len(recs["items"]) == 0:
             self.stream.write("<strong>Found nothing</strong>")
