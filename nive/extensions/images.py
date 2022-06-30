@@ -242,7 +242,10 @@ class ImageExtension:
             
             # file meta data
             imgFile = open(destPath, 'rb')
-            filename = DvPath(profile.dest+"_"+source.filename)
+            fn = source.filename
+            if fn.startswith(source.filekey+"_"):
+                fn = fn[len(source.filekey)+1:]
+            filename = DvPath(profile.dest+"_"+fn)
             filename.SetExtension(destExtension)
             file = File(filekey=profile.dest, 
                         filename=str(filename), 
