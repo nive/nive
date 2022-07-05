@@ -203,6 +203,7 @@ class Base(object):
         groupby: add GROUP BY statement
         sort: result sort order. sort prefix ! to skip auto table lookup
         ascending: result sort order ascending or descending
+        extraValues: list. additional values for sql statement not included in parameter list. appended to returned value list
         """
         operators = kw.get("operators",{})
         jointype = operators.get("jointype", "INNER")
@@ -452,6 +453,9 @@ class Base(object):
 
         if sort != "":
             sort = "ORDER BY %s %s" % (sort, order)
+
+        if kw.get("extraValues"):
+            plist.extend(kw.get("extraValues"))
 
         sql = """
         SELECT %s
