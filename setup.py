@@ -27,7 +27,7 @@ requires = [
 
 setupkw = dict(
       name='nive',
-      version='1.3.16',
+      version='1.3.17',
       description='Nive 3 base package',
       long_description=README + '\n\n' + CHANGES,
       long_description_content_type="text/markdown",
