@@ -816,6 +816,9 @@ class BaseView(object):
             if value is None:
                 return default
             return value
+        except json.JSONDecodeError:
+            return default
+
         if not len(value):
             return default
         elif len(value)==1:
