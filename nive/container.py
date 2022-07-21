@@ -456,7 +456,7 @@ class ContainerWrite:
         Workflow action
 
         - remove (called in context of the container)
-        - delete (called in context of the new object)
+        - delete (called in context of the object)
         """
         app = self.app
         # check if id is object
