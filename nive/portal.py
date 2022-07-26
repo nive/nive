@@ -283,7 +283,7 @@ class Portal(Events):
         config.add_view(logout_view, name="logout", context="nive.portal.Portal")
         config.add_view(login_view,  name="login", context="nive.portal.Portal")
         config.add_view(account_view,name="account", context="nive.portal.Portal")
-        #config.add_view(favicon_view, name="favicon.txt", context="nive.portal.Portal", view=PortalViews)
+        config.add_view(favicon_view, name="favicon.ico", context="nive.portal.Portal")
     
         # translations
         config.add_translation_dirs('nive:locale/')
@@ -367,6 +367,12 @@ def error_view(context, request):
     #context.body = str(context)
     return context
 
+def favicon_view(context, request):
+    # website root / favicon redirect
+    portal = context
+    if portal.configuration.get("favicon"):
+        return Redirect(portal.configuration.favicon, request, raiseException=False)
+    return HTTPNotFound()
 
 
 
