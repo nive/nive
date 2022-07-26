@@ -277,13 +277,16 @@ class Portal(Events):
         # redirects
         #config.add_view(error_view, context=HTTPError)
         config.add_view(forbidden_view, context=Forbidden)
-        config.add_view(portal_view, name="", context="nive.portal.Portal")
-        config.add_view(robots_view, name="robots.txt", context="nive.portal.Portal")
-        config.add_view(sitemap_view, name="sitemap.xml", context="nive.portal.Portal")
-        config.add_view(logout_view, name="logout", context="nive.portal.Portal")
-        config.add_view(login_view,  name="login", context="nive.portal.Portal")
-        config.add_view(account_view,name="account", context="nive.portal.Portal")
-        config.add_view(favicon_view, name="favicon.ico", context="nive.portal.Portal")
+        config.add_view(portal_view,  name="", context="nive.portal.Portal")
+        config.add_view(logout_view,  name="logout", context="nive.portal.Portal")
+        config.add_view(login_view,   name="login", context="nive.portal.Portal")
+        config.add_view(account_view, name="account", context="nive.portal.Portal")
+        if self.configuration.get("robots") is not None:
+            config.add_view(robots_view,  name="robots.txt", context="nive.portal.Portal")
+        if self.configuration.get("sitemap") is not None:
+            config.add_view(sitemap_view, name="sitemap.xml", context="nive.portal.Portal")
+        if self.configuration.get("favicon"):
+            config.add_view(favicon_view, name="favicon.ico", context="nive.portal.Portal")
     
         # translations
         config.add_translation_dirs('nive:locale/')
