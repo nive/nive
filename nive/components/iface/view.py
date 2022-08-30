@@ -566,7 +566,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         form.fields = self.GetFlds(conf.fields, self.context, typeID)
         form.actions = [
             Conf(id="default",    method="StartForm",             name="Initialize",   hidden=True),
-            Conf(id=tag,          method="ReturnDataOnSuccess",   name="Submit",       hidden=False),
+            Conf(id=tag,          method="ReturnDataOnSuccess",   name="Submit",       css_class="btn btn-primary", hidden=False),
         ]
         form.use_ajax = False
         form.ListenEvent("success", callback)
