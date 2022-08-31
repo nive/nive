@@ -391,7 +391,7 @@ class Parts:
         for hint in self.ifaceConf.hints:
             if not hint.Visible(section, self):
                 continue
-            html.append("""<div class="alert hint">%s</div>"""%(str(hint.text)))
+            html.append("""<div class="alert alert-info hint">%s</div>"""%(str(hint.text)))
         return "".join(html)
      
      
