@@ -466,7 +466,7 @@ class PoolStructure(object):
                 value = json.dumps(value)
             
         # assure unicode except filedata
-        if isinstance(value, bytes) and fieldtype!="file":
+        if isinstance(value, bytes) and fieldtype not in ("file", "binary"):
             value = str(value, self.codepage)
 
         return value
