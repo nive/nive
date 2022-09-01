@@ -364,7 +364,7 @@ class Parts:
         """
         cls = "alert-success"
         if error:
-            cls = "alert-error"
+            cls = "alert-danger"
         if not msgs:
             msgs = self.GetFormValue("msgs")
         flashs = self.request.session.peek_flash()

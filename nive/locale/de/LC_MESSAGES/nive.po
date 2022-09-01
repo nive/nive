@@ -1091,9 +1091,9 @@ msgstr ""
 
 #: nive/tools/dbStructureUpdater.py:69 nive/tools/dbStructureUpdater.py:72
 msgid ""
-"<div class=\"alert alert-error\">No database connection configured</div>"
+"<div class=\"alert alert-danger\">No database connection configured</div>"
 msgstr ""
-"<div class=\"alert alert-error\">Keine Datenbankverbindung konfiguriert</div>"
+"<div class=\"alert alert-danger\">Keine Datenbankverbindung konfiguriert</div>"
 
 #: nive/tools/dbStructureUpdater.py:76
 #, python-format
@@ -1103,9 +1103,9 @@ msgstr "<h4>Datenbank '${name}' ${host} </h4><br>"
 #: nive/tools/dbStructureUpdater.py:79
 #, python-format
 msgid ""
-"<div class='alert alert-error'>Database connection error (${name})</div>"
+"<div class='alert alert-danger'>Database connection error (${name})</div>"
 msgstr ""
-"<div class='alert alert-error'>Datenbankverbindug fehlgeschlagen (${name})</"
+"<div class='alert alert-danger'>Datenbankverbindug fehlgeschlagen (${name})</"
 "div>"
 
 #: nive/tools/dbStructureUpdater.py:87
@@ -1116,29 +1116,29 @@ msgstr "<div class='alert alert-success'>Datenbank erstellt: '${name}'</div>"
 #: nive/tools/dbStructureUpdater.py:109
 #, python-format
 msgid ""
-"<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
+"<div class='alert alert-danger'>Table update failed: ${dbparam} (type: "
 "${name})</div>"
 msgstr ""
-"<div class='alert alert-error'>Tabellen Update fehlgeschlagen: ${dbparam} "
+"<div class='alert alert-danger'>Tabellen Update fehlgeschlagen: ${dbparam} "
 "(Typ: ${name})</div>"
 
 #: nive/tools/dbStructureUpdater.py:123
-msgid "<div class='alert alert-error'>Table creation failed (pool_meta)</div>"
+msgid "<div class='alert alert-danger'>Table creation failed (pool_meta)</div>"
 msgstr ""
-"<div class='alert alert-error'>Tabelle erstellen fehlgeschlagen (pool_meta)</"
+"<div class='alert alert-danger'>Tabelle erstellen fehlgeschlagen (pool_meta)</"
 "div>"
 
 #: nive/tools/dbStructureUpdater.py:134
-msgid "<div class='alert alert-error'>Table update failed (pool_meta)</div>"
+msgid "<div class='alert alert-danger'>Table update failed (pool_meta)</div>"
 msgstr ""
-"<div class='alert alert-error'>Tabelle update fehlgeschlagen (pool_meta)</"
+"<div class='alert alert-danger'>Tabelle update fehlgeschlagen (pool_meta)</"
 "div>"
 
 #: nive/tools/dbStructureUpdater.py:151 nive/tools/dbStructureUpdater.py:162
 #, python-format
-msgid "<div class='alert alert-error'>Table creation failed (${name})</div>"
+msgid "<div class='alert alert-danger'>Table creation failed (${name})</div>"
 msgstr ""
-"<div class='alert alert-error'>Tabelle erstellen fehlgeschlagen (${name})</"
+"<div class='alert alert-danger'>Tabelle erstellen fehlgeschlagen (${name})</"
 "div>"
 
 #: nive/tools/dbStructureUpdater.py:173
@@ -2137,10 +2137,10 @@ msgstr "Verwaltung"
 #~ msgstr "Der Ordner ist ein einfacher Container um Resourcen zu verwalten."
 
 #~ msgid ""
-#~ "<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
+#~ "<div class='alert alert-danger'>Table update failed: ${dbparam} (type: "
 #~ "${name}</div>"
 #~ msgstr ""
-#~ "<div class='alert alert-error'>Table update failed: ${dbparam} (type: "
+#~ "<div class='alert alert-danger'>Table update failed: ${dbparam} (type: "
 #~ "${name}</div>"
 
 #~ msgid "</form>"
