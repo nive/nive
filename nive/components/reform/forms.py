@@ -1542,7 +1542,7 @@ class ToolForm(HTMLForm):
         msgs = []
         validated,data,errors = self.Validate(self.request)
         if validated:
-            values, result = self.context.Run(request=self.request, user=self.view.User(), **data)
+            values, result = self.context.Run(request=self.request, user=self.view.User(), view=self.view, **data)
             if result:
                 return result, values
             try:
