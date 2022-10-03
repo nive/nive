@@ -213,7 +213,7 @@ class ToolView(BaseView):
 
     """
     
-    def form(self):
+    def form(self, **kw):
         """
         Run a tool by rendering the default form and execute on submit.
         This function does not return a valid Response object. This view is meant to
@@ -222,7 +222,7 @@ class ToolView(BaseView):
         """
         form = ToolForm(view=self, loadFromType=self.context.configuration)
         form.Setup()
-        result, data, action = form.Process()
+        result, data, action = form.Process(**kw)
         if not isinstance(data, (str, bytes)):
             try:
                 data = data.getvalue()
