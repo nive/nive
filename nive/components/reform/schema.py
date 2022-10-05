@@ -1219,7 +1219,7 @@ class Date(SchemaType):
 
     def deserialize(self, node, cstruct, formstruct=None):
         if not cstruct:
-            return null
+            return cstruct
         try:
             result = iso8601.parse_date(cstruct)
             result = result.date()
