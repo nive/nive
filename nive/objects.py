@@ -381,7 +381,7 @@ class ObjectWrite:
         # check workflow
         if not wf.WfAllow("edit", user=user):
             raise WorkflowNotAllowed("Workflow: Not allowed (edit)")
-        self.Signal("update", data=data)
+        self.Signal("update", data=data, user=user)
         self.UpdateInternal(data)
         # call wf
         try:
