@@ -165,6 +165,16 @@ class Parts:
         return "".join(html)
 
         
+    def slot(self, name):
+        """
+        render contents for a named slot. extension function for subclassing.
+
+        :param name: string. view, options, list, add, edit, delete, meta, settings
+        :return: rendered html
+        """
+        return ""
+
+
     def path_render(self, items, css="path"):
         """
         Renders path items as html

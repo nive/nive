@@ -5,6 +5,7 @@
 <span tal:replace="structure view.shortcuts()" />
 <span tal:replace="structure view.messages(msgs)" />
 
+<div tal:replace="structure view.slot('delete')"></div>
 <form tal:condition="len(objsToDelete)>0" action="${action}" method="post">
  <div class="alert alert-danger">
    <h3>Are you sure you want to delete the following 

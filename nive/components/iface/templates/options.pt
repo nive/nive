@@ -20,6 +20,7 @@
         </div>
     </tal:block>
 
+    <div tal:replace="structure view.slot('options')"></div>
     <hr>
     <br>
     <p><a href="duplicate"

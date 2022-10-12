@@ -4,11 +4,19 @@
 <span tal:replace="structure view.unitInfo('view')" />
 <span tal:replace="structure view.messages()" />
 
-<table tal:define="fields view.GetFldsMetaView(context)" 
-       class="table table-striped">
- <tr tal:repeat="fld fields">
-  <th tal:content="structure fld['name']"></th><td tal:content="structure view.RenderField(fld)"></td></tr>
-</table>
+    <div class="row">
+        <div class="col-md-8">
+                <table tal:define="fields view.GetFldsMetaView(context)"
+                       class="table table-striped">
+                 <tr tal:repeat="fld fields">
+                  <th tal:content="structure fld['name']"></th><td tal:content="structure view.RenderField(fld)"></td></tr>
+                </table>
+        </div>
+
+        <div class="col-md-4">
+            <div tal:replace="structure view.slot('meta')"></div>
+        </div>
+    </div>
 
 </tal:block>
 </tal:block>

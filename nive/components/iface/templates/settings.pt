@@ -12,6 +12,7 @@
     </div>
 
     <hr>
+    <div tal:replace="structure view.slot('settings')"></div>
 
     <div tal:condition="user.InGroups(('group:useradmin','group:admin'))" class="alert alert-info">
        <strong><a href="/userdb/management" i18n:translate="">Usermanagement</a></strong>

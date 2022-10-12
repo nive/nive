@@ -16,8 +16,10 @@
             </div>
 
             <div class="col-md-4">
+                <div tal:replace="structure view.slot('view')"></div>
+
                 <div tal:repeat="fld view.GetFldsDataView(context, files=True)">
-                    <figure class="figure" tal:define="url view.RenderField(fld, htmlcode=False)">
+                    <figure class="figure m-0" tal:define="url view.RenderField(fld, htmlcode=False)">
                       <img tal:condition="url and url.lower().endswith(('.png','.jpg','.gif','.svg'))" src="${url}" class="figure-img img-fluid" alt="">
                       <figcaption class="figure-caption">${fld['name']} <a tal:condition="url" href="${url}" target="_blank" alt="">[Download]</a></figcaption>
                     </figure>
@@ -25,7 +27,6 @@
                 </div>
 
             </div>
-
         </div>
     </tal:block>
 </tal:block>

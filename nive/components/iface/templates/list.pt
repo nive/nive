@@ -2,7 +2,12 @@
 <tal:block metal:fill-slot="content">
 
 <tal:block metal:fill-slot="title"></tal:block>
-<span tal:replace="structure view.search(searchconf)" />
+
+    <div tal:replace="structure view.slot('list')"></div>
+
+    <span tal:replace="structure view.search(searchconf)" />
+
+    <div tal:replace="structure view.slot('list-bottom')"></div>
 
 </tal:block>
 </tal:block>
