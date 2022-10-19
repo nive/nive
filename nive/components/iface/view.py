@@ -628,9 +628,9 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         if not searchid or not str(searchid) in self.ifaceConf.searchconf:
             if IRoot.providedBy(self.context):
                 searchid = "root"
-                if not str(searchid) in self.ifaceConf.searchconf:
-                    searchid = None
             else:
+                searchid = self.context.GetTypeID()
+            if not str(searchid) in self.ifaceConf.searchconf:
                 searchid = None
         return {"pageinfo": "view", "msgs": [], "searchconf": searchid or "default"}
 
