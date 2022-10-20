@@ -501,12 +501,12 @@ class Registration(object):
             if isinstance(viewmod.static, (list,tuple)):
                 for static in viewmod.static:
                     if isinstance(static, dict):
-                        config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage))
+                        config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage), permission=static.get("permission"))
                     else:
                         config.add_static_view(name=static[0], path=static[1], cache_max_age=viewmod.get("maxage", maxage))
 
             elif isinstance(viewmod.static, dict):
-                config.add_static_view(name=viewmod.static["name"], path=viewmod.static["path"], cache_max_age=viewmod.static.get("maxage", maxage))
+                config.add_static_view(name=viewmod.static["name"], path=viewmod.static["path"], cache_max_age=viewmod.static.get("maxage", maxage), permission=static.get("permission"))
 
             elif viewmod.static:
                 # bw update
