@@ -4,66 +4,40 @@ from pkg_resources import resource_filename
 from nive.components.reform.exception import TemplateError
 from translationstring import ChameleonTranslate
 
-try: # pragma: no cover (chameleon 1)
-    from chameleon.zpt import language # will raise exception for c2
-    from chameleon.zpt.template import PageTemplateFile
+BOOLEAN_HTML_ATTRS = frozenset(
+    [
+        # List of Boolean attributes in HTML that should be rendered in
+        # minimized form (e.g. <img ismap> rather than <img ismap="">)
+        # From http://www.w3.org/TR/xhtml1/#guidelines (C.10)
+        "compact",
+        "nowrap",
+        "ismap",
+        "declare",
+        "noshade",
+        "checked",
+        "disabled",
+        "readonly",
+        "multiple",
+        "selected",
+        "noresize",
+        "defer",
+    ]
+)
 
-    def cache(func):
-        def load(self, *args):
-            template = self.registry.get(args)
-            if template is None:
-                self.registry[args] = template = func(self, *args)
-            return template
-        return load
+from chameleon.zpt.loader import TemplateLoader
+class ZPTTemplateLoader(TemplateLoader):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('encoding', 'utf-8')
+        kwargs.setdefault("boolean_attributes", BOOLEAN_HTML_ATTRS)
+        super(ZPTTemplateLoader, self).__init__(*args, **kwargs)
 
-    class ZPTTemplateLoader(object):
-        """ A Chameleon ZPT template loader """
-        parser = language.Parser()
+    def load(self, filename, *args, **kwargs):
+        try:
+            return super(ZPTTemplateLoader, self).load(
+                filename, *args, **kwargs)
+        except ValueError:
+            raise TemplateError(filename)
 
-        def __init__(self, search_path=None, auto_reload=True, debug=True,
-                     encoding='utf-8', translate=None):
-            if search_path is None:
-                search_path = []
-            if isinstance(search_path, str):
-                search_path = [search_path]
-            self.search_path = search_path
-            self.auto_reload = auto_reload
-            self.debug = debug
-            self.encoding = encoding
-            self.translate = translate
-            self.registry = {}
-            self.notexists = {}
-
-        @cache
-        def load(self, filename):
-            for path in self.search_path:
-                path = os.path.join(path, filename)
-                if (path in self.notexists) and (not self.auto_reload):
-                    raise TemplateError("Can not find template %s" % filename)
-                try:
-                    return PageTemplateFile(path, parser=self.parser,
-                                            auto_reload=self.auto_reload,
-                                            debug = self.debug,
-                                            encoding=self.encoding,
-                                            translate=self.translate)
-                except OSError:
-                    self.notexists[path] = True
-
-            raise TemplateError("Can not find template %s" % filename)
-except ImportError:
-    # Chameleon 2
-    from chameleon.zpt.loader import TemplateLoader
-    class ZPTTemplateLoader(TemplateLoader):
-        def __init__(self, *args, **kwargs):
-            kwargs.setdefault('encoding', 'utf-8')
-            super(ZPTTemplateLoader, self).__init__(*args, **kwargs)
-
-        def load(self, filename, *args, **kwargs):
-            try:
-                return super(ZPTTemplateLoader, self).load(
-                    filename, *args, **kwargs)
-            except ValueError:
-                raise TemplateError(filename)
 
 class ZPTRendererFactory(object):
     """
