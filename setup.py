@@ -37,6 +37,7 @@ setupkw = dict(
         "Framework :: Pyramid",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Development Status :: 4 - Beta",
+        "Programming Language :: Python :: 3.7"
         "Programming Language :: Python :: 3.11"
       ],
       author='Arndt Droullier, Nive GmbH',
