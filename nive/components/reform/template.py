@@ -4,6 +4,7 @@ from pkg_resources import resource_filename
 from nive.components.reform.exception import TemplateError
 from translationstring import ChameleonTranslate
 
+
 BOOLEAN_HTML_ATTRS = frozenset(
     [
         # List of Boolean attributes in HTML that should be rendered in
@@ -37,6 +38,8 @@ class ZPTTemplateLoader(TemplateLoader):
                 filename, *args, **kwargs)
         except ValueError:
             raise TemplateError(filename)
+
+
 
 
 class ZPTRendererFactory(object):

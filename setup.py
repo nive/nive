@@ -14,9 +14,9 @@ except:
     CHANGES = ''
 
 requires = [
-    'Chameleon==3.6.2', # form error in 3.8.1
+    'pyramid==1.10.8',
+    'Chameleon==3.10.1',
     'zope.interface',
-    'pyramid>=1.10.1',
     'pyramid_chameleon',
     'iso8601',
     'pytz',
@@ -27,7 +27,7 @@ requires = [
 
 setupkw = dict(
       name='nive',
-      version='1.3.19',
+      version='1.4.1',
       description='Nive 3 base package',
       long_description=README + '\n\n' + CHANGES,
       long_description_content_type="text/markdown",
@@ -38,6 +38,7 @@ setupkw = dict(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3.7"
+        "Programming Language :: Python :: 3.11"
       ],
       author='Arndt Droullier, Nive GmbH',
       author_email='info@nive.co',
