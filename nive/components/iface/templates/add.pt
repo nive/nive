@@ -4,15 +4,8 @@
 <span tal:replace="view.unitInfo('add')" />
 <span tal:replace="structure view.messages()" />
 
-
-    <div class="row">
-        <div class="col-md-8">
-            <span tal:replace="structure content"/>
-        </div>
-        <div class="col-md-4">
-            <div tal:replace="structure view.slot('add')"></div>
-        </div>
-    </div>
+<div tal:replace="structure view.slot('add')"></div>
+<span tal:replace="structure content" />
 
 </tal:block>
 </tal:block>

@@ -4,8 +4,8 @@
 <span tal:replace="structure view.unitInfo('edit')" />
 <span tal:replace="structure view.messages()" />
 
-    <div tal:replace="structure view.slot('edit')"></div>
-    <span tal:replace="structure content"/>
+<div tal:replace="structure view.slot('edit')"></div>
+<span tal:replace="structure content" />
 
 </tal:block>
 </tal:block>
