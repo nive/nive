@@ -37,7 +37,7 @@ def ConvertHTMLToText(html, removeReST=True, url=""):
     try:
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(html, "html.parser")
-        return soup.get_text()
+        return soup.get_text(" ")
     except ImportError:
         pass
     try:
