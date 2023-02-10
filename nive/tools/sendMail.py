@@ -163,6 +163,11 @@ class sendMail(Tool):
 
         if not host:
             raise ConfigurationError("Empty mail host")
+        elif host == "nive.testing":
+            log.info("[Mail.test] send to -> %s", ", ".join([r[0] for r in recvs]))
+            log.info(str(message))
+            return None, True
+
         mailer = SMTP(host, port)
         try:
             mailer.ehlo()
