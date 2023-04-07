@@ -93,6 +93,14 @@ class PathExtension:
         except:
             pass
 
+        # handle filenames ending numbers
+        try:
+            parts = path.split("_")
+            int(parts[-1])
+            path = "_".join(parts[:-1]) + parts[-1]+"n"
+        except:
+            pass
+
         # cut long filenames
         cutlen = 20
         if len(path) <= self.maxlength:
