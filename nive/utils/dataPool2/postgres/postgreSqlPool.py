@@ -95,6 +95,8 @@ class PostgresConnection(Connection):
             kargs['port'] = conf.port
         if conf.user:
             kargs['user'] = conf.user
+        if conf.password:
+            kargs['password'] = str(conf.password)
 
         return psycopg2.connect(**kargs)
 
