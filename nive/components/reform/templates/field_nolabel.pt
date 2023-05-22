@@ -6,7 +6,6 @@
     </div>
 
     <div tal:condition="not fieldw.hidden"
-            title="${field.description}"
             id="item-${field.name}"
             class="row form-group ${field.error and (formw.error_class or fieldw.error_class)}">
 

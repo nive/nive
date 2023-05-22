@@ -6,7 +6,6 @@
     </div>
 
     <div tal:condition="not fieldw.hidden"
-            title="${field.description}"
             id="item-${field.name}"
             class="row form-group ${field.error and (fieldw.error_class)}">
 
@@ -15,7 +14,6 @@
             <label tal:condition="fieldw.category != 'structural'"
                      tal:content="field.title"
                     class="col-form-label ${formw.settings.get('column1_css', 'col-md-2')} ${'required' if field.required else ''} ${field.error and (fieldw.error_class)}"
-                    title="${field.description}"
                     for="${field.oid}"></label>
 
             <div class="${formw.settings.get('column2_css', 'col-md-7')}">
@@ -36,7 +34,6 @@
                 <label tal:condition="fieldw.category != 'structural'"
                          tal:content="field.title"
                         class="col-form-label ${'required' if field.required else ''} ${field.error and (fieldw.error_class)}"
-                        title="${field.description}"
                         for="${field.oid}"></label>
             </div>
             <div class="col-sm">
