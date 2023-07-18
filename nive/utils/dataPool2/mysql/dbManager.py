@@ -151,7 +151,7 @@ class MySQLManager(DatabaseManager):
         listn -> SMALLINT NOT NULL DEFAULT default
         multilist, checkbox -> VARCHAR(2048) NOT NULL DEFAULT default
         json -> TEXT
-        [file] -> BLOB
+        binary, [file] -> BLOB
         [bytesize] -> BIGINT(20) NOT NULL DEFAULT default
         url -> TEXT NOT NULL DEFAULT default
         """
@@ -179,7 +179,7 @@ class MySQLManager(DatabaseManager):
                 aN = int(aN)
             if conf.get("size", conf.get("maxLen",0)) == 4:
                 aStr = "TINYINT(4) NOT NULL DEFAULT %d" % (aN)
-            elif conf.get("size", conf.get("maxLen",0)) >16:
+            elif conf.get("size", conf.get("maxLen",0)) > 16:
                 aStr = "BIGINT(20) NOT NULL DEFAULT %d" % (aN)
             else:
                 aStr = "INT NOT NULL DEFAULT %d" % (aN)
@@ -275,7 +275,7 @@ class MySQLManager(DatabaseManager):
         elif datatype in ("multilist", "mselection", "checkbox", "mcheckboxes", "radio"):
             aStr = "VARCHAR(%d) NOT NULL DEFAULT '%s'" % (conf.get("size", conf.get("maxLen",0)), conf["default"])
 
-        elif datatype == "file":
+        elif datatype in ("binary","file"):
             aStr = "BLOB"
 
         elif datatype == "bytesize":
