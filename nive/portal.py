@@ -315,7 +315,10 @@ from pyramid.httpexceptions import HTTPError, HTTPNotFound, HTTPServerError
 
 
 def forbidden_view(forbiddenResponse, request):
-    portal = request.context.app.portal
+    if IPortal.providedBy(request.context):
+        portal = request.context
+    else:
+        portal = request.context.app.portal
     def status():
         headers = [("X-Result", "false")]
         if hasattr(forbiddenResponse, "headerlist"):
