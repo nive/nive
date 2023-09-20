@@ -1,7 +1,6 @@
 
 # Nive application base package
-This is the base package. Please refer to 'nive_cms', nive_userdb' 
-or 'nive_datastore' for functional applications.
+This is the base package. 
 
 ## Source code
 The source code is hosted on github: https://github.com/nive
