@@ -381,7 +381,7 @@ class Search(object):
         if not db:
             raise ConnectionError("No database connection")
 
-        sql, values = db.FmtSQLSelect(fldList, 
+        sql, values = db.FmtSQLSelect(fldList,
                                       parameter=parameter,  
                                       operators=operators,
                                       start=start, 
@@ -390,7 +390,7 @@ class Search(object):
                                       singleTable=1,
                                       **kw)
         records = db.Query(sql, values)
-            
+
         # prepare field renderer and names
         fldList = self._RenameFieldAlias(fldList)
         converter = self._PrepareRenderer(kw, fldList)
@@ -408,8 +408,6 @@ class Search(object):
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
-                                           start=start, 
-                                           max=max, 
                                            dataTable=typeInf["dbparam"],
                                            singleTable=1,
                                            **kw)
@@ -418,7 +416,7 @@ class Search(object):
                 total = val[0][0] if val else 0
             else:
                 total = len(val) if val else 0
-                
+
         items = self._HandleRelations(kw.get("relations"), items, kw)
         result = self._PrepareResult(items, parameter, cnt, total, start, max, t, sql)
         return result
@@ -486,9 +484,7 @@ class Search(object):
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
-                                           start=start, 
-                                           max=max, 
-                                           skipRang=1, 
+                                           skipRang=1,
                                            **kw)
             val = db.Query(sql2, values)
             if not kw.get("groupby"):
@@ -572,8 +568,6 @@ class Search(object):
             sql2, values = db.FmtSQLSelect(cntflds, 
                                            parameter=parameter,  
                                            operators=operators,
-                                           start=start, 
-                                           max=max, 
                                            dataTable=typeInf["dbparam"],
                                            skipRang=1, 
                                            **kw)
