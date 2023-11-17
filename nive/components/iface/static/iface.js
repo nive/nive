@@ -53,7 +53,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.lazy').Lazy();
+    /*$('.lazy').Lazy();*/
 });
 
 
