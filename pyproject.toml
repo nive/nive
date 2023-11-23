@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=62.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nive"
+version = "1.5.1"
+authors = [{name = "Arndt Droullier", email = "info@nive.co"}, {name = "Nive GmbH"}]
+license = {text = "GPL 3"}
+description = "Nive 3 base package"
+keywords = ["cms", "framework", "pyramid"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Framework :: Pyramid",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+urls = {Homepage = "https://niveapps.com/", Repository = "https://github.com/nive/nive"}
+dependencies = [
+    "pyramid==1.10.8",
+    "Chameleon==3.10.1",
+    "zope.interface",
+    "pyramid_chameleon",
+    "iso8601",
+    "pytz",
+    "translationstring",
+    "bs4",
+]
+
+[project.readme]
+text = """
+# Nive application base package
+This is the base package.
+## Source code
+The source code is hosted on github: https://github.com/nive
+### The form module nive.components.reform
+The reform package is a merge of deform and colander and includes several changes
+to make form handling easier. Please see nive.components.reform.README.txt for details.
+### Translations
+Translations can be extracted using lingua>=3.2
+> pip install lingua-3.2
+> bin/pot-create -o nive/locale/nive.pot nive
+### Dependencies
+library 'pillow' optional. required for extensions.images."""
+content-type = "text/markdown"
+
+[project.optional-dependencies]
+testing = [
+    "pyramid==1.10.8",
+    "Chameleon==3.10.1",
+    "zope.interface",
+    "pyramid_chameleon",
+    "iso8601",
+    "pytz",
+    "translationstring",
+    "bs4",
+]
+
+[tool.distutils.easy_install]
+zip-ok = false
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {namespaces = false}
