@@ -1167,7 +1167,7 @@ class HTMLForm(Form):
             return result, self.view.Redirect(redirectSuccess, messages=msgs, raiseException=True, refresh=True)
 
         if self.successResponseBody is not None:
-            if isinstance(self.successResponseBody, collections.Callable):
+            if isinstance(self.successResponseBody, collections.abc.Callable):
                 body = self.successResponseBody(self)
             else:
                 body = self.successResponseBody
@@ -1305,7 +1305,7 @@ class ObjectForm(HTMLForm):
             data = {}
         elif self.defaults is not None:
             data = self.defaults
-            if isinstance(data, collections.Callable):
+            if isinstance(data, collections.abc.Callable):
                 data = data(self)
         else:
             data = self.LoadDefaultData()

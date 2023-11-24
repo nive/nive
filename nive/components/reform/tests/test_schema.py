@@ -1289,7 +1289,7 @@ class TestDate(unittest.TestCase):
         node = DummySchemaNode(None)
         typ = self._makeOne()
         result = typ.deserialize(node, '')
-        self.assertEqual(result, reform.schema.null)
+        self.assertEqual(result, '')
 
     def test_deserialize_success_date(self):
         typ = self._makeOne()

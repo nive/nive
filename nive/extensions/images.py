@@ -291,7 +291,7 @@ class ImageExtension:
 
             size = int(x), int(y)
             if resize:
-                img = img.resize(size, Image.ANTIALIAS)
+                img = img.resize(size, Image.Resampling.LANCZOS)
 
         return img
 
@@ -335,7 +335,7 @@ class ImageExtension:
             return img
 
         size = int(newx), int(newy)
-        img = img.resize(size, Image.ANTIALIAS)
+        img = img.resize(size, Image.Resampling.LANCZOS)
 
         if newx<fill[0]:
             # fill sides with bgcolor

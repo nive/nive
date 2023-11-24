@@ -13,7 +13,7 @@ from nive.utils.dataPool2.files import File
 
 # Database records wrapper ---------------------------------------------------------------------------
 
-class Wrapper(object):
+class Wrapper:
     """
     Wrappers are mapping objects for data, files and meta. Content can be accessed as
     dictionary field.
@@ -25,7 +25,7 @@ class Wrapper(object):
     
     def __init__(self, entry, content=None):
         self._entry_ = entry
-        self._temp_ = {}
+        self._temp_ = dict()
         self._content_ = None
         
     def __repr__(self):
@@ -42,23 +42,23 @@ class Wrapper(object):
     def __getitem__(self, key):
         if key in self._temp_:
             return self._temp_[key]
-        if not self._content_:
+        elif not self._content_:
             self._Load()
         return self._content_.get(key)
 
     def __contains__(self, key):
         if key in self._temp_:
             return True
-        if not self._content_:
+        elif not self._content_:
             self._Load()
         return key in self._content_
 
     def __getattr__(self, key):
         if key in list(self.__dict__.keys()):
             return self.__dict__[key]
-        if key in self._temp_:
+        elif key in self._temp_:
             return self._temp_[key]
-        if not self._content_:
+        elif not self._content_:
             self._Load()
         return self._content_.get(key)
 
@@ -86,47 +86,39 @@ class Wrapper(object):
         c.update(self._temp_)
         return c
 
-
-    def has_key(self, key):
-        if self.HasTempKey(key):
-            return True
-        return key in list(self.keys())
+    # removed 1.5.1
+    #def has_key(self, key):
 
 
     def get(self, key, default=None):
         try:
             data = self[key]
-            if data is None:
-                return default
-            return data
         except AttributeError:
             return default
+        return data if data is not None else default
 
 
     def set(self, key, data):
         self[key] = data
 
 
-    def update(self, dict, force = False):
-        dict = self._entry_().DeserializeValue(None, dict, self.meta)
+    def update(self, values, force = False):
+        values = self._entry_().DeserializeValue(None, values, self.meta)
         if force:
-            for k in list(dict.keys()):
-                data = dict[k]
+            for k in list(values.keys()):
+                data = values[k]
                 if isinstance(data, bytes):
-                    dict[k] = self._entry_().pool.DecodeText(data)
-            self._temp_.update(dict)
+                    values[k] = self._entry_().pool.DecodeText(data)
+            self._temp_.update(values)
             return
-        for k in list(dict.keys()):
-            self[k] = dict[k]
+        for k in list(values.keys()):
+            self[k] = values[k]
 
 
     def keys(self):
         if not self._content_:
             self._Load()
-        t = list(self._content_.keys())
-        t += list(self._temp_.keys())
-        return t
-
+        return list(set(list(self._content_.keys())+list(self._temp_.keys())))
 
 
     def IsEmpty(self):                return self._content_ is None
@@ -138,17 +130,15 @@ class Wrapper(object):
     def GetEntry(self):                return self._entry_()
 
     def SetContent(self, content):
-        if not self._content_:
-            self._content_ = content
-        else:
-            self._content_.update(content)
+        if self._content_ is None:
+            self._content_ = dict()
+        self._content_.update(content)
 
     def EmptyTemp(self):
         self._temp_.clear()
 
     def _Load(self):
-        self._content_ = {}
-        pass
+        self._content_ = dict()
 
 
 class MetaWrapper(Wrapper):
