@@ -19,7 +19,7 @@ from pyramid.authorization import ACLHelper
 
 from pyramid import threadlocal
 
-from nive.definitions import Conf
+from nive.definitions import Conf, IPortal
 from nive.definitions import Interface, implementer
 
 
@@ -189,10 +189,16 @@ def effective_principals(request=None):
 @implementer(ISecurityPolicy)
 class AuthTktSecurityPolicy:
 
-    def __init__(self, secret, callback):
+    def __init__(self, secret):
         self.helper = AuthTktCookieHelper(secret)
-        self.callback = callback
         self.identity_cache = RequestLocalCache(self.load_identity)
+
+    def _principals(self, userid, request):
+        # context based callback
+        context = request.context
+        if context is None or IPortal.providedBy(context):
+            return request.root.userdb.Principals(userid, request, context)
+        return context.app.portal.userdb.Principals(userid, request, context)
 
     def load_identity(self, request):
         # define our simple identity as None or a dict with userid and principals keys
@@ -201,7 +207,7 @@ class AuthTktSecurityPolicy:
             return None
         userid = identity['userid']  # identical to the deprecated request.unauthenticated_userid
 
-        principals = self.callback(userid, request)
+        principals = self._principals(userid, request)
 
         # assuming the userid is valid, return a map with userid and principals
         if principals is not None:

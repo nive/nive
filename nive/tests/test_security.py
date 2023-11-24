@@ -85,7 +85,7 @@ class securityTest(unittest.TestCase):
         def callback(userid, request):
             return ["pricipal"]
         req = Conf(environ=dict(), cookies=dict(), identity=None, add_finished_callback=lambda a: [])
-        policy = AuthTktSecurityPolicy("ooo", callback)
+        policy = AuthTktSecurityPolicy("ooo")
         policy.load_identity(req)
         policy.identity(req)
         policy.authenticated_userid(req)
