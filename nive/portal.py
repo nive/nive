@@ -44,7 +44,7 @@ from nive.definitions import IModuleConf, IAppConf
 from nive.definitions import IPortal, IApplication
 from nive.helper import ResolveConfiguration, ResolveName
 from nive.helper import ClassFactory
-from nive.security import User, authenticated_userid, Allow, ALL_PERMISSIONS
+from nive.security import Allow, ALL_PERMISSIONS
 from nive.events import Events
 from nive.utils.utils import SortConfigurationList
 
@@ -218,7 +218,7 @@ class Portal(Events):
         Event:
         - start(event)
         """
-        uid = authenticated_userid(event.request)
+        uid = event.request.authenticated_userid
         event.request.environ["REMOTE_USER"] = uid
         event.request.environ["START_TIME"] = time.time()
         self.Signal("start", event=event)

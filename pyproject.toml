@@ -23,8 +23,8 @@ classifiers = [
 ]
 urls = {Homepage = "https://niveapps.com/", Repository = "https://github.com/nive/nive"}
 dependencies = [
-    "pyramid==1.10.8",
-    "Chameleon==3.10.1",
+    "pyramid>=2.0.1",
+    "Chameleon",
     "zope.interface",
     "pyramid_chameleon",
     "iso8601",
@@ -47,13 +47,13 @@ Translations can be extracted using lingua>=3.2
 > pip install lingua-3.2
 > bin/pot-create -o nive/locale/nive.pot nive
 ### Dependencies
-library 'pillow' optional. required for extensions.images."""
+library 'pillow' 10> optional. required for extensions.images."""
 content-type = "text/markdown"
 
 [project.optional-dependencies]
 testing = [
-    "pyramid==1.10.8",
-    "Chameleon==3.10.1",
+    "pyramid>=2.0.1",
+    "Chameleon",
     "zope.interface",
     "pyramid_chameleon",
     "iso8601",

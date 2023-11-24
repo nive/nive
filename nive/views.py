@@ -24,7 +24,6 @@ from pyramid.response import Response
 from pyramid.renderers import render_to_response, get_renderer, render
 from pyramid.url import static_url, resource_url
 from pyramid.view import render_view
-from pyramid.security import authenticated_userid
 from pyramid.i18n import get_localizer
 
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPOk, HTTPForbidden, HTTPException
@@ -242,9 +241,6 @@ class BaseView(object):
         if not context:
             context = self.context
 
-        # todo [3]
-        # DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working
-        #   if isinstance(url, collections.Callable):
         if isinstance(url, collections.abc.Callable):
             return url(context, self)
 
@@ -651,7 +647,7 @@ class BaseView(object):
         """
         returns the *Authenticated User Name* or None
         """
-        return authenticated_userid(self.request)    
+        return self.request.authenticated_userid
 
     def Allowed(self, permission, context=None):
         """
@@ -1212,7 +1208,7 @@ def User(context, request, sessionuser=True):
     """
     # cached session user object
     if not sessionuser:
-        ident = authenticated_userid(request)
+        ident = request.authenticated_userid
         if not ident:
             return None
         return context.app.portal.userdb.root.LookupUser(ident=ident)
@@ -1222,7 +1218,7 @@ def User(context, request, sessionuser=True):
             return user
     except (AttributeError, KeyError):
         pass
-    ident = authenticated_userid(request)
+    ident = request.authenticated_userid
     if not ident:
         return None
     return context.app.portal.userdb.root.GetUser(ident)

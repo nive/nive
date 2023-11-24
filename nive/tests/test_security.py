@@ -5,6 +5,7 @@ from nive.definitions import implementer, Conf
 from nive.security import User, AdminUser, GetUsers, Unauthorized, UserFound, IAdminUser
 from nive.security import effective_principals
 from nive.security import SetupRuntimeAcls
+from nive.security import AuthTktSecurityPolicy
 
 
 class securityTest(unittest.TestCase):
@@ -80,3 +81,12 @@ class securityTest(unittest.TestCase):
         self.assertTrue(len(a)==0)
 
 
+    def test_policy(self):
+        def callback(userid, request):
+            return ["pricipal"]
+        req = Conf(environ=dict(), cookies=dict(), identity=None, add_finished_callback=lambda a: [])
+        policy = AuthTktSecurityPolicy("ooo", callback)
+        policy.load_identity(req)
+        policy.identity(req)
+        policy.authenticated_userid(req)
+        policy.permits(req, User("name", 123), "edit")

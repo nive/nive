@@ -11,10 +11,13 @@ from pyramid.security import Allow
 from pyramid.security import Deny
 from pyramid.security import ALL_PERMISSIONS
 from pyramid.security import Everyone, Authenticated
-from pyramid.security import remember, forget, authenticated_userid
+from pyramid.request import RequestLocalCache
+from pyramid.interfaces import ISecurityPolicy
+from pyramid.authentication import AuthTktCookieHelper
+from pyramid.authorization import ACLHelper
+
 
 from pyramid import threadlocal
-from pyramid.interfaces import IAuthenticationPolicy, IAuthorizationPolicy
 
 from nive.definitions import Conf
 from nive.definitions import Interface, implementer
@@ -175,12 +178,76 @@ def effective_principals(request=None):
     # returns None if no auth policy is configured (e.g. in tests)
     registry = threadlocal.get_current_registry()
     request = request or threadlocal.get_current_request()
-    authn_policy = registry.queryUtility(IAuthenticationPolicy)
-    authz_policy = registry.queryUtility(IAuthorizationPolicy)
-    if authn_policy and authz_policy:
-        principals = authn_policy.effective_principals(request)
-        return principals
+    policy = registry.queryUtility(ISecurityPolicy)
+    if policy is not None:
+        ident = policy.identity(request)
+        return ident.get("principals")
     return None
 
 
-        
+
+@implementer(ISecurityPolicy)
+class AuthTktSecurityPolicy:
+
+    def __init__(self, secret, callback):
+        self.helper = AuthTktCookieHelper(secret)
+        self.callback = callback
+        self.identity_cache = RequestLocalCache(self.load_identity)
+
+    def load_identity(self, request):
+        # define our simple identity as None or a dict with userid and principals keys
+        identity = self.helper.identify(request)
+        if identity is None:
+            return None
+        userid = identity['userid']  # identical to the deprecated request.unauthenticated_userid
+
+        principals = self.callback(userid, request)
+
+        # assuming the userid is valid, return a map with userid and principals
+        if principals is not None:
+            return {
+                'userid': userid,
+                'principals': principals,
+            }
+        return None
+
+    def identity(self, request):
+        return self.identity_cache.get_or_create(request)
+
+    def authenticated_userid(self, request):
+        # defer to the identity logic to determine if the user id logged in
+        # and return None if they are not
+        identity = request.identity
+        if identity is not None:
+            return identity['userid']
+        return None
+
+    def permits(self, request, context, permission):
+        # use the identity to build a list of principals, and pass them
+        # to the ACLHelper to determine allowed/denied
+        identity = request.identity
+        principals = {Everyone}
+        if identity is not None:
+            principals.add(Authenticated)
+            principals.add(identity['userid'])
+            principals.update(identity['principals'])
+        return ACLHelper().permits(context, principals, permission)
+
+    def remember(self, request, userid, response=None, **kw):
+        headers = self.helper.remember(request, userid, **kw)
+        if response is None:
+            return headers
+        if not hasattr(request.response, "headerlist"):
+            request.response.headerlist = []
+        request.response.headerlist += list(headers)
+
+    def forget(self, request, response=None, **kw):
+        headers = self.helper.forget(request, **kw)
+        if response is None:
+            return headers
+        if not hasattr(request.response, "headerlist"):
+            request.response.headerlist = []
+        request.response.headerlist += list(headers)
+
+
+
