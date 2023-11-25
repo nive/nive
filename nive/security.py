@@ -189,8 +189,8 @@ def effective_principals(request=None):
 @implementer(ISecurityPolicy)
 class AuthTktSecurityPolicy:
 
-    def __init__(self, secret):
-        self.helper = AuthTktCookieHelper(secret)
+    def __init__(self, secret, **kw):
+        self.helper = AuthTktCookieHelper(secret, **kw)
         self.identity_cache = RequestLocalCache(self.load_identity)
 
     def _principals(self, userid, request):
