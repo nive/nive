@@ -1,3 +1,7 @@
+1.5.2
+-----
+- fix effective_pricipals if identity is None
+
 1.5.1
 -----
 - setup.py to pyproject.toml

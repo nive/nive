@@ -181,7 +181,8 @@ def effective_principals(request=None):
     policy = registry.queryUtility(ISecurityPolicy)
     if policy is not None:
         ident = policy.identity(request)
-        return ident.get("principals")
+        if ident is not None:
+            return ident.get("principals")
     return None
 
 
