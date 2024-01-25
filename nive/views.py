@@ -656,15 +656,20 @@ class BaseView(object):
         
         returns True / False
         """
-        # fix missing callback principals() context param
         context = context or self.context
         if context != self.request.context:
             try:
                 originalContext = self.request.context
+                originalPrincipal = self.request.identity["principals"]
+
+                local = context.app.portal.userdb.Principals(self.request.authenticated_userid, self.request, context)
+                self.request.identity["principals"] = tuple(list(local))
+
                 self.request.context = context
-                return self.request.has_permission(permission, context or self.context)
+                return self.request.has_permission(permission, context)
             finally:
                 self.request.context = originalContext
+                self.request.identity["principals"] = originalPrincipal
 
         return self.request.has_permission(permission, context or self.context)
 
@@ -815,7 +820,7 @@ class BaseView(object):
         except json.JSONDecodeError:
             return default
 
-        if not len(value):
+        if value is None or not len(value):
             return default
         elif len(value)==1:
             if value[0] is None:
