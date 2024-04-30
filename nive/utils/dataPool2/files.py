@@ -296,6 +296,30 @@ class File:
             setattr(self, k, data[k])
 
 
+    # pickle support ---------------------------------------
+
+    def __getstate__(self):
+        # Copy the object's state from self.__dict__ which contains
+        # all our instance attributes. Always use the dict.copy()
+        # method to avoid modifying the original state.
+        state = self.__dict__.copy()
+        if state['file']:
+            state['path'] = state['file'].name
+        # Remove the unpicklable entries.
+        del state['file']
+        return state
+
+    def __setstate__(self, state):
+        # Restore instance attributes (i.e., filename and lineno).
+        self.__dict__.update(state)
+        # Restore the previously opened file's state.
+        if self.path:
+            file = open(self.path, "rb")
+            # Finally, save the file.
+            self.file = file
+            self.path = ""
+
+
     # path management ---------------------------------------
 
     def _CreatePath(self, key, filename):
