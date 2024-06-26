@@ -114,6 +114,8 @@ class PostgresManager(DatabaseManager):
                 col = "SMALLINT NOT NULL DEFAULT %d" % (cval)
             elif size == 8:
                 col = "BIGINT NOT NULL DEFAULT %d" % (cval)
+            elif size == 20:
+                col = "BIGINT(20) NOT NULL DEFAULT %d" % (cval)
             else:
                 col = "INTEGER NOT NULL DEFAULT %d" % (cval)
 
