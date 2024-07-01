@@ -1425,7 +1425,7 @@ class FieldRenderer(object):
                 data = "".join([tmpl%ll for ll in data])
 
         elif fType == "json":
-            if data:
+            if data and not isinstance(data, str):
                 data = json.dumps(data)
 
         return data
