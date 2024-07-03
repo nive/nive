@@ -617,6 +617,13 @@ for l in languages:
         continue
     _cl.append({"id": lang["code"], "name": lang["name"]})
 
+_cl2 = []
+for l in languages:
+    lang = globals().get(l)
+    if not lang["code"]:
+        continue
+    _cl2.append({"id": lang["code2"], "name": "%s (%s)"%(lang["code2"], lang["name"])})
+
 def GetConf(langcode):
     """
     Load language configuration by code (3 letters)
@@ -642,3 +649,9 @@ def GetLanguages():
     #    cl.append({"id": l["code"], "name": l["name"]})
     #_cl = cl
     #return cl
+
+def GetLanguages2():
+    """
+    load codelist of languages and cache
+    """
+    return _cl2
