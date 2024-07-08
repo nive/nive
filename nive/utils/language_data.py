@@ -622,7 +622,7 @@ for l in languages:
     lang = globals().get(l)
     if not lang["code"]:
         continue
-    _cl2.append({"id": lang["code2"], "name": "%s (%s)"%(lang["code2"], lang["name"])})
+    _cl2.append({"id": lang["code2"], "title": lang["name"], "name": "%s (%s)"%(lang["code2"], lang["name"])})
 
 def GetConf(langcode):
     """
