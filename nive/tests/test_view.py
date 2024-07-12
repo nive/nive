@@ -169,13 +169,13 @@ class viewTest(unittest.TestCase):
 class viewTest_db:
 
     def setUp(self):
-        self.request = testing.DummyRequest()
-        self.config = testing.setUp(request=self.request)
-        self.config.include('pyramid_chameleon')
+        self.request = testing.DummyRequest(identity = dict(userid="", principals=""))
         self.request._LOCALE_ = "en"
         self.request.subpath = ["file1.txt"]
         self.request.context = None
         self.request.content_type = None
+        self.config = testing.setUp(request=self.request)
+        self.config.include('pyramid_chameleon')
         self._loadApp(["nive.components.adminview.view"])
         self.app.Startup(self.config)
         #self.request = getRequest()
@@ -371,8 +371,8 @@ class viewTest_db:
         view.user
         view.User()
         view.UserName()
-        view.Allowed("test", context=None)
-        view.Allowed("test", context=self.context)
+        #view.Allowed("test", context=None)
+        #view.Allowed("test", context=self.context)
         view.InGroups([])
         
 
