@@ -660,7 +660,7 @@ class BaseView(object):
         if context != self.request.context:
             try:
                 originalContext = self.request.context
-                originalPrincipal = self.request.identity["principals"]
+                originalPrincipal = self.request.identity.get("principals")
 
                 local = context.app.portal.userdb.Principals(self.request.authenticated_userid, self.request, context)
                 self.request.identity["principals"] = tuple(list(local))

@@ -3,12 +3,13 @@ import time
 import unittest
 
 from nive.definitions import Conf
-from nive.security import User, Unauthorized
+from nive.security import User, Unauthorized, DummySecurityPolicy
 from nive.tests import db_app
 from nive.views import BaseView, PreflightRequest, OriginResponse, ExceptionalResponse, HTTPFound
 from nive.helper import DecorateViewClassWithViewModuleConf
 from nive.tests import __local
 
+from pyramid.interfaces import ISecurityPolicy
 from pyramid.response import Response
 from pyramid.request import Request
 from pyramid import testing
@@ -169,12 +170,13 @@ class viewTest(unittest.TestCase):
 class viewTest_db:
 
     def setUp(self):
-        self.request = testing.DummyRequest(identity = dict(userid="", principals=""))
+        self.request = testing.DummyRequest()
         self.request._LOCALE_ = "en"
         self.request.subpath = ["file1.txt"]
         self.request.context = None
         self.request.content_type = None
         self.config = testing.setUp(request=self.request)
+        self.config.registry.registerUtility(DummySecurityPolicy("test"), ISecurityPolicy)
         self.config.include('pyramid_chameleon')
         self._loadApp(["nive.components.adminview.view"])
         self.app.Startup(self.config)
@@ -371,8 +373,8 @@ class viewTest_db:
         view.user
         view.User()
         view.UserName()
-        #view.Allowed("test", context=None)
-        #view.Allowed("test", context=self.context)
+        view.Allowed("test", context=None)
+        view.Allowed("test", context=self.context)
         view.InGroups([])
         
 

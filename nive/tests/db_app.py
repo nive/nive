@@ -126,6 +126,17 @@ file2_1 = {"filename":"file1.txt", "file":file2_1_data}
 file2_2 = {"filename":"file2.txt", "file":file2_2_data}
 
 
+class FakeUserDB():
+    def Principals(self, userid, request, context):
+        if userid:
+            return [userid]
+        return ["system.Everyone"]
+    @property
+    def root(self):
+        return self
+    def GetUser(self, name):
+        return User(name)
+
 # empty -------------------------------------------------------------------------
 def app_db(modules=None):
     app = Application()
@@ -136,6 +147,7 @@ def app_db(modules=None):
     p = Portal()
     p.Register(app, "nive")
     app.SetupApplication()
+    p.Register(FakeUserDB(), "userdb")
     dbfile = DvPath(app.dbConfiguration.dbName)
     if not dbfile.IsFile():
         dbfile.CreateDirectories()
