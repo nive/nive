@@ -1,0 +1,136 @@
+The `Nive DataStore` is a highlevel storage with a focus on build in
+functional extensions like form renderer, workflow integration,
+hierarchical data structures, flexible renderer and a web api.
+
+Sqllite, Postgres or Mysql are used as data backend so the goal is not replace
+database systems but to provide a flexible, easy and convenient way
+to store data items.
+
+Database connection and basic datastore application configuration
+::
+
+    from nive.definitions import AppConf, DatabaseConf
+
+    app = AppConf("nive.application",
+                  id = "storage",
+                  title = "My Data Storage",
+                  maxStoreItems = 20,
+                  maxBatchNumber = 100,
+                  search = {"default": {
+                               "type": "bookmark",
+                               "container": False,
+                               "fields": ["id", "link", "comment", "pool_changedby"],
+                               "parameter": {"share": True}
+                  }},
+                  subtree = {"default": {
+                                 "levels": 0,              # the number of levels to include, 0=include all
+                                 "descent": (IContainer,), # item types or interfaces to descent into subtree
+                                 "fields": {},             # if empty uses type definition toJson defaults
+                                 "parameter": {"pool_state": 1}
+                  }},
+                  defaultSubtree = "all"
+    )
+    app.modules = [
+        # items / collections
+        # -> no collections defined by default. See documentation how to define collections
+        #    based on 'nive.definitions.ObjectConf'
+        # root
+        "nive.root",
+        # web api (view layer)
+        "nive.components.webapi",
+        "nive.components.webapi.view.stringRendererConf",
+        # extensions
+        "nive.extensions.filename",
+        "nive.extensions.localgroups",
+        # tools
+        "nive.tools.dbStructureUpdater", "nive.tools.cmsstatistics",
+        "nive.tools.exportJson", "nive.tools.dbJsonDump",
+        # administration and persistence
+        "nive.components.adminview",
+        "nive.extensions.persistence.dbPersistenceConfiguration"
+    ]
+    dbConfiguration = DatabaseConf(
+        fileRoot="/var/opt/datastore",
+        context="Sqlite3",
+        dbName="/var/opt/datastore/items.db"
+    )
+    app.modules.append(dbConfiguration)
+
+**Items**
+
+Item data field definitions are registered as typed collections. Each collection
+has a unique type id, a custom set of data fields and many other options. Use
+`nive.definitions.ObjectConf` as configuration class to define a new collection.
+
+A simple example. Stores a bookmark and comment: ::
+
+    bookmark = ObjectConf(
+        id = "bookmark",
+        name = _("Bookmarks"),
+        dbparam = "bookmarks",
+        data = (
+          FieldConf(id="link",     datatype="url",  size=500,   default="",  name="Link url"),
+          FieldConf(id="share",    datatype="bool", size=2,     default=False,name="Share link"),
+          FieldConf(id="comment",  datatype="text", size=50000, default="",  name="Comment")
+        ),
+        forms = {
+          "newItem": {"fields": ("link", "share", "comment") },
+          "setItem": {"fields": ("link", "share", "comment") }
+        },
+        toJson = ("link", "share", "comment", "id", "pool_create", "pool_change"),
+        template = "bookmark.pt",
+    )
+    app.modules.append(bookmark)  # app is the AppConf() defined in the previous example
+
+**Root**
+
+    class root(Root):
+
+        def Init(self):
+            self.queryRestraints = {}, {}
+
+
+    # Root definition ------------------------------------------------------------------
+    #@nive_module
+    configuration = RootConf(
+        id = "api",
+        context = "nive_datastore.root.root",
+        default = True,
+        subtypes = AllTypesAllowed,
+        extensions = ("nive_datastore.pydispatch.Dispatcher",),
+        name = _("Data root"),
+        description = ""
+    )
+
+
+
+**Groups and permissions**
+
+``configuration.acl`` and ``configuration.groups``
+
+*Permissions:* read, search, add, edit, delete, webform, tojson, toxml, render, action
+
+The data storage has no workflow activated by default. So by reassigning permissions
+in `configuration.acl` the predefined groups can simply be customized.
+
+**Webforms**
+
+The systems provides a build in form renderer. Form configurations are included in the collection
+definition (`configuration.form`) and support by default create and edit modes.
+
+**Workflow**
+
+Workflow processes can be added to the system to build a event system or extend the
+functionality. You can define and use multiple workflow processes and assign a process
+to an item as needed (or define defaults). A workflow process is organized in states and
+transitions. A transition can take one or multiple callbacks to be executed with the
+transition.
+
+By default the workflow is disabled. See `nive.definitions.AppConf.workflowEnabled` and
+`nive.definitions.ObjectConf.workflowID`
+
+**Meta data**
+
+The system automatically tracks create and change information in a shared meta table
+(shared by all items). This table also stores the items globally unique id. To define
+database fields used for all collections use `nive.definitions.AppConf.meta`.
