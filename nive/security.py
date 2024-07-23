@@ -301,3 +301,8 @@ class DummySecurityPolicy:
             principals.update(identity['principals'])
         return ACLHelper().permits(context, principals, permission)
 
+    def remember(self, request, userid, response=None, **kw):
+        pass
+
+    def forget(self, request, response=None, **kw):
+        pass

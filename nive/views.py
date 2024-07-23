@@ -663,7 +663,7 @@ class BaseView(object):
                 originalPrincipal = self.request.identity.get("principals")
 
                 local = context.app.portal.userdb.Principals(self.request.authenticated_userid, self.request, context)
-                self.request.identity["principals"] = tuple(list(local))
+                self.request.identity["principals"] = tuple(list(local)) if local is not None else ()
 
                 self.request.context = context
                 return self.request.has_permission(permission, context)
