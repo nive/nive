@@ -430,7 +430,7 @@ def DecorateViewClassWithViewModuleConf(viewModuleConf, cls):
 # Field list items ------------------------------------------
 
 from nive.security import GetUsers
-from nive.utils.language import LanguageExtension, CountryExtension
+from nive.utils import language_data, country_data
 
 def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, user=None):
     """
@@ -457,13 +457,12 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, us
         if fieldconf.settings:
             # settings dyn list
             dyn = fieldconf.settings.get("codelist")
-            if dyn in ("languages", "countries"):
-                # the only two lists not requiring 'app'
-                if dyn == "languages":
-                    return LanguageExtension().Codelist()
-                else:
-                    return CountryExtension().Codelist()
-            
+            if dyn == "languages":
+                level = fieldconf.settings.get("level", 0)
+                return language_data.GetLanguages(level)
+            elif dyn == "countries":
+                return country_data.GetCountries()
+
         # abort here if app is not set
         return fieldconf.listItems
 
@@ -497,9 +496,10 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, us
         elif dyn == "meta":
             return app.root.search.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "languages":
-            return LanguageExtension().Codelist()
+            level = fieldconf.settings.get("level", 0)
+            return language_data.GetLanguages(level)
         elif dyn == "countries":
-            return CountryExtension().Codelist()
+            return country_data.GetCountries()
 
         elif obj_type:
             ot = fieldconf.settings.get("obj_type")

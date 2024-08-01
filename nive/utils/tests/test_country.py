@@ -3,7 +3,6 @@
 import unittest
 
 from nive.utils import country_data
-from nive.utils import language
 
 
 class Country_data(unittest.TestCase):
@@ -29,32 +28,6 @@ class Country_data(unittest.TestCase):
                         
         
 
-
-class Country(unittest.TestCase):
-    
-
-    def test_lang(self):
-        cext = language.CountryExtension()
-        for c in cext.Codelist():
-            self.assertTrue(c.get("id"))
-            self.assertTrue(c.get("name"))
-            
-    def test_conf(self):
-        lext = language.CountryExtension()
-        for c in country_data.countries:
-            conf = lext.GetConf(c[0])
-            self.assertTrue(conf.get("code"), c)
-            self.assertTrue(conf.get("code2"), c)
-            self.assertTrue(conf.get("name"), c)
-            
-
-    def test_name(self):
-        lext = language.CountryExtension()
-        for c in country_data.countries:
-            name = lext.GetName(c[0])
-            self.assertTrue(name, c)
-            
-            
             
             
             

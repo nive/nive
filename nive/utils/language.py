@@ -1,5 +1,6 @@
 
-from copy import deepcopy
+# to be removed
+
 from . import language_data 
 
 
