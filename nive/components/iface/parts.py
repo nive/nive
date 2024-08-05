@@ -150,7 +150,7 @@ class Parts:
         return "".join(html)
     
 
-    def navigation(self):
+    def navigation(self, context=None):
         """
         left column navigation
         """
@@ -160,6 +160,9 @@ class Parts:
         """ 
         html = ["""<nav class="nav flex-column">"""]
         for n in self.ifaceConf.navigation:
+            permission = n.get("permission")
+            if permission and not self.Allowed(permission, context or self.context):
+                continue
             html.append(tmpl % {"url": self.ToUrl(n), "content": getattr(self, n["widget"])(n), "name": translate(n["name"], self.request)})
         html.append("""</nav> """)
         return "".join(html)
@@ -500,6 +503,9 @@ class Parts:
         tmpl = """<a href="%(url)s" class="nav-link">%(icon)s %(name)s</a>"""
         html = []
         for link in conf["links"]:
+            permission = link.get("permission")
+            if permission and not self.Allowed(permission, self.context):
+                continue
             icon = link.get("icon", "")
             if icon:
                 icon = """<i class="%s"></i> """ % icon
