@@ -27,7 +27,7 @@ def GetLanguages(level=0):
     """
     _cl = []
     for code, lang in LANGUAGES.items():
-        if not lang["level"]>level:
+        if lang["level"]>level:
             continue
         _cl.append({"id": lang["code"], "name": lang["name"]})
     return _cl
@@ -40,7 +40,7 @@ def GetLanguages2(level=0):
     _cl = []
     for code2, mapping in LANGUAGES2.items():
         lang = LANGUAGES[mapping]
-        if not lang["level"]>level:
+        if lang["level"]>level:
             continue
         _cl.append({"id": code2, "title": lang["name"], "name": "%s (%s)"%(code2, lang["name"])})
     return _cl
@@ -511,7 +511,7 @@ _add(kat)
 # ell ---------------------------------------------------
 ell = deepcopy(empty) # alt for gre
 ell["code"] = "ell"
-ell["code2"] = "el"
+ell["code2"] = "gr"
 ell["name"] = "ελληνική γλώσσα"
 ell["codepage"] = "iso-8859-7"
 ell["level"] = 9
