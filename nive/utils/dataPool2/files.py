@@ -126,7 +126,7 @@ class File:
         return self.file.tell()
 
     def close(self):
-        if self.file and not isinstance(self.file, str):
+        if self.file and hasattr(self.file, "close"):
             self.file.close()
 
     def iterator(self):
@@ -303,10 +303,11 @@ class File:
         # all our instance attributes. Always use the dict.copy()
         # method to avoid modifying the original state.
         state = self.__dict__.copy()
-        if state['file']:
+        if state['file'] and hasattr(state['file'], "name"):
             state['path'] = state['file'].name
-        # Remove the unpicklable entries.
-        del state['file']
+            # Remove the unpicklable entries.
+            state['file'] = None
+            state['tempfile'] = False
         return state
 
     def __setstate__(self, state):
