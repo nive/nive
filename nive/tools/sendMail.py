@@ -168,6 +168,7 @@ class sendMail(Tool):
             log.info(str(message))
             return None, True
 
+        log.info("[Mail.info] send to -> %s", ", ".join(to))
         mailer = SMTP(host, port)
         try:
             mailer.ehlo()
