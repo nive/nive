@@ -122,7 +122,7 @@ class sendMailTester(sendMail):
                 self.stream.write(recv[0] + " ok, ")
                 if log:
                     logdata = "%s - %s - %s" % (recv[0], recv[1], title)
-                    log.debug(" %s", logdata)
+                    log.info(" %s", logdata)
         return None, result
 
 
