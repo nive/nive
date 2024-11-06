@@ -1,3 +1,7 @@
+1.6.4
+-----
+- rename @delete iface view
+
 1.6.3
 -----
 - fixes
