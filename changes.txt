@@ -1,3 +1,7 @@
+1.6.3
+-----
+- fixes
+
 1.6.2
 -----
 - refactor nive_datastore to nive.components.webapi
