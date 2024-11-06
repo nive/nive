@@ -9,7 +9,7 @@ $(document).ready(function () {
 
     $("#boxSearch #delete").on("click", function (e) {
         e.preventDefault();
-        $("#boxSearch").attr("action", "deletec").submit();
+        $("#boxSearch").attr("action", "@delete").submit();
     });
     $("#boxSearch #cut").on("click", function (e) {
         e.preventDefault();

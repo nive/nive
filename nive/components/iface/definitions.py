@@ -155,7 +155,7 @@ class IFaceConf(baseConf):
                 container = True,
                 queryRestraints = None,
                 callback = None, # callback for parameter lookup: callback(view, parameter, operators, searchconf)
-                listoptions = ["ccp", "deletec"],
+                listoptions = ["ccp", "delete"],
                 form = ["pool_type", "title"],
                 fields = ["pool_state","pool_type", "title", "pool_create","pool_createdby", "pool_change", "pool_changedby", "id"],
                 method = None, # GET or POST

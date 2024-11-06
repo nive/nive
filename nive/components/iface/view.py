@@ -95,7 +95,7 @@ configuration.views = [
 
     # container add, delete
     ViewConf(name="add", attr="add", context=IContainer, renderer=t + "add.pt", permission="add"),
-    ViewConf(name="deletec", attr="deletelist", context=IContainer, renderer=t + "delete.pt", permission="delete"),
+    ViewConf(name="@delete", attr="deletelist", context=IContainer, renderer=t + "delete.pt", permission="delete"),
     ViewConf(name="duplicate", attr="duplicate", context=IObject, permission="add"),
     ViewConf(name="tool", attr="tool", context=IObject, renderer=t + "tool.pt", permission="tools"),
 
@@ -711,7 +711,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
                 ids = ids.split(",")
             else:
                 ids = [ids]
-        result = {"msgs": [], "objsToDelete": [], "action": "deletec", "result": False, "ids": ids, "pageinfo": "delete"}
+        result = {"msgs": [], "objsToDelete": [], "action": "@delete", "result": False, "ids": ids, "pageinfo": "delete"}
         if not ids:
             result["msgs"] = [translator()(_("Nothing to delete"))]
             return result
