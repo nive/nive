@@ -271,7 +271,7 @@ class sendMail(Tool):
         if isinstance(mail, str):
             return mail
         if len(mail) > 1 and mail[1]:
-            return '"%s" <%s>' % ((Header(mail[1], "utf-8").encode()), mail[0])
+            return '%s <%s>' % ((Header(mail[1], "utf-8").encode()), mail[0])
         return mail[0]
         
 
