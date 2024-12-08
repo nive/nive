@@ -105,6 +105,7 @@ class RewriteFulltext(Tool):
             try:
                 obj = root.LookupObj(page)
             except TypeError:
+                err += 1
                 self.stream.write("Error: Invalid obj (%(id)d).<br>" % {"id": page})
                 continue
             if not obj:
@@ -120,7 +121,7 @@ class RewriteFulltext(Tool):
                     self.stream.write("<br><br>")
         conn.commit()
         self.stream.write("Updated fulltext index. Finished.<br>")
-        self.stream.write("%(cnt)d pages ok. %(err)d failed.<br>" % {"cnt": cnt, "err": err})
+        self.stream.write("%(cnt)d pages. %(err)d failed.<br>" % {"cnt": cnt, "err": err})
         return self.stream, 1
 
 
