@@ -277,18 +277,19 @@ class sendMail(Tool):
 
     def _GetRecv(self, recvids, recvrole, force, app):
         userdb = app.root
-        if not hasattr(userdb, "GetUsersWithRole"):
+        if not hasattr(userdb, "GetUsersWithGroup"):
             userdb = app.portal.userdb.GetRoot()
-        recvList = []
         # check roles
         recvids2 = []
         if recvrole:
-            recvids2 = userdb.GetUsersWithRole(recvrole, activeOnly=not force)
+            recvids2 = [u["name"] for u in userdb.GetUsersWithGroup(recvrole, activeOnly=not force)]
         # get users
+        recvList = []
+        if isinstance(recvids, str):
+            recvids = ConvertToList(recvids)
+        recvids = recvids + recvids2
         if recvids:
-            if isinstance(recvids, str):
-                recvids = ConvertToList(recvids)
-            for user in userdb.GetUserInfos(recvids+recvids2, ["name", "email", "title"], activeOnly=not force):
+            for user in userdb.GetUserInfos(recvids, ["name", "email", "title"], activeOnly=not force):
                 if user and user["email"] != "":
                     if force or user.get("notify", 1):
                         recvList.append([user["email"], user["title"]])
