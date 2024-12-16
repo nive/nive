@@ -1,6 +1,6 @@
 1.6.5
 -----
-- fix sendMail to format
+- fix sendMail/sendMailTest: roles, format
 
 1.6.4
 -----
