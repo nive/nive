@@ -52,6 +52,7 @@ configuration = ToolConf(
         FieldConf(id="ssl", name=_("Use SSL"), datatype="bool", required=0, readonly=0, default=1, description=""),
         FieldConf(id="maillog", name=_("Log mails"), datatype="string", required=0, readonly=0, default="", description=""),
         FieldConf(id="showToListInHeader", name=_("Show all receivers in header"), datatype="bool", required=0, readonly=0, default=0, description=""),
+        FieldConf(id="skipName", name=_("Do not use name in from field"), datatype="bool", required=0, readonly=0, default=0, description=""),
 
         FieldConf(id="debug", name=_("Debug mail receiver"), datatype="email", required=0, readonly=0, default="", description=_("If not empty all mails are sent to this address. The original mail receivers are ignored.")),
     ),
@@ -61,6 +62,8 @@ configuration = ToolConf(
 
 
 class sendMailTester(Tool):
+
+    maxlinelen = 350
 
     def _Run(self, **values):
         """
@@ -88,6 +91,7 @@ class sendMailTester(Tool):
         ssl = values.get("ssl")
 
         showToListInHeader = values.get("showToListInHeader")
+        skipName = values.get("skipName")
         force = values.get("force")
         debug = values.get("debug")
         maillog = values.get("maillog")
@@ -121,9 +125,9 @@ class sendMailTester(Tool):
                 recvs.extend(bcc)
 
         # to, cc, bcc are the corresponding lists formatted as strings `name <mail>`
-        to = [self._GetMailStr(r) for r in recvs]
-        cc = [self._GetMailStr(r) for r in cc]
-        bcc = [self._GetMailStr(r) for r in bcc]
+        to = [self._GetMailStr(r, skipName) for r in recvs]
+        cc = [self._GetMailStr(r, skipName) for r in cc]
+        bcc = [self._GetMailStr(r, skipName) for r in bcc]
 
         if fromMail:
             senderMail = sender
@@ -139,7 +143,7 @@ class sendMailTester(Tool):
             charset = "utf-8"
 
         if debug:
-            mails_original = "\r\n<br>".join([self._GetMailStr(r) for r in recvs])
+            mails_original = "\r\n<br>".join([self._GetMailStr(r, skipName) for r in recvs])
             body += """\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
             # in debug mode use default receiver mail as receiving address for all mails
             recvs = [(debug, "")]
@@ -156,22 +160,17 @@ class sendMailTester(Tool):
             contentType=contentType,
             charset=charset,
             sender=senderMail,
-            replyTo=replyTo
+            replyTo=replyTo,
+            skipName=skipName
         )
 
-        if host == "nive.testing":
-            log.info("[Mail.test] send to -> %s", ", ".join([r[0] for r in recvs]))
-            log.info(str(message))
-            return None, True
-
-        log.info(message.as_string(unixfrom=False))
-
         result = 1
-        log.info("send to -> %s", ", ".join([r[0] for r in recvs]))
+        log.info("[Mail.test] %s -> %s", fromMail, ", ".join(to))
+        log.info("[Mail.message] " + message.as_string(unixfrom=False, maxheaderlen=self.maxlinelen))
         for recv in recvs:
             if not showToListInHeader:
                 del message["To"]
-                message["To"] = self._GetMailStr(recv)
+                message["To"] = self._GetMailStr(recv, skipName)
 
             self.stream.write(recv[0] + " ok, ")
 
@@ -184,11 +183,11 @@ class sendMailTester(Tool):
         message = EmailMessage()
         message.set_content(kw.get("body"), subtype=contentType, charset=charset)
         message["Date"] = self._FormatDate()
-        message["Subject"] = Header(kw.get("title"), maxlinelen=400, charset=charset).encode()
+        message["Subject"] = Header(kw.get("title"), charset=charset, maxlinelen=self.maxlinelen).encode(maxlinelen=self.maxlinelen)
 
         fromName = kw.get("fromName")
         fromMail = kw.get("fromMail")
-        message["From"] = self._GetMailStr((fromMail, fromName))
+        message["From"] = self._GetMailStr((fromMail, fromName), kw.get("skipName"))
 
         to = kw.get("to")
         if isinstance(to, (list, tuple)):
@@ -226,11 +225,13 @@ class sendMailTester(Tool):
         s = "%s, %02d %3s %4d %02d:%02d:%02d GMT" % (weekdayname[wd], day, monthname[month], year, hh, mm, ss)
         return s
 
-    def _GetMailStr(self, mail):
+    def _GetMailStr(self, mail, skipName=False):
         if isinstance(mail, str):
             return mail
+        if skipName:
+            return mail[0]
         if len(mail) > 1 and mail[1]:
-            return '%s <%s>' % ((Header(mail[1], "utf-8").encode()), mail[0])
+            return '%s <%s>' % ((Header(mail[1], charset="utf-8", maxlinelen=self.maxlinelen).encode(maxlinelen=self.maxlinelen)), mail[0])
         return mail[0]
 
     def _GetRecv(self, recvids, recvrole, force, app):
