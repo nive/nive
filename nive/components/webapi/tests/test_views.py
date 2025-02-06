@@ -706,9 +706,6 @@ class tWebapi_db(object):
         create_track(o1, user)
         create_track(o3, user)
 
-        view = APIv1(o1, self.request)
-        data = view.renderTmpl()
-        self.assertTrue(data)
 
 
     def test_newform(self):

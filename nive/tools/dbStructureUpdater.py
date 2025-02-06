@@ -3,7 +3,7 @@
 #
 
 from nive.tool import Tool, ToolView
-from nive.definitions import ToolConf, ViewConf, FieldConf, IApplication, Structure, MetaTbl
+from nive.definitions import ToolConf, ViewConf, FieldConf, IApplication, Structure
 
 from nive.i18n import _
 from nive.helper import FakeLocalizer
@@ -114,9 +114,9 @@ By default this tool will only create new tables and columns and never delete an
             self.printStructure(db.GetColumns(aT["dbparam"], fmt), aT["dbparam"], fmt, db, localizer)
 
         # check meta table exists and update ---------------------------------------------------------------
-        if not MetaTbl in ignoreTables:
+        if not app.configuration.metaTableName in ignoreTables:
             meta = app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)
-            tableName = MetaTbl
+            tableName = app.configuration.metaTableName
 
             if not db.IsTable(tableName):
                 if not db.CreateTable(tableName, columns=meta):

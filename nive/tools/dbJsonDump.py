@@ -7,7 +7,7 @@ import datetime
 
 from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, FieldConf, ViewConf
-from nive.definitions import IApplication, MetaTbl, Structure
+from nive.definitions import IApplication, Structure
 from nive.helper import JsonDataEncoder
 from nive.i18n import _
 
@@ -62,7 +62,7 @@ class dbJsonDump(Tool):
                 a.append(f.id)
             return a
         
-        export = [(MetaTbl,mapfields(app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)))]
+        export = [(app.configuration.metaTableName, mapfields(app.configurationQuery.GetAllMetaFlds(ignoreSystem=False)))]
         for t in app.configurationQuery.GetAllObjectConfs():
             export.append((t.dbparam, ["id"]+mapfields(t.data)))
         for t in list(Structure.items()):

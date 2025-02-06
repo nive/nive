@@ -30,7 +30,7 @@ root = RootConf(
     acl = ((Allow, Everyone, 'view'),)
 )
 
-collection1 = ObjectConf("nive_datastore.item",
+collection1 = ObjectConf(
     id = "bookmark",
     name = "Bookmarks",
     dbparam = "bookmarks",
@@ -44,11 +44,11 @@ collection1 = ObjectConf("nive_datastore.item",
         "newItem": {"fields": ("link", "share", "comment"), "ajax":True, "newItem": True}, 
         "setItem": {"fields": ("link", "share", "comment"), "ajax":True}
     },
-    toJson = ("id", "link", "comment", "pool_changedby", "pool_change"),
-    template = "nive_datastore.webapi.tests:bookmark.pt"
+    toJson = ("id", "link", "comment", "pool_changedby", "pool_change")
+    #template = "nive_datastore.webapi.tests:bookmark.pt"
 )
 
-collection2 = ObjectConf("nive_datastore.item",
+collection2 = ObjectConf(
     id = "track",
     name = "Track",
     dbparam = "tracks",

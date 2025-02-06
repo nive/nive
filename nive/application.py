@@ -24,7 +24,6 @@ from zope.interface.registry import Components
 
 from nive.utils.dataPool2.structure import PoolStructure
 
-from nive.definitions import MetaTbl
 from nive.definitions import IAppConf
 from nive.definitions import ConfigurationError
 
@@ -118,7 +117,7 @@ class Application(Events):
         # default root name (root.configuration.id)
         self._defaultRoot = ""
         # cache database structure
-        self._structure = PoolStructure()
+        self._structure = PoolStructure() # init empty object
         self._dbpool = None
 
         self.log = logging.getLogger(self.id)
@@ -524,7 +523,7 @@ class Application(Events):
         """
         app = self.app
         if forceReload:
-            app._structure = PoolStructure()
+            app._structure = PoolStructure()  # reset to empty object
         if not app._structure.IsEmpty():
             return app._structure
 
@@ -538,8 +537,8 @@ class Application(Events):
             if fld.datatype == "file":
                 continue
             m.append(fld.id)
-        structure[MetaTbl] = m
-        fieldtypes[MetaTbl] = f
+        structure[self.configuration.metaTableName] = m
+        fieldtypes[self.configuration.metaTableName] = f
 
         types = app.configurationQuery.GetAllObjectConfs()
         for ty in types:

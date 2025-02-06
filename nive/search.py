@@ -127,7 +127,7 @@ class Search(object):
         fields = fields or ["id"]
         db = kw.get("db") or self.db
         if pool_type is None:
-            dataTable=kw.get("dataTable") or "pool_meta"
+            dataTable=kw.get("dataTable") or self.app.configuration.metaTableName
             sql, values = db.FmtSQLSelect(fields, 
                                           parameter, 
                                           dataTable=dataTable, 

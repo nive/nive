@@ -7,7 +7,7 @@ import base64
 
 from nive.tool import Tool, ToolView
 from nive.definitions import ToolConf, FieldConf, ViewConf
-from nive.definitions import IApplication, MetaTbl, Structure, IContainer
+from nive.definitions import IApplication, Structure, IContainer
 from nive.helper import ConfEncoder
 from nive.i18n import _
 

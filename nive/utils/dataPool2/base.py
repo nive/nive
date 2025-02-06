@@ -88,9 +88,10 @@ class Base(object):
         
         self._conn = None
         if not structure:
-            self.structure = self._GetDefaultPoolStructure()(pool=self)
+            self.structure = PoolStructure(pool=self)
         else:
             self.structure = structure
+            self.MetaTable = structure.MetaTable # update meta table name if customized
         
         # create directories, if not available
         self.InitFileStorage(root, connParam)
@@ -1303,9 +1304,6 @@ class Base(object):
     
     # internal subclassing -------------------------------------------
     
-    def _GetDefaultPoolStructure(self):
-        return PoolStructure
-
     def _GetDataWrapper(self):
         return DataWrapper
 

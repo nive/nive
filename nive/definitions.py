@@ -449,6 +449,7 @@ class AppConf(baseConf):
         acl :    List of pyramid acls for permission settings.
             
         # options
+        metaTableName :    Use custom meta table name instead of 'pool_meta'
         fulltextIndex :    Enable fulltext index based on FieldConf.fulltext setting.
         autocommit :       Enable autocommit for object write and delete operations.
         useCache :         Cache database on application level.
@@ -482,6 +483,7 @@ class AppConf(baseConf):
         self.autocommit = True
         self.useCache = True
         self.frontendCodepage = "utf-8"
+        self.metaTableName = MetaTbl
         self.fulltextIndex = False
         self.workflowEnabled = False
         self.timezone = None
