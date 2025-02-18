@@ -1,14 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Copyright 2012, 2013 Arndt Droullier, Nive GmbH. All rights reserved.
-# Released under GPL3. See license.txt
-#
-
-__doc__ = """
-Receivers are looked up by user ids or roles. Sender name, receiver, title, and body can be set as values by call.
-
-mails as list with [(email, name),...] ("name@mail.com","Name")
-"""
 
 import time
 import logging
@@ -55,15 +44,16 @@ configuration = ToolConf(
         FieldConf(id="ssl",   name=_("Use SSL"),           datatype="bool",         required=0,     readonly=0, default=1,      description=""),
         FieldConf(id="maillog",  name=_("Log mails"),      datatype="string",       required=0,     readonly=0, default="",    description=""),
         FieldConf(id="showToListInHeader",name=_("Show all receivers in header"), datatype="bool", required=0, readonly=0, default=0,    description=""),
+        FieldConf(id="skipName",name=_("Do not use name in from field"), datatype="bool", required=0, readonly=0, default=0,    description=""),
 
         FieldConf(id="debug", name=_("Debug mail receiver"),datatype="email",       required=0,     readonly=0, default="",    description=_("If not empty all mails are sent to this address. The original mail receivers are ignored.")),
     ),
     mimetype = "text/html"
-    #modules = WidgetConf(name=_("Root"),      viewmapper="rootsettings",id="admin.rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
 )
 
-
 class sendMail(Tool):
+
+    maxlinelen = 350
 
     def _Run(self, **values):
         """
@@ -91,6 +81,7 @@ class sendMail(Tool):
         ssl = values.get("ssl")
 
         showToListInHeader = values.get("showToListInHeader")
+        skipName = values.get("skipName")
         force = values.get("force")
         debug = values.get("debug")
         maillog = values.get("maillog")
@@ -124,9 +115,9 @@ class sendMail(Tool):
                 recvs.extend(bcc)
         
         # to, cc, bcc are the corresponding lists formatted as strings `name <mail>`
-        to = [self._GetMailStr(r) for r in recvs]
-        cc = [self._GetMailStr(r) for r in cc]
-        bcc = [self._GetMailStr(r) for r in bcc]
+        to = [self._GetMailStr(r, skipName) for r in recvs]
+        cc = [self._GetMailStr(r, skipName) for r in cc]
+        bcc = [self._GetMailStr(r, skipName) for r in bcc]
 
         if fromMail:
             senderMail = sender
@@ -142,7 +133,7 @@ class sendMail(Tool):
             charset = "utf-8"
 
         if debug:
-            mails_original = "\r\n<br>".join([self._GetMailStr(r) for r in recvs])
+            mails_original = "\r\n<br>".join([self._GetMailStr(r, skipName) for r in recvs])
             body += """\r\n<br><br>\r\nDEBUG\r\n<br> Original receiver: \r\n<br>""" + mails_original
             # in debug mode use default receiver mail as receiving address for all mails
             recvs = [(debug, "")]
@@ -159,16 +150,18 @@ class sendMail(Tool):
             contentType=contentType,
             charset=charset,
             sender=senderMail,
-            replyTo=replyTo)
+            replyTo=replyTo,
+            skipName=skipName
+        )
 
         if not host:
             raise ConfigurationError("Empty mail host")
         elif host == "nive.testing":
-            log.info("[Mail.test] send to -> %s", ", ".join([r[0] for r in recvs]))
+            log.info("[Mail.test] send %s -> %s", fromMail, ", ".join([r[0] for r in recvs]))
             log.info(str(message))
             return None, True
 
-        log.info("[Mail.info] send to -> %s", ", ".join(to))
+        log.info("[Mail.send] %s -> %s", fromMail, ", ".join(to))
         mailer = SMTP(host, port)
         try:
             mailer.ehlo()
@@ -183,15 +176,14 @@ class sendMail(Tool):
             mailer.login(user, str(pass_))
 
         result = 1
-        log.info("send to -> %s", ", ".join([r[0] for r in recvs]))
         for recv in recvs:
             try:
                 if not showToListInHeader:
                     del message["To"]
-                    message["To"] = self._GetMailStr(recv)
+                    message["To"] = self._GetMailStr(recv, skipName)
 
                 #log.debug(message.as_string(unixfrom=False))
-                info = mailer.sendmail(fromMail, recv[0], message.as_string(unixfrom=False))
+                info = mailer.sendmail(fromMail, recv[0], message.as_string(unixfrom=False, maxheaderlen=self.maxlinelen))
                 self.stream.write(recv[0] + " ok, ")
                 log.debug("%s - %s - %s" % (recv[0], title, str(info)))
 
@@ -223,11 +215,11 @@ class sendMail(Tool):
         message = EmailMessage()
         message.set_content(kw.get("body"), subtype=contentType, charset=charset)
         message["Date"] = self._FormatDate()
-        message["Subject"] = Header(kw.get("title"), charset=charset).encode()
+        message["Subject"] = Header(kw.get("title"), charset=charset, maxlinelen=self.maxlinelen).encode(maxlinelen=self.maxlinelen)
 
         fromName = kw.get("fromName")
         fromMail = kw.get("fromMail")
-        message["From"] = self._GetMailStr((fromMail, fromName))
+        message["From"] = self._GetMailStr((fromMail, fromName), kw.get("skipName"))
 
         to = kw.get("to")
         if isinstance(to, (list,tuple)):
@@ -267,11 +259,13 @@ class sendMail(Tool):
         return s
 
 
-    def _GetMailStr(self, mail):
+    def _GetMailStr(self, mail, skipName=False):
         if isinstance(mail, str):
             return mail
+        if skipName:
+            return mail[0]
         if len(mail) > 1 and mail[1]:
-            return '%s <%s>' % ((Header(mail[1], "utf-8").encode()), mail[0])
+            return '%s <%s>' % ((Header(mail[1], charset="utf-8", maxlinelen=self.maxlinelen).encode(maxlinelen=self.maxlinelen)), mail[0])
         return mail[0]
         
 

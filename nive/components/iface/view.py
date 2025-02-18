@@ -717,26 +717,37 @@ class IFaceView(Parts, Search, CopyView, BaseView):
             return result
         delete = self.GetFormValue("delete")
         objs = []
+        lnk = []
         for i in ids:
             o = self.context.obj(i)
             if o is not None:
                 # check delete permission
                 if self.Allowed("delete", o):
                     objs.append(o)
+                    if delete != "1":
+                        # linked as unit/unitlist info message before confirmation
+                        linked = self.context.root.search.GetReferences(o.id, types=None, sort="id")
+                        if linked:
+                            result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked.")))
+                            for l in linked:
+                                lo = self.context.obj(l[0])
+                                result["msgs"].append(str(lo.meta.title)+" : "+str(lo.id))
                 else:
                     result["msgs"].append(o.meta.title + " " + translator()(_("Unauthorized. Delete is not allowed.")))
         if delete != "1":
             result["objsToDelete"] = objs
             return result
-        ok = False
         user = self.User()
+        ok = False
+        force = self.GetFormValue("force")=="1"
         for o in objs:
-            # linked as unit/unitlist
-            linked = self.context.root.search.GetReferences(o.id, types=None, sort="id")
-            if linked:
-                result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked. Not deleted.")) + " " + str([l[0] for l in linked]))
-                ok = False
-                continue
+            if not force:
+                # linked as unit/unitlist
+                linked = self.context.root.search.GetReferences(o.id, types=None, sort="id")
+                if linked:
+                    result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked. Not deleted.")) + " " + str([l[0] for l in linked]))
+                    ok = False
+                    continue
             try:
                 ok = self.context.Delete(o.id, user=user, obj=o)
             except Exception as e:

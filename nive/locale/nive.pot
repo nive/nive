@@ -808,6 +808,10 @@ msgstr ""
 msgid "Still linked. Not deleted."
 msgstr ""
 
+#: ./nive/components/iface/view.py:684
+msgid "Still linked."
+msgstr ""
+
 #: ./nive/components/iface/view.py:713
 msgid "OK. Deleted."
 msgstr ""
