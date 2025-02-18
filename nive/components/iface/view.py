@@ -711,7 +711,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
                 ids = ids.split(",")
             else:
                 ids = [ids]
-        result = {"msgs": [], "objsToDelete": [], "action": "@delete", "result": False, "ids": ids, "pageinfo": "delete"}
+        result = {"msgs": [], "objsToDelete": [], "linked": [], "action": "@delete", "result": False, "ids": ids, "pageinfo": "delete"}
         if not ids:
             result["msgs"] = [translator()(_("Nothing to delete"))]
             return result
@@ -730,8 +730,9 @@ class IFaceView(Parts, Search, CopyView, BaseView):
                         if linked:
                             result["msgs"].append(o.meta.title + ": " + translator()(_("Still linked.")))
                             for l in linked:
-                                lo = self.context.obj(l[0])
-                                result["msgs"].append(str(lo.meta.title)+" : "+str(lo.id))
+                                lo = self.context.root.LookupObj(l[0])
+                                #result["msgs"].append(str(lo.meta.title)+" : "+str(lo.id))
+                                result["linked"].append(lo)
                 else:
                     result["msgs"].append(o.meta.title + " " + translator()(_("Unauthorized. Delete is not allowed.")))
         if delete != "1":
