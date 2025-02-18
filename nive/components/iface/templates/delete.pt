@@ -17,7 +17,7 @@
          <p class="alert alert-info">Please delete all linked entries first. </p>
          <p tal:repeat="obj linked">
              <a href="${view.FolderUrl(context.root)}@delete?ids=${obj.id}&ref=${view.FolderUrl()}@delete?ids=${ids[0]}"
-                class="delete" target="_blank">
+                class="delete">
                  <img tal:condition="obj.meta.pool_wfa" src="${static}images/wf${obj.meta.pool_wfa}.gif" title="State: ${obj.meta.pool_wfa}"/> ${obj.meta.title} (${view.RenderField('pool_type', context=obj)}) -> Delete </a><br>
          </p>
    </div>
