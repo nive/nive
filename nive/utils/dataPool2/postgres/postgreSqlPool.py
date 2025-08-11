@@ -63,9 +63,8 @@ class PostgresConnection(Connection):
 
     def connect(self):
         """ Close and connect to server """
-
         db = self.PrivateConnection()
-        if not db:
+        if db is None:
             conf = self.configuration
             raise OperationalError("Cannot connect to database '%s.%s'" % (conf.host, conf.dbName))
         self._set(db)
@@ -73,8 +72,11 @@ class PostgresConnection(Connection):
 
     def IsConnected(self):
         """ Check if database is connected """
-        db = self._get()
-        return db and not db.closed
+        try:
+            db = self._get()
+            return db.cursor() is not None
+        except:
+            return False
 
     def GetDBManager(self):
         """ returns the database manager obj """
@@ -130,6 +132,7 @@ class PgConnRequest(PostgresConnection, ConnectionRequest):
     def __init__(self, config = None, connectNow = False):
         self.local = threading.local()
         PostgresConnection.__init__(self, config, connectNow)
+
 
 class PostgreSql(FileManager, Base):
     """
