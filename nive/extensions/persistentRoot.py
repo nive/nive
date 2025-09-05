@@ -33,6 +33,9 @@ class Persistent(object):
     def Init(self):
         self.storagekey = self.configuration.id+self.defaultKey
         self.LoadStoredValues()
+        for fld in self.configuration.data:
+            if not hasattr(self.data, fld.id):
+                self.data[fld.id] = fld.default
 
     
     def LoadStoredValues(self):
