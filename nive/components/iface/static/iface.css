@@ -78,7 +78,13 @@ a               { color: #000000; }
     -webkit-border-radius: 1em; -moz-border-radius: 1em; border-radius: 1em;
     border: 1px solid lightgray;
 }
-
+.wellsmall      {
+    padding: 1em;
+    -webkit-border-radius: 1em;
+    -moz-border-radius: 1em;
+    border-radius: 1em;
+    border: 1px solid lightgray;
+}
 /* path */
 ul.path         { padding:0px; color:#bbbbbb; }
 ul.path:before  { content: ""; }
