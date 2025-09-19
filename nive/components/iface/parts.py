@@ -236,13 +236,13 @@ class Parts:
         tabs = self.GetTabs(self.context)
         if not tabs:
             return ""
-        tmpl = """<li class="nav-item"><a class="nav-link %(cls)s" href="%(url)s">%(name)s</a></li>"""
+        tmpl = """<li class="nav-item"><a class="nav-link %(cls)s" href="%(url)s">%(icon)s %(name)s</a></li>"""
         if active is None:
             try:
                 active = self.request.currentTab
             except:
                 pass
-        html = ["""<ul class="nav nav-tabs">"""]
+        html = ["""<ul class="nav nav-tabs mb-4">"""]
         for t in tabs:
             permission = t.get("permission")
             if permission and not self.Allowed(permission, self.context):
@@ -250,7 +250,10 @@ class Parts:
             cls = ""
             if active == t["id"]:
                 cls = "active"
-            html.append(tmpl % {"url": self.ToUrl(t), "name": translate(t["name"]), "cls": cls})
+            icon = ""
+            if t.get("icon"):
+                icon = t.get("icon")
+            html.append(tmpl % {"url": self.ToUrl(t), "name": translate(t["name"]), "cls": cls, "icon": icon})
         html.append("</ul>")
         return "".join(html)
 
