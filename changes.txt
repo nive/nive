@@ -1,3 +1,8 @@
+1.6.8
+-----
+- language data update local name
+- fixes
+
 1.6.7
 -----
 - iface delete linked data
