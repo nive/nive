@@ -1651,7 +1651,8 @@ default_resources = {
     'trumbowyg': {
         None:{
             'seq':(('trumbowyg.js', 'nive.components.reform:static/trumbowyg/trumbowyg.min.js'),
-                   ('trumbowyg.cleanpaste.js', 'nive.components.reform:static/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.js'),
+                   ('trumbowyg.allowtagsfrompaste.js', 'nive.components.reform:static/trumbowyg/plugins/allowtagsfrompaste2/trumbowyg.allowtagsfrompaste.js'),
+                   #('trumbowyg.cleanpaste.js', 'nive.components.reform:static/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.min.js'),
                    ('trumbowyg.de.js', 'nive.components.reform:static/trumbowyg/langs/de.min.js'),
                    ('trumbowyg.table.js', 'nive.components.reform:static/trumbowyg/plugins/table/trumbowyg.table.min.js'),
                    ('trumbowyg.css', 'nive.components.reform:static/trumbowyg/ui/trumbowyg.min.css'),
