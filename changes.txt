@@ -1,3 +1,7 @@
+1.6.9
+-----
+- text editor fix, update
+
 1.6.8
 -----
 - language data update local name
