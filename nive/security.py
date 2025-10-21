@@ -7,10 +7,10 @@ User and security functions.
 """
 
 # imports used by other files
-from pyramid.security import Allow 
-from pyramid.security import Deny
-from pyramid.security import ALL_PERMISSIONS
-from pyramid.security import Everyone, Authenticated
+from pyramid.authorization import Allow
+from pyramid.authorization import Deny
+from pyramid.authorization import ALL_PERMISSIONS
+from pyramid.authorization import Everyone, Authenticated
 from pyramid.request import RequestLocalCache
 from pyramid.interfaces import ISecurityPolicy
 from pyramid.authentication import AuthTktCookieHelper
