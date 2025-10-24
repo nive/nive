@@ -396,7 +396,7 @@ class Base(object):
                 where.append(" %s %s" %(aCombi, condition))
             else:
                 where = [condition]
-        where = self._FmtWhereClause(where, singleTable)
+        where = self._FmtWhereClause(where, singleTable, kw)
 
         order = "ASC"
         if kw.get("ascending", 1) == 0:
@@ -474,7 +474,7 @@ class Base(object):
     def _FmtListForQuery(self, values):
         return values
 
-    def _FmtWhereClause(self, where, singleTable):
+    def _FmtWhereClause(self, where, singleTable, options):
         if len(where):
             where = "WHERE %s" % "".join(where)
         else:
