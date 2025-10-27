@@ -201,8 +201,11 @@ class ConnectionCache(object):
     def close(self):
         for key, conn in self.connections.items():
             # rollback uncommited values by default
-            conn.rollback()
-            conn.close()
+            try:
+                conn.rollback()
+                conn.close()
+            except:
+                pass
 
 class ConnectionRequest(Connection):
     """
