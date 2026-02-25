@@ -462,10 +462,6 @@ ind["local"] = "Bahasa Indonesia"
 ind["codepage"] = "iso-8859-1"
 _add(ind)
 
-
-
-""" 2nd level languages """
-
 # per ---------------------------------------------------
 per = deepcopy(empty)
 per["code"] = "per"
@@ -473,8 +469,11 @@ per["code2"] = "fa"
 per["name"] = "Persisch"
 per["local"] = "فارسی"
 per["codepage"] = "iso-8859-6"
-per["level"] = 2
 _add(per)
+
+
+""" 2nd level languages """
+
 # srp ---------------------------------------------------
 srp = deepcopy(empty)
 srp["code"] = "srp"
