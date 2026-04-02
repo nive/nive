@@ -4,8 +4,8 @@
 from copy import deepcopy
 
 
-LANGUAGES = dict()  # 3 char codes
-LANGUAGES2 = dict() # 2 char codes + mapping 3 chars
+LANGUAGES = dict()  # 2 char codes + variants
+LANGUAGES3 = dict() # mapping 3 chars
 
 
 #[s] api -------------------------------------------
@@ -14,8 +14,8 @@ def GetConf(langcode):
     """
     Load language configuration by code (3 letters)
     """
-    if len(langcode)==2:
-        langcode = LANGUAGES2.get(langcode)
+    if len(langcode)==3:
+        langcode = LANGUAGES3.get(langcode)
         if not langcode:
             return empty
     return LANGUAGES.get(langcode, empty)
@@ -29,23 +29,25 @@ def GetLanguages(level=0):
     for code, lang in LANGUAGES.items():
         if lang["level"]>level:
             continue
-        _cl.append({"id": lang["code"], "name": lang["name"]})
+        _cl.append({"id": lang["code2"], "name": lang["name"]})
     return _cl
 
 
-def GetLanguages2(level=0):
+def GetLanguages3(level=0):
     """
     load codelist of LANGUAGES and cache
     """
     _cl = []
-    for code2, mapping in LANGUAGES2.items():
+    for code3, mapping in LANGUAGES3.items():
         lang = LANGUAGES[mapping]
         if lang["level"]>level:
             continue
-        _cl.append({"id": code2, "title": lang["name"], "name": "%s (%s)"%(code2, lang["name"])})
+        _cl.append({"id": code3, "title": lang["name"], "name": "%s (%s)"%(code3, lang["name"])})
     return _cl
 
-
+def ExtendLanguages(languages):
+    for l in languages:
+        _add(l)
 
 # default ------------------------------------------------
 empty = dict()
@@ -63,10 +65,10 @@ empty["remove_chars"] = "\t\r\n"
 empty["special_chars"] = ""
 
 # level for sublist:
-#    0 = active LANGUAGES/countries
-#    1-8 = uncommon LANGUAGES rarely used in EU apps
+#    1 = active LANGUAGES/countries
+#    2-8 = uncommon LANGUAGES rarely used in EU apps
 #    9 = not linked to countries/local LANGUAGES/dialects,
-empty["level"] = 0
+empty["level"] = 1
 
 
 #[s] LANGUAGES -------------------------------------------
@@ -74,10 +76,12 @@ empty["level"] = 0
 noArticle = "no-article"
 
 def _add(info):
-    LANGUAGES[info["code"]] = info
-    LANGUAGES2[info["code2"]] = info["code"]
+    LANGUAGES3[info["code"]] = info["code"]
+    LANGUAGES[info["code2"]] = info
 
 # variants: en-gb en-us uh-hans zh-hant
+def _addVariant(info):
+    LANGUAGES[info["code2"]] = info
 
 # ger ---------------------------------------------------
 ger = deepcopy(empty)
@@ -106,6 +110,19 @@ eng["plural"] = "s"
 eng["codepage"] = "iso-8859-1"
 eng["special_chars"] = ""
 _add(eng)
+
+eng2 = deepcopy(eng)
+eng2["code2"] = "en-gb"
+eng2["name"] = "Englisch (Britisch)"
+eng2["local"] = "English (GB)"
+_addVariant(eng2)
+
+eng3 = deepcopy(eng)
+eng3["code2"] = "en-us"
+eng3["name"] = "Englisch (Amerikanisch)"
+eng3["local"] = "English (US)"
+_addVariant(eng3)
+
 
 # ita ---------------------------------------------------
 ita = deepcopy(empty)
@@ -137,6 +154,12 @@ spa["codepage"] = "iso-8859-15"
 spa["special_chars"] = "ÁÉÍÑÓÚÜáéíñóúü"
 _add(spa)
 
+spa2 = deepcopy(spa)
+spa2["code2"] = "es-419"
+spa2["name"] = "Spanisch (Lateinamerika)"
+spa2["local"] = "Español (Latino)"
+_add(spa2)
+
 # fra ---------------------------------------------------
 fra = deepcopy(empty)
 fra["code"] = "fra"
@@ -167,6 +190,17 @@ por["codepage"] = "iso-8859-15"
 por["special_chars"] = "ÀÁÂÃÇÉÊÍÓÔÕÚÜàáâãçéêíóôõúü"
 _add(por)
 
+por2 = deepcopy(por)
+por2["code2"] = "pt-br"
+por2["name"] = "Portugiesisch (Brasilianisch)"
+por2["local"] = "Português (BR)"
+_add(por2)
+
+por3 = deepcopy(por)
+por3["code2"] = "pt-pt"
+por3["name"] = "Portugiesisch (Portugiesisch)"
+por3["local"] = "Português (BR)"
+_add(por3)
 
 # dan ---------------------------------------------------
 dan = deepcopy(empty)
@@ -352,6 +386,16 @@ zho["codepage"] = "utf-8"
 zho["special_chars"] = "地球" # test
 _add(zho)
 
+zho2 = deepcopy(zho)
+zho2["code2"] = "zh-hans"
+zho2["name"] = "Chinesisch (Einfach)"
+_add(zho2)
+
+zho3 = deepcopy(zho)
+zho3["code2"] = "zh-hant"
+zho3["name"] = "Chinesisch (Traditional)"
+_add(zho3)
+
 # est ---------------------------------------------------
 est = deepcopy(empty)
 est["code"] = "est"
@@ -360,7 +404,6 @@ est["name"] = "Estnisch"
 est["local"] = "Eesti keel"
 est["codepage"] = "iso-8859-15"
 _add(est)
-
 
 # ara ---------------------------------------------------
 ara = deepcopy(empty)
@@ -418,15 +461,6 @@ lit["codepage"] = "iso-8859-4"
 _add(lit)
 
 # nor ---------------------------------------------------
-nor = deepcopy(empty)
-nor["code"] = "nor"
-nor["code2"] = "no"
-nor["name"] = "Norwegisch"
-nor["local"] = "Norsk"
-nor["codepage"] = "iso-8859-1"
-_add(nor)
-
-# nor ---------------------------------------------------
 nob = deepcopy(empty)
 nob["code"] = "nob"
 nob["code2"] = "nb"
@@ -453,15 +487,6 @@ slk["local"] = "Slovene"
 slk["codepage"] = "iso-8859-2"
 _add(slk)
 
-# ind ---------------------------------------------------
-ind = deepcopy(empty)
-ind["code"] = "ind"
-ind["code2"] = "id"
-ind["name"] = "Indonesisch"
-ind["local"] = "Bahasa Indonesia"
-ind["codepage"] = "iso-8859-1"
-_add(ind)
-
 # per ---------------------------------------------------
 per = deepcopy(empty)
 per["code"] = "per"
@@ -471,8 +496,20 @@ per["local"] = "فارسی"
 per["codepage"] = "iso-8859-6"
 _add(per)
 
-
-""" 2nd level languages """
+# hrv ---------------------------------------------------
+hrv = deepcopy(empty)
+hrv["code"] = "hrv"
+hrv["code2"] = "hr"
+hrv["name"] = "Kroatisch"
+hrv["local"] = "Hrvatski"
+hrv["articles_used"] = 0
+hrv["articles"] = {}
+hrv["article_abbr"] = ""
+hrv["verb_prefix"] = ""
+hrv["plural"] = ""
+hrv["codepage"] = "iso-8859-2"
+hrv["special_chars"] = "ĆČĐŠŽćčđšž"
+_add(hrv)
 
 # srp ---------------------------------------------------
 srp = deepcopy(empty)
@@ -481,8 +518,28 @@ srp["code2"] = "sr"
 srp["name"] = "Serbisch"
 srp["local"] = "Srpski jezik"
 srp["codepage"] = "iso-8859-2"
-srp["level"] = 2
 _add(srp)
+
+# hin ---------------------------------------------------
+hin = deepcopy(empty)
+hin["code"] = "hin"
+hin["code2"] = "hi"
+hin["name"] = "Hindi"
+hin["local"] = "Hindi"
+hin["codepage"] = "utf-8"
+_add(hin)
+
+""" 2nd level languages """
+
+# ind ---------------------------------------------------
+ind = deepcopy(empty)
+ind["code"] = "ind"
+ind["code2"] = "id"
+ind["name"] = "Indonesisch"
+ind["local"] = "Bahasa Indonesia"
+ind["codepage"] = "iso-8859-1"
+ind["level"] = 2
+_add(ind)
 # swa ---------------------------------------------------
 swa = deepcopy(empty)
 swa["code"] = "swa"
@@ -510,21 +567,6 @@ vie["local"] = "Tiếng Việt"
 vie["codepage"] = "iso-8859-1"
 vie["level"] = 2
 _add(vie)
-# hrv ---------------------------------------------------
-hrv = deepcopy(empty)
-hrv["code"] = "hrv"
-hrv["code2"] = "hr"
-hrv["name"] = "Kroatisch"
-hrv["local"] = "Hrvatski"
-hrv["articles_used"] = 0
-hrv["articles"] = {}
-hrv["article_abbr"] = ""
-hrv["verb_prefix"] = ""
-hrv["plural"] = ""
-hrv["codepage"] = "iso-8859-2"
-hrv["special_chars"] = "ĆČĐŠŽćčđšž"
-hrv["level"] = 2
-_add(hrv)
 # afr ---------------------------------------------------
 afr = deepcopy(empty)
 afr["code"] = "afr"
@@ -570,16 +612,6 @@ bos["codepage"] = "iso-8859-2"
 bos["special_chars"] = "čćžšž"
 bos["level"] = 2
 _add(bos)
-# tib------------------------------------------------
-tib = deepcopy(empty)
-tib["code"] = "tib"
-tib["code2"] = "bo"
-tib["name"] = "Tibetisch"
-tib["local"] = "Bod yig"
-tib["codepage"] = "utf-8"
-tib["special_chars"] = ""
-tib["level"] = 2
-_add(tib)
 # kat ---------------------------------------------------
 kat = deepcopy(empty)
 kat["code"] = "kat"
@@ -592,20 +624,12 @@ _add(kat)
 # heb ---------------------------------------------------
 heb = deepcopy(empty)
 heb["code"] = "heb"
-heb["code2"] = "iw"
+heb["code2"] = "he"
 heb["name"] = "Hebräisch"
 heb["local"] = " עברית"
 heb["codepage"] = "iso-8859-8"
 heb["level"] = 2
 _add(heb)
-# hin ---------------------------------------------------
-hin = deepcopy(empty)
-hin["code"] = "hin"
-hin["code2"] = "hi"
-hin["name"] = "Hindi"
-hin["codepage"] = "utf-8"
-hin["level"] = 2
-_add(hin)
 # isi ---------------------------------------------------
 isi = deepcopy(empty)
 isi["code"] = "isi"
@@ -615,24 +639,23 @@ isi["local"] = "Íslenska"
 isi["codepage"] = "iso-8859-1"
 isi["level"] = 2
 _add(isi)
+# hau ---------------------------------------------------
+hau = deepcopy(empty)
+hau["code"] = "hau"
+hau["code2"] = "ha"
+hau["name"] = "Hausa"
+hau["local"] = "Hausa"
+hau["codepage"] = "iso-8859-1"
+hau["level"] = 2
+_add(hau)
 
-""" 3rd level languages """
-# amh ---------------------------------------------------
-amh = deepcopy(empty)
-amh["code"] = "amh"
-amh["code2"] = "am"
-amh["name"] = "Amarəñña"
-amh["local"] = "Amarəñña"
-amh["codepage"] = "utf-8"
-amh["special_chars"] = ""
-amh["level"] = 3
-_add(amh)
+""" other languages --------------------------------------------------------------------------------- """
 
 # arm -------------------------------------------------
 arm = deepcopy(empty)
 arm["code"] = "arm"
 arm["code2"] = "hy"
-arm["name"] = "Hajeren les"
+arm["name"] = "Armenian"
 arm["local"] = "Hajeren les"
 arm["codepage"] = "utf-8"
 arm["special_chars"] = ""
@@ -643,7 +666,7 @@ _add(arm)
 aze = deepcopy(empty)
 aze["code"] = "aze"
 aze["code2"] = "az"
-aze["name"] = "Azərbaycan dili"
+aze["name"] = "Azerbaijani"
 aze["local"] = "Azərbaycan dili"
 aze["codepage"] = "iso-8859-9"
 aze["special_chars"] = ""
@@ -654,43 +677,21 @@ _add(aze)
 ben = deepcopy(empty)
 ben["code"] = "ben"
 ben["code2"] = "bn"
-ben["name"] = "Bangla bhasha"
+ben["name"] = "Bengali"
 ben["local"] = "Bangla bhasha"
 ben["codepage"] = "utf-8"
 ben["special_chars"] = ""
 ben["level"] = 3
 _add(ben)
-
-# fil ---------------------------------------------------
-fil = deepcopy(empty)
-fil["code"] = "fil"
-fil["code2"] = "fl"
-fil["name"] = "Filipino"
-fil["local"] = "Filipino"
-fil["codepage"] = "iso-8859-1"
-fil["level"] = 3
-_add(fil)
-
-# hau ---------------------------------------------------
-hau = deepcopy(empty)
-hau["code"] = "hau"
-hau["code2"] = "ha"
-hau["name"] = "Hausa"
-hau["local"] = "Hausa"
-hau["codepage"] = "iso-8859-1"
-hau["level"] = 9
-_add(hau)
-
 # mon ---------------------------------------------------
 mon = deepcopy(empty)
 mon["code"] = "mon"
 mon["code2"] = "mn"
-mon["name"] = "халх монгол хэл"
+mon["name"] = "Mongolian"
 mon["local"] = "халх монгол хэл"
 mon["codepage"] = "iso-8859-5"
 mon["level"] = 3
 _add(mon)
-
 # nep ---------------------------------------------------
 nep = deepcopy(empty)
 nep["code"] = "nep"
@@ -700,6 +701,16 @@ nep["local"] = "Nepali"
 nep["codepage"] = "utf-8"
 nep["level"] = 3
 _add(nep)
+# mk -------------------------------------------------
+mk = deepcopy(empty)
+mk["code"] = "mkd"
+mk["code2"] = "mk"
+mk["name"] = "Macedonian"
+mk["local"] = "македонски јазик"
+mk["codepage"] = "iso-8859-5"
+mk["level"] = 3
+_add(mk)
+
 
 # san ---------------------------------------------------
 san = deepcopy(empty)
@@ -708,19 +719,10 @@ san["code2"] = "sa"
 san["name"] = "Sanskrit"
 san["local"] = "Sanskrit"
 san["codepage"] = "utf-8"
-san["level"] = 3
+san["level"] = 4
 _add(san)
 
 
-# ell ---------------------------------------------------
-ell = deepcopy(empty) # alt for gre
-ell["code"] = "ell"
-ell["code2"] = "gr"
-ell["name"] = "Griechisch (alt)"
-ell["local"] = "ελληνική γλώσσα"
-ell["codepage"] = "iso-8859-7"
-ell["level"] = 9
-_add(ell)
 # cat ---------------------------------------------------
 cat = deepcopy(empty)
 cat["code"] = "cat"
@@ -734,8 +736,52 @@ cat["verb_prefix"] = ""
 cat["plural"] = "s"
 cat["codepage"] = "iso-8859-15"
 cat["special_chars"] = "ÁÉÍÑÓÚÜáéíñóúü"
-cat["level"] = 9
+cat["level"] = 4
 _add(cat)
+
+# eu -------------------------------------------------
+eu = deepcopy(empty)
+eu["code"] = "eus"
+eu["code2"] = "eu"
+eu["name"] = "Basque"
+eu["local"] = "Euskara"
+eu["level"] = 4
+_add(eu)
+
+# ga -------------------------------------------------
+ga = deepcopy(empty)
+ga["code"] = "irl"
+ga["code2"] = "ga"
+ga["name"] = "Irisch"
+ga["local"] = "Irish"
+ga["level"] = 4
+_add(ga)
+
+
+
+# amh ---------------------------------------------------
+amh = deepcopy(empty)
+amh["code"] = "amh"
+amh["code2"] = "am"
+amh["name"] = "Ethiopisch"
+amh["local"] = "Amarəñña"
+amh["codepage"] = "utf-8"
+amh["special_chars"] = ""
+amh["level"] = 8
+_add(amh)
+
+# fil ---------------------------------------------------
+fil = deepcopy(empty)
+fil["code"] = "fil"
+fil["code2"] = "fl"
+fil["name"] = "Filipino"
+fil["local"] = "Filipino"
+fil["codepage"] = "iso-8859-1"
+fil["level"] = 8
+_add(fil)
+
+
+""" old languages / not actively used """
 # epo ---------------------------------------------------
 epo = deepcopy(empty)
 epo["code"] = "epo"

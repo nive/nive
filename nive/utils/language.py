@@ -1,8 +1,12 @@
 
+
+
+from . import language_data
+
+
+#######################################
 # to be removed
-
-from . import language_data 
-
+#########################################
 
 class LanguageExtension(object):
     """    
@@ -29,7 +33,7 @@ class LanguageExtension(object):
     def GetConf(self, lang):
         """
         """
-        return language_data.GetConf(lang)
+        return language_data.GetConf(lang.lower())
 
 
     def GetName(self, lang):
