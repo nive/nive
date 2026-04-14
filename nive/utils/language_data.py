@@ -55,6 +55,7 @@ empty["code"] = ""
 empty["code2"] = ""
 empty["name"] = ""
 empty["local"] = ""
+empty["en"] = ""
 empty["articles_used"] = 0 # 1=article, 2=f+m, 3=f+m+n
 empty["articles"] = dict()
 empty["article_abbr"] = ""
@@ -89,6 +90,7 @@ ger["code"] = "ger"
 ger["code2"] = "de"
 ger["name"] = "Deutsch"
 ger["local"] = "Deutsch"
+ger["en"] = "German"
 ger["articles_used"] = 3
 ger["articles"] = {"m": "der", "f": "die", "n": "das"}
 ger["verb_prefix"] = ""
@@ -103,6 +105,7 @@ eng["code"] = "eng"
 eng["code2"] = "en"
 eng["name"] = "Englisch"
 eng["local"] = "English"
+eng["en"] = "English"
 eng["articles_used"] = 1
 eng["articles"] = {"a": "the"}
 eng["verb_prefix"] = "to"
@@ -130,6 +133,7 @@ ita["code"] = "ita"
 ita["code2"] = "it"
 ita["name"] = "Italienisch"
 ita["local"] = "Italiano"
+ita["en"] = "Italian"
 ita["articles_used"] = 2
 ita["articles"] = {"m": "il", "f": "la"}
 ita["article_abbr"] = "l'"
@@ -145,6 +149,7 @@ spa["code"] = "spa"
 spa["code2"] = "es"
 spa["name"] = "Spanisch"
 spa["local"] = "Español"
+spa["en"] = "Spanish"
 spa["articles_used"] = 2
 spa["articles"] = {"m": "el", "f": "la"}
 spa["article_abbr"] = ""
@@ -166,6 +171,7 @@ fra["code"] = "fra"
 fra["code2"] = "fr"
 fra["name"] = "Französisch"
 fra["local"] = "Français"
+fra["en"] = "French"
 fra["articles_used"] = 2
 fra["articles"] = {"m": "le", "f": "la"}
 fra["article_abbr"] = "l’"
@@ -181,6 +187,7 @@ por["code"] = "por"
 por["code2"] = "pt"
 por["name"] = "Portugiesisch"
 por["local"] = "Português"
+por["en"] = "Portuguese"
 por["articles_used"] = 2
 por["articles"] = {"m": "o", "f": "a"}
 por["article_abbr"] = ""
@@ -208,6 +215,7 @@ dan["code"] = "dan"
 dan["code2"] = "da"
 dan["name"] = "Dänisch"
 dan["local"] = "Dansk"
+dan["en"] = "Danish"
 dan["articles_used"] = 0
 dan["articles"] = {}
 dan["article_abbr"] = ""
@@ -223,6 +231,7 @@ dut["code"] = "dut"
 dut["code2"] = "nl"
 dut["name"] = "Niederländisch"
 dut["local"] = "Nederlands"
+dut["en"] = "Dutch"
 dut["articles_used"] = 3
 dut["articles"] = {"m": "de",  "f": "de", "n": "het"}
 dut["article_abbr"] = ""
@@ -238,6 +247,7 @@ pol["code"] = "pol"
 pol["code2"] = "pl"
 pol["name"] = "Polnisch"
 pol["local"] = "Polski"
+pol["en"] = "Polish"
 pol["articles_used"] = 4
 pol["articles"] = {"ma": "maskulin belebt", "mi": "maskulin unbelebt", "f": "feminin", "n": "neutrum"}
 pol["article_abbr"] = ""
@@ -253,6 +263,7 @@ swe["code"] = "swe"
 swe["code2"] = "sv"
 swe["name"] = "Schwedisch"
 swe["local"] = "Svenska"
+swe["en"] = "Swedish"
 swe["articles_used"] = 2
 swe["articles"] = {"": "en", "n": "ett"}
 swe["article_abbr"] = ""
@@ -268,6 +279,7 @@ cze["code"] = "cze"
 cze["code2"] = "cs"
 cze["name"] = "Tschechisch"
 cze["local"] = "Čeština"
+cze["en"] = "Czech"
 cze["articles_used"] = 4
 cze["articles"] = {"ma": "maskulin belebt", "mi": "maskulin unbelebt", "f": "feminin", "n": "neutrum"}
 cze["article_abbr"] = ""
@@ -283,6 +295,7 @@ tur["code"] = "tur"
 tur["code2"] = "tr"
 tur["name"] = "Türkisch"
 tur["local"] = "Türkçe"
+tur["en"] = "Turkish"
 tur["articles_used"] = 0
 tur["articles"] = { }
 tur["article_abbr"] = ""
@@ -298,6 +311,7 @@ fin["code"] = "fin"
 fin["code2"] = "fi"
 fin["name"] = "Finnisch"
 fin["local"] = "Suomi"
+fin["en"] = "Finnish"
 fin["articles_used"] = 0
 fin["articles"] = { }
 fin["article_abbr"] = ""
@@ -312,7 +326,8 @@ rus = deepcopy(empty)
 rus["code"] = "rus"
 rus["code2"] = "ru"
 rus["name"] = "Russisch"
-rus["local"] = "Россия"
+rus["local"] = "Русский"
+rus["en"] = "Russian"
 rus["articles_used"] = 4
 rus["articles"] = {"ma": "maskulin belebt", "mi": "maskulin unbelebt", "f": "feminin", "n": "neutrum"}
 rus["article_abbr"] = ""
@@ -328,6 +343,7 @@ gre["code"] = "gre"
 gre["code2"] = "el"
 gre["name"] = "Griechisch"
 gre["local"] = "Ελληνικα"
+gre["en"] = "Greek"
 gre["articles_used"] = 3
 gre["articles"] = {"m": "o", "f": "η", "n": "το"}
 gre["article_abbr"] = ""
@@ -343,6 +359,7 @@ rum["code"] = "rum"
 rum["code2"] = "ro"
 rum["name"] = "Rumänisch"
 rum["local"] = "Română"
+rum["en"] = "Romanian"
 rum["articles_used"] = 3
 rum["articles"] = {"m": "m", "f": "f"}
 rum["article_abbr"] = "l'"
@@ -358,6 +375,7 @@ ukr["code"] = "ukr"
 ukr["code2"] = "uk"
 ukr["name"] = "Ukrainisch"
 ukr["local"] = "українська"
+ukr["en"] = "Ukrainian"
 ukr["codepage"] = "iso-8859-5"
 _add(ukr)
 
@@ -367,6 +385,7 @@ bul["code"] = "bul"
 bul["code2"] = "bg"
 bul["name"] = "Bulgarisch"
 bul["local"] = "Български език"
+bul["en"] = "Bulgarian"
 bul["articles_used"] = 4
 bul["articles"] = {"ma": "maskulin belebt", "mi": "maskulin unbelebt", "f": "feminin", "n": "neutrum"}
 bul["article_abbr"] = ""
@@ -382,6 +401,7 @@ zho["code"] = "zho"
 zho["code2"] = "zh"
 zho["name"] = "Chinesisch"
 zho["local"] = "中文"
+zho["en"] = "Chinese"
 zho["codepage"] = "utf-8"
 zho["special_chars"] = "地球" # test
 _add(zho)
@@ -402,6 +422,7 @@ est["code"] = "est"
 est["code2"] = "et"
 est["name"] = "Estnisch"
 est["local"] = "Eesti keel"
+est["en"] = "Estonian"
 est["codepage"] = "iso-8859-15"
 _add(est)
 
@@ -411,6 +432,7 @@ ara["code"] = "ara"
 ara["code2"] = "ar"
 ara["name"] = "Arabisch"
 ara["local"] = "للغة العربية‎"
+ara["en"] = "Arabic"
 ara["codepage"] = "utf-8"
 ara["special_chars"] = ara["name"]
 _add(ara)
@@ -421,6 +443,7 @@ hun["code"] = "hun"
 hun["code2"] = "hu"
 hun["name"] = "Ungarisch"
 hun["local"] = "Magyar nyelv"
+hun["en"] = "Hungarian"
 hun["codepage"] = "iso-8859-1"
 _add(hun)
 
@@ -430,6 +453,7 @@ jpn["code"] = "jpn"
 jpn["code2"] = "ja"
 jpn["name"] = "Japanisch"
 jpn["local"] = "日本語"
+jpn["en"] = "Japanese"
 jpn["codepage"] = "utf-8"
 _add(jpn)
 
@@ -439,6 +463,7 @@ kor["code"] = "kor"
 kor["code2"] = "ko"
 kor["name"] = "Koreanisch"
 kor["local"] = "韓國語"
+kor["en"] = "Korean"
 kor["codepage"] = "utf-8"
 _add(kor)
 
@@ -448,6 +473,7 @@ lav["code"] = "lav"
 lav["code2"] = "lv"
 lav["name"] = "Lättisch"
 lav["local"] = "Latviešu valoda"
+lav["en"] = "Latvian"
 lav["codepage"] = "iso-8859-4"
 _add(lav)
 
@@ -457,6 +483,7 @@ lit["code"] = "lit"
 lit["code2"] = "lt"
 lit["name"] = "Litauisch"
 lit["local"] = "Lietuvių kalba"
+lit["en"] = "Lithuanian"
 lit["codepage"] = "iso-8859-4"
 _add(lit)
 
@@ -466,6 +493,7 @@ nob["code"] = "nob"
 nob["code2"] = "nb"
 nob["name"] = "Norwegisch Bokmål"
 nob["local"] = "Bokmål"
+nob["en"] = "Norwegian"
 nob["codepage"] = "iso-8859-1"
 _add(nob)
 
@@ -475,6 +503,7 @@ slk["code"] = "slk"
 slk["code2"] = "sk"
 slk["name"] = "Slovakisch"
 slk["local"] = "Slovenčina"
+slk["en"] = "Slovak"
 slk["codepage"] = "iso-8859-2"
 _add(slk)
 
@@ -484,6 +513,7 @@ slk["code"] = "slv"
 slk["code2"] = "sl"
 slk["name"] = "Slovenisch"
 slk["local"] = "Slovene"
+slk["en"] = "Slovenian"
 slk["codepage"] = "iso-8859-2"
 _add(slk)
 
@@ -493,6 +523,7 @@ per["code"] = "per"
 per["code2"] = "fa"
 per["name"] = "Persisch"
 per["local"] = "فارسی"
+per["en"] = "Persian"
 per["codepage"] = "iso-8859-6"
 _add(per)
 
@@ -502,6 +533,7 @@ hrv["code"] = "hrv"
 hrv["code2"] = "hr"
 hrv["name"] = "Kroatisch"
 hrv["local"] = "Hrvatski"
+hrv["en"] = "Croatian"
 hrv["articles_used"] = 0
 hrv["articles"] = {}
 hrv["article_abbr"] = ""
@@ -517,6 +549,7 @@ srp["code"] = "srp"
 srp["code2"] = "sr"
 srp["name"] = "Serbisch"
 srp["local"] = "Srpski jezik"
+srp["en"] = "Serbian"
 srp["codepage"] = "iso-8859-2"
 _add(srp)
 
@@ -526,6 +559,7 @@ hin["code"] = "hin"
 hin["code2"] = "hi"
 hin["name"] = "Hindi"
 hin["local"] = "Hindi"
+hin["en"] = "Hindi"
 hin["codepage"] = "utf-8"
 _add(hin)
 
@@ -537,6 +571,7 @@ ind["code"] = "ind"
 ind["code2"] = "id"
 ind["name"] = "Indonesisch"
 ind["local"] = "Bahasa Indonesia"
+ind["en"] = "Indonesian"
 ind["codepage"] = "iso-8859-1"
 ind["level"] = 2
 _add(ind)
@@ -546,6 +581,7 @@ swa["code"] = "swa"
 swa["code2"] = "sw"
 swa["name"] = "Kiswahili"
 swa["local"] = "Kiswahili"
+swa["en"] = "Swahili"
 swa["codepage"] = "iso-8859-1"
 swa["level"] = 2
 _add(swa)
@@ -555,6 +591,7 @@ tha["code"] = "tha"
 tha["code2"] = "th"
 tha["name"] = "Thailändisch"
 tha["local"] = "ภาษาไทย"
+tha["en"] = "Thai"
 tha["codepage"] = "iso-8859-11"
 tha["level"] = 2
 _add(tha)
@@ -564,6 +601,7 @@ vie["code"] = "vie"
 vie["code2"] = "vi"
 vie["name"] = "Vietnamesisch"
 vie["local"] = "Tiếng Việt"
+vie["en"] = "Vietnamese"
 vie["codepage"] = "iso-8859-1"
 vie["level"] = 2
 _add(vie)
@@ -573,6 +611,7 @@ afr["code"] = "afr"
 afr["code2"] = "af"
 afr["name"] = "Afrikaans"
 afr["local"] = "Afrikaans"
+afr["en"] = "Afrikaans"
 afr["codepage"] = "iso-8859-15"
 afr["special_chars"] = "ÈèÉéÊêËëÎîÏïÔôÛû"
 afr["level"] = 2
@@ -582,7 +621,8 @@ alb = deepcopy(empty)
 alb["code"] = "alb"
 alb["code2"] = "sq"
 alb["name"] = "Albanisch"
-alb["name"] = "Gjuha Shqipe"
+alb["local"] = "Gjuha Shqipe"
+alb["en"] = "Albanian"
 alb["codepage"] = "iso-8859-16"
 alb["special_chars"] = "ËëÇç"
 alb["level"] = 2
@@ -593,6 +633,7 @@ bel["code"] = "bel"
 bel["code2"] = "be"
 bel["name"] = "Weisrussisch"
 bel["local"] = "беларуская мова"
+bel["en"] = "Belarusian"
 bel["articles_used"] = 4
 bel["articles"] = {"ma": "maskulin belebt", "mi": "maskulin unbelebt", "f": "feminin", "n": "neutrum"}
 bel["article_abbr"] = ""
@@ -608,6 +649,7 @@ bos["code"] = "bos"
 bos["code2"] = "bs"
 bos["name"] = "Bosnisch"
 bos["local"] = "Bosanski jezik"
+bos["en"] = "Bosnian"
 bos["codepage"] = "iso-8859-2"
 bos["special_chars"] = "čćžšž"
 bos["level"] = 2
@@ -618,6 +660,7 @@ kat["code"] = "kat"
 kat["code2"] = "ka"
 kat["name"] = "Georgisch"
 kat["local"] = "Kartuli Ena"
+kat["en"] = "Georgian"
 kat["codepage"] = "utf-8"
 kat["level"] = 2
 _add(kat)
@@ -627,6 +670,7 @@ heb["code"] = "heb"
 heb["code2"] = "he"
 heb["name"] = "Hebräisch"
 heb["local"] = " עברית"
+heb["en"] = "Hebrew"
 heb["codepage"] = "iso-8859-8"
 heb["level"] = 2
 _add(heb)
@@ -636,6 +680,7 @@ isi["code"] = "isi"
 isi["code2"] = "is"
 isi["name"] = "Isländisch"
 isi["local"] = "Íslenska"
+isi["en"] = "Icelandic"
 isi["codepage"] = "iso-8859-1"
 isi["level"] = 2
 _add(isi)
@@ -645,6 +690,7 @@ hau["code"] = "hau"
 hau["code2"] = "ha"
 hau["name"] = "Hausa"
 hau["local"] = "Hausa"
+hau["en"] = "Hausa"
 hau["codepage"] = "iso-8859-1"
 hau["level"] = 2
 _add(hau)
@@ -657,6 +703,7 @@ arm["code"] = "arm"
 arm["code2"] = "hy"
 arm["name"] = "Armenian"
 arm["local"] = "Hajeren les"
+arm["en"] = "Armenian"
 arm["codepage"] = "utf-8"
 arm["special_chars"] = ""
 arm["level"] = 3
@@ -668,6 +715,7 @@ aze["code"] = "aze"
 aze["code2"] = "az"
 aze["name"] = "Azerbaijani"
 aze["local"] = "Azərbaycan dili"
+aze["en"] = "Azerbaijani"
 aze["codepage"] = "iso-8859-9"
 aze["special_chars"] = ""
 aze["level"] = 3
@@ -679,6 +727,7 @@ ben["code"] = "ben"
 ben["code2"] = "bn"
 ben["name"] = "Bengali"
 ben["local"] = "Bangla bhasha"
+ben["en"] = "Bengali"
 ben["codepage"] = "utf-8"
 ben["special_chars"] = ""
 ben["level"] = 3
@@ -689,6 +738,7 @@ mon["code"] = "mon"
 mon["code2"] = "mn"
 mon["name"] = "Mongolian"
 mon["local"] = "халх монгол хэл"
+mon["en"] = "Mongolian"
 mon["codepage"] = "iso-8859-5"
 mon["level"] = 3
 _add(mon)
@@ -698,6 +748,7 @@ nep["code"] = "nep"
 nep["code2"] = "ne"
 nep["name"] = "Nepali"
 nep["local"] = "Nepali"
+nep["en"] = "Nepali"
 nep["codepage"] = "utf-8"
 nep["level"] = 3
 _add(nep)
@@ -707,6 +758,7 @@ mk["code"] = "mkd"
 mk["code2"] = "mk"
 mk["name"] = "Macedonian"
 mk["local"] = "македонски јазик"
+mk["en"] = "Macedonian"
 mk["codepage"] = "iso-8859-5"
 mk["level"] = 3
 _add(mk)
@@ -718,6 +770,7 @@ san["code"] = "san"
 san["code2"] = "sa"
 san["name"] = "Sanskrit"
 san["local"] = "Sanskrit"
+san["en"] = "Sanskrit"
 san["codepage"] = "utf-8"
 san["level"] = 4
 _add(san)
@@ -729,6 +782,7 @@ cat["code"] = "cat"
 cat["code2"] = "ca"
 cat["name"] = "Katalanisch"
 cat["local"] = "Catalán"
+cat["en"] = "Catalan"
 cat["articles_used"] = 2
 cat["articles"] = {"m": "el", "f": "la"}
 cat["article_abbr"] = ""
@@ -745,6 +799,7 @@ eu["code"] = "eus"
 eu["code2"] = "eu"
 eu["name"] = "Basque"
 eu["local"] = "Euskara"
+eu["en"] = "Basque"
 eu["level"] = 4
 _add(eu)
 
@@ -754,6 +809,7 @@ ga["code"] = "irl"
 ga["code2"] = "ga"
 ga["name"] = "Irisch"
 ga["local"] = "Irish"
+ga["en"] = "Irish"
 ga["level"] = 4
 _add(ga)
 
@@ -765,6 +821,7 @@ amh["code"] = "amh"
 amh["code2"] = "am"
 amh["name"] = "Ethiopisch"
 amh["local"] = "Amarəñña"
+amh["en"] = "Ethiopian"
 amh["codepage"] = "utf-8"
 amh["special_chars"] = ""
 amh["level"] = 8
@@ -776,9 +833,11 @@ fil["code"] = "fil"
 fil["code2"] = "fl"
 fil["name"] = "Filipino"
 fil["local"] = "Filipino"
+fil["en"] = "Filipino"
 fil["codepage"] = "iso-8859-1"
 fil["level"] = 8
 _add(fil)
+
 
 
 """ old languages / not actively used """
