@@ -29,7 +29,7 @@ def GetLanguages(level=0):
     for code, lang in LANGUAGES.items():
         if lang["level"]>level:
             continue
-        _cl.append({"id": lang["code2"], "name": lang["name"]})
+        _cl.append({"id": lang["code2"], "name": lang["name"], "local": lang["local"], "en": lang.get("en",lang["name"])})
     return _cl
 
 
