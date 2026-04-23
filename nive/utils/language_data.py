@@ -116,8 +116,8 @@ _add(eng)
 
 eng2 = deepcopy(eng)
 eng2["code2"] = "en-gb"
-eng2["name"] = "Englisch (Britisch)"
-eng2["local"] = "English (GB)"
+eng2["name"] = "Englisch"
+eng2["local"] = "English"
 _addVariant(eng2)
 
 eng3 = deepcopy(eng)
@@ -205,8 +205,8 @@ _add(por2)
 
 por3 = deepcopy(por)
 por3["code2"] = "pt-pt"
-por3["name"] = "Portugiesisch (Portugiesisch)"
-por3["local"] = "Português (BR)"
+por3["name"] = "Portugiesisch"
+por3["local"] = "Português"
 _add(por3)
 
 # dan ---------------------------------------------------
