@@ -1155,7 +1155,7 @@ def PreflightRequest(request,
         ("Access-Control-Allow-Origin", origin),
         ("Access-Control-Allow-Methods", allowMethods),
         ("Access-Control-Allow-Credentials", str(allowCredentials).lower()),
-        ("Access-Control-Max-Age", maxAge),
+        ("Access-Control-Max-Age", str(maxAge)),
         ("Access-Control-Allow-Headers", allowHeaders),
         ("Vary", "Accept-Encoding, Origin")
     ]
