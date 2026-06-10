@@ -10,6 +10,11 @@ import hashlib
 from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 from pyramid.path import DottedNameResolver
 from pyramid.path import AssetResolver
 from pyramid.path import caller_package
@@ -70,7 +75,6 @@ def ResolveAsset(name, base=None, raiseExcp=True):
             return None
         raise
 
-    
 def ResolveConfiguration(conf, base=None):
     """
     Lookup configuration object by dotted python name. Returns interface and configuration object.
@@ -99,6 +103,14 @@ def ResolveConfiguration(conf, base=None):
             with open(path.abspath()) as f:
                 s = f.read()
             conf = json.loads(s)
+        # json file
+        elif conf.find(".yaml")!= -1:
+            if yaml is None:
+                raise ConfigurationError("optional dependency 'yaml' is required to load yaml files")
+            path = ResolveAsset(conf, base)
+            with open(path.abspath()) as f:
+                s = f.read()
+            conf = yaml.safe_load(s)
         # resolve attribute name
         elif conf:
             conf = ResolveName(conf, base=base)
