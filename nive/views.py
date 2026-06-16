@@ -527,20 +527,21 @@ class BaseView(object):
         
         #!date format
         """
-        if not file:
+        if file is None:
             return HTTPNotFound()
-        last_mod = file.mtime
+        r = Response(content_type=str(GetMimeTypeExtension(file.extension)), conditional_response=True, headerlist=headers)
+        try:
+            last_mod = file.mtime
+            iterator = file.iterator()
+            if iterator is None:
+                r.app_iter = iterator
+            else:
+                r.body = file.read()
+        except (FileNotFound, FileNotFoundError):
+            self.context.app.log.warning("File not found: %s", file.path)
+            return HTTPNotFound()
         if not last_mod:
             last_mod = self.context.meta.pool_change
-        r = Response(content_type=str(GetMimeTypeExtension(file.extension)), conditional_response=True, headerlist=headers)
-        iterator = file.iterator()
-        if iterator:
-            r.app_iter = iterator
-        else:
-            try:
-                r.body = file.read()
-            except FileNotFound:
-                raise NotFound
         r.content_length = file.size
         r.last_modified = last_mod
         r.etag = '%s-%s' % (last_mod, hash(file.path))
