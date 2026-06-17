@@ -58,7 +58,7 @@ class MySqlConnection(Connection):
         use_unicode = conf.unicode
         charset = None
         if use_unicode:
-            charset = "utf8"
+            charset = "utf8mb4"
         db = MySQLdb.connect(conf.host,
                              conf.user,
                              str(conf.password), 
