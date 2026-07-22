@@ -57,6 +57,8 @@ class sendMail(Tool):
 
     def _Run(self, **values):
         """
+        use nive.testing as mailhost in configuration to disable smtp and enable logging as [Mail.test]
+
         """
         host = values.get("host")
         port = values.get("port")
