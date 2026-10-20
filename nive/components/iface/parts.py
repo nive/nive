@@ -258,12 +258,12 @@ class Parts:
         return "".join(html)
 
 
-    def settingsLinks(self, base=None):
+    def settingsLinks(self):
         """
         html body div.mainBoxContent div#unit_settings
         dropdown in content
         """
-        li = self.settingsStripped(base=base)
+        li = self.settingsStripped()
         if not li:
             return ""
         return """
@@ -278,7 +278,7 @@ class Parts:
 </div>  """% dict(li=li, Settings=translate(_("Settings"), self.request))
 
 
-    def settingsStripped(self, active=None, base=None, addSlots=False, cls="dropdown-item"):
+    def settingsStripped(self, active=None, addSlots=False, cls="dropdown-item"):
         """
         settings as <li> list
         """
@@ -297,22 +297,6 @@ class Parts:
             except:
                 pass
 
-        app = self.context.app
-        base0 = ""
-        if base=="dev":
-            from peak.config import ROUTING # TODO reconfigure ROUTING
-            base = ROUTING.development
-            base0 = self.Url(app.portal)
-            if base.endswith("/") and not base0.endswith("/"):
-                base = base[:-1]
-            if not base.endswith("/") and base0.endswith("/"):
-                base += "/"
-
-        def rewriteBase(url):
-            if not base0:
-                return url
-            return url.replace(base0, base)
-
         tmpl = """<a class="%(class)s" href="%(url)s">%(icon)s %(name)s</a>"""
         html = []
         for t in settings:
@@ -324,7 +308,7 @@ class Parts:
                 cc += " active"
             ic = t.get("icon","")
             icon = ("""<i class="%s"></i>"""%ic) if ic else ""
-            html.append(tmpl % {"url": rewriteBase(self.ToUrl(t)), "name": translate(t["name"], self.request), "class": cc, "icon": icon})
+            html.append(tmpl % {"url": self.ToUrl(t), "name": translate(t["name"], self.request), "class": cc, "icon": icon})
 
         return "\r\n".join(html)
 
