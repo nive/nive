@@ -508,7 +508,7 @@ def LoadListItems(fieldconf, app=None, obj=None, pool_type=None, force=False, us
         elif dyn == "meta":
             return app.root.search.GetEntriesAsCodeList2("title", parameter= {}, operators = {}, sort = "title")
         elif dyn == "languages":
-            level = fieldconf.settings.get("level", 0)
+            level = fieldconf.settings.get("level", 1)
             return language_data.GetLanguages(level)
         elif dyn == "countries":
             return country_data.GetCountries()

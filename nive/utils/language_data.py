@@ -77,7 +77,7 @@ empty["level"] = 1
 noArticle = "no-article"
 
 def _add(info):
-    LANGUAGES3[info["code"]] = info["code"]
+    LANGUAGES3[info["code"]] = info["code2"]
     LANGUAGES[info["code2"]] = info
 
 # variants: en-gb en-us uh-hans zh-hant

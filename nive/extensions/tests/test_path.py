@@ -54,8 +54,7 @@ class TestPath(unittest.TestCase):
     def test_special_chars(self):
         p = PathExtension()
 
-        for lang in language_data.languages:
-            conf = language_data.GetConf(lang)
+        for lang, conf in language_data.LANGUAGES.items():
             if not conf.get("special_chars"):
                 continue
             

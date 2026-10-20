@@ -11,8 +11,8 @@ class Langugage_data(unittest.TestCase):
     def test_defs(self):
         for lang, info in language_data.LANGUAGES.items():
             conf = language_data.GetConf(lang)
-            self.assertTrue(conf.get("code")==lang, lang)
-            self.assertTrue(conf.get("code2")!=lang, lang)
+            self.assertTrue(conf.get("code2")==lang, lang)
+            self.assertTrue(conf.get("code")!=lang, lang)
             self.assertTrue(conf.get("name"), lang)
 
     def test_codes(self):
@@ -20,8 +20,8 @@ class Langugage_data(unittest.TestCase):
             self.assertTrue(conf.get("id"), conf)
             self.assertTrue(conf.get("name"), conf)
 
-    def test_codes2(self):
-        for conf in language_data.GetLanguages2():
+    def test_codes3(self):
+        for conf in language_data.GetLanguages3():
             self.assertTrue(conf.get("id"), conf)
             self.assertTrue(conf.get("title"), conf)
             self.assertTrue(conf.get("name"), conf)
