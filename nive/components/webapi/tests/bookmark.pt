@@ -1,6 +1,0 @@
-<p>
-${view}
-${request}
-${item}
-${item.GetObjs()}
-</p>
