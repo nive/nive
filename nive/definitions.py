@@ -178,7 +178,23 @@ class baseConf(object):
         data.update(newvalues)
         data["locked"] = 0
         return self.__class__(**data)
-    
+
+    def merge(self, newvalues):
+        """
+        merge new values into existing conf
+
+        :param newvalues:
+        :return:
+        """
+        for key, value in newvalues.items():
+            if self.has_key(key) and isinstance(self[key], (dict, Conf)) and isinstance(value, dict):
+                self[key].update(value)
+            elif isinstance(value, dict):
+                self[key] = Conf(**value)
+            else:
+                self[key] = value
+        return
+
     def test(self):
         return ()
     
