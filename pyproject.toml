@@ -4,23 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nive"
-version = "1.7.2"
+version = "1.8.1"
 authors = [{name = "Arndt Droullier", email = "info@nive.co"}, {name = "Nive GmbH"}]
-license = {text = "GPL 3"}
+license = "GPL-3.0"
 description = "Nive 3 base package"
 keywords = ["cms", "framework", "pyramid"]
 classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Framework :: Pyramid",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Development Status :: 4 - Beta",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 urls = {Homepage = "https://niveapps.com/", Repository = "https://github.com/nive/nive"}
 dependencies = [
