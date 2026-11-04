@@ -15,10 +15,10 @@ applications in a single pyramid app.
 """
 
 import logging
-import pytz
 import uuid
 
 from time import time
+from zoneinfo import ZoneInfo
 
 from zope.interface.registry import Components
 
@@ -237,7 +237,7 @@ class Application(Events):
             self.dbConfiguration = c.dbConfiguration
         tz = self.configuration.get("timezone")
         if tz is not None:
-            self.pytimezone = pytz.timezone(tz)
+            self.pytimezone = ZoneInfo(tz)
 
     def StartRegistration(self, pyramidConfig):
         """
