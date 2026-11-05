@@ -203,9 +203,34 @@ class viewEscapeTest(unittest.TestCase):
         self.assertTrue(t == "&lt;i&gt;<br>b<br>")
         t = r.Render(FieldConf(id="f", datatype="url"), "example.com/'><script>")
         self.assertTrue("<script>" not in t and "href='http://example.com/&#x27;&gt;" in t)
+        # string, text and json are only escaped on request
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v) == v)
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="text"), v) == v)
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="json"), v) == v)
+        esc = "&lt;b&gt;&#x27;x&#x27;&lt;/b&gt;"
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v, escapeHtml=True) == esc)
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="text"), v, escapeHtml=True) == esc)
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="json"), v, escapeHtml=True) == esc)
+        t = r.Render(FieldConf(id="f", datatype="text", settings={"format": "newlineToBr"}), "<i>\r\nb", escapeHtml=True)
+        self.assertTrue(t == "&lt;i&gt;\r\n<br>b")
         # skipped fields are not changed
         r = FieldRenderer(None, skip=("f",))
-        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v) == v)
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v, escapeHtml=True) == v)
+
+    def test_iface_tablecell(self):
+        from nive.components.iface.search import Search
+        cell = Search()._EscapeCell
+        v = "<b>"
+        self.assertTrue(cell(FieldConf(id="f", datatype="string"), v) == "&lt;b&gt;")
+        self.assertTrue(cell(FieldConf(id="f", datatype="json"), v) == "&lt;b&gt;")
+        self.assertTrue(cell(FieldConf(id="f", datatype="number"), 5) == 5)
+        self.assertTrue(cell(FieldConf(id="f", datatype="url"), "<a href='x'>x</a>") == "<a href='x'>x</a>")
+        # html created by the renderer is kept
+        fld = FieldConf(id="f", datatype="text", settings={"format": "newlineToBr"})
+        rendered = FieldRenderer(None).Render(fld, "<i>\r\nb")
+        self.assertTrue(cell(fld, rendered) == "&lt;i&gt;\r\n<br>b")
+        fld = FieldConf(id="f", datatype="text", settings={"format": "markdown"})
+        self.assertTrue(cell(fld, "<p>x</p>") == "<p>x</p>")
 
 
 class viewTest_db:

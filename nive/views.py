@@ -756,7 +756,7 @@ class BaseView(object):
             if url2.find(".jpg")!=-1 or url2.find(".jpeg")!=-1 or url2.find(".png")!=-1 or url2.find(".gif")!=-1:
                 return """<img src="%s">""" % (url)
             return """<a href="%s">download</a>""" % (url)
-        return FieldRenderer(context).Render(fld, data, context=context, user=user or self.user)
+        return FieldRenderer(context).Render(fld, data, context=context, user=user or self.user, escapeHtml=htmlcode)
     
 
     def Translate(self, text):
@@ -1258,13 +1258,15 @@ class FieldRenderer(object):
         self.context = context
         self.skipRender = skip
         
-    def Render(self, fieldConf, value, useDefault=False, listItems=None, context=None, **kw):
+    def Render(self, fieldConf, value, useDefault=False, listItems=None, context=None, escapeHtml=False, **kw):
         """
         fieldConf = FieldConf of field to be rendered
         value = the value to be rendered
         useDefault = use default values from fieldConf if not found in value
         listItems = used for list lookup key -> name
         context = context object the field is rendered for. Required if listItems=None.
+        escapeHtml = html escape string, text and json values. Other types are always escaped
+                     or rendered as html.
         
         **kw:
         static = static root path for images
@@ -1315,9 +1317,13 @@ class FieldRenderer(object):
                         data = user.GetTitle()
                 except AttributeError:
                     pass
+            if escapeHtml and isinstance(data, str):
+                data = escape(data)
 
         elif fType == "text":
             fmt = settings.get("format")
+            if escapeHtml and fmt!="markdown" and isinstance(data, str):
+                data = escape(data)
             if fmt=="newlineToBr":
                 data = data.replace("\r\n", "\r\n<br>")
             elif fmt=="markdown":
@@ -1450,6 +1456,8 @@ class FieldRenderer(object):
         elif fType == "json":
             if data and not isinstance(data, str):
                 data = json.dumps(data)
+            if escapeHtml and isinstance(data, str):
+                data = escape(data)
 
         return data
     

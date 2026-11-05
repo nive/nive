@@ -10,6 +10,8 @@ from nive import helper
 
 from nive.i18n import _, translate, TranslationString
 
+from html import escape
+
 
 class Search:
     """
@@ -200,10 +202,24 @@ class Search:
                 data = i[id]
                 if hasattr(searchconf, "renderer") and hasattr(searchconf.renderer, id):
                     data = searchconf.renderer.get(id)(field=f, value=data, context=self, data=i)
+                else:
+                    data = self._EscapeCell(f, data)
                 html.append(fld %(data))
             i["value"] = "".join(html)
             body.append(row % i)
         return "".join(body)
+
+    def _EscapeCell(self, fld, data):
+        # search results are rendered without escaping. string, text and json values are escaped here.
+        if not isinstance(data, str) or fld.get("datatype") not in ("string", "text", "json"):
+            return data
+        settings = fld.get("settings") or {}
+        if fld.get("datatype") == "text" and settings.get("format") == "markdown":
+            return data
+        data = escape(data)
+        if fld.get("datatype") == "text" and settings.get("format") == "newlineToBr":
+            data = data.replace("\r\n&lt;br&gt;", "\r\n<br>")
+        return data
             
             
     # search ----------------------------------------------
