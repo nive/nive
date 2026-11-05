@@ -366,7 +366,7 @@ def sitemap_view(context, request):
     portal = request.context
     # portal google sitemap link
     r = Response(content_type="text/xml", conditional_response=False)
-    r.unicode_body = portal.configuration.sitemap
+    r.unicode_body = portal.configuration.sitemap # TODO alt callable
     return r
 
 def error_view(context, request):
