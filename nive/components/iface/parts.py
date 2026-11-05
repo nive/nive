@@ -3,6 +3,8 @@
 from nive.definitions import Conf, IRoot, IContainer
 from nive.i18n import translate, _
 
+from html import escape
+
 
 class Hint(object):
     """
@@ -211,8 +213,8 @@ class Parts:
         objs = list(o.GetParents())
         objs.reverse()
         for p in objs:
-            html.append({"url":self.FolderUrl(p), "title":p.GetTitle(), "class":""})
-        html.append({"url":self.FolderUrl(o), "title":o.GetTitle(), "class":"active"})
+            html.append({"url":self.FolderUrl(p), "title":escape(p.GetTitle()), "class":""})
+        html.append({"url":self.FolderUrl(o), "title":escape(o.GetTitle()), "class":"active"})
         return self.path_render(html, css=css)
     
     
@@ -365,18 +367,16 @@ class Parts:
         cls = "alert-success"
         if error:
             cls = "alert-danger"
-        if not msgs:
-            msgs = self.GetFormValue("msgs")
         flashs = self.request.session.peek_flash()
         if not msgs and not flashs:
             return ""
         html = ["""<div class="alert %s"><ul>"""%cls]
         if msgs:
             for m in msgs:
-                html.append("""<li>%s</li>""" % (m))
+                html.append("""<li>%s</li>""" % (escape(str(m))))
         if flashs:
             for m in self.request.session.pop_flash():
-                html.append("""<li>%s</li>""" % (m))
+                html.append("""<li>%s</li>""" % (escape(str(m))))
         html.append("""</ul></div>""")
         return "".join(html)
     
@@ -472,13 +472,13 @@ class Parts:
             tmpl = """<li class="nav-item"><a href="open?id=%(id)d" class="nav-link">%(title)s</a></li>"""
         html = []
         if conf.get("levelup", True) and not IRoot.providedBy(self.context):
-            html.append(tmpl % dict(id=container.parent.id, title="../ " + container.parent.meta.title, pool_state=""))
+            html.append(tmpl % dict(id=container.parent.id, title="../ " + escape(container.parent.meta.title), pool_state=""))
         cb = conf.get("callback")
         for i in items:
             if cb is not None:
                 html.append(cb(i))
             else:
-                html.append(tmpl % i)
+                html.append(tmpl % dict(i, title=escape(i["title"] or "")))
         return "".join(html)
 
 
@@ -512,7 +512,7 @@ class Parts:
         objs += [self.context]
         l = 0
         for p in objs:
-            html.append(tmpl % {"url":self.FolderUrl(p), "level": str(l), "name":p.GetTitle()})
+            html.append(tmpl % {"url":self.FolderUrl(p), "level": str(l), "name":escape(p.GetTitle())})
             l+=1
         return "".join(html)
     
@@ -573,7 +573,7 @@ class Parts:
         if not redirect:
             redirect = self.request.URL
         for t in wfinfo["transitions"]:
-            l.apend("""<option value="%s">%s</option>""" % (t['applications'][0], t["name"]))
+            l.append("""<option value="%s">%s</option>""" % (t['applications'][0], t["name"]))
         html = """
 <div class="unit_options_block">
 <form id="unit_options_transition" name="transition" action="wf" method="post">

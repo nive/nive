@@ -31,9 +31,7 @@ class CopyView:
         if not ids:
             ids = [self.context.id]
         cp = self.SetCopyInfo("cut", ids, self.context)
-        url = self.GetFormValue("url")
-        if not url:
-            url = self.PageUrl(self.context)
+        url = self.SafeRedirectUrl(self.GetFormValue("url"), self.PageUrl(self.context))
         msgs = _("OK. Cut.")
         ok = True
         return self.Redirect(url, [msgs], refresh=True)
@@ -47,9 +45,7 @@ class CopyView:
         if not ids:
             ids = [self.context.id]
         cp = self.SetCopyInfo("copy", ids, self.context)
-        url = self.GetFormValue("url")
-        if not url:
-            url = self.PageUrl(self.context)
+        url = self.SafeRedirectUrl(self.GetFormValue("url"), self.PageUrl(self.context))
         msgs = _("OK. Copied.")
         return self.Redirect(url, [msgs], refresh=True)
 
@@ -59,9 +55,7 @@ class CopyView:
         """
         self.ResetFlashMessages()
         deleteClipboard=1
-        url = self.GetFormValue("url")
-        if not url:
-            url = self.PageUrl(self.context)
+        url = self.SafeRedirectUrl(self.GetFormValue("url"), self.PageUrl(self.context))
         action, ids = self.GetCopyInfo()
         if not action or not ids:
             msgs = []

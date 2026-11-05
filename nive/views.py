@@ -19,6 +19,8 @@ except:
     import json
 from datetime import datetime
 from email.utils import formatdate
+from html import escape
+from urllib.parse import urlencode, urlsplit
 
 from pyramid.response import Response
 from pyramid.renderers import render_to_response, get_renderer, render
@@ -268,8 +270,35 @@ class BaseView(object):
             parts[0] = url[:-1]
             return "/".join(parts)
         return url
-    
-    
+
+
+    def SafeRedirectUrl(self, url, default=None):
+        """
+        Validate a redirect target passed in by the client. Relative urls and absolute urls
+        pointing to the current host are returned unchanged. Anything else (other hosts,
+        protocol relative urls, non http schemes) is replaced by `default`.
+
+        returns url or default
+        """
+        if not url or not isinstance(url, str):
+            return default
+        url = url.strip()
+        # browsers treat backslashes like slashes and ignore control characters
+        if "\\" in url or any(ord(c) < 32 for c in url):
+            return default
+        try:
+            parts = urlsplit(url)
+        except ValueError:
+            return default
+        if not parts.scheme and not parts.netloc:
+            return url
+        if parts.scheme not in ("http", "https"):
+            return default
+        if parts.netloc.lower() != self.request.host.lower():
+            return default
+        return url
+
+
     def ResolveLink(self, link):
         """
         Resolve the link to a valid (page) URL. If the link is an existing object.id the url to the 
@@ -886,14 +915,7 @@ class BaseView(object):
         
         returns string
         """
-        url = []
-        params = kw
-        #opt
-        for p in list(params.keys()):
-            if len(url):
-                url.append("&")
-            url.append("%s=%s" % (p, params[p]))
-        return "".join(url)    #urllib.quote_plus()
+        return urlencode(kw, doseq=True)
     
 
     def FmtFormParam(self, **kw):
@@ -906,7 +928,7 @@ class BaseView(object):
         params = kw
         for p in list(params.keys()):
             value = ConvertToStr(params[p])
-            form.append("<input type='hidden' name='%s' value='%s'>" % (p, value))
+            form.append("<input type='hidden' name='%s' value='%s'>" % (escape(p), escape(value)))
         return "".join(form)
 
 
@@ -1293,18 +1315,21 @@ class FieldRenderer(object):
                         data = user.GetTitle()
                 except AttributeError:
                     pass
+            if isinstance(data, str):
+                data = escape(data)
 
         elif fType == "text":
             fmt = settings.get("format")
-            if fmt=="newlineToBr":
-                data = data.replace("\r\n", "\r\n<br>")
-            elif fmt=="markdown":
+            if fmt=="markdown":
                 import markdown2
-                data = markdown2.markdown(data)
+                data = markdown2.markdown(data, safe_mode="escape")
+            elif isinstance(data, str):
+                data = escape(data)
+                if fmt=="newlineToBr":
+                    data = data.replace("\r\n", "\r\n<br>")
 
         elif fType == "code":
-            import html
-            data = html.escape( data, False )
+            data = escape( data, False )
 
         elif fType == "date":
             if not isinstance(data, datetime):
@@ -1379,13 +1404,13 @@ class FieldRenderer(object):
             data = delimiter.join(values)
 
         elif fType == "url":
-            if render:
-                if data != "" and data.find("http://") == -1:
+            if data:
+                if data.find("http://") == -1 and data.find("https://") == -1:
                     data = "http://" + data
-                l = data[7:50]
+                l = data.split("://", 1)[1][:43]
                 if len(data) > 50:
                     l += "..."
-                data = "<a alt='%s' href='%s' target='_blank'>%s</a>" % (data, data, l)
+                data = "<a alt='%s' href='%s' target='_blank'>%s</a>" % (escape(data), escape(data), escape(l))
 
         elif fType == "urllist":
             urllist = data
@@ -1410,7 +1435,8 @@ class FieldRenderer(object):
                 else:
                     title = url
                 links.append({"id": l, "name": title})
-                data.append("<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br>" % (title, title, url, title))
+                title = escape(title)
+                data.append("<a alt='%s' title='%s' href='%s' target='_blank'>%s</a><br>" % (title, title, escape(url), title))
             data = "".join(data)
 
         elif fType == "password":
@@ -1423,11 +1449,13 @@ class FieldRenderer(object):
                     tmpl = settings["tmpl"]
                 if isinstance(data, str):
                     data = data.split("\n")
-                data = "".join([tmpl%ll for ll in data])
+                data = "".join([tmpl%escape(str(ll)) for ll in data])
 
         elif fType == "json":
             if data and not isinstance(data, str):
                 data = json.dumps(data)
+            if isinstance(data, str):
+                data = escape(data)
 
         return data
     

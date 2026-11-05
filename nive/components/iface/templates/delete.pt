@@ -24,7 +24,7 @@
 
    <div id="delete_list">
    <p tal:repeat="obj objsToDelete">
-     <span tal:replace="structure obj.GetTitle()" /> (<span tal:content="structure obj.GetTypeName()" />)
+     <span tal:replace="obj.GetTitle()" /> (<span tal:content="obj.GetTypeName()" />)
      <span tal:condition="obj.IsContainer()" class="deletecontainer">... and all subobjects</span>
    </p>
    </div>

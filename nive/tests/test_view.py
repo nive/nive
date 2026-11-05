@@ -2,10 +2,10 @@
 import time
 import unittest
 
-from nive.definitions import Conf
+from nive.definitions import Conf, FieldConf
 from nive.security import User, Unauthorized, DummySecurityPolicy
 from nive.tests import db_app
-from nive.views import BaseView, PreflightRequest, OriginResponse, ExceptionalResponse, HTTPFound
+from nive.views import BaseView, FieldRenderer, PreflightRequest, OriginResponse, ExceptionalResponse, HTTPFound
 from nive.helper import DecorateViewClassWithViewModuleConf
 from nive.tests import __local
 
@@ -165,6 +165,51 @@ class viewTest(unittest.TestCase):
         self.assertTrue(response.headers.get("Access-Control-Allow-Origin") == "http://mydomain.com")
         self.assertTrue(response.headers.get("Access-Control-Expose-Headers") == "X-MyHeader, X-Something")
         self.assertTrue(response.headers.get("Access-Control-Allow-Credentials") == "true")
+
+
+class viewEscapeTest(unittest.TestCase):
+
+    def setUp(self):
+        self.view = BaseView(None, testing.DummyRequest(host="example.com:80"))
+
+    def test_saferedirect(self):
+        view = self.view
+        default = "/default"
+        # allowed
+        self.assertTrue(view.SafeRedirectUrl("/obj/edit", default) == "/obj/edit")
+        self.assertTrue(view.SafeRedirectUrl("edit?a=1", default) == "edit?a=1")
+        self.assertTrue(view.SafeRedirectUrl("http://example.com:80/obj", default) == "http://example.com:80/obj")
+        # rejected
+        self.assertTrue(view.SafeRedirectUrl(None, default) == default)
+        self.assertTrue(view.SafeRedirectUrl("", default) == default)
+        self.assertTrue(view.SafeRedirectUrl("https://evil.com/", default) == default)
+        self.assertTrue(view.SafeRedirectUrl("//evil.com/", default) == default)
+        self.assertTrue(view.SafeRedirectUrl("/\\evil.com/", default) == default)
+        self.assertTrue(view.SafeRedirectUrl("javascript:alert(1)", default) == default)
+        self.assertTrue(view.SafeRedirectUrl("http://example.com.evil.com/", default) == default)
+        self.assertTrue(view.SafeRedirectUrl(" \t//evil.com", default) == default)
+
+    def test_fmtparams(self):
+        view = self.view
+        self.assertTrue(view.FmtURLParam(a=1, url="/x?b=2&c=\"") == "a=1&url=%2Fx%3Fb%3D2%26c%3D%22")
+        html = view.FmtFormParam(url="'><script>")
+        self.assertTrue("<script>" not in html)
+        self.assertTrue("value='&#x27;&gt;&lt;script&gt;'" in html)
+
+    def test_fieldrenderer(self):
+        r = FieldRenderer(None)
+        v = "<b>'x'</b>"
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v) == "&lt;b&gt;&#x27;x&#x27;&lt;/b&gt;")
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="text"), v) == "&lt;b&gt;&#x27;x&#x27;&lt;/b&gt;")
+        t = r.Render(FieldConf(id="f", datatype="text", settings={"format": "newlineToBr"}), "<i>\r\nb")
+        self.assertTrue(t == "&lt;i&gt;\r\n<br>b")
+        t = r.Render(FieldConf(id="f", datatype="lines"), "<i>\nb")
+        self.assertTrue(t == "&lt;i&gt;<br>b<br>")
+        t = r.Render(FieldConf(id="f", datatype="url"), "example.com/'><script>")
+        self.assertTrue("<script>" not in t and "href='http://example.com/&#x27;&gt;" in t)
+        # skipped fields are not changed
+        r = FieldRenderer(None, skip=("f",))
+        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v) == v)
 
 
 class viewTest_db:
