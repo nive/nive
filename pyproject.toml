@@ -8,7 +8,7 @@ version = "1.8.1"
 authors = [{name = "Arndt Droullier", email = "info@nive.co"}, {name = "Nive GmbH"}]
 license = "GPL-3.0"
 description = "Nive 3 base package"
-keywords = ["cms", "framework", "pyramid"]
+keywords = ["framework", "pyramid"]
 classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
