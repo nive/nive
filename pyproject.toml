@@ -27,7 +27,6 @@ dependencies = [
     "zope.interface",
     "pyramid_chameleon",
     "iso8601",
-    "pytz",
     "translationstring",
     "bs4",
 ]
@@ -56,7 +55,6 @@ testing = [
     "zope.interface",
     "pyramid_chameleon",
     "iso8601",
-    "pytz",
     "translationstring",
     "bs4",
 ]

@@ -93,6 +93,37 @@ class baseConfTest(unittest.TestCase):
         c.test=4
         self.assertTrue(c.test==4)
 
+    def test_merge(self):
+        c = Conf(test=1, keep=2, d={"a":1, "b":2}, sub=Conf(a=1, b=2))
+        c.merge({"test":3, "new":4,
+                 "d":{"b":3, "c":4},
+                 "sub":{"b":3, "c":4},
+                 "newd":{"a":1}})
+        # values
+        self.assertTrue(c.test==3)
+        self.assertTrue(c.keep==2)
+        self.assertTrue(c.new==4)
+        # existing dict is updated
+        self.assertTrue(c.d=={"a":1, "b":3, "c":4})
+        # existing conf is updated
+        self.assertTrue(isinstance(c.sub, Conf))
+        self.assertTrue(c.sub.a==1)
+        self.assertTrue(c.sub.b==3)
+        self.assertTrue(c.sub.c==4)
+        # new dicts are added as conf
+        self.assertTrue(isinstance(c.newd, Conf))
+        self.assertTrue(c.newd.a==1)
+        # dict replaces non dict value
+        c.merge({"test":{"a":1}})
+        self.assertTrue(isinstance(c.test, Conf))
+        self.assertTrue(c.test.a==1)
+
+    def test_merge_lock(self):
+        c = Conf(test=1)
+        c.lock()
+        self.assertRaises(ConfigurationError, c.merge, {"test":2})
+        self.assertTrue(c.test==1)
+
 
 
 class ConfTest(unittest.TestCase):

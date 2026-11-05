@@ -473,7 +473,7 @@ class AppConf(baseConf):
         events  : Register for one or multiple Application events. 
                   Register each event as e.g. Conf(event="run", callback=function).
         translations : A single or multiple directories containing translation files.
-        timezone :         Time zone id as used in `pytz` package to be used for new dates.
+        timezone :         IANA time zone id (e.g. "Europe/Berlin") as used by `zoneinfo` to be used for new dates.
 
     Call ``AppConf().test()`` to verify configuration values.
     
