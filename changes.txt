@@ -1,3 +1,9 @@
+1.8.1
+-----
+- removed nive.components.webapi
+- zoneinfo for timezone
+- added FieldRenderer escapeHtml param
+
 1.7.1
 -----
 - language configuration update
