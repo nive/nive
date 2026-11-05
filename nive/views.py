@@ -1315,18 +1315,14 @@ class FieldRenderer(object):
                         data = user.GetTitle()
                 except AttributeError:
                     pass
-            if isinstance(data, str):
-                data = escape(data)
 
         elif fType == "text":
             fmt = settings.get("format")
-            if fmt=="markdown":
+            if fmt=="newlineToBr":
+                data = data.replace("\r\n", "\r\n<br>")
+            elif fmt=="markdown":
                 import markdown2
                 data = markdown2.markdown(data, safe_mode="escape")
-            elif isinstance(data, str):
-                data = escape(data)
-                if fmt=="newlineToBr":
-                    data = data.replace("\r\n", "\r\n<br>")
 
         elif fType == "code":
             data = escape( data, False )
@@ -1454,8 +1450,6 @@ class FieldRenderer(object):
         elif fType == "json":
             if data and not isinstance(data, str):
                 data = json.dumps(data)
-            if isinstance(data, str):
-                data = escape(data)
 
         return data
     

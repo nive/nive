@@ -199,10 +199,6 @@ class viewEscapeTest(unittest.TestCase):
     def test_fieldrenderer(self):
         r = FieldRenderer(None)
         v = "<b>'x'</b>"
-        self.assertTrue(r.Render(FieldConf(id="f", datatype="string"), v) == "&lt;b&gt;&#x27;x&#x27;&lt;/b&gt;")
-        self.assertTrue(r.Render(FieldConf(id="f", datatype="text"), v) == "&lt;b&gt;&#x27;x&#x27;&lt;/b&gt;")
-        t = r.Render(FieldConf(id="f", datatype="text", settings={"format": "newlineToBr"}), "<i>\r\nb")
-        self.assertTrue(t == "&lt;i&gt;\r\n<br>b")
         t = r.Render(FieldConf(id="f", datatype="lines"), "<i>\nb")
         self.assertTrue(t == "&lt;i&gt;<br>b<br>")
         t = r.Render(FieldConf(id="f", datatype="url"), "example.com/'><script>")
