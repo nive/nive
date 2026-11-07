@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 
 import unittest
-import os
-import tempfile
+import time
+import datetime
+import zoneinfo
 
 from nive.utils.utils import MakeListItems, ConvertHTMLToText, ConvertToDateTime
 
@@ -66,11 +66,9 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(t, "# Hello!")
 
     def test_todatetime(self):
-        import datetime
         dt = datetime.datetime.now()
         self.assertTrue(ConvertToDateTime(dt)==dt)
 
-        import time
         self.assertTrue(ConvertToDateTime(time.time()))
 
         self.assertTrue(ConvertToDateTime(0)==None)
@@ -81,3 +79,19 @@ class UtilsTest(unittest.TestCase):
         self.assertTrue(ConvertToDateTime("2015/01/02").strftime("%Y-%m-%d")=="2015-01-02")
         self.assertTrue(ConvertToDateTime("2015/01/02 12:23").strftime("%Y-%m-%d %H:%M")=="2015-01-02 12:23")
         self.assertTrue(ConvertToDateTime("2015/01/02 12:23:43").strftime("%Y-%m-%d %H:%M:%S")=="2015-01-02 12:23:43")
+
+    def test_todatetimetz(self):
+        tz = zoneinfo.ZoneInfo("CET")
+        dt = datetime.datetime.now(tz=tz)
+        self.assertTrue(ConvertToDateTime(dt, tz)==dt)
+
+        self.assertTrue(ConvertToDateTime(time.time()))
+
+        self.assertTrue(ConvertToDateTime(0, tz)==None)
+        self.assertTrue(ConvertToDateTime(None, tz)==None)
+
+        self.assertTrue(ConvertToDateTime(str(dt), tz).strftime("%Y-%m-%d %H:%M:%S")==dt.strftime("%Y-%m-%d %H:%M:%S"))
+        self.assertTrue(ConvertToDateTime("2015-01-02", tz).strftime("%Y-%m-%d")=="2015-01-02")
+        self.assertTrue(ConvertToDateTime("2015/01/02", tz).strftime("%Y-%m-%d")=="2015-01-02")
+        self.assertTrue(ConvertToDateTime("2015/01/02 12:23", tz).strftime("%Y-%m-%d %H:%M")=="2015-01-02 12:23")
+        self.assertTrue(ConvertToDateTime("2015/01/02 12:23:43", tz).strftime("%Y-%m-%d %H:%M:%S")=="2015-01-02 12:23:43")

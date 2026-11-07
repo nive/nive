@@ -63,6 +63,7 @@ if ENABLE_SQLITE_TESTS:
             self.app = db_app.app_db(mods)
 
         def _closeApp(self, data=False, files=False):
+            self.app.Close()
             pass
             #if data:
             #    db_app.emptypool(self.app, files)
