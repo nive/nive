@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nive"
-version = "1.8.1"
+version = "1.8.2"
 authors = [{name = "Arndt Droullier", email = "info@nive.co"}, {name = "Nive GmbH"}]
 license = "GPL-3.0"
 description = "Nive 3 base package"
