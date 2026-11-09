@@ -9,6 +9,8 @@ import pprint
 import re
 import json
 
+from pyramid.path import DottedNameResolver
+
 from nive.i18n import _
 from nive.helper import File
 
@@ -257,7 +259,7 @@ class Email(Regex):
         if msg is None:
             msg = _("Invalid email address")
         super(Email, self).__init__(
-            '(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,15}$', msg=msg)
+            r'(?i)^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,15}$', msg=msg)
 
 class Literal(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .-_` charachters are allowed.
@@ -268,7 +270,7 @@ class Literal(Regex):
     def __init__(self, msg=None):
         if msg is None:
             msg = _("Invalid characters in string: Only 'a-zA-Z0-9.-_' allowed.")
-        super(Literal, self).__init__('^[a-zA-Z0-9\._\-]*$', msg=msg)
+        super(Literal, self).__init__(r'^[a-zA-Z0-9\._\-]*$', msg=msg)
 
 class LiteralWS(Regex):
     """ Literal string validator. Only `a-z, A-Z, 0-9, .- _` charachters including whitespace are allowed.
@@ -279,7 +281,7 @@ class LiteralWS(Regex):
     def __init__(self, msg=None):
         if msg is None:
             msg = _("Invalid characters in string: Only 'a-zA-Z0-9.- _' allowed.")
-        super(Literal, self).__init__('^[a-zA-Z0-9\._\- ]*$', msg=msg)
+        super(LiteralWS, self).__init__(r'^[a-zA-Z0-9\._\- ]*$', msg=msg)
 
 class Range(object):
     """ Validator which succeeds if the value it is passed is greater
@@ -968,69 +970,6 @@ class GlobalObject(SchemaType):
     def __init__(self, package):
         self.package = package
 
-    def _pkg_resources_style(self, node, value):
-        """ package.module:attr style """
-        import importlib
-        from functools import reduce
-        if value.startswith('.') or value.startswith(':'):
-            if not self.package:
-                raise Invalid(
-                    node,
-                    _('relative name "${val}" irresolveable without package',
-                      mapping={'val':value})
-                    )
-            if value in ['.', ':']:
-                value = self.package.__name__
-            else:
-                value = self.package.__name__ + value
-        module_name, _sep, attr = value.strip().partition(':')
-        obj = importlib.import_module(module_name)
-        if not attr:
-            return obj
-        try:
-            return reduce(getattr, attr.split('.'), obj)
-        except AttributeError as exc:
-            raise ImportError(str(exc)) from exc
-
-    def _zope_dottedname_style(self, node, value):
-        """ package.module.attr style """
-        module = self.package and self.package.__name__ or None
-        if value == '.':
-            if self.package is None:
-                raise Invalid(
-                    node,
-                    _('relative name "${val}" irresolveable without package',
-                      mapping={'val':value})
-                    )
-            name = module.split('.')
-        else:
-            name = value.split('.')
-            if not name[0]:
-                if module is None:
-                    raise Invalid(
-                        node,
-                        _('relative name "${val}" irresolveable without '
-                          'package', mapping={'val':value})
-                        )
-                module = module.split('.')
-                name.pop(0)
-                while not name[0]:
-                    module.pop()
-                    name.pop(0)
-                name = module + name
-
-        used = name.pop(0)
-        found = __import__(used)
-        for n in name:
-            used += '.' + n
-            try:
-                found = getattr(found, n)
-            except AttributeError: # pragma: no cover
-                __import__(used)
-                found = getattr(found, n)
-
-        return found
-
     def serialize(self, node, appstruct):
         if appstruct is null:
             return null
@@ -1051,14 +990,16 @@ class GlobalObject(SchemaType):
                           _('"${val}" is not a string',
                             mapping={'val':cstruct}))
         try:
-            if ':' in cstruct:
-                return self._pkg_resources_style(node, cstruct)
-            else:
-                return self._zope_dottedname_style(node, cstruct)
+            return DottedNameResolver(self.package).resolve(cstruct)
         except ImportError:
             raise Invalid(node,
                           _('The dotted name "${name}" cannot be imported',
                             mapping={'name':cstruct}))
+        except ValueError:
+            # relative name without package
+            raise Invalid(node,
+                          _('relative name "${val}" irresolveable without package',
+                            mapping={'val':cstruct}))
 
 class DateTime(SchemaType):
     """ A type representing a Python ``datetime.datetime`` object.
