@@ -84,8 +84,8 @@ class PathExtension:
         """
         path = unicodedata.normalize("NFKD", path).encode("ascii", "ignore")
         path = path.decode("utf-8")
-        path = re.sub('[^\w\s-]', '', path).strip().lower()
-        path = re.sub('[-\s]+', '_', path)
+        path = re.sub(r'[^\w\s-]', '', path).strip().lower()
+        path = re.sub(r'[-\s]+', '_', path)
         # avoid ids as filenames
         try:
             int(path)
