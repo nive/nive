@@ -21,7 +21,6 @@ classifiers = [
 ]
 urls = {Homepage = "https://niveapps.com/", Repository = "https://github.com/nive/nive"}
 dependencies = [
-    "setuptools<82",
     "pyramid>=2.0.2",
     "Chameleon",
     "zope.interface",
@@ -56,7 +55,7 @@ testing = [
     "pyramid_chameleon",
     "iso8601",
     "translationstring",
-    "bs4",
+    "bs4"
 ]
 
 [tool.distutils.easy_install]
