@@ -970,7 +970,8 @@ class GlobalObject(SchemaType):
 
     def _pkg_resources_style(self, node, value):
         """ package.module:attr style """
-        import pkg_resources
+        import importlib
+        from functools import reduce
         if value.startswith('.') or value.startswith(':'):
             if not self.package:
                 raise Invalid(
@@ -982,8 +983,14 @@ class GlobalObject(SchemaType):
                 value = self.package.__name__
             else:
                 value = self.package.__name__ + value
-        return pkg_resources.EntryPoint.parse(
-            'x=%s' % value).load(False)
+        module_name, _sep, attr = value.strip().partition(':')
+        obj = importlib.import_module(module_name)
+        if not attr:
+            return obj
+        try:
+            return reduce(getattr, attr.split('.'), obj)
+        except AttributeError as exc:
+            raise ImportError(str(exc)) from exc
 
     def _zope_dottedname_style(self, node, value):
         """ package.module.attr style """

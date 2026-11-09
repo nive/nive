@@ -6,7 +6,7 @@ This is the connection between nive.Form and reform and maps FieldConf()
 to schema nodes. 
 """
 
-from pkg_resources import resource_filename
+from importlib.resources import files
 from nive.components.reform.template import ZPTRendererFactory
 
 from nive.i18n import translate, _
@@ -29,7 +29,7 @@ configuration = ModuleConf(
     views = (ViewModuleConf(static="nive.components.reform:static",id="reform"),),
 )
 
-template_dir = resource_filename('nive.components.reform', 'templates/')
+template_dir = str(files('nive.components.reform') / 'templates')
 zpt_renderer = ZPTRendererFactory([template_dir], translator=translate)
 
 

@@ -19,12 +19,13 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
 ]
+requires-python = ">=3.12"
 urls = {Homepage = "https://niveapps.com/", Repository = "https://github.com/nive/nive"}
 dependencies = [
-    "pyramid>=2.0.2",
+    "pyramid>=2.2.dev0",
     "Chameleon",
     "zope.interface",
-    "pyramid_chameleon",
+    "pyramid_chameleon>=0.4.dev0",
     "iso8601",
     "translationstring",
     "bs4",
@@ -49,10 +50,10 @@ content-type = "text/markdown"
 
 [project.optional-dependencies]
 testing = [
-    "pyramid>=2.0.2",
+    "pyramid>=2.2.dev0",
     "Chameleon",
     "zope.interface",
-    "pyramid_chameleon",
+    "pyramid_chameleon>=0.4.dev0",
     "iso8601",
     "translationstring",
     "bs4"

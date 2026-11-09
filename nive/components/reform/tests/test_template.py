@@ -77,8 +77,8 @@ class TestZPTRendererFactory(unittest.TestCase):
         return ZPTRendererFactory(dirs, **kw)
 
     def test_functional(self):
-        from pkg_resources import resource_filename
-        default_dir = resource_filename('nive.components.reform', 'tests/fixtures/')
+        import os
+        default_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
         renderer = self._makeOne((default_dir,))
         result = renderer('test')
         self.assertEqual(result.strip(), '<div>Test</div>')

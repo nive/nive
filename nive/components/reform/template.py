@@ -1,5 +1,5 @@
 import os
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 from nive.components.reform.exception import TemplateError
 from translationstring import ChameleonTranslate
@@ -97,5 +97,5 @@ class ZPTRendererFactory(object):
         return self.loader.load(template_name + '.pt')
 
 
-default_dir = resource_filename('nive.components.reform', 'templates/')
+default_dir = str(files('nive.components.reform') / 'templates')
 default_renderer = ZPTRendererFactory((default_dir,))

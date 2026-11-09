@@ -1,10 +1,12 @@
 
 
-import copy, time, io
+import copy, time, io, os
 import unittest
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 from nive.utils.dataPool2.files import File
+
+TESTS_DIR = str(files('nive.utils.dataPool2') / 'tests')
 
 
 class fileentrytest(object):
@@ -12,15 +14,14 @@ class fileentrytest(object):
     
     @property
     def root(self):
-        return resource_filename('nive.utils.dataPool2', 'tests/')
+        return TESTS_DIR + os.sep
     
     @property
     def pool(self):
         return self
     
     def abspath(self, file):
-        root = resource_filename('nive.utils.dataPool2', 'tests/')
-        return root+"test_files.py"
+        return os.path.join(TESTS_DIR, "test_files.py")
 
 
 class FileTest(unittest.TestCase):
@@ -110,9 +111,8 @@ class FileTest(unittest.TestCase):
 
 
     def test_path(self):
-        root = resource_filename('nive.utils.dataPool2', 'tests/')
         file = File("aaa")
-        file.fromPath(root+"test_db.py")
+        file.fromPath(os.path.join(TESTS_DIR, "test_db.py"))
         self.assertTrue(file.filename=="test_db.py")
         self.assertTrue(file.extension=="py")
         self.assertFalse(file.abspath())
@@ -122,11 +122,11 @@ class FileTest(unittest.TestCase):
                     file=None
                     )
         file.fileentry=fileentrytest
-        file.path = root+"test_db.py"
-        self.assertTrue(file.abspath().startswith(root))
+        file.path = os.path.join(TESTS_DIR, "test_db.py")
+        self.assertTrue(file.abspath().startswith(TESTS_DIR))
         
         file = File("aaa", filename="qqqq.png", size=10)
-        file.fromPath(root+"test_db.py")
+        file.fromPath(os.path.join(TESTS_DIR, "test_db.py"))
         self.assertTrue(file.filename=="qqqq.png")
         self.assertTrue(file.extension=="png")
         file.close()
