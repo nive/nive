@@ -642,7 +642,7 @@ class DatabaseConf(baseConf):
         report = []
         # check context
         c = self.context
-        if c.lower() in ("sqlite", "sqlite3", "mysql", "postgres","postgresql"):
+        if c.lower() in ("sqlite", "sqlite3", "mysql", "postgres", "postgresql", "testing"):
             return report
         o = TryResolveName(c)
         if not o:

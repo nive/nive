@@ -595,6 +595,8 @@ class AppFactory(object):
             poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
         elif poolTag.lower() in ("postgres", "postgresql"):
             poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
+        elif poolTag.lower() in ("testing",):
+            poolTag = "nive.utils.dataPool2.testing.TestingPool"
 
         # if a database connection other than the default is configured
         if cachedDbConnection is not None:
@@ -649,6 +651,9 @@ class AppFactory(object):
             poolTag = "nive.utils.dataPool2.mysql.mySqlPool.MySql"
         elif poolTag.lower() in ("postgres", "postgresql"):
             poolTag = "nive.utils.dataPool2.postgres.postgreSqlPool.PostgreSql"
+        elif poolTag.lower() in ("testing",):
+            poolTag = "nive.utils.dataPool2.testing.TestingPool"
+
         dbObj = GetClassRef(poolTag, app.reloadExtensions, True, None)
         return dbObj._DefaultConnection(config=app.dbConfiguration, connectNow=False)
 
