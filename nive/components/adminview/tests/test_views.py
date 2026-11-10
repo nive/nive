@@ -30,7 +30,7 @@ class tViews(__local.DefaultTestCase):
     
 
     def tearDown(self):
-        self._closeApp()
+        self._closeApp(req=self.request)
         testing.tearDown()
 
 
@@ -95,7 +95,7 @@ class tTemplates(__local.DefaultTestCase):
         self.request.context = self.app
 
     def tearDown(self):
-        self.app.Close()
+        self._closeApp(True, True, req=self.request)
         testing.tearDown()
 
     def test_templates(self):

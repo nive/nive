@@ -179,7 +179,7 @@ def app_db(modules=None):
 def app_nodb():
     app = Application()
     app.Register(appconf)
-    app.Register(DatabaseConf())
+    app.Register(DatabaseConf(dbName = "", fileRoot = "", context = "testing"))
     p = Portal()
     p.Register(app, "nive")
     app.SetupApplication()

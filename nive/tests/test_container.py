@@ -487,8 +487,8 @@ class groupsrootTest_db:
         self.remove=[]
 
     def tearDown(self):
-        db_app.emptypool(self.app)
-        self.app.Close()
+        self._closeApp(True, True, req=self.request)
+        testing.tearDown()
 
     def test_permissions(self):
         #print "Testing shortcuts"

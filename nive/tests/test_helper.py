@@ -157,7 +157,6 @@ class ConfigurationTest(unittest.TestCase):
         self.assertTrue(newcls.__configuration__().id=="test")
 
 
-from nive.tests import db_app
 from nive.tests import __local
 
 class ListItemTest_db:

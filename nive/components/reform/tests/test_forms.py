@@ -40,16 +40,16 @@ from pyramid import testing
 class FormTest_db:
 
     def setUp(self):
-        self._loadApp()
         self.request = testing.DummyRequest()
         self.request._LOCALE_ = "en"
         self.config = testing.setUp(request=self.request)
+        self._loadApp()
         self.view = Viewy(self.app)
         self.config.include('pyramid_chameleon')
         self.remove=[]
     
     def tearDown(self):
-        self._closeApp(True)
+        self._closeApp(True, req=self.request)
         testing.tearDown()
 
 

@@ -255,7 +255,7 @@ class viewTest_db:
         self.context2.StoreFile("file2", db_app.file2_2, user=user)
 
     def tearDown(self):
-        self._closeApp(True, True)
+        self._closeApp(True, True, req=self.request)
         testing.tearDown()
 
 
