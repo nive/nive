@@ -172,10 +172,6 @@ class ConnectionThreadLocal(Connection):
             return None
         return self.local.db
         
-    def _set(self, dbconn):
-        # locally store database connection
-        self.local.db = dbconn
-        
     def _getvtime(self):
         if not hasattr(self.local, "_vtime"):
             self._setvtime()
@@ -274,7 +270,11 @@ class ConnectionRequest(Connection):
                 request.__nive_db__.close()
                 request.__nive_db__ = None
             except AttributeError:
-                pass
+                try:
+                    self.local.db.close()
+                except AttributeError:
+                    return
+            done=1
         req.add_finished_callback(CloseDatabase)
         
     def _getvtime(self):
