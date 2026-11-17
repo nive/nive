@@ -768,7 +768,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
     def delete(self, url="view_url"):
         self.request.currentTab = "context.options"
         delete = self.GetFormValue("delete", method="POST")
-        result = {"msgs": [], "objsToDelete": [self.context], "action": "deleteo", "result": False, "ids":None, "pageinfo": "delete"}
+        result = {"msgs": [], "objsToDelete": [self.context], "linked": [], "action": "deleteo", "result": False, "ids":None, "pageinfo": "delete"}
         if delete != "1":
             return result
         ok = False

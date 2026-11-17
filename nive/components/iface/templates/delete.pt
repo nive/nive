@@ -36,7 +36,7 @@
 </form>
 
 <div tal:condition="len(objsToDelete)==0" class="alert alert-danger">
-    <a href="${view.GetURL()}}">Nothing to delete. Return.</a>
+    <a href="${view.Url()}">Nothing to delete. Return.</a>
 </div>
 
 </tal:block>

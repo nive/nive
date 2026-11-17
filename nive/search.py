@@ -1040,9 +1040,9 @@ class Search(object):
                 l = self.Select(pool_type=t["id"], parameter={f["id"]:str(unitID)}, fields=["id", f["id"]], sort=sort,
                                 operators={f["id"]:"LIKE"})
                 for r in l:
-                    if not r[2] == t["id"]:
+                    if not r[0] == t["id"]:
                         continue
-                    unitRefs = ConvertToNumberList(r[3])
+                    unitRefs = ConvertToNumberList(r[1])
                     if not unitID in unitRefs:
                         continue
                     if not r[0] in ids:
