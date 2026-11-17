@@ -46,6 +46,7 @@ configuration = ViewModuleConf(
         ('iface.css', 'nive.components.iface:static/iface.css'),
         ('jquery.js', 'nive.components.iface:static/mods/jquery-4.0.0+comp.min.js'),
         ('bootstrap.min.js', 'nive.components.iface:static/mods/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js'),
+        ('jquery.lazy.js', 'nive.components.iface:static/mods/jquery.lazy.min.js'),
         ('iface.js', 'nive.components.iface:static/iface.js'),
     ]
 )

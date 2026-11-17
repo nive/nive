@@ -246,6 +246,7 @@ button.go-sm     {
 .search table.list .listRow2 { background-color: #ffffff; }
 .search table.list .listRow1 { background-color: #f8f8f8; }
 .search table.list .listRow:hover { background-color: #dddddd; }
+.table-striped>tbody>tr:nth-of-type(odd)>* {--bs-table-accent-bg: #ffffff;}
 
 .search img.lv { display:block; margin-left:auto; margin-right:auto; max-width: 100px; max-height: 80px; }
 .search #listActionButtons {
