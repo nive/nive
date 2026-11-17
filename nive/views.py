@@ -476,7 +476,7 @@ class BaseView(object):
         Asset definitions use a identifier and an asset path like: ::
         
             assets = (
-              ('jquery.js', 'nive_cms.cmsview:static/mods/jquery.min.js'),
+              ('jquery.js', 'nive.view:static/mods/jquery.min.js'),
               ('toolbox.css', 'nive_cms.cmsview:static/toolbox/toolbox.css'),
               ('jquery-ui.js', 'http://example.com/static/mods/jquery.min.js')
             )

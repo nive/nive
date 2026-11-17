@@ -1644,7 +1644,6 @@ default_resources = {
     'reform': {
         None:{
             'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   #('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form.js'),
                    ('reform.js', 'nive.components.reform:static/scripts/reform.js')),
             },
         },
