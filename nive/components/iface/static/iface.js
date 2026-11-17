@@ -59,7 +59,7 @@ $(document).ready(function () {
 
 function overlay(url) {
     $('#overlay-content').load(url);
-    $('#overlay').modal({show: true});
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('overlay')).show();
 }
 
 

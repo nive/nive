@@ -2,24 +2,25 @@
 <!-- main header navigation used for all layouts -->
 <nav metal:define-macro="topnav" i18n:domain="nive">
    <div class="navbar fixed-top navbar-expand-lg" id="topnav">
+   <div class="container-fluid">
    <div tal:condition="view.ifaceConf.slogan" class="slogan">${view.ifaceConf.slogan}</div>
    <a class="navbar-brand" href="${view.backlink()}"><img src="${view.ifaceConf.logo}" class="logo" alt="${view.ifaceConf.slogan}" title="${view.ifaceConf.slogan}" /></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
      <span class="navbar-toggler-icon"></span>
      <img src="/s-iface/images/menu.png">
    </button>
    <div class="collapse navbar-collapse" id="navbarContent">
      <ul metal:define-slot="sections"
-         class="navbar-nav mr-auto"
+         class="navbar-nav me-auto"
          tal:content="structure view.sections()">
      </ul>
      <ul tal:condition="view.UserName()"
          tal:define="ho view.headoptions();"
-         class="navbar-nav mr-right">
+         class="navbar-nav">
        <li tal:condition="ho" class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n:translate="">More</span> <b class="caret"></b></a>
-          <div tal:content="structure ho" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+               role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span i18n:translate="">More</span> <b class="caret"></b></a>
+          <div tal:content="structure ho" class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
           </div>
        </li>
        <li class="divider-vertical"></li>
@@ -27,10 +28,11 @@
      </ul>
      <ul tal:condition="not view.UserName()"
          tal:define="hl view.headlinkAnonymous();"
-         class="navbar-nav mr-right">
+         class="navbar-nav">
        <li class="divider-vertical"></li>
        <li class="nav-item"><span tal:condition="hl" tal:replace="structure hl"></span></li>
      </ul>
+   </div>
    </div>
    </div>
 </nav>
