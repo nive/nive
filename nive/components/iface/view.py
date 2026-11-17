@@ -662,7 +662,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         self.request.currentTab = "context.add"
         typeID = self.GetFormValue("pool_type")
         if not typeID:
-            return {"content": self.selectType(), "result": True}
+            return {"content": self.selectType(), "result": False}
             #raise ValueError, "No type id found"
         if not self.context.IsTypeAllowed(typeID, self.User()):
             raise ValueError("Not allowed")
@@ -771,7 +771,6 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         result = {"msgs": [], "objsToDelete": [self.context], "linked": [], "action": "deleteo", "result": False, "ids":None, "pageinfo": "delete"}
         if delete != "1":
             return result
-        ok = False
         parent = self.context.parent
         try:
             ok = parent.Delete(self.context.id, user=self.User(), obj=self.context)
