@@ -6,98 +6,56 @@ __doc__ = """
 Administration interface module
 """
 
-from pyramid.renderers import get_renderer, render_to_response, render
-from zope.interface import Interface
 
 from nive.i18n import _
-from nive.definitions import ViewConf, ViewModuleConf, FieldConf, WidgetConf, Conf
-from nive.definitions import IApplication, IUser, IUserDatabase, IPersistent, IModuleConf, IViewModuleConf
+from nive.definitions import ViewConf, ViewModuleConf, FieldConf, Conf
+from nive.definitions import IApplication, IPortal, IModuleConf, IViewModuleConf
 
 from nive.views import BaseView
 from nive.extensions.persistentRoot import IPersistentRoot
-from nive.utils.utils import SortConfigurationList, ConvertDictToStr
+from nive.utils.utils import ConvertDictToStr
 
-from nive.components.reform.forms import ValidationError, HTMLForm
+from nive.components.reform.forms import HTMLForm
+from nive.components.iface import view as iface_base
 
-
-
-class IAdminWidgetConf(Interface):
-    """
-    IAdminWidgetConf refers to the nive.components.adminview tab plugin point. Use IAdminWidgetConf as widgetType
-    in your WidgetConf() to link a new tab to the nive admin header.
-    """
-
+from .iface import configuration as ifaceConf
 
 
 # view module definition ------------------------------------------------------------------
 
 #@nive_module
-configuration = ViewModuleConf(
-    id = "administration",
+configuration = ViewModuleConf("nive.components.iface.view.configuration",
+    id = "admin",
     name = _("System"),
     context = IApplication,
+    containment = IPortal,
     view = "nive.components.adminview.view.AdminView",
-    templates = "nive.components.adminview:",
-    template = "index.pt",
+    templates = "nive.components.adminview:templates/",
     permission = "administration",
     adminLink = "app_folder_url/system",
-    static = "nive.components.adminview:static",
-    assets = [
-        ('bootstrap.min.css', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/css/bootstrap.css'),
-        ('adminview.css', 'nive.components.adminview:static/adminview.css'),   # nive css
-        ('jquery.js', 'nive.components.adminview:static/mods/jquery-3.3.1.slim.min.js'),
-        ('bootstrap.min.js', 'nive.components.adminview:static/mods/bootstrap-4.3.1-dist/js/bootstrap.bundle.js'),
-    ],
+    static = (
+        {"path":"nive.components.iface:static/","name":"s-iface"},
+        {"path":"nive.components.adminview:static/","name":"s-admin"}
+    ),
+    ifaceConf = ifaceConf,
+    template = "nive.components.iface:templates/index.pt",
+    assetsCustom = [ ],
+    utilities=Conf()
 )
-t = configuration.templates
+
 configuration.views = [
     # User Management Views
-    ViewConf(name = "system",       attr = "editbasics", renderer = t+"form.pt"),
-    ViewConf(name = "sys-tools",    attr = "tools",      renderer = t+"tools.pt"),
-    ViewConf(name = "sys-modules",  attr = "view",       renderer = t+"modules.pt"),
-    ViewConf(name = "sys-views",    attr = "view",       renderer = t+"views.pt"),
+    ViewConf(name = "system",       attr = "basics", renderer = configuration.templates+"form.pt"),
+    ViewConf(name = "sys-tools",    attr = "tools",  renderer = configuration.templates+"tools.pt"),
+    ViewConf(name = "sys-modules",  attr = "modules",renderer = configuration.templates+"modules.pt"),
+    ViewConf(name = "sys-views",    attr = "views",  renderer = configuration.templates+"views.pt"),
+
+    # ViewConf(name = "database",     attr = "editdatabase", renderer=t+"form.pt"),
     # ViewConf(name = "sys-rootsettings",attr = "editroot",    renderer = t+"form.pt"),
     # ViewConf(name = "portal",   attr = "editportal", renderer = t+"form.pt"),
 ]
 
-configuration.widgets = [
-    WidgetConf(name=_("Basics"),    viewmapper="system",         id="admin.system",       sort=1000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    WidgetConf(name=_("Tools"),     viewmapper="sys-tools",      id="admin.sys-tools",    sort=5000,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    WidgetConf(name=_("Modules"),   viewmapper="sys-modules",    id="admin.sys-modules",  sort=10000,  apply=(IApplication,), widgetType=IAdminWidgetConf,
-               description=_("Read only listing of all registered modules and settings.")),
-    WidgetConf(name=_("Views"),     viewmapper="sys-views",      id="admin.sys-views",    sort=15000,  apply=(IApplication,), widgetType=IAdminWidgetConf,
-               description=_("Read only listing of all registered views grouped by view modules.")),
-    # WidgetConf(name=_("Root"),      viewmapper="sys-rootsettings",id="admin.sys-rootsettings",sort=1100,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    # WidgetConf(name=_("Global"),    viewmapper="sys-portal",     id="admin.sys-portal",   sort=300,    apply=(IApplication,), widgetType=IAdminWidgetConf),
-]
 
-
-"""
-dbAdminConfiguration
---------------------
-managing database settings through the web interface makes sense if the values are
-stored outside the database.
-"""
-#@nive_module
-dbAdminConfiguration = ViewModuleConf(
-    id = "databaseAdministration",
-    name = _("Database Administration"),
-    static = "",
-    context = IApplication,
-    view = "nive.components.adminview.view.AdminView",
-    templates = "nive.components.adminview:",
-    permission = "administration",
-    views = [
-        # Database Management Views
-        ViewConf(name = "database", attr = "editdatabase",   renderer = "nive.components.adminview:form.pt"),
-    ],
-    widgets = [
-        WidgetConf(name=_("Database"),  viewmapper="database",   id="admin.database", sort=200,   apply=(IApplication,), widgetType=IAdminWidgetConf),
-    ]
-)
-
-        
-    
 # view and form implementation ------------------------------------------------------------------
 
 
@@ -223,23 +181,8 @@ class RootForm(HTMLForm):
         return result, self.Render(data, msgs=msgs, errors=errors)
 
 
-class AdminBasics(BaseView):
-
-    def __init__(self, context, request):
-        super(AdminBasics, self).__init__(context, request)
-
-    def view(self):
-        return {}
-
-    def GetAdminWidgets(self):
-        app = self.context.app
-        widgets = app.configurationQuery.QueryConf(IAdminWidgetConf, app)
-        confs = []
-        if not widgets:
-            return confs
-        for n,w in widgets:
-            confs.append(w)
-        return SortConfigurationList(confs, "sort")
+class AdminView(iface_base.IFaceView):
+    viewModuleID = "admin"
 
     def RenderConf(self, c):
         return """<strong><a onclick="$('#%d').toggle()" style="cursor:pointer">%s</a></strong><br>%s""" % (
@@ -289,12 +232,12 @@ class AdminBasics(BaseView):
         return "".join(v)
 
 
-    def AdministrationLinks(self, context=None):
+    def headoptions(self, context=None):
         if context is not None:
             apps = (context,)
         else:
             apps = self.context.app.portal.GetApps()
-        links = []
+        html = []
         for app in apps:
             if not hasattr(app, "registry"):
                 continue
@@ -305,16 +248,13 @@ class AdminBasics(BaseView):
                     continue
                 if not self.Allowed(vm.permission, app):
                     continue
-                url = self.ResolveUrl(vm.get("adminLink"), app)
-                links.append({"href":url, "title":app.configuration.title + ": " + vm.name})
+                link = Conf(id=self.ResolveUrl(vm.get("adminLink"), app), name=app.configuration.title + ": " + vm.name)
+                html.append(self.head_link(link, cls="dropdown-item"))
+        return "".join(html)
 
-        return links
-                
-    
 
-class AdminView(AdminBasics):
-    
-    def editbasics(self):
+    def basics(self):
+        self.request.currentSection = "system"
         fields = (
             FieldConf(id="title",           datatype="string", size=255,  required=0, name=_("Application title")),
             FieldConf(id="description",     datatype="text",   size=5000, required=0, name=_("Application description")),
@@ -331,6 +271,7 @@ class AdminView(AdminBasics):
 
 
     def editroot(self):
+        self.request.currentSection = "sys-root"
         root = self.context.app.GetRoot(name="")
         if not IPersistentRoot.providedBy(root):
             return {"content": _("The default root does not support persistent data storage."), "result": False, "head": ""}
@@ -351,6 +292,7 @@ class AdminView(AdminBasics):
 
 
     def editdatabase(self):
+        self.request.currentSection = "sys-db"
         dbtypes=[{"id":"MySql","name":"MySql"},{"id":"Sqlite3","name":"Sqlite3"}]
         fields = (
             FieldConf(id="context",  datatype="list",   size=20,   required=1, name=_("Database type to be used"), listItems=dbtypes,
@@ -372,6 +314,7 @@ class AdminView(AdminBasics):
 
 
     def editportal(self):
+        self.request.currentSection = "sys-portal"
         fields = (
             FieldConf(id="portalDefaultUrl", datatype="string", size=200, required=1, name=_("Redirect for portal root (/) requests")),
             FieldConf(id="favicon",      datatype="string", size=200,  required=0, name=_("Favicon asset path")),
@@ -388,10 +331,11 @@ class AdminView(AdminBasics):
         result, data, action = form.Process()
         return {"content": data, "result": result, "head": form.HTMLHead()}
 
-    
+
     def tools(self):
+        self.request.currentSection = "sys-tools"
         app = self.context.app
-        head = data = ""
+        data = ""
         
         selected = self.GetFormValue("tag")
         if selected:
@@ -405,7 +349,16 @@ class AdminView(AdminBasics):
         return {"content": data, "tools": t, "tool":None}
     
     
+    def modules(self):
+        self.request.currentSection = "sys-modules"
+        return {}
+
+    def views(self):
+        self.request.currentSection = "sys-views"
+        return {}
+
     def doc(self):
+        self.request.currentSection = "sys-doc"
         return {}
 
     

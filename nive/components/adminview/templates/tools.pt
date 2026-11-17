@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <tal:block metal:use-macro="view.index_tmpl().macros['main']" i18n:domain="nive">
 
-    <tal:block metal:fill-slot="editmain">
-
+    <tal:block metal:fill-slot="content">
         <div class="row"><div class="col-sm">
             <tal:block tal:condition="tool is not None">
                 <h3>${tool.configuration.name}</h3>
