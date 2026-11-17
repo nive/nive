@@ -473,6 +473,7 @@ class Registration(object):
         config.add_view_predicate(predicatename, AppContainmentPredicate)
 
         mods = app.registry.getAllUtilitiesRegisteredFor(IViewModuleConf)
+        staticreg = []
         for viewmod in mods:
             # decorate viewmod to add a pointer to the view module configuration. otherwise there is no way
             # to access the configuration from inside the view callable
@@ -501,12 +502,21 @@ class Registration(object):
             if isinstance(viewmod.static, (list,tuple)):
                 for static in viewmod.static:
                     if isinstance(static, dict):
+                        if static["name"] in staticreg:
+                            continue
                         config.add_static_view(name=static["name"], path=static["path"], cache_max_age=static.get("maxage", maxage), permission=static.get("permission"))
+                        staticreg.append(static["name"])
                     else:
+                        if static[0] in staticreg:
+                            continue
                         config.add_static_view(name=static[0], path=static[1], cache_max_age=viewmod.get("maxage", maxage))
+                        staticreg.append(static[0])
 
             elif isinstance(viewmod.static, dict):
+                if viewmod.static["name"] in staticreg:
+                    continue
                 config.add_static_view(name=viewmod.static["name"], path=viewmod.static["path"], cache_max_age=viewmod.static.get("maxage", maxage), permission=static.get("permission"))
+                staticreg.append(viewmod.static["name"])
 
             elif viewmod.static:
                 # bw update
