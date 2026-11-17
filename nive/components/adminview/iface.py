@@ -42,7 +42,7 @@ configuration.navigation = (
             Conf(name=_("Modules"), id="sys-modules"),
             Conf(name=_("Views"), id="sys-views",)
         )
-    )
+    ),
 )
 
 # object defaults. can be replaced on type base.

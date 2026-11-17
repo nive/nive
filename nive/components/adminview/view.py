@@ -11,12 +11,11 @@ from nive.i18n import _
 from nive.definitions import ViewConf, ViewModuleConf, FieldConf, Conf
 from nive.definitions import IApplication, IPortal, IModuleConf, IViewModuleConf
 
-from nive.views import BaseView
 from nive.extensions.persistentRoot import IPersistentRoot
 from nive.utils.utils import ConvertDictToStr
 
 from nive.components.reform.forms import HTMLForm
-from nive.components.iface import view as iface_base
+from nive.components.iface.view import IFaceView
 
 from .iface import configuration as ifaceConf
 
@@ -181,7 +180,7 @@ class RootForm(HTMLForm):
         return result, self.Render(data, msgs=msgs, errors=errors)
 
 
-class AdminView(iface_base.IFaceView):
+class AdminView(IFaceView):
     viewModuleID = "admin"
 
     def RenderConf(self, c):
