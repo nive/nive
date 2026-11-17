@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nive"
-version = "1.8.1"
+version = "1.9.1"
 authors = [{name = "Arndt Droullier", email = "info@nive.co"}, {name = "Nive GmbH"}]
 license = "GPL-3.0"
 description = "Nive 3 base package"
@@ -19,13 +19,13 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
 ]
+requires-python = ">=3.12"
 urls = {Homepage = "https://niveapps.com/", Repository = "https://github.com/nive/nive"}
 dependencies = [
-    "setuptools<82",
-    "pyramid>=2.0.2",
+    "pyramid>=2.2.dev0",
     "Chameleon",
     "zope.interface",
-    "pyramid_chameleon",
+    "pyramid_chameleon>=0.4.dev0",
     "iso8601",
     "translationstring",
     "bs4",
@@ -50,13 +50,13 @@ content-type = "text/markdown"
 
 [project.optional-dependencies]
 testing = [
-    "pyramid>=2.0.2",
+    "pyramid>=2.2.dev0",
     "Chameleon",
     "zope.interface",
-    "pyramid_chameleon",
+    "pyramid_chameleon>=0.4.dev0",
     "iso8601",
     "translationstring",
-    "bs4",
+    "bs4"
 ]
 
 [tool.distutils.easy_install]

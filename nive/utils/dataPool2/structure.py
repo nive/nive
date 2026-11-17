@@ -484,32 +484,32 @@ class PoolStructure(object):
         if fieldtype == "datetime":
             # -> to datetime
             if isinstance(value, str):
-                value = ConvertToDateTime(value)
+                value = ConvertToDateTime(value, self.pytimezone)
             elif isinstance(value, (float,int)):
-                value = datetime.fromtimestamp(value)
+                value = datetime.fromtimestamp(value, tz=self.pytimezone)
             if value is not None and self.pytimezone is not None and value.tzinfo is None:
                 value = value.replace(tzinfo=self.pytimezone)
 
         elif fieldtype == "date":
             # -> to datetime
             if isinstance(value, str):
-                value = ConvertToDateTime(value)
+                value = ConvertToDateTime(value, self.pytimezone)
             elif isinstance(value, (float,int)):
-                value = datetime.fromtimestamp(value)
+                value = datetime.fromtimestamp(value, tz=self.pytimezone)
 
         elif fieldtype == "time":
             # -> to datetime.time
             if isinstance(value, str):
                 # misuse datetime parser
-                value2 = ConvertToDateTime("2015-01-01 "+str(value))
+                value2 = ConvertToDateTime("2015-01-01 "+str(value), self.pytimezone)
                 if value2:
-                    value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond)
+                    value = datetime_time(value2.hour,value2.minute,value2.second,value2.microsecond, tzinfo=self.pytimezone)
             elif isinstance(value, (float,int)):
-                value = datetime.fromtimestamp(value)
-                value = datetime_time(value.hour,value.minute,value.second,value.microsecond)
+                value = datetime.fromtimestamp(value, tz=self.pytimezone)
+                value = datetime_time(value.hour,value.minute,value.second,value.microsecond,tzinfo=self.pytimezone)
             elif isinstance(value, timedelta):  # treat as time. py3 mysql bug?
-                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0) + value
-                value = datetime_time(hour=n.hour, minute=n.minute, second=n.second, microsecond=n.microsecond)
+                n = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0, tzinfo=self.pytimezone) + value
+                value = datetime_time(hour=n.hour, minute=n.minute, second=n.second, microsecond=n.microsecond, tzinfo=self.pytimezone)
 
         elif fieldtype == "timestamp":
             if isinstance(value, str):

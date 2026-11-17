@@ -47,20 +47,28 @@ def ConvertHTMLToText(html, removeReST=True, url=""):
         return html
 
 
-def ConvertToDateTime(date):
+def ConvertToDateTime(date, tz=None):
+
+    def extendtz(dt, t):
+        return dt if (dt.tzinfo or t is None) else dt.replace(tzinfo=tz)
+
     if isinstance(date, datetime.datetime):
-        return date
+        return extendtz(date, tz)
     elif isinstance(date, datetime.date):
-        return  datetime.datetime(year=date.year, month=date.month, day=date.day)
+        return  datetime.datetime(year=date.year, month=date.month, day=date.day, tzinfo=tz)
     elif isinstance(date, float):
-        return datetime.datetime.fromtimestamp(date)
+        return datetime.datetime.fromtimestamp(date, tz=tz)
     elif not date:
         return None
     try:
-        return iso8601.parse_date(date, default_timezone=None)
+        return iso8601.parse_date(date, default_timezone=tz)
     except (iso8601.ParseError, TypeError) as e:
         pass
-    # try other string format versions
+    try:
+        return extendtz(datetime.datetime.fromisoformat(date), tz)
+    except ValueError:
+        pass
+    # outdated parser. to be removed
     try: # 2011-12-23
         return datetime.datetime.strptime(date, "%Y-%m-%d")
     except ValueError:

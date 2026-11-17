@@ -161,8 +161,8 @@ class Base(object):
         if not date:
             date = datetime.now(tz=self.pytimezone)
         elif not isinstance(date, datetime):
-            date = ConvertToDateTime(date)
-        return date.strftime("%Y-%m-%d %H:%M:%S")
+            date = ConvertToDateTime(date, self.pytimezone)
+        return date.strftime("%Y-%m-%d %H:%M:%S")# TODO add tz
     
     @property
     def placeholder(self):

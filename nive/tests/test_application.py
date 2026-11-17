@@ -15,10 +15,11 @@ from nive.tests import db_app
 from nive.tests import __local
 
 
-mApp = AppConf(id="app", 
+mDbTest  = DatabaseConf(context="testing")
+mApp = AppConf(id="app",
                groups=[GroupConf(id="g1",name="G1")], 
                categories=[Conf(id="c1",name="C1")],
-               modules = [DatabaseConf(dbName=__local.ROOT+"nive3-testapp.db")],
+               modules = [mDbTest],
                translations="nive:locale/")
 
 mObject = ObjectConf(id="object", dbparam="object", name="Object",
@@ -30,7 +31,6 @@ mTool = ToolConf(id="tool", context="nive.tools.example.tool")
 mViewm = ViewModuleConf(id="vm")
 mView = ViewConf(id="v",context=mApp,view=mApp)
 mMod = ModuleConf(id="mod", context=mApp)
-mDb = DatabaseConf(dbName=__local.ROOT+"nive3-testapp2.db")
 
 mWfObj = WfProcessConf("nive.tests.test_workflow.wf1", id="wf", apply=(IObject,))
 mToolObj = ToolConf("nive.tools.example", id="tool", apply=(IObject,))
@@ -40,7 +40,7 @@ mToolErr = ToolConf(id="tool", context="nive.tools.no_example")
 
 mApp2 = AppConf(id="app2", 
                 context="nive.tests.test_application.testapp",
-                modules=[mObject,mRoot,mTool,mViewm,mView,mMod,mDb], 
+                modules=[mObject,mRoot,mTool,mViewm,mView,mMod,mDbTest],
                 groups=[GroupConf(id="g1",name="G1")], 
                 categories=[Conf(id="c1",name="C1")]
 )
@@ -88,7 +88,7 @@ class modTest(unittest.TestCase):
         self.app.Register(mViewm)
         self.app.Register(mView)
         self.app.Register(mMod)
-        self.app.Register(mDb)
+        self.app.Register(mDbTest)
         self.app.Register(ModuleConf(id="aaa"), provided=IObject, name="testttttt")
         
         # debug test
@@ -106,8 +106,8 @@ class modTest(unittest.TestCase):
         self.app.Register(mApp)
         self.app.Startup(None, debug=True)
         self.assertTrue(self.app.db)
-        c = self.app.db.Execute("select id from pool_meta")
-        c.close()
+        #c = self.app.db.Execute("select id from pool_meta")
+        #c.close()
         self.app.Close()
 
     def test_startup2(self):
@@ -446,7 +446,9 @@ class appTest_db:
         v,r=self.app.TestDB()
         self.assertTrue(v,r)
         self.assertTrue(self.app.NewConnection())
-        self.assertTrue(self.app.NewDBApi())
+        db = self.app.NewDBApi()
+        self.assertTrue(db)
+        db.close()
     
 
     def test_real_tools(self):

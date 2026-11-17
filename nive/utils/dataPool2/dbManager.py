@@ -56,7 +56,7 @@ class DatabaseManager(object):
             date = ConvertToDateTime(date)
         if not date:
             return ""
-        return date.strftime("%Y-%m-%d %H:%M:%S")
+        return date.strftime("%Y-%m-%d %H:%M:%S")# TODO add tz for default
 
 
     def UpdateStructure(self, tableName, structure, modify = None, createIdentity = True):

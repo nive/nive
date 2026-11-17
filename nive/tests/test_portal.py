@@ -29,6 +29,7 @@ class portalTest(unittest.TestCase):
 
     def tearDown(self):
         self.app.Close()
+        self.request._process_finished_callbacks()
         testing.tearDown()
 
 

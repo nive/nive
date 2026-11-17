@@ -24,7 +24,6 @@ DB_CONF = DatabaseConf(
     context = "Sqlite3"
 )
 
-
 MYSQL_CONF = DatabaseConf(
     context = "MySql",
     dbName = "ut_nive",
@@ -34,7 +33,6 @@ MYSQL_CONF = DatabaseConf(
     port = "",
     fileRoot = ROOT
 )
-
 
 POSTGRES_CONF = DatabaseConf(
     context = "PostgreSql",
@@ -52,7 +50,6 @@ ENABLE_SQLITE_TESTS = True
 ENABLE_MYSQL_TESTS = False
 ENABLE_POSTGRES_TESTS = False
 
-
 if ENABLE_SQLITE_TESTS:
 
     class SqliteTestCase(unittest.TestCase):
@@ -62,11 +59,12 @@ if ENABLE_SQLITE_TESTS:
             mods.append(DatabaseConf(DB_CONF))
             self.app = db_app.app_db(mods)
 
-        def _closeApp(self, data=False, files=False):
-            pass
+        def _closeApp(self, delete=False, files=False, req=None):
             #if data:
             #    db_app.emptypool(self.app, files)
-            #self.app.Close()
+            self.app.Close()
+            if req:
+                req._process_finished_callbacks()
 
 else:
 
@@ -74,7 +72,7 @@ else:
         def _loadApp(self, mods=None):
             pass
 
-        def _closeApp(self, delete=False, files=False):
+        def _closeApp(self, delete=False, files=False, req=None):
             pass
 
 
@@ -87,17 +85,20 @@ if ENABLE_MYSQL_TESTS:
             mods.append(DatabaseConf(MYSQL_CONF))
             self.app = db_app.app_db(mods)
 
-        def _closeApp(self, delete=False, files=False):
+        def _closeApp(self, delete=False, files=False, req=None):
             if delete:
                 db_app.emptypool(self.app, files)
             self.app.Close()
+            if req:
+                req._process_finished_callbacks()
+
 
 else:
 
     class MySqlTestCase(object):
         def _loadApp(self, mods=None):
             pass
-        def _closeApp(self, delete=False, files=False):
+        def _closeApp(self, delete=False, files=False, req=None):
             pass
 
 
@@ -110,27 +111,28 @@ if ENABLE_POSTGRES_TESTS:
             mods.append(DatabaseConf(POSTGRES_CONF))
             self.app = db_app.app_db(mods)
 
-        def _closeApp(self, delete=False, files=False):
+        def _closeApp(self, delete=False, files=False, req=None):
             if delete:
                 db_app.emptypool(self.app, files)
             self.app.Close()
+            if req:
+                req._process_finished_callbacks()
 
 else:
 
     class PostgreSqlTestCase(object):
         def _loadApp(self, mods=None):
             pass
-        def _closeApp(self, delete=False, files=False):
+        def _closeApp(self, delete=False, files=False, req=None):
             pass
 
 
 
-# Higher level tests are only run for one database system (sqlite if activated), not multiple.
+# Higher level tests are only run for one database system, not multiple.
 DefaultTestCase = SqliteTestCase
-if not ENABLE_SQLITE_TESTS:
-    if ENABLE_POSTGRES_TESTS:
-        DefaultTestCase = PostgreSqlTestCase
-    else:
-        DefaultTestCase = MySqlTestCase
+if ENABLE_MYSQL_TESTS:
+    DefaultTestCase = MySqlTestCase
+elif ENABLE_POSTGRES_TESTS:
+    DefaultTestCase = PostgreSqlTestCase
 
     

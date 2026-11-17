@@ -935,7 +935,7 @@ class GlobalObject(SchemaType):
 
     Two dotted name styles are supported during deserialization:
 
-    - ``pkg_resources``-style dotted names where non-module attributes
+    - ``importlib.files``-style dotted names where non-module attributes
       of a module are separated from the rest of the path using a ':'
       e.g. ``package.module:attr``.
 
@@ -944,7 +944,7 @@ class GlobalObject(SchemaType):
       using a '.' e.g. ``package.module.attr``.
 
     These styles can be used interchangeably.  If the serialization
-    contains a ``:`` (colon), the ``pkg_resources`` resolution
+    contains a ``:`` (colon), the ``importlib.files`` resolution
     mechanism will be chosen, otherwise the ``zope.dottedname``
     resolution mechanism will be chosen.
 

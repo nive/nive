@@ -3,10 +3,8 @@
 #
 
 import string, time
-from datetime import datetime
 
 from nive.definitions import OperationalError, ConfigurationError
-from nive.utils.utils import ConvertToDateTime
 from nive.utils.dataPool2.dbManager import DatabaseManager
 
 try:    
@@ -60,14 +58,6 @@ class MySQLManager(DatabaseManager):
 
 
     # Options ----------------------------------------------------------------
-
-    def ConvertDate(self, date):
-        if not isinstance(date, datetime):
-            date = ConvertToDateTime(date)
-        if not date:
-            return ""
-        return date.strftime("%Y-%m-%d %H:%M:%S")
-
 
     def UpdateStructure(self, tableName, structure, modify = None, createIdentity = True):
         """

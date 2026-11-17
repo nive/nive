@@ -2,6 +2,7 @@
 
 import unittest
 
+from zoneinfo import ZoneInfo
 from datetime import datetime
 from datetime import time as datetime_time
 
@@ -16,6 +17,7 @@ class objTest_db:
     
     def setUp(self):
         self._loadApp()
+        self.tz = ZoneInfo("UTC")
 
     def tearDown(self):
         self._closeApp(True, True)
@@ -51,10 +53,10 @@ class objTest_db:
         o = db_app.createObj1(r)
         id = o.id
         self.assertTrue(o.meta.pool_create)
-        self.assertTrue(o.meta.pool_create.hour==datetime.utcnow().hour)
+        self.assertTrue(o.meta.pool_create.hour==datetime.now(tz=a.pytimezone).hour)
         o.Update(db_app.data1_2, user)
         self.assertTrue(o.meta.pool_change)
-        self.assertTrue(o.meta.pool_change.hour==datetime.utcnow().hour)
+        self.assertTrue(o.meta.pool_change.hour==datetime.now(tz=a.pytimezone).hour)
         o.Close()
 
         r.Delete(id, user=user)
@@ -91,14 +93,14 @@ class objTest_db:
         self.assertTrue(oo.GetFieldConf("ftext").name=="ftext")
         self.assertTrue(oo.GetTitle()=="")
         self.assertTrue(oo.GetPath()==str(oo.id))
-        self.assertTrue(str(o1.GetFld("ftime"))==str(datetime_time(16,55)), str(o1.GetFld("ftime")))
+        self.assertTrue(str(o1.GetFld("ftime"))==str(datetime_time(16,55, tzinfo=self.tz)), str(o1.GetFld("ftime")))
 
         id = o1.GetID()
         o1.Update(db_app.data1_2, user)
         self.assertTrue(o1.GetID()==id)
         self.assertTrue(o1.GetFld("ftext")==db_app.data1_2["ftext"])
         self.assertTrue(o1.GetFld("pool_filename")==db_app.data1_2["pool_filename"])
-        self.assertTrue(str(o1.GetFld("ftime"))==str(datetime_time(23,8,13,500)), str(o1.GetFld("ftime")))
+        self.assertTrue(str(o1.GetFld("ftime"))==str(datetime_time(23,8,13,500, tzinfo=self.tz)), str(o1.GetFld("ftime")))
         o1.Close()
         del o1
 

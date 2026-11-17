@@ -241,7 +241,7 @@ class AuthTktSecurityPolicy:
         return ACLHelper().permits(context, principals, permission)
 
     def remember(self, request, userid, response=None, **kw):
-        headers = self.helper.remember(request, userid, **kw)
+        headers = self.helper.remember(request, str(userid), **kw)
         if response is None:
             return headers
         if not hasattr(request.response, "headerlist"):

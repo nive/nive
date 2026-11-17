@@ -105,8 +105,8 @@ class TestField(unittest.TestCase):
     def test_set_zpt_renderer(self):
         cls = self._getTargetClass()
         old = cls.default_renderer
-        from pkg_resources import resource_filename
-        template_dir = resource_filename('nive.components.reform', 'templates/')
+        from importlib.resources import files
+        template_dir = str(files('nive.components.reform') / 'templates')
         class Field:
             oid = None
             name = None
