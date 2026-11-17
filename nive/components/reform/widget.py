@@ -365,7 +365,6 @@ class DateInputWidget(Widget):
 
 class DateTimeInputWidget(DateInputWidget):
     """
-    Renders a date picker with a JQuery Plugin tempusdominus add-on.
     Used for ``colander.DateTime`` schema nodes.
 
     **Attributes/Arguments**
