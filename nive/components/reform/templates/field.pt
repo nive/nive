@@ -7,7 +7,7 @@
 
     <div tal:condition="not fieldw.hidden"
             id="item-${field.name}"
-            class="row form-group ${field.error and (fieldw.error_class)}">
+            class="row mb-3 form-group ${field.error and (fieldw.error_class)}">
 
         <tal:block tal:condition="fieldw.category!='full-width'">
             <!-- mapping_item 3 column -->

@@ -279,7 +279,7 @@ class TextInputWidget(Widget):
     mask = None
     mask_placeholder = "_"
     placeholder = ""
-    requirements = ( ('jquery.maskedinput', None), )
+    #requirements = ( ('jquery.maskedinput', None), )
 
     def serialize(self, field, cstruct):
         if cstruct in (null, None):
@@ -295,100 +295,6 @@ class TextInputWidget(Widget):
         if not pstruct and field.required:
             return null
         return pstruct
-
-class AutocompleteInputWidget(Widget):
-    """
-    Renders an ``<input type="text">`` widget which provides
-    autocompletion via a list of values.
-
-    When this option is used, the :term:`jquery.ui.autocomplete`
-    library must be loaded into the page serving the form for
-    autocompletion to have any effect.  See also
-    :ref:`autocomplete_input`.  A version of :term:`JQuery UI` which
-    includes the autoinclude sublibrary is included in the reform
-    static directory. The default styles for JQuery UI are also
-    available in the reform static/css directory.
-
-    **Attributes/Arguments**
-
-    size
-        The size, in columns, of the text input field.  Defaults to
-        ``None``, meaning that the ``size`` is not included in the
-        widget output (uses browser default size).
-
-    template
-        The template name used to render the widget.  Default:
-        ``autocomplete_textinput``.
-
-    strip
-        If true, during deserialization, strip the value of leading
-        and trailing whitespace (default ``True``).
-
-    values
-        ``values`` from which :term:`jquery.ui.autocomplete` provides
-        autocompletion. It MUST be an iterable that can be converted
-        to a json array by [simple]json.dumps. It is also possible
-        to pass a [base]string representing a remote URL.
-
-        If ``values`` is a string it will be treated as a
-        URL. If values is an iterable which can be serialized to a
-        :term:`json` array, it will be treated as local data.
-
-        If a string is provided to a URL, an :term:`xhr` request will
-        be sent to the URL. The response should be a JSON
-        serialization of a list of values.  For example:
-
-          ['foo', 'bar', 'baz']
-
-        Defaults to ``None``.
-
-    min_length
-        ``min_length`` is an optional argument to
-        :term:`jquery.ui.autocomplete`. The number of characters to
-        wait for before activating the autocomplete call.  Defaults to
-        ``2``.
-
-    delay
-        ``delay`` is an optional argument to
-        :term:`jquery.ui.autocomplete`. It sets the time to wait after a
-        keypress to activate the autocomplete call.
-        Defaults to ``10`` ms or ``400`` ms if a url is passed.
-    """
-    delay = None
-    min_length = 2
-    size = None
-    strip = True
-    template = 'autocomplete_input'
-    values = None
-    requirements = ( ('jqueryui', None), )
-
-    def serialize(self, field, cstruct):
-        if cstruct in (null, None):
-            cstruct = ''
-        options = {}
-        if not self.delay:
-            # set default delay if None
-            options['delay'] = (isinstance(self.values,
-                                          str) and 400) or 10
-        options['minLength'] = self.min_length
-        options = json.dumps(options)
-        values = json.dumps(self.values)
-        template = self.template
-        return field.renderer(template,
-                              cstruct=cstruct,
-                              field=field,
-                              options=options,
-                              values=values)
-
-    def deserialize(self, field, pstruct, formstruct=None):
-        if pstruct is null:
-            return null
-        if self.strip:
-            pstruct = pstruct.strip()
-        if not pstruct:
-            return null
-        return pstruct
-
 
 class DateInputWidget(Widget):
     """
@@ -479,7 +385,7 @@ class DateTimeInputWidget(DateInputWidget):
     """
     template = 'datetimeinput'
     size = None
-    requirements = ( ('datetimepicker', None), )
+    #requirements = ( ('datetimepicker', None), )
     option_defaults = {'dateFormat': '%Y-%m-%d',
                        'timeFormat': '%H:%M',
                        'separator': ' '}
@@ -1078,7 +984,7 @@ class CheckedInputWidget(Widget):
     confirm_subject = _('Confirm Value')
     mask = None
     mask_placeholder = "_"
-    requirements = ( ('jquery.maskedinput', None), )
+    #requirements = ( ('jquery.maskedinput', None), )
 
     def serialize(self, field, cstruct):
         if cstruct in (null, None):
@@ -1606,44 +1512,15 @@ class ResourceRegistry(object):
                         result[thing].append(source)
         return result
 
-            
 default_resources = {
     'jquery': {
         None:{
-            'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),),
-            },
-        },
-    'jqueryui': {
-        None:{
-            'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery-ui.js', 'nive.components.reform:static/scripts/jquery-ui-1.8.11.custom.min.js'),
-                   ('jquery-ui.css', 'nive.components.reform:static/css/ui-lightness/jquery-ui-1.8.11.custom.css'))
-            },
-        },
-    'deactivated!jquery.form': {
-        None:{
-            'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.form.js', 'nive.components.reform:static/scripts/jquery.form-3.50.js')),
-            },
-        },
-    'jquery.maskedinput': {
-        None:{
-            'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('jquery.maskedinput.js', 'nive.components.reform:static/scripts/jquery.maskedinput-1.3.1.min.js')),
-            },
-        },
-    'datetimepicker': {
-        None:{
-            'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
-                   ('moment.js', 'nive.components.reform:static/tempusdominus/moment.min.js'),
-                   ('moment-de.js', 'nive.components.reform:static/tempusdominus/de.js'),
-                   ('tempusdominus.js', 'nive.components.reform:static/tempusdominus/tempusdominus-bootstrap-4.min.js'),
-                   ('tempusdominus.css', 'nive.components.reform:static/tempusdominus/tempusdominus-bootstrap-4.min.css')),
+            'seq':(('jquery.js', 'nive.components.iface:static/mods/jquery-4.0.0+comp.min.js'),),
             },
         },
     'reform': {
         None:{
-            'seq':(('jquery.js', 'nive.components.reform:static/scripts/jquery.min.js'),
+            'seq':(('jquery.js', 'nive.components.iface:static/mods/jquery-4.0.0+comp.min.js'),
                    ('reform.js', 'nive.components.reform:static/scripts/reform.js')),
             },
         },
