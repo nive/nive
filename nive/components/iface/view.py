@@ -481,50 +481,6 @@ class IFaceView(Parts, Search, CopyView, BaseView):
 
     # helper -----------------------------------------------------------
     
-    def ResolveUrl(self, url, context=None):
-        """
-        Resolve a string to url for object or the current context.
-
-        Possible values:
-        
-        - page_url
-        - obj_url
-        - obj_folder_url
-        - parent_url
-        """
-        if not url:
-            return ""
-        if context is None:
-            context = self.context
-        if url == "view_url":
-            return self.FolderUrl(context)
-        elif url == "section_url":
-            try:
-                section = self.request.currentSection
-            except:
-                section = ""
-            return self.FolderUrl(context) + section
-        elif url == "page_url":
-            url = self.PageUrl(context)
-        elif url == "page_url_anchor":
-            url = self.PageUrl(context, addAnchor=True)
-        elif url == "obj_url":
-            url = self.Url(context)
-        elif url.find("objid_url")!=-1:
-            url = url.replace("objid_url", self.FolderUrl(context.parent) + str(context.id))
-        elif url.find("obj_folder_url")!=-1:
-            url = url.replace("obj_folder_url", self.FolderUrl(context))
-        elif url == "root_url":
-            url = self.FolderUrl(context.root)
-        elif url == "parent_url":
-            url = self.Url(context.parent)
-        elif url == "app_url":
-            url = self.Url(context.app)
-        elif url.find("app_folder_url") != -1:
-            url = url.replace("app_folder_url", self.FolderUrl(context.app)[:-1])
-        return self.ToUrl(url)
-    
-        
     def ToUrl(self, item, context=None):
         """
         convert iface configuration item id to url
