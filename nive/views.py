@@ -163,37 +163,6 @@ class BaseView(object):
             return ""
         return "%sfile/%s" % (self.Url(resource), file.filename)
 
-    def PageUrl(self, resource=None, usePageLink=0, addAnchor=True):
-        """
-        Generates the default page url for the resource with extension. If resource is a page element
-        the page containing this element is used for the url. 
-        
-        If `resource` is None the current context object is used as resource.
-
-        If `addAnchor` is true and resource is not the actula page the url is generated for, the function 
-        will append a anchor for the resource to the url based on the id.
-        
-        returns url
-        """
-        resource = resource or self.context
-        try:
-            page = resource.GetPage()
-        except AttributeError:
-            page = self.context
-        link = page.data.get("pagelink")
-        if usePageLink and link:
-            return self.ResolveUrl(link, resource)
-
-        url = resource_url(page, self.request)
-        if hasattr(page, "extension") and page.extension:
-            # add extension if it is not the virtual root
-            if self.request.virtual_root != page:
-                url = "%s.%s" % (url[:-1], page.extension)
-
-        if not addAnchor or resource == page:
-            return url
-        # add anchor if resource is a element
-        return "%s#nive-element%d"%(url, resource.id)
 
     def CurrentUrl(self, retainUrlParams=False, preserveHost=1):
         """
@@ -240,7 +209,7 @@ class BaseView(object):
         """
         if url is None:
             return ""
-        if not context:
+        if context is None:
             context = self.context
 
         if isinstance(url, collections.abc.Callable):
@@ -248,24 +217,32 @@ class BaseView(object):
 
         parts = url.split("/")
         url = parts[0]
-        if url == "page_url":
-            url = self.PageUrl(context)
-        elif url == "page_url_anchor":
-            url = self.PageUrl(context, addAnchor=True)
+        if url == "view_url":
+            url = self.FolderUrl(context)
         elif url == "obj_url":
             url = self.Url(context)
+        elif url == "objid_url":
+            url = self.FolderUrl(context.parent) + str(context.id)
         elif url == "obj_folder_url":
             url = self.FolderUrl(context)
         elif url == "parent_url":
             url = self.Url(context.parent)
         elif url == "root_url":
-            url = self.Url(context.root)
-        elif url == "root_folder_url":
             url = self.FolderUrl(context.root)
         elif url == "app_url":
             url = self.Url(context.app)
         elif url == "app_folder_url":
             url = self.FolderUrl(context.app)
+
+        elif url == "section_url":# url ???
+            try:
+                section = self.request.currentSection
+            except:
+                section = ""
+            return self.FolderUrl(context) + section
+
+
+
         if len(parts)>1:
             parts[0] = url[:-1]
             return "/".join(parts)

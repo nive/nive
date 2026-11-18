@@ -283,10 +283,6 @@ class viewTest_db:
         self.assertTrue(view.FolderUrl(self.context))
         self.assertTrue(view.FileUrl("file1"))
         self.assertTrue(view.FileUrl("file1", self.context2))
-        self.assertTrue(view.PageUrl())
-        self.assertTrue(view.PageUrl(self.context, usePageLink=1))
-        self.assertTrue(view.PageUrl(addAnchor=True))
-        self.assertTrue(view.PageUrl(self.context, addAnchor=True))
         self.assertTrue(view.CurrentUrl(retainUrlParams=False))
         self.assertTrue(view.CurrentUrl(retainUrlParams=True))
 
@@ -295,7 +291,7 @@ class viewTest_db:
         self.assertTrue(view.StaticUrl("http://file.js"))
         self.assertTrue(view.StaticUrl("/file.js"))
 
-        urls = ["page_url", "obj_url", "obj_folder_url", "parent_url"]
+        urls = ["obj_url", "obj_folder_url", "parent_url"]
         for url in urls:
             self.assertTrue(view.ResolveUrl(url, context=None))
             self.assertTrue(view.ResolveUrl(url, context=self.context2))
@@ -305,9 +301,7 @@ class viewTest_db:
         self.assertTrue(view.ResolveLink("none")=="none")
 
         self.request.virtual_root = self.app.root
-        self.assertTrue(view.PageUrl(self.context))
         self.assertTrue(view.Url(self.context))
-        self.assertTrue(view.PageUrl(self.app.root))
         self.assertTrue(view.Url(self.app.root))
 
 
