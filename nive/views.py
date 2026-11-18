@@ -233,16 +233,6 @@ class BaseView(object):
             url = self.Url(context.app)
         elif url == "app_folder_url":
             url = self.FolderUrl(context.app)
-
-        elif url == "section_url":# url ???
-            try:
-                section = self.request.currentSection
-            except:
-                section = ""
-            return self.FolderUrl(context) + section
-
-
-
         if len(parts)>1:
             parts[0] = url[:-1]
             return "/".join(parts)
