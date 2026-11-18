@@ -20,7 +20,7 @@ a               { color: #000000; }
 
 /*bootstrap layout additions--------------------------------------------------*/
 
-.navbar         { background-color: #565656; box-shadow:0 0 0.3em gray; padding:0 1.5em 0 1.5em; color: #ffffff; }
+.navbar         { background-color: #0786D5; box-shadow:0 0 0.3em gray; padding:0 1.5em 0 1.5em; color: #ffffff; }
 /*.navbar .slogan { display:none }*/
 
 .navbar-brand { padding-top:0.5em; }
