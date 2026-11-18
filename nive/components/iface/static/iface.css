@@ -24,7 +24,7 @@ a               { color: #000000; }
 /*.navbar .slogan { display:none }*/
 
 .navbar-brand { padding-top:0.5em; }
-.navbar-brand img { padding-bottom:0.3em; }
+.navbar-brand img { padding-bottom:0.3em; max-height:60px; }
 
 .navbar a { color:#fff; }
 .navbar .active a.nav-link,

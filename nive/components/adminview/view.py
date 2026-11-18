@@ -182,32 +182,11 @@ class RootForm(HTMLForm):
 
 
 
-def headoptions(self, context=None):
-    if context is not None:
-        apps = (context,)
-    else:
-        apps = self.context.app.portal.GetApps()
-    html = []
-    for app in apps:
-        if not hasattr(app, "registry"):
-            continue
-
-        # search all view modules for admin links
-        for vm in app.configurationQuery.QueryConf(IViewModuleConf):
-            if not vm.get("adminLink"):
-                continue
-            if not self.Allowed(vm.permission, app):
-                continue
-            link = Conf(id=self.ResolveUrl(vm.get("adminLink"), app), name=app.configuration.title + ": " + vm.name)
-            html.append(self.head_link(link, cls="dropdown-item"))
-    return "".join(html)
-
 
 
 
 class AdminView(IFaceView):
     viewModuleID = "admin"
-    headoptions = headoptions
 
     def RenderConf(self, c):
         return """<strong><a onclick="$('#%d').toggle()" style="cursor:pointer">%s</a></strong><br>%s""" % (
@@ -255,6 +234,35 @@ class AdminView(IFaceView):
             v.append("<tr><th>%s</th><td>%s</td></tr>\r\n" % (d[0], value))
         v.append("</table>")
         return "".join(v)
+
+
+    def adminoptions(self, context=None):
+        """
+        Renders Admin Links if iface.headoptions is empty
+
+        :param self:
+        :param context:
+        :return:
+        """
+        if context is not None:
+            apps = (context,)
+        else:
+            apps = self.context.app.portal.GetApps()
+        html = []
+        for app in apps:
+            if not hasattr(app, "registry"):
+                continue
+
+            # search all view modules for admin links
+            for vm in app.configurationQuery.QueryConf(IViewModuleConf):
+                if not vm.get("adminLink"):
+                    continue
+                if not self.Allowed(vm.permission, app):
+                    continue
+                link = Conf(id=self.ResolveUrl(vm.get("adminLink"), app), name=app.configuration.title + ": " + vm.name)
+                html.append(self.head_link(link, cls="dropdown-item"))
+        return "".join(html)
+    headoptions = adminoptions # map dropdown links
 
 
     def basics(self):
