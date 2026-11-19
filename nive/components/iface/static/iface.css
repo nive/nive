@@ -16,7 +16,7 @@ h1              { font-size: 1.6em; line-height: 1em; }
 h2              { font-size: 1.4em; line-height: 1em; }
 h3              { font-size: 1.2em; line-height: 1em; }
 h4              { font-size: 1.0em; line-height: 1em; }
-a               { color: #000000; text-decoration: none; }
+a, a.nav-link   { color: #000000; text-decoration: none; }
 
 /*bootstrap layout additions--------------------------------------------------*/
 
