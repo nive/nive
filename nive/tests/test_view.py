@@ -296,7 +296,10 @@ class viewTest_db:
             self.assertTrue(view.ResolveUrl(url, context=None))
             self.assertTrue(view.ResolveUrl(url, context=self.context2))
         self.assertFalse(view.ResolveUrl("", context=None))
-        
+        self.assertEqual(view.ResolveUrl("http://0.0.0.0:6543/db/iface/123/preview", context=self.context2), "http://0.0.0.0:6543/db/iface/123/preview")
+        self.assertEqual(view.ResolveUrl("https://nive.io/db/iface/123/preview", context=self.context2), "https://nive.io/db/iface/123/preview")
+        self.assertEqual(view.ResolveUrl("/db/iface/123/preview", context=self.context2), "/db/iface/123/preview")
+
         self.assertTrue(view.ResolveLink(str(self.context.id))!=str(self.context.id))
         self.assertTrue(view.ResolveLink("none")=="none")
 
