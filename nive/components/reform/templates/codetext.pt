@@ -9,15 +9,19 @@
 .CodeMirror-scroll {
   min-height: ${field.widget.height}px;
   height: auto;
-  overflow-y: scrolling;
+  overflow-y: scroll;
   overflow-x: auto;
 }
 </style>
 <textarea class="${field.widget.css_class} ${'is-invalid' if field.error else ''}"
           id="${field.oid}"
           name="${field.name}">${cstruct}</textarea>
-
 <script>
-  var editor = CodeMirror.fromTextArea(document.getElementById("${field.oid}"), ${field.widget.renderOptions(field)});
+    $(document).ready(function () {
+        var editor = CodeMirror.fromTextArea(
+            document.getElementById("${field.oid}"),
+            ${field.widget.renderOptions(field)}
+        );
+    });
 </script>
 </tal:block>

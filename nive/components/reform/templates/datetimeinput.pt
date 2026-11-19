@@ -28,7 +28,6 @@
     </div>
     <script type="text/javascript">
         $(function () {
-            $("#datetimepicker-${field.oid}").datetimepicker({locale: 'de', format: 'YYYY-MM-DD'});
             $(document).on("submit", "#${field.widget.form.formid}", function() {
                 $("#${field.oid}").val($("#${field.oid}-dt").val() + " " + $("#${field.oid}-tm").val());
             });

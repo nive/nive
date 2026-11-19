@@ -651,7 +651,7 @@ class CodeTextWidget(TextInputWidget):
     category = 'default' #full-width'
     theme = 'simple'
     requirements = ( ('codemirror', None), )
-    options = { "mode": "text/html", "tabMode": "indent", "lineNumbers": True }
+    options = { "mode": {"name": "javascript", "json": True}, "tabMode": "indent", "lineNumbers": True }
 
     def renderOptions(self, field):
         """
@@ -1546,6 +1546,7 @@ default_resources = {
                    ('codemirror-xml.js', 'nive.components.reform:static/codemirror/mode/xml/xml.js'),
                    ('codemirror-javascript.js', 'nive.components.reform:static/codemirror/mode/javascript/javascript.js'),
                    ('codemirror-css.js', 'nive.components.reform:static/codemirror/mode/css/css.js'),
+                   ('codemirror-yaml.js', 'nive.components.reform:static/codemirror/mode/yaml/yaml.js'),
                    ('codemirror-htmlmixed.js', 'nive.components.reform:static/codemirror/mode/htmlmixed/htmlmixed.js'),
                    ('codemirror.css', 'nive.components.reform:static/codemirror/lib/codemirror.css')),
             },
