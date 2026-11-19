@@ -1,6 +1,6 @@
 
 
-from nive.definitions import Conf, IRoot, IContainer
+from nive.definitions import Conf, IRoot, IContainer, IViewModuleConf
 from nive.i18n import translate, _
 
 from html import escape
@@ -151,6 +151,34 @@ class Parts:
                 html.append(self.head_link(u, cls="dropdown-item"))
         return "".join(html)
     
+
+    def adminoptions(self, context=None):
+        """
+        Renders Admin Links if iface.headoptions is empty
+
+        :param self:
+        :param context:
+        :return:
+        """
+        if context is not None:
+            apps = (context,)
+        else:
+            apps = self.context.app.portal.GetApps()
+        html = []
+        for app in apps:
+            if not hasattr(app, "registry"):
+                continue
+
+            # search all view modules for admin links
+            for vm in app.configurationQuery.QueryConf(IViewModuleConf):
+                if not vm.get("adminLink"):
+                    continue
+                if not self.Allowed(vm.permission, app):
+                    continue
+                link = Conf(id=self.ResolveUrl(vm.get("adminLink"), app), name=app.configuration.title + ": " + vm.name)
+                html.append(self.head_link(link, cls="dropdown-item"))
+        return "".join(html)
+
 
     def navigation(self, context=None):
         """

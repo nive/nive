@@ -234,6 +234,8 @@ class BaseView(object):
         elif url == "app_folder_url":
             url = self.FolderUrl(context.app)
         if len(parts)>1:
+            if url.endswith("/"):
+                url = url[:-1]
             parts[0] = url
             return "/".join(parts)
         return url
@@ -278,10 +280,7 @@ class BaseView(object):
             o = self.context.root.obj(i)
             if not o:
                 return link
-            try:
-                return self.PageUrl(o)
-            except:
-                return self.Url(o)
+            return self.Url(o)
         except:
             return link
 

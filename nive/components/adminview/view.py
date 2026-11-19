@@ -25,7 +25,7 @@ from .iface import configuration as ifaceConf
 
 #@nive_module
 configuration = ViewModuleConf("nive.components.iface.view.configuration",
-    id = "admin",
+    id = "system",
     name = _("System"),
     context = IApplication,
     containment = IPortal,
@@ -235,35 +235,8 @@ class AdminView(IFaceView):
         v.append("</table>")
         return "".join(v)
 
-
-    def adminoptions(self, context=None):
-        """
-        Renders Admin Links if iface.headoptions is empty
-
-        :param self:
-        :param context:
-        :return:
-        """
-        if context is not None:
-            apps = (context,)
-        else:
-            apps = self.context.app.portal.GetApps()
-        html = []
-        for app in apps:
-            if not hasattr(app, "registry"):
-                continue
-
-            # search all view modules for admin links
-            for vm in app.configurationQuery.QueryConf(IViewModuleConf):
-                if not vm.get("adminLink"):
-                    continue
-                if not self.Allowed(vm.permission, app):
-                    continue
-                link = Conf(id=self.ResolveUrl(vm.get("adminLink"), app), name=app.configuration.title + ": " + vm.name)
-                html.append(self.head_link(link, cls="dropdown-item"))
-        return "".join(html)
-    headoptions = adminoptions # map dropdown links
-
+    def headoptions(self, context=None):
+        return self.adminoptions(context)
 
     def basics(self):
         self.request.currentSection = "system"

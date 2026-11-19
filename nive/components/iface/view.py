@@ -276,7 +276,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
             return view.FolderUrl(view.context)+"edit"
 
         elif action == "deletelist":
-            return self.SafeRedirectUrl(self.GetFormValue("ref"), view.PageUrl(view.context))
+            return self.SafeRedirectUrl(self.GetFormValue("ref"), view.Url(view.context))
 
         return "parent"
     
@@ -533,7 +533,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         form.Setup()
         result, data, action = form.Process(**formkws)
         if result and not data:
-            self.Redirect(self.PageUrl(self.context))
+            self.Redirect(self.Url(self.context))
             return
         return {"content": data, "result": result, "view": self, "foot": form.HTMLHead(), "pageinfo": tag}
 
@@ -629,7 +629,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         form.Setup(subset="create", addTypeField=True)
         result, data, action = form.Process(redirectSuccess="view_url")
         if result and not data:
-            self.Redirect(self.PageUrl(self.context))
+            self.Redirect(self.Url(self.context))
             return
         return {"content": data, "result": result, "view": self, "foot": form.HTMLHead(), "pageinfo": "add"}
 
@@ -656,7 +656,7 @@ class IFaceView(Parts, Search, CopyView, BaseView):
         form.Setup(subset="create", addTypeField=True)
         result, data, action = form.Process(redirectSuccess="view_url")
         if result and not data:
-            self.Redirect(self.PageUrl(self.context))
+            self.Redirect(self.Url(self.context))
             return
         return {"content": data, "result": result, "view": self, "foot": form.HTMLHead(), "pageinfo": "add"}
 

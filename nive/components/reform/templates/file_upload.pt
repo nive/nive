@@ -5,7 +5,7 @@
         <a target="_blank" href="${field.widget.form.view.FileUrl(field.name)}">${cstruct.get('filename')}</a>
         (${field.widget.form.view.FmtBytes(cstruct.get('size'))})
 
-        <button type="button" class="btn" data-toggle="modal" data-target="#modal-${field.oid}"
+        <button type="button" class="btn" data-bs-toggle="modal" data-target="#modal-${field.oid}"
                  i18n:translate="">Delete this file
         </button>
     </p>
