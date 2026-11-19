@@ -16,15 +16,15 @@ h1              { font-size: 1.6em; line-height: 1em; }
 h2              { font-size: 1.4em; line-height: 1em; }
 h3              { font-size: 1.2em; line-height: 1em; }
 h4              { font-size: 1.0em; line-height: 1em; }
-a               { color: #000000; }
+a               { color: #000000; text-decoration: none; }
 
 /*bootstrap layout additions--------------------------------------------------*/
 
 .navbar         { background-color: #0786D5; box-shadow:0 0 0.3em gray; padding:0 1.5em 0 1.5em; color: #ffffff; }
-/*.navbar .slogan { display:none }*/
 
 .navbar-brand { padding-top:0.5em; }
 .navbar-brand img { padding-bottom:0.3em; max-height:60px; }
+.navbar .slogan { font-size: 1.5em; padding-right: 1.5em; }
 
 .navbar a { color:#fff; }
 .navbar .active a.nav-link,
