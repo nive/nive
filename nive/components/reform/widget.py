@@ -650,7 +650,7 @@ class CodeTextWidget(TextInputWidget):
     codetype = 'default'
     category = 'default' #full-width'
     theme = 'simple'
-    requirements = ( ('codemirror', None), )
+    #requirements = ( ('codemirror', None), ) disabled
     options = { "mode": {"name": "javascript", "json": True}, "tabMode": "indent", "lineNumbers": True }
 
     def renderOptions(self, field):

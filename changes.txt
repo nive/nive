@@ -1,3 +1,10 @@
+1.9.2
+-----
+- boostrap 5, jquery 4
+- removed old js modules
+- reform update
+- adminview update based on iface
+
 1.8.1
 -----
 - removed nive.components.webapi
